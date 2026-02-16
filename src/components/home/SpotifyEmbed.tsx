@@ -21,7 +21,7 @@ export default function SpotifyEmbed({ playlistUrl }: Props) {
           height="152"
           frameBorder="0"
           allowFullScreen
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          allow="encrypted-media; fullscreen; picture-in-picture"
           loading="lazy"
           style={{ borderRadius: 12 }}
           className="opacity-80 hover:opacity-100 transition-opacity duration-500"
