@@ -35,7 +35,11 @@ export default async function HomePage() {
     sanityFetch<SpotlightProject | null>({ query: spotlightProjectQuery }),
   ]);
 
-  const heroSlides = slides?.length ? slides : fallbackHeroSlides;
+  const heroSlides = slides?.length
+    ? slides.length >= 3
+      ? slides
+      : [...slides, ...fallbackHeroSlides.slice(slides.length)]
+    : fallbackHeroSlides;
   const projectCategories = categories?.length
     ? categories
     : fallbackProjectCategories;
