@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { sanityFetch } from "@/sanity/fetch";
@@ -37,6 +38,7 @@ export default async function RootLayout({
           {children}
         </main>
         <Footer items={navItems} />
+        <SpeedInsights />
       </body>
     </html>
   );
