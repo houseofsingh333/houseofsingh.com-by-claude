@@ -30,6 +30,24 @@ export const heroSlide = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "caption",
+      title: "Caption",
+      type: "string",
+      description: 'Overlay text shown on the slide, e.g. "House of Singh — Design Studio"',
+    }),
+    defineField({
+      name: "internalLink",
+      title: "Internal Link",
+      type: "string",
+      description: "Link to a page on this site, e.g. /about",
+    }),
+    defineField({
+      name: "externalLink",
+      title: "External Link",
+      type: "url",
+      description: "Link to an external site (opens in new tab)",
+    }),
+    defineField({
       name: "order",
       title: "Display Order",
       type: "number",
