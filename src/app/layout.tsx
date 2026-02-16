@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import LogoIntro from "@/components/layout/LogoIntro";
 import { sanityFetch } from "@/sanity/fetch";
 import { navigationQuery } from "@/sanity/queries";
 import {
@@ -33,7 +32,6 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
-        <LogoIntro />
         <Header items={navItems} />
         <main id="main-content" className="flex-1">
           {children}
