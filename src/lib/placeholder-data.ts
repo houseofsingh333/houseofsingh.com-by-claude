@@ -134,4 +134,6 @@ export const fallbackSiteSettings: SiteSettings = {
   siteTitle: "House of Singh",
   tagline: "Design. Build. Create.",
   footerText: "\u00A9 2025 House of Singh. All rights reserved.",
+  spotifyPlaylistUrl:
+    "https://open.spotify.com/embed/playlist/5siljeAcGgaINDEqVRBsAg?utm_source=generator",
 };

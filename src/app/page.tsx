@@ -8,6 +8,7 @@ import { heroSlidesQuery, siteSettingsQuery } from "@/sanity/queries";
 import {
   fallbackHeroSlides,
   fallbackProjects,
+  fallbackSiteSettings,
   type HeroSlide,
   type SiteSettings,
 } from "@/lib/placeholder-data";
@@ -19,7 +20,8 @@ export default async function HomePage() {
   ]);
 
   const heroSlides = slides?.length ? slides : fallbackHeroSlides;
-  const spotifyUrl = settings?.spotifyPlaylistUrl;
+  const spotifyUrl =
+    settings?.spotifyPlaylistUrl ?? fallbackSiteSettings.spotifyPlaylistUrl;
 
   return (
     <>
