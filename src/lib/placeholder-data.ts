@@ -93,6 +93,12 @@ export const fallbackHeroSlides: HeroSlide[] = [
     caption: "Crafted Spaces — Where vision meets execution",
     internalLink: "/projects",
   },
+  {
+    _id: "hero-3",
+    image: "/images/hero-placeholder-3.svg",
+    caption: "Timeless Interiors — Built to inspire and endure",
+    internalLink: "/journal",
+  },
 ];
 
 // --------------- Fallback Project Categories ---------------
