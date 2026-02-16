@@ -2,12 +2,10 @@ import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { sanityFetch } from "@/sanity/fetch";
-import { navigationQuery, siteSettingsQuery } from "@/sanity/queries";
+import { navigationQuery } from "@/sanity/queries";
 import {
   fallbackNavItems,
-  fallbackSiteSettings,
   type NavItem,
-  type SiteSettings,
 } from "@/lib/placeholder-data";
 import "./globals.css";
 
@@ -25,20 +23,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [navData, settings] = await Promise.all([
-    sanityFetch<{ items: NavItem[] } | null>({ query: navigationQuery }),
-    sanityFetch<SiteSettings | null>({ query: siteSettingsQuery }),
-  ]);
+  const navData = await sanityFetch<{ items: NavItem[] } | null>({
+    query: navigationQuery,
+  });
 
   const navItems = navData?.items ?? fallbackNavItems;
-  const footerText = settings?.footerText ?? fallbackSiteSettings.footerText;
 
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
         <Header items={navItems} />
-        <main id="main-content">{children}</main>
-        <Footer footerText={footerText} />
+        <main id="main-content" className="flex-1">
+          {children}
+        </main>
+        <Footer items={navItems} />
       </body>
     </html>
   );

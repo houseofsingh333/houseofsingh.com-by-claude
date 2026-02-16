@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
+import Link from "next/link";
 import type { HeroSlide } from "@/lib/placeholder-data";
 
 type Props = {
@@ -25,49 +25,71 @@ export default function HeroSlider({ slides }: Props) {
 
   const slide = slides[current];
 
-  return (
-    <section
-      className="relative flex h-[70vh] min-h-[480px] items-center justify-center overflow-hidden bg-neutral-900 text-white"
-      aria-label="Hero slideshow"
-    >
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <Image
-          src={slide.imageSrc}
-          alt={slide.imageAlt}
-          fill
-          priority
-          className="object-cover opacity-60"
-          sizes="100vw"
+  const inner = (
+    <div className="relative w-full h-screen bg-secondary flex items-center justify-center overflow-hidden cursor-pointer">
+      {/* Images with fade transition */}
+      {slides.map((s, i) => (
+        <img
+          key={s._id}
+          src={s.image}
+          alt={s.caption || "Hero"}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+            i === current ? "opacity-100" : "opacity-0"
+          }`}
         />
-      </div>
+      ))}
 
-      {/* Content */}
-      <div className="relative z-10 px-6 text-center">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-          {slide.heading}
-        </h1>
-        <p className="mt-4 text-lg text-neutral-200 sm:text-xl">
-          {slide.subheading}
-        </p>
-      </div>
-
-      {/* Slide indicators */}
-      {slides.length > 1 && (
-        <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-          {slides.map((s, i) => (
+      {/* Bottom-left: dots + caption */}
+      <div className="absolute bottom-8 left-8 z-10 flex items-center gap-5">
+        <div className="flex gap-2">
+          {slides.map((_, i) => (
             <button
-              key={s._id}
-              type="button"
-              onClick={() => setCurrent(i)}
-              className={`h-2 w-2 rounded-full transition-colors ${
-                i === current ? "bg-white" : "bg-white/40"
-              }`}
+              key={i}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setCurrent(i);
+              }}
               aria-label={`Go to slide ${i + 1}`}
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${
+                i === current
+                  ? "bg-foreground scale-150"
+                  : "bg-foreground/25 hover:bg-foreground/50"
+              }`}
             />
           ))}
         </div>
-      )}
-    </section>
+        {slide.caption && (
+          <p className="text-xs tracking-widest uppercase text-foreground/70">
+            {slide.caption}
+          </p>
+        )}
+      </div>
+
+      {/* Right side: scroll indicator */}
+      <div className="absolute bottom-8 right-8 z-10 flex flex-col items-center gap-2">
+        <span className="text-[10px] tracking-widest uppercase text-foreground/40">
+          Scroll
+        </span>
+        <div className="w-px h-8 bg-foreground/20 relative overflow-hidden">
+          <div
+            className="absolute top-0 left-0 w-full h-3 bg-foreground/50"
+            style={{ animation: "scrollPulse 2s ease-in-out infinite" }}
+          />
+        </div>
+      </div>
+    </div>
   );
+
+  if (slide.internalLink) {
+    return <Link href={slide.internalLink}>{inner}</Link>;
+  }
+  if (slide.externalLink) {
+    return (
+      <a href={slide.externalLink} target="_blank" rel="noopener noreferrer">
+        {inner}
+      </a>
+    );
+  }
+  return inner;
 }
