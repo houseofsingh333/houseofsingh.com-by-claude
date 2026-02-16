@@ -1,8 +1,10 @@
 /**
- * Placeholder data used until Sanity CMS is wired up.
- * Each array mirrors the shape of the future Sanity schema.
- * Replace with real GROQ queries when ready.
+ * Placeholder data — used as fallbacks when Sanity returns null
+ * (e.g. before content is populated in the CMS).
+ * Also exports shared TypeScript types used across components.
  */
+
+// --------------- Types ---------------
 
 export type NavItem = {
   label: string;
@@ -40,11 +42,12 @@ export type SiteSettings = {
   siteTitle: string;
   tagline: string;
   footerText: string;
+  spotifyPlaylistUrl?: string;
 };
 
-// --------------- Navigation ---------------
+// --------------- Fallback Navigation ---------------
 
-export const navigationItems: NavItem[] = [
+export const fallbackNavItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Projects", href: "/projects" },
@@ -53,9 +56,9 @@ export const navigationItems: NavItem[] = [
   { label: "Studio", href: "/studio", external: true },
 ];
 
-// --------------- Hero Slides ---------------
+// --------------- Fallback Hero Slides ---------------
 
-export const heroSlides: HeroSlide[] = [
+export const fallbackHeroSlides: HeroSlide[] = [
   {
     _id: "hero-1",
     heading: "House of Singh",
@@ -72,9 +75,9 @@ export const heroSlides: HeroSlide[] = [
   },
 ];
 
-// --------------- Projects ---------------
+// --------------- Fallback Projects ---------------
 
-export const projects: ProjectSummary[] = [
+export const fallbackProjects: ProjectSummary[] = [
   {
     _id: "proj-1",
     title: "The Parkview Residence",
@@ -104,9 +107,9 @@ export const projects: ProjectSummary[] = [
   },
 ];
 
-// --------------- Journal ---------------
+// --------------- Fallback Journal ---------------
 
-export const journalEntries: JournalEntry[] = [
+export const fallbackJournalEntries: JournalEntry[] = [
   {
     _id: "journal-1",
     title: "Why We Start With Materials",
@@ -125,9 +128,9 @@ export const journalEntries: JournalEntry[] = [
   },
 ];
 
-// --------------- Site Settings ---------------
+// --------------- Fallback Site Settings ---------------
 
-export const siteSettings: SiteSettings = {
+export const fallbackSiteSettings: SiteSettings = {
   siteTitle: "House of Singh",
   tagline: "Design. Build. Create.",
   footerText: "\u00A9 2025 House of Singh. All rights reserved.",

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { projects } from "@/lib/placeholder-data";
+import { fallbackProjects as projects } from "@/lib/placeholder-data";
 
 type Props = {
   params: Promise<{ slug: string }>;

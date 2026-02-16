@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { journalEntries } from "@/lib/placeholder-data";
+import { fallbackJournalEntries as journalEntries } from "@/lib/placeholder-data";
 
 export const metadata: Metadata = {
   title: "Journal",

@@ -2,9 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { navigationItems } from "@/lib/placeholder-data";
+import type { NavItem } from "@/lib/placeholder-data";
 
-export default function Header() {
+type Props = {
+  items: NavItem[];
+};
+
+export default function Header({ items }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -19,11 +23,11 @@ export default function Header() {
 
         {/* Desktop nav */}
         <ul className="hidden gap-8 md:flex">
-          {navigationItems.map((item) =>
+          {items.map((item) =>
             item.external ? (
               <li key={item.href}>
                 <a
-                  href="https://studios.houseofsingh.com"
+                  href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
@@ -92,11 +96,11 @@ export default function Header() {
       {/* Mobile menu */}
       {mobileOpen && (
         <ul className="border-t border-neutral-200 px-6 pb-4 md:hidden">
-          {navigationItems.map((item) => (
+          {items.map((item) => (
             <li key={item.href}>
               {item.external ? (
                 <a
-                  href="https://studios.houseofsingh.com"
+                  href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block py-2 text-sm font-medium text-neutral-600"

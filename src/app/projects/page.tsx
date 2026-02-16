@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { projects } from "@/lib/placeholder-data";
+import { fallbackProjects as projects } from "@/lib/placeholder-data";
 
 export const metadata: Metadata = {
   title: "Projects",

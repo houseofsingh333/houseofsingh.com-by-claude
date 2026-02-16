@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { journalEntries } from "@/lib/placeholder-data";
+import { fallbackJournalEntries as journalEntries } from "@/lib/placeholder-data";
 
 type Props = {
   params: Promise<{ slug: string }>;
