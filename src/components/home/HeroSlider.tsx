@@ -39,32 +39,14 @@ export default function HeroSlider({ slides }: Props) {
         />
       ))}
 
-      {/* Bottom-left: dots + caption */}
-      <div className="absolute bottom-8 left-8 z-10 flex items-center gap-5">
-        <div className="flex gap-2">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setCurrent(i);
-              }}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${
-                i === current
-                  ? "bg-foreground scale-150"
-                  : "bg-foreground/25 hover:bg-foreground/50"
-              }`}
-            />
-          ))}
-        </div>
-        {slide.caption && (
+      {/* Bottom-left: caption */}
+      {slide.caption && (
+        <div className="absolute bottom-8 left-8 z-10">
           <p className="text-xs tracking-widest uppercase text-foreground/70">
             {slide.caption}
           </p>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Right side: scroll indicator */}
       <div className="absolute bottom-8 right-8 z-10 flex flex-col items-center gap-2">
