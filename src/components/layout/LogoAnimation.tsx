@@ -13,7 +13,7 @@ type Props = {
 let animationData: object | null = null;
 try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  animationData = require("../../../public/animations/logo.json");
+  animationData = require("../../../public/animations/hos_logo.json");
 } catch {
   animationData = null;
 }
