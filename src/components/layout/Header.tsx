@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import NavOverlay from "./NavOverlay";
+import LogoAnimation from "./LogoAnimation";
 import type { NavItem } from "@/lib/placeholder-data";
 
 type Props = {
@@ -37,12 +37,7 @@ export default function Header({ items }: Props) {
         </button>
 
         {/* Centered logo */}
-        <Link
-          href="/"
-          className="absolute left-1/2 -translate-x-1/2 text-sm font-medium tracking-widest uppercase text-foreground"
-        >
-          House of Singh
-        </Link>
+        <LogoAnimation variant="header" />
 
         <div className="w-10" />
       </header>
