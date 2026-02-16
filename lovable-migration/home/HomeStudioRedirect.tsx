@@ -1,6 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 
-export default function StudioRedirect() {
+const HomeStudioRedirect = () => {
   return (
     <section className="bg-foreground text-background px-8 md:px-16 py-16 md:py-24">
       <div className="max-w-5xl mx-auto flex flex-col items-center text-center gap-6">
@@ -29,4 +29,6 @@ export default function StudioRedirect() {
       </div>
     </section>
   );
-}
+};
+
+export default HomeStudioRedirect;
