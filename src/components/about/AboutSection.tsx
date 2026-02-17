@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PortableText } from "@portabletext/react";
+import SanityImage from "@/components/SanityImage";
 import type {
   AboutPageData,
   AboutMilestone,
@@ -108,7 +109,7 @@ function TimelineMilestone({
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const isEven = idx % 2 === 0;
-  const imgSrc = m.image ?? "/images/project-placeholder-1.svg";
+  const imgData = m.image;
 
   useEffect(() => {
     const el = ref.current;
@@ -173,17 +174,19 @@ function TimelineMilestone({
             </div>
           ) : (
             <div
-              className={`timeline-image w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4 transition-all duration-700 ease-out ${
+              className={`timeline-image relative w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4 transition-all duration-700 ease-out ${
                 visible
                   ? "opacity-100 translate-x-0"
                   : "opacity-0 md:-translate-x-8"
               }`}
               style={{ transitionDelay: `${idx * 100 + 150}ms` }}
             >
-              <img
-                src={imgSrc}
+              <SanityImage
+                image={imgData}
+                context="thumbnail"
                 alt={m.title}
-                className="w-full h-full object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
+                fill
+                className="object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
               />
             </div>
           )}
@@ -195,17 +198,19 @@ function TimelineMilestone({
         >
           {isEven ? (
             <div
-              className={`timeline-image w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4 transition-all duration-700 ease-out ${
+              className={`timeline-image relative w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4 transition-all duration-700 ease-out ${
                 visible
                   ? "opacity-100 translate-x-0"
                   : "opacity-0 md:translate-x-8"
               }`}
               style={{ transitionDelay: `${idx * 100 + 150}ms` }}
             >
-              <img
-                src={imgSrc}
+              <SanityImage
+                image={imgData}
+                context="thumbnail"
                 alt={m.title}
-                className="w-full h-full object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
+                fill
+                className="object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
               />
             </div>
           ) : (
@@ -247,11 +252,13 @@ function TimelineMilestone({
         <p className="text-xs text-muted-foreground leading-[1.6] mb-3">
           {m.text}
         </p>
-        <div className="w-[180px] aspect-[4/3] overflow-hidden bg-secondary">
-          <img
-            src={imgSrc}
+        <div className="relative w-[180px] aspect-[4/3] overflow-hidden bg-secondary">
+          <SanityImage
+            image={imgData}
+            context="thumbnail"
             alt={m.title}
-            className="w-full h-full object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
+            fill
+            className="object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
           />
         </div>
       </div>
@@ -347,11 +354,13 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
           {/* Portrait — right */}
           <div className="md:col-span-5 md:col-start-8 order-1 md:order-2 group">
-            <div className="w-full aspect-[3/4] overflow-hidden bg-secondary">
-              <img
-                src={portrait ?? "/images/hero-placeholder-1.svg"}
+            <div className="relative w-full aspect-[3/4] overflow-hidden bg-secondary">
+              <SanityImage
+                image={portrait}
+                context="body"
                 alt={`${founderName} — ${roles[0]}`}
-                className="w-full h-full object-cover object-top grayscale scale-[1.03] group-hover:grayscale-0 group-hover:scale-100 transition-all duration-1000 ease-out"
+                fill
+                className="object-cover object-top grayscale scale-[1.03] group-hover:grayscale-0 group-hover:scale-100 transition-all duration-1000 ease-out"
               />
             </div>
           </div>
@@ -372,8 +381,9 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
             {/* Logo — left */}
             <div className="md:col-span-4 flex justify-center">
               {monikerLogo ? (
-                <img
-                  src={monikerLogo}
+                <SanityImage
+                  image={monikerLogo}
+                  context="body"
                   alt="House of Singh"
                   className="w-36 md:w-44 object-contain opacity-40"
                 />

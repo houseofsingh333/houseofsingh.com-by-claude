@@ -21,13 +21,26 @@ export const heroSlide = defineType({
       title: "Background Image",
       type: "image",
       options: { hotspot: true },
+      description:
+        "Full-bleed hero image. Minimum 2400 px long edge, JPEG preferred. Avoid raw/uncompressed exports.",
       validation: (rule) => rule.required(),
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alt Text",
+          type: "string",
+          description: "Describe the image for screen readers and SEO.",
+          validation: (rule) =>
+            rule.required().error("Alt text is required for hero images."),
+        }),
+      ],
     }),
     defineField({
       name: "imageAlt",
-      title: "Image Alt Text",
+      title: "Image Alt Text (legacy)",
       type: "string",
-      validation: (rule) => rule.required(),
+      description: "Deprecated — use the alt field on the image above instead.",
+      hidden: true,
     }),
     defineField({
       name: "caption",

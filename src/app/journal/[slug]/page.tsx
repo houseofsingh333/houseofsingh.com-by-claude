@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReadingProgress from "@/components/journal/ReadingProgress";
+import SanityImage from "@/components/SanityImage";
 import { sanityFetch } from "@/sanity/fetch";
 import { journalBySlugQuery, journalFeedQuery } from "@/sanity/queries";
 import {
@@ -79,11 +80,16 @@ export default async function JournalDetailPage({ params }: Props) {
 
         {/* Cover image */}
         {resolved.coverImage && (
-          <img
-            src={resolved.coverImage}
-            alt={resolved.title}
-            className="w-full h-[50vh] object-cover bg-secondary mb-8"
-          />
+          <div className="relative w-full h-[50vh] bg-secondary mb-8">
+            <SanityImage
+              image={resolved.coverImage}
+              context="hero"
+              alt={resolved.title}
+              priority
+              fill
+              className="object-cover"
+            />
+          </div>
         )}
 
         {/* Title */}

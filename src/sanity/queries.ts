@@ -1,6 +1,19 @@
 /**
  * GROQ queries used by server components via sanityFetch().
+ *
+ * Image fields use the _imageAsset projection to return the CDN URL
+ * along with LQIP blur hash and dimensions for responsive rendering.
  */
+
+// Shared projection for image asset data (includes alt/caption from image fields)
+const _imageAsset = `{
+  "url": asset->url,
+  "lqip": asset->metadata.lqip,
+  "width": asset->metadata.dimensions.width,
+  "height": asset->metadata.dimensions.height,
+  alt,
+  caption
+}`;
 
 // --------------- Navigation ---------------
 
@@ -21,10 +34,10 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   founderName,
   founderRoles,
   founderBio,
-  "portrait": portrait.asset->url,
+  "portrait": portrait ${_imageAsset},
   "monikerLogo": monikerLogo.asset->url,
   monikerText,
-  milestones[]{ year, title, text, "image": image.asset->url },
+  milestones[]{ year, title, text, "image": image ${_imageAsset} },
   testimonials[]{ quote, name, role },
   seoTitle,
   seoDescription
@@ -34,7 +47,8 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
 
 export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
   _id,
-  "image": image.asset->url,
+  "image": image ${_imageAsset},
+  "imageAlt": coalesce(image.alt, imageAlt),
   caption,
   internalLink,
   externalLink
@@ -50,17 +64,19 @@ export const projectCategoriesQuery = `*[_type == "projectCategory"] | order(ord
 
 export const projectsListQuery = `*[_type == "project"] | order(title asc){
   _id, title, "slug": slug.current, category,
-  "thumbnailSrc": thumbnail.asset->url, thumbnailAlt, excerpt
+  "thumbnail": thumbnail ${_imageAsset},
+  thumbnailAlt, excerpt
 }`;
 
 export const projectsByCategoryQuery = `*[_type == "project" && category == $category] | order(title asc){
   _id, title, "slug": slug.current, category,
-  "thumbnailSrc": thumbnail.asset->url, thumbnailAlt, excerpt
+  "thumbnail": thumbnail ${_imageAsset},
+  thumbnailAlt, excerpt
 }`;
 
 export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug][0]{
   _id, title, "slug": slug.current, category, excerpt, body,
-  "images": images[].asset->url
+  "images": images[]${_imageAsset}
 }`;
 
 // --------------- Spotlight Project ---------------
@@ -68,16 +84,17 @@ export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug
 export const spotlightProjectQuery = `*[_type == "project" && spotlight == true][0]{
   _id, title, "slug": slug.current,
   "description": excerpt,
-  "image": thumbnail.asset->url
+  "image": thumbnail ${_imageAsset}
 }`;
 
 // --------------- Journal ---------------
 
 export const journalFeedQuery = `*[_type == "journalEntry"] | order(date desc){
   _id, title, "slug": slug.current, date, excerpt,
-  "coverImage": coverImage.asset->url
+  "coverImage": coverImage ${_imageAsset}
 }`;
 
 export const journalBySlugQuery = `*[_type == "journalEntry" && slug.current == $slug][0]{
-  _id, title, "slug": slug.current, date, excerpt, body
+  _id, title, "slug": slug.current, date, excerpt, body,
+  "coverImage": coverImage ${_imageAsset}
 }`;

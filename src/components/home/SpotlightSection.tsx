@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SanityImage from "@/components/SanityImage";
 import type { SpotlightProject } from "@/lib/placeholder-data";
 
 type Props = {
@@ -12,10 +13,13 @@ export default function SpotlightSection({ project }: Props) {
         href={`/projects/${project.slug}`}
         className="group block relative w-full aspect-[4/3] md:aspect-[16/7] overflow-hidden bg-secondary"
       >
-        <img
-          src={project.image}
+        <SanityImage
+          image={project.image}
+          context="hero"
           alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-[1.03]"
+          priority
+          fill
+          className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-[1.03]"
         />
         {/* Dark gradient overlay */}
         <div className="absolute inset-0 bg-black/50" />

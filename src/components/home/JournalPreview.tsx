@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import SanityImage from "@/components/SanityImage";
 import type { JournalEntry } from "@/lib/placeholder-data";
 
 type Props = {
@@ -98,10 +99,12 @@ export default function JournalPreview({ entries }: Props) {
                   top: mousePos.y - 60,
                 }}
               >
-                <img
-                  src={entry.coverImage}
+                <SanityImage
+                  image={entry.coverImage}
+                  context="thumbnail"
                   alt=""
-                  className="w-full h-full object-cover grayscale"
+                  fill
+                  className="object-cover grayscale"
                 />
               </div>
             )}

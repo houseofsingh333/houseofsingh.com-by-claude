@@ -41,6 +41,18 @@ export const aboutPage = defineType({
       title: "Portrait",
       type: "image",
       options: { hotspot: true },
+      description:
+        "Founder portrait. Recommended: JPEG, minimum 2400 px long edge, portrait orientation (3:4).",
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alt Text",
+          type: "string",
+          description: "Describe the image for screen readers and SEO.",
+          validation: (rule) =>
+            rule.required().warning("Alt text is strongly recommended."),
+        }),
+      ],
     }),
 
     /* ——— 3 · The Moniker ——— */
@@ -89,6 +101,17 @@ export const aboutPage = defineType({
               title: "Image",
               type: "image",
               options: { hotspot: true },
+              description: "JPEG preferred. Use PNG only if transparency is needed.",
+              fields: [
+                defineField({
+                  name: "alt",
+                  title: "Alt Text",
+                  type: "string",
+                  description: "Describe the image for screen readers.",
+                  validation: (rule) =>
+                    rule.required().warning("Alt text is recommended."),
+                }),
+              ],
             }),
           ],
           preview: {

@@ -4,6 +4,11 @@
  * Also exports shared TypeScript types used across components.
  */
 
+import type { SanityImageAsset } from "@/lib/sanityImage";
+
+/** Image field from Sanity can be a full asset object or a plain URL string. */
+export type SanityImage = SanityImageAsset | string;
+
 // --------------- Types ---------------
 
 export type NavItem = {
@@ -15,7 +20,8 @@ export type NavItem = {
 
 export type HeroSlide = {
   _id: string;
-  image: string;
+  image: SanityImage;
+  imageAlt?: string;
   caption?: string;
   internalLink?: string;
   externalLink?: string;
@@ -44,7 +50,7 @@ export type JournalEntry = {
   slug: string;
   date: string;
   excerpt: string;
-  coverImage?: string;
+  coverImage?: SanityImage;
 };
 
 export type SpotlightProject = {
@@ -52,7 +58,7 @@ export type SpotlightProject = {
   slug: string;
   title: string;
   description: string;
-  image: string;
+  image: SanityImage;
 };
 
 export type SiteSettings = {
@@ -66,7 +72,7 @@ export type AboutMilestone = {
   year: string;
   title: string;
   text: string;
-  image: string | null;
+  image: SanityImage | null;
 };
 
 export type AboutTestimonial = {
@@ -83,8 +89,8 @@ export type AboutPageData = {
   founderName: string;
   founderRoles: string[] | null;
   founderBio: PortableTextBlock[] | null;
-  portrait: string | null;
-  monikerLogo: string | null;
+  portrait: SanityImage | null;
+  monikerLogo: SanityImage | null;
   monikerText: PortableTextBlock[] | null;
   milestones: AboutMilestone[] | null;
   testimonials: AboutTestimonial[] | null;

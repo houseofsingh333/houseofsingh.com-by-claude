@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import SanityImage from "@/components/SanityImage";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const PORTRAIT_IMAGE = "/images/hero-placeholder-1.svg";
@@ -34,11 +35,13 @@ export default function IntroSection() {
           style={{ transitionDelay: "200ms" }}
           onMouseEnter={() => setRevealed(true)}
         >
-          <div className="w-full aspect-square md:aspect-[3/4] overflow-hidden bg-secondary">
-            <img
-              src={PORTRAIT_IMAGE}
+          <div className="relative w-full aspect-square md:aspect-[3/4] overflow-hidden bg-secondary">
+            <SanityImage
+              image={PORTRAIT_IMAGE}
+              context="body"
               alt="Maninder Singh — Creative Director, Designer & Photographer"
-              className={`w-full h-full object-cover object-top transition-all duration-1000 ${
+              fill
+              className={`object-cover object-top transition-all duration-1000 ${
                 revealed ? "grayscale-0 scale-100" : "grayscale scale-[1.03]"
               }`}
             />

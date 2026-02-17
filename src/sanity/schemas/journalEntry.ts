@@ -36,6 +36,23 @@ export const journalEntry = defineType({
       title: "Cover Image",
       type: "image",
       options: { hotspot: true },
+      description:
+        "Recommended: JPEG, minimum 2400 px on the long edge. Avoid uploading raw/uncompressed exports.",
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alt Text",
+          type: "string",
+          description: "Describe the image for screen readers and SEO.",
+          validation: (rule) =>
+            rule.required().warning("Alt text is strongly recommended for accessibility."),
+        }),
+        defineField({
+          name: "caption",
+          title: "Caption",
+          type: "string",
+        }),
+      ],
     }),
     defineField({
       name: "body",

@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
+import SanityImage from "@/components/SanityImage";
 import type { JournalEntry } from "@/lib/placeholder-data";
 
 type Props = {
@@ -216,14 +217,15 @@ export default function JournalList({ entries }: Props) {
                 className="block group transition-transform duration-300 hover:-translate-y-1"
               >
                 {/* Image */}
-                <div className="overflow-hidden bg-secondary mb-5 shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                  <img
-                    src={entry.coverImage || "/images/project-placeholder-1.svg"}
+                <div className="relative overflow-hidden bg-secondary mb-5 shadow-sm group-hover:shadow-md transition-shadow duration-300 aspect-[3/4]">
+                  <SanityImage
+                    image={entry.coverImage}
+                    context="thumbnail"
                     alt={entry.title}
-                    className={`w-full aspect-[3/4] object-cover transition-all duration-700 group-hover:scale-[1.03] grayscale group-hover:grayscale-0 ${
+                    fill
+                    className={`object-cover transition-all duration-700 group-hover:scale-[1.03] grayscale group-hover:grayscale-0 ${
                       entry._id === mostRecentId ? "grayscale-0" : ""
                     }`}
-                    loading="lazy"
                   />
                 </div>
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import SanityImage from "@/components/SanityImage";
 import type { HeroSlide } from "@/lib/placeholder-data";
 
 type Props = {
@@ -29,14 +30,21 @@ export default function HeroSlider({ slides }: Props) {
     <div className="relative w-full h-screen bg-secondary flex items-center justify-center overflow-hidden cursor-pointer">
       {/* Images with fade transition */}
       {slides.map((s, i) => (
-        <img
+        <div
           key={s._id}
-          src={s.image}
-          alt={s.caption || "Hero"}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
             i === current ? "opacity-100" : "opacity-0"
           }`}
-        />
+        >
+          <SanityImage
+            image={s.image}
+            context="hero"
+            alt={s.imageAlt || s.caption || "Hero"}
+            priority={i === 0}
+            fill
+            className="object-cover"
+          />
+        </div>
       ))}
 
       {/* Bottom-left: dots + caption */}
