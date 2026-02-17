@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import type { HeroSlide } from "@/lib/placeholder-data";
+
+const FADE_THRESHOLD = 60;
 
 type Props = {
   slides: HeroSlide[];
@@ -11,6 +14,7 @@ type Props = {
 
 export default function HeroSlider({ slides }: Props) {
   const [current, setCurrent] = useState(0);
+  const [crestVisible, setCrestVisible] = useState(true);
 
   const next = useCallback(() => {
     setCurrent((prev) => (prev + 1) % slides.length);
@@ -21,6 +25,21 @@ export default function HeroSlider({ slides }: Props) {
     const id = setInterval(next, 5000);
     return () => clearInterval(id);
   }, [next, slides.length]);
+
+  /* Fade out crest logo as user scrolls past threshold */
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setCrestVisible(window.scrollY < FADE_THRESHOLD);
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   if (slides.length === 0) return null;
 
@@ -46,6 +65,22 @@ export default function HeroSlider({ slides }: Props) {
           />
         </div>
       ))}
+
+      {/* Centered crest logo — State 1 hero element */}
+      <div
+        className={`absolute inset-0 z-10 flex items-center justify-center pt-8 transition-opacity duration-300 ease-in-out pointer-events-none ${
+          crestVisible ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <Image
+          src="/images/hos-logo.svg"
+          alt="House of Singh"
+          width={144}
+          height={144}
+          priority
+          className="dark:invert drop-shadow-lg"
+        />
+      </div>
 
       {/* Bottom-left: dots + caption */}
       <div className="absolute bottom-6 left-5 md:bottom-8 md:left-8 z-10 flex items-center gap-4 md:gap-5">

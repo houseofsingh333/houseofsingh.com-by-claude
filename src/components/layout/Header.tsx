@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import NavOverlay from "./NavOverlay";
 import NewsletterModal from "@/components/NewsletterModal";
 import type { NavItem } from "@/lib/placeholder-data";
 
-const SESSION_KEY = "hos-intro-seen";
+const SHOW_THRESHOLD = 60;
+const HIDE_THRESHOLD = 30;
 
 type Props = {
   items: NavItem[];
@@ -16,89 +16,75 @@ type Props = {
 export default function Header({ items }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [newsletterOpen, setNewsletterOpen] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const [introActive, setIntroActive] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  // Hide the header logo while the intro overlay is playing
+  /* Scroll listener with hysteresis to prevent flicker */
   useEffect(() => {
-    try {
-      if (!sessionStorage.getItem(SESSION_KEY)) {
-        const prefersReduced = window.matchMedia(
-          "(prefers-reduced-motion: reduce)",
-        ).matches;
-        if (!prefersReduced) {
-          setIntroActive(true);
-          // Listen for intro completion — the IntroLogo sets sessionStorage when done
-          const check = setInterval(() => {
-            if (sessionStorage.getItem(SESSION_KEY)) {
-              setIntroActive(false);
-              clearInterval(check);
-            }
-          }, 100);
-          // Safety timeout: never stay hidden more than 5s
-          const safety = setTimeout(() => {
-            setIntroActive(false);
-            clearInterval(check);
-          }, 5000);
-          return () => {
-            clearInterval(check);
-            clearTimeout(safety);
-          };
-        }
-      }
-    } catch {
-      /* sessionStorage not available */
-    }
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        setScrolled((prev) => {
+          if (!prev && y >= SHOW_THRESHOLD) return true;
+          if (prev && y < HIDE_THRESHOLD) return false;
+          return prev;
+        });
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleNewsletterOpen = () => {
+  const handleNewsletterOpen = useCallback(() => {
     setMenuOpen(false);
-    // Small delay so the nav panel closes before modal opens
     setTimeout(() => setNewsletterOpen(true), 200);
-  };
+  }, []);
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 py-4 md:px-6 md:py-5">
-        {/* Dot menu trigger — 44px min touch target */}
+      {/* Sticky header strip — only visible after scroll */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 h-[68px] flex items-center justify-between px-5 md:px-8 transition-all duration-300 ease-in-out ${
+          scrolled
+            ? "opacity-100 pointer-events-auto bg-background/95 backdrop-blur-sm border-b border-border/40"
+            : "opacity-0 pointer-events-none"
+        }`}
+        aria-hidden={!scrolled}
+      >
+        {/* Left: dot menu */}
         <button
           onClick={() => setMenuOpen(true)}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
           aria-label="Open menu"
-          className="flex items-center gap-2 group min-h-[44px] min-w-[44px]"
+          tabIndex={scrolled ? 0 : -1}
+          className="flex items-center min-h-[44px] min-w-[44px]"
         >
-          <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
-          <span
-            className={`text-xs tracking-widest uppercase text-foreground transition-all duration-300 ${
-              hovered
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 -translate-x-2"
-            }`}
-          >
-            Menu
-          </span>
+          <span className="block w-2 h-2 rounded-full bg-foreground" />
         </button>
 
-        {/* Centered logo — hidden while intro animation is playing */}
+        {/* Center: text mark */}
         <Link
           href="/"
-          className={`absolute left-1/2 -translate-x-1/2 transition-opacity duration-300 ${
-            introActive ? "opacity-0" : "opacity-100"
-          }`}
+          tabIndex={scrolled ? 0 : -1}
           aria-label="House of Singh — Home"
+          className="absolute left-1/2 -translate-x-1/2 select-none"
         >
-          <Image
-            src="/images/hos-logo.svg"
-            alt="House of Singh"
-            width={144}
-            height={144}
-            priority
-            className="dark:invert"
-          />
+          <span className="text-[13px] font-medium tracking-[0.25em] uppercase text-foreground">
+            House of Singh
+          </span>
         </Link>
 
-        <div className="w-10" />
+        {/* Right: menu button */}
+        <button
+          onClick={() => setMenuOpen(true)}
+          aria-label="Open menu"
+          tabIndex={scrolled ? 0 : -1}
+          className="text-[11px] tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 min-h-[44px] flex items-center"
+        >
+          Menu
+        </button>
       </header>
 
       <NavOverlay

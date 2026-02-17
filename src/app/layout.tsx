@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ThemeProvider from "@/components/ThemeProvider";
-import IntroLogo from "@/components/IntroLogo";
+
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { sanityFetch } from "@/sanity/fetch";
@@ -42,7 +42,6 @@ export default async function RootLayout({
     <html lang="en" className={initialClass}>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
         <ThemeProvider>
-          <IntroLogo />
           <Header items={navItems} />
           <main id="main-content" className="flex-1">
             {children}
