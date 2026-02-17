@@ -1,12 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
 @import "tailwindcss";
 
+/* Editorial design system — warm off-whites, soft blacks, generous space */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --secondary: #f5f5f5;
-  --muted-foreground: #737373;
-  --border: #e5e5e5;
+  --background: hsl(40 20% 97%);
+  --foreground: hsl(30 10% 12%);
+  --secondary: hsl(40 10% 93%);
+  --muted-foreground: hsl(30 5% 50%);
+  --border: hsl(40 10% 88%);
 }
 
 @theme inline {
@@ -28,7 +30,85 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "kern" 1, "liga" 1;
 }
+
+/* ——— Timeline milestone interactions (CSS-variable driven) ——— */
+
+.timeline-milestone {
+  --dot-scale: 1;
+  --img-opacity: 0;
+  --img-scale: 0.92;
+  --content-x: 0px;
+  --year-opacity: 0.12;
+}
+
+.timeline-milestone:hover,
+.timeline-milestone:focus-within {
+  --dot-scale: 1.6;
+  --img-opacity: 1;
+  --img-scale: 1;
+  --content-x: 4px;
+  --year-opacity: 0.3;
+}
+
+.timeline-dot {
+  transform: scale(var(--dot-scale));
+  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+    background-color 0.4s ease;
+}
+
+.timeline-image {
+  opacity: var(--img-opacity);
+  transform: scale(var(--img-scale));
+  transition: opacity 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+    transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.timeline-content {
+  transform: translateX(var(--content-x));
+  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.timeline-content-reverse {
+  transform: translateX(calc(var(--content-x) * -1));
+  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.timeline-year {
+  opacity: var(--year-opacity);
+  transition: opacity 0.5s ease;
+}
+
+/* ——— Utility animations ——— */
+
+.editorial-fade-in {
+  animation: editorialFadeIn 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+.editorial-slide-up {
+  animation: editorialSlideUp 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+/* Hide scrollbar for timeline scrubber */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ——— Reading progress bar ——— */
+
+.reading-progress {
+  height: 2px;
+  background: var(--foreground);
+  transform-origin: left;
+  transition: transform 0.1s linear;
+}
+
+/* ——— Keyframes ——— */
 
 @keyframes fadeIn {
   from {
@@ -42,6 +122,17 @@ body {
 }
 
 @keyframes editorialFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes editorialSlideUp {
   from {
     opacity: 0;
     transform: translateY(12px);

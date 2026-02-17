@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ReadingProgress from "@/components/journal/ReadingProgress";
 import { sanityFetch } from "@/sanity/fetch";
 import { journalBySlugQuery, journalFeedQuery } from "@/sanity/queries";
 import {
@@ -27,6 +28,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title };
 }
 
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 export default async function JournalDetailPage({ params }: Props) {
   const { slug } = await params;
 
@@ -45,101 +55,115 @@ export default async function JournalDetailPage({ params }: Props) {
     query: journalFeedQuery,
   });
   const all = allData?.length ? allData : fallbackJournalEntries;
-  const currentIdx = all.findIndex((e) => e.slug === resolved.slug);
-  const prevEntry = currentIdx > 0 ? all[currentIdx - 1] : null;
-  const nextEntry = currentIdx < all.length - 1 ? all[currentIdx + 1] : null;
+  const sorted = [...all].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+  const currentIdx = sorted.findIndex((e) => e.slug === resolved.slug);
+  const prevEntry = currentIdx > 0 ? sorted[currentIdx - 1] : null;
+  const nextEntry =
+    currentIdx < sorted.length - 1 ? sorted[currentIdx + 1] : null;
 
   return (
-    <div className="overflow-hidden">
-      {/* Header */}
-      <section className="px-8 md:px-16 pt-32 md:pt-44 pb-16 md:pb-24">
+    <>
+      {/* Reading progress bar */}
+      <ReadingProgress />
+
+      <div className="px-8 md:px-16 pt-32 md:pt-40 pb-16 max-w-4xl mx-auto">
+        {/* Back to journal */}
         <Link
           href="/journal"
-          className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 mb-12"
+          className="inline-block text-[11px] uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors mb-8"
         >
-          <span className="transition-transform duration-300 hover:-translate-x-1">
-            ←
-          </span>
-          Back to Journal
+          &larr; Back to journal
         </Link>
 
-        <time
-          dateTime={resolved.date}
-          className="block text-xs tracking-widest text-muted-foreground mb-4"
-        >
-          {new Date(resolved.date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </time>
+        {/* Cover image */}
+        {resolved.coverImage && (
+          <img
+            src={resolved.coverImage}
+            alt={resolved.title}
+            className="w-full h-[50vh] object-cover bg-secondary mb-8"
+          />
+        )}
 
-        <h1 className="font-editorial text-3xl md:text-5xl lg:text-6xl font-light text-foreground leading-[1.1] max-w-3xl animate-editorial-fade-in">
+        {/* Title */}
+        <h1 className="font-editorial text-3xl md:text-4xl font-light tracking-wide text-foreground mb-3">
           {resolved.title}
         </h1>
-      </section>
 
-      {/* Cover image */}
-      {resolved.coverImage && (
-        <section className="px-8 md:px-16 pb-16 md:pb-24">
-          <div className="w-full aspect-[16/9] overflow-hidden bg-secondary">
-            <img
-              src={resolved.coverImage}
-              alt={resolved.title}
-              className="w-full h-full object-cover"
-            />
+        {/* Date */}
+        <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-10">
+          {formatDate(resolved.date)}
+        </p>
+
+        {/* Body */}
+        <div className="text-muted-foreground leading-relaxed space-y-6 mb-16">
+          <p>{resolved.excerpt}</p>
+          <p className="text-sm text-muted-foreground/60">
+            Full journal content with Portable Text will render here once Sanity
+            is connected.
+          </p>
+        </div>
+
+        {/* Prev / Next navigation */}
+        <div className="border-t border-border pt-10">
+          <div className="grid grid-cols-2 gap-8">
+            {/* Previous (newer) */}
+            <div>
+              {prevEntry ? (
+                <Link
+                  href={`/journal/${prevEntry.slug}`}
+                  className="group block"
+                >
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50 mb-1">
+                    Previous
+                  </p>
+                  <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground/30 mb-2">
+                    Newer entry
+                  </p>
+                  <p className="text-[11px] md:text-xs uppercase tracking-[0.12em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
+                    {prevEntry.title}
+                  </p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mt-1">
+                    {formatDate(prevEntry.date)}
+                  </p>
+                </Link>
+              ) : (
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/20">
+                  No previous entry
+                </p>
+              )}
+            </div>
+
+            {/* Next (older) */}
+            <div className="text-right">
+              {nextEntry ? (
+                <Link
+                  href={`/journal/${nextEntry.slug}`}
+                  className="group block"
+                >
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50 mb-1">
+                    Next
+                  </p>
+                  <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground/30 mb-2">
+                    Older entry
+                  </p>
+                  <p className="text-[11px] md:text-xs uppercase tracking-[0.12em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
+                    {nextEntry.title}
+                  </p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mt-1">
+                    {formatDate(nextEntry.date)}
+                  </p>
+                </Link>
+              ) : (
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/20">
+                  No next entry
+                </p>
+              )}
+            </div>
           </div>
-        </section>
-      )}
-
-      {/* Body */}
-      <section className="px-8 md:px-16 pb-24 md:pb-36">
-        <div className="max-w-2xl">
-          <p className="text-lg md:text-xl text-foreground leading-[1.8] font-editorial font-light mb-8">
-            {resolved.excerpt}
-          </p>
-          <p className="text-sm text-muted-foreground leading-[1.8]">
-            Full journal content with rich text will render here once Sanity is
-            connected.
-          </p>
         </div>
-      </section>
-
-      {/* Prev / Next navigation */}
-      <section className="px-8 md:px-16 pb-24 md:pb-36 border-t border-border pt-12">
-        <div className="flex items-stretch justify-between gap-8">
-          {prevEntry ? (
-            <Link
-              href={`/journal/${prevEntry.slug}`}
-              className="group flex-1 text-left"
-            >
-              <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-2">
-                Previous
-              </p>
-              <p className="font-editorial text-lg md:text-xl font-light text-foreground group-hover:text-muted-foreground transition-colors duration-300 leading-tight">
-                {prevEntry.title}
-              </p>
-            </Link>
-          ) : (
-            <div className="flex-1" />
-          )}
-          {nextEntry ? (
-            <Link
-              href={`/journal/${nextEntry.slug}`}
-              className="group flex-1 text-right"
-            >
-              <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mb-2">
-                Next
-              </p>
-              <p className="font-editorial text-lg md:text-xl font-light text-foreground group-hover:text-muted-foreground transition-colors duration-300 leading-tight">
-                {nextEntry.title}
-              </p>
-            </Link>
-          ) : (
-            <div className="flex-1" />
-          )}
-        </div>
-      </section>
-    </div>
+      </div>
+    </>
   );
 }

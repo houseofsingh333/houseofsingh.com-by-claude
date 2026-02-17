@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import type { JournalEntry } from "@/lib/placeholder-data";
 
@@ -8,112 +8,243 @@ type Props = {
   entries: JournalEntry[];
 };
 
+const YEARS = [2026, 2025, 2024, 2023, 2022, 2021];
+const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const MONTH_LABELS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+const currentYear = new Date().getFullYear();
+const currentMonth = new Date().getMonth() + 1;
+
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 export default function JournalList({ entries }: Props) {
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [activeYear, setActiveYear] = useState<number>(currentYear);
+  const [activeMonth, setActiveMonth] = useState<number>(currentMonth);
+  const [isSticky, setIsSticky] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const formatDate = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+  /* Sticky timeline observer */
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsSticky(!entry.isIntersecting),
+      { threshold: 0, rootMargin: "-1px 0px 0px 0px" },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, []);
+
+  const monthsWithEntries = useMemo(() => {
+    const map: Record<number, Set<number>> = {};
+    entries.forEach((e) => {
+      const d = new Date(e.date);
+      const y = d.getFullYear();
+      const m = d.getMonth() + 1;
+      if (!map[y]) map[y] = new Set();
+      map[y].add(m);
     });
+    return map;
+  }, [entries]);
+
+  const handleYearClick = (year: number) => {
+    if (activeYear === year) {
+      setActiveYear(-1);
+      return;
+    }
+    setActiveYear(year);
+    if (year === currentYear) {
+      setActiveMonth(currentMonth);
+    } else {
+      setActiveMonth(12);
+    }
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
+  const mostRecentId = useMemo(() => {
+    const sorted = [...entries].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
+    return sorted[0]?._id;
+  }, [entries]);
+
+  const filtered =
+    activeYear === -1
+      ? []
+      : entries.filter((e) => {
+          const d = new Date(e.date);
+          return (
+            d.getFullYear() === activeYear && d.getMonth() + 1 === activeMonth
+          );
+        });
 
   return (
     <div className="overflow-hidden">
-      {/* Hero header */}
-      <section className="px-8 md:px-16 pt-32 md:pt-44 pb-16 md:pb-24">
+      {/* Page Header */}
+      <section className="px-8 md:px-16 pt-32 md:pt-44 pb-16 md:pb-20">
         <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
-          Journal
+          Archive
         </p>
         <div className="w-full h-px bg-border mb-10" />
-        <h1 className="font-editorial text-3xl md:text-5xl lg:text-6xl font-light text-foreground leading-[1.1] max-w-2xl animate-editorial-fade-in">
-          Thoughts, Process &amp; Stories
+        <h1 className="font-editorial text-5xl md:text-7xl lg:text-[6rem] font-light text-foreground leading-none">
+          Journal
         </h1>
-        <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] mt-6 max-w-lg">
-          Behind-the-scenes notes, reflections on craft, and the stories that
-          shape the work.
-        </p>
       </section>
 
-      {/* Journal entries list */}
-      <section className="px-8 md:px-16 pb-24 md:pb-36">
+      {/* Sentinel for sticky detection */}
+      <div ref={sentinelRef} className="h-0" />
+
+      {/* Sticky Horizontal Timeline */}
+      <section
+        className={`px-8 md:px-16 pb-20 md:pb-28 transition-all duration-300 ${
+          isSticky
+            ? "sticky top-0 z-30 bg-background/95 backdrop-blur-sm py-6 border-b border-border/50 shadow-sm"
+            : ""
+        }`}
+      >
+        {/* Scrollable timeline with fade edges */}
         <div className="relative">
-          {entries.map((entry, index) => (
-            <Link
-              key={entry._id}
-              href={`/journal/${entry.slug}`}
-              className="group relative block border-t border-border py-8 md:py-10"
-              onMouseEnter={() => setHoveredId(entry._id)}
-              onMouseLeave={() => setHoveredId(null)}
-              onMouseMove={handleMouseMove}
-            >
-              <div className="flex items-baseline justify-between gap-8">
-                {/* Index number */}
-                <span className="hidden md:block text-xs tracking-widest text-muted-foreground w-12 shrink-0 transition-colors duration-300 group-hover:text-foreground">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
-                {/* Title */}
-                <div className="flex-1 min-w-0">
-                  <h2 className="font-editorial text-xl md:text-3xl lg:text-4xl font-light text-foreground leading-tight transition-all duration-500 group-hover:tracking-wide">
-                    {entry.title}
-                  </h2>
-                </div>
+          <div className="overflow-x-auto scrollbar-hide snap-x snap-mandatory">
+            <div className="relative min-w-max px-4">
+              {/* The line */}
+              <div className="absolute top-[5px] left-0 right-0 h-px bg-border z-0" />
 
-                {/* Date + arrow */}
-                <div className="hidden md:flex items-center gap-6 shrink-0">
-                  <time
-                    dateTime={entry.date}
-                    className="text-xs tracking-widest text-muted-foreground transition-colors duration-300 group-hover:text-foreground"
-                  >
-                    {formatDate(entry.date)}
-                  </time>
-                  <span className="text-foreground/0 group-hover:text-foreground transition-all duration-500 translate-x-[-8px] group-hover:translate-x-0">
-                    →
-                  </span>
-                </div>
+              {/* Year markers */}
+              <div className="flex items-start">
+                {YEARS.map((year, i) => {
+                  const isActive = activeYear === year;
+                  return (
+                    <button
+                      key={year}
+                      onClick={() => handleYearClick(year)}
+                      className={`flex flex-col items-center snap-start group ${
+                        i < YEARS.length - 1
+                          ? "min-w-[100px] md:min-w-[140px]"
+                          : ""
+                      }`}
+                    >
+                      <div
+                        className={`rounded-full transition-all duration-300 relative z-10 ${
+                          isActive
+                            ? "w-3 h-3 bg-foreground"
+                            : "w-[10px] h-[10px] bg-border group-hover:bg-foreground/50"
+                        }`}
+                      />
+                      <span
+                        className={`font-editorial text-sm md:text-base mt-3 transition-all duration-300 ${
+                          isActive
+                            ? "text-foreground font-medium"
+                            : "text-muted-foreground/40 group-hover:text-muted-foreground"
+                        }`}
+                      >
+                        {year}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Excerpt on hover */}
-              <div className="overflow-hidden transition-all duration-500 max-h-0 group-hover:max-h-16 opacity-0 group-hover:opacity-100">
-                <p className="text-sm text-muted-foreground mt-3 md:ml-12 max-w-lg leading-relaxed">
-                  {entry.excerpt}
-                </p>
-              </div>
+        {/* Months row */}
+        <div
+          className={`overflow-hidden transition-all duration-400 ease-in-out ${
+            activeYear > 0
+              ? "max-h-24 opacity-100 mt-8"
+              : "max-h-0 opacity-0 mt-0"
+          }`}
+        >
+          <div className="flex items-center gap-4 md:gap-6 flex-wrap">
+            {MONTHS.map((month) => {
+              const isActive = activeMonth === month;
+              const isFuture =
+                activeYear === currentYear && month > currentMonth;
+              const hasEntries = monthsWithEntries[activeYear]?.has(month);
 
-              {/* Floating cover image that follows cursor */}
-              {hoveredId === entry._id && entry.coverImage && (
-                <div
-                  className="hidden md:block absolute z-20 w-48 h-32 overflow-hidden pointer-events-none animate-fade-in"
-                  style={{
-                    left: mousePos.x + 20,
-                    top: mousePos.y - 60,
-                  }}
+              return (
+                <button
+                  key={month}
+                  onClick={() => !isFuture && setActiveMonth(month)}
+                  disabled={isFuture}
+                  className={`text-xs tracking-[0.15em] uppercase transition-all duration-200 pb-0.5 ${
+                    isActive
+                      ? "text-foreground border-b border-foreground"
+                      : isFuture
+                        ? "text-muted-foreground/20 cursor-not-allowed"
+                        : hasEntries
+                          ? "text-muted-foreground/60 hover:text-foreground border-b border-transparent hover:border-foreground"
+                          : "text-muted-foreground/30 hover:text-muted-foreground/60 border-b border-transparent"
+                  }`}
                 >
+                  {MONTH_LABELS[month - 1]}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Article Grid */}
+      <section className="px-8 md:px-16 pb-24 md:pb-36">
+        {filtered.length === 0 ? (
+          <div className="py-24 text-center">
+            <p className="text-sm text-muted-foreground/60 uppercase tracking-[0.2em]">
+              {activeYear === -1
+                ? "Select a year to browse entries"
+                : `No entries for ${MONTH_LABELS[activeMonth - 1]} ${activeYear}`}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-14 animate-fade-in">
+            {filtered.map((entry) => (
+              <Link
+                key={entry._id}
+                href={`/journal/${entry.slug}`}
+                className="block group transition-transform duration-300 hover:-translate-y-1"
+              >
+                {/* Image */}
+                <div className="overflow-hidden bg-secondary mb-5 shadow-sm group-hover:shadow-md transition-shadow duration-300">
                   <img
-                    src={entry.coverImage}
-                    alt=""
-                    className="w-full h-full object-cover grayscale"
+                    src={entry.coverImage || "/images/project-placeholder-1.svg"}
+                    alt={entry.title}
+                    className={`w-full aspect-[3/4] object-cover transition-all duration-700 group-hover:scale-[1.03] grayscale group-hover:grayscale-0 ${
+                      entry._id === mostRecentId ? "grayscale-0" : ""
+                    }`}
+                    loading="lazy"
                   />
                 </div>
-              )}
-            </Link>
-          ))}
 
-          {/* Bottom border */}
-          <div className="border-t border-border" />
-        </div>
+                {/* Date */}
+                <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
+                  {formatDate(entry.date)}
+                </p>
+
+                {/* Title */}
+                <h2 className="text-[11px] md:text-xs uppercase tracking-[0.15em] text-foreground font-normal leading-[1.6] mb-3 line-clamp-2">
+                  {entry.title}
+                </h2>
+
+                {/* Read more */}
+                <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground group-hover:text-foreground transition-colors duration-300 border-b border-muted-foreground/30 group-hover:border-foreground pb-px">
+                  Read more
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

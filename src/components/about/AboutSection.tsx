@@ -210,7 +210,7 @@ function TimelineMilestone({
             </div>
           ) : (
             <div
-              className={`timeline-content text-left max-w-[280px] py-4 transition-all duration-700 ease-out ${
+              className={`timeline-content-reverse text-left max-w-[280px] py-4 transition-all duration-700 ease-out ${
                 visible
                   ? "opacity-100 translate-x-0"
                   : `opacity-0 ${slideFrom}`
