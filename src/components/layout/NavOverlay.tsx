@@ -1,8 +1,9 @@
 "use client";
 
-import { X } from "lucide-react";
+import { X, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 import type { NavItem } from "@/lib/placeholder-data";
+import { useTheme } from "@/components/ThemeProvider";
 
 type Props = {
   isOpen: boolean;
@@ -12,6 +13,7 @@ type Props = {
 
 export default function NavOverlay({ isOpen, onClose, items }: Props) {
   const sorted = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const { theme, toggle } = useTheme();
 
   return (
     <>
@@ -32,7 +34,7 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
         }`}
       >
         {/* Close button */}
-        <div className="flex items-center px-8 py-6">
+        <div className="flex items-center justify-between px-8 py-6">
           <button
             onClick={onClose}
             aria-label="Close menu"
@@ -43,9 +45,22 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
               Close
             </span>
           </button>
+
+          {/* Theme toggle */}
+          <button
+            onClick={toggle}
+            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+            className="text-muted-foreground hover:text-foreground transition-colors duration-300"
+          >
+            {theme === "light" ? (
+              <Moon className="h-4 w-4" />
+            ) : (
+              <Sun className="h-4 w-4" />
+            )}
+          </button>
         </div>
 
-        {/* Nav items */}
+        {/* Nav items — sans-serif font */}
         <ul className="flex flex-col gap-0 px-8 pt-12 flex-1">
           {sorted.map((item) => (
             <li key={item.label} className="border-b border-border/50">
@@ -55,7 +70,7 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={onClose}
-                  className="flex items-center justify-between py-5 font-editorial text-2xl md:text-3xl font-light text-foreground hover:text-muted-foreground transition-colors duration-300"
+                  className="flex items-center justify-between py-5 text-2xl md:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300"
                 >
                   {item.label}
                   <span className="text-xs tracking-widest text-muted-foreground">
@@ -66,7 +81,7 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
                 <Link
                   href={item.href}
                   onClick={onClose}
-                  className="block py-5 font-editorial text-2xl md:text-3xl font-light text-foreground hover:text-muted-foreground transition-colors duration-300"
+                  className="block py-5 text-2xl md:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300"
                 >
                   {item.label}
                 </Link>
@@ -74,6 +89,26 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
             </li>
           ))}
         </ul>
+
+        {/* Bottom: Instagram + Newsletter */}
+        <div className="px-8 pb-8 flex items-center gap-6">
+          <a
+            href="https://www.instagram.com/houseofsingh.studio"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+          >
+            Instagram
+          </a>
+          <span className="text-border">·</span>
+          <Link
+            href="/contact"
+            onClick={onClose}
+            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+          >
+            Newsletter
+          </Link>
+        </div>
       </nav>
     </>
   );
