@@ -3,39 +3,38 @@
 import { useState } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
+import ScrollReveal from "@/components/ScrollReveal";
 
 const PORTRAIT_IMAGE = "/images/hero-placeholder-1.svg";
 
 export default function IntroSection() {
   const [revealed, setRevealed] = useState(false);
-  const { ref: sectionRef, visible } = useScrollReveal(0.1);
 
   return (
-    <section ref={sectionRef} className="px-6 md:px-16 py-20 md:py-36">
+    <section className="px-6 md:px-16 py-20 md:py-36">
       {/* Section label */}
-      <div
-        className={`mb-16 transition-all duration-700 ease-out ${
-          visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-        }`}
-      >
-        <p className="text-xs tracking-widest uppercase text-muted-foreground">
-          About
-        </p>
-        <div className="w-full h-px bg-border mt-4" />
-      </div>
+      <ScrollReveal>
+        <div className="mb-16">
+          <p className="text-xs tracking-widest uppercase text-muted-foreground">
+            About
+          </p>
+          <div className="w-full h-px bg-border mt-4" />
+        </div>
+      </ScrollReveal>
 
       {/* Asymmetric overlap layout */}
       <div className="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         {/* Portrait — left, tall, overlaps into the text zone */}
-        <div
-          className={`md:col-span-5 md:col-start-1 relative z-10 transition-all duration-1000 ease-out ${
-            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-          style={{ transitionDelay: "200ms" }}
-          onMouseEnter={() => setRevealed(true)}
+        <ScrollReveal
+          delay={0.15}
+          offset={30}
+          duration={0.9}
+          className="md:col-span-5 md:col-start-1 relative z-10"
         >
-          <div className="relative w-full aspect-square md:aspect-[3/4] overflow-hidden bg-secondary">
+          <div
+            className="relative w-full aspect-square md:aspect-[3/4] overflow-hidden bg-secondary"
+            onMouseEnter={() => setRevealed(true)}
+          >
             <SanityImage
               image={PORTRAIT_IMAGE}
               context="body"
@@ -46,54 +45,57 @@ export default function IntroSection() {
               }`}
             />
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Text content — right, vertically centered against portrait */}
-        <div
-          className={`md:col-span-5 md:col-start-7 flex flex-col gap-10 md:pt-16 lg:pt-28 transition-all duration-1000 ease-out ${
-            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-          style={{ transitionDelay: "400ms" }}
-        >
+        <div className="md:col-span-5 md:col-start-7 flex flex-col gap-10 md:pt-16 lg:pt-28">
           {/* Roles stacked as a typographic element */}
-          <div className="space-y-0">
-            {["Creative Director", "Multidisciplinary Designer", "Photographer"].map(
-              (role, i) => (
-                <p
-                  key={role}
-                  className="font-editorial text-lg md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5]"
-                  style={{ opacity: 1 - i * 0.2 }}
-                >
-                  {role}
-                </p>
-              )
-            )}
-          </div>
+          <ScrollReveal delay={0.3} offset={16}>
+            <div className="space-y-0">
+              {["Creative Director", "Multidisciplinary Designer", "Photographer"].map(
+                (role, i) => (
+                  <p
+                    key={role}
+                    className="font-editorial text-lg md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5]"
+                    style={{ opacity: 1 - i * 0.2 }}
+                  >
+                    {role}
+                  </p>
+                )
+              )}
+            </div>
+          </ScrollReveal>
 
-          <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-sm">
-            Based in Toronto, Maninder Singh blends design and photography to
-            craft stories that feel both visually refined and emotionally
-            resonant. His practice spans brand identities, editorial work, and
-            fine art — always grounded in intention and detail.
-          </p>
+          <ScrollReveal delay={0.4} offset={16}>
+            <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-sm">
+              Based in Toronto, Maninder Singh blends design and photography to
+              craft stories that feel both visually refined and emotionally
+              resonant. His practice spans brand identities, editorial work, and
+              fine art — always grounded in intention and detail.
+            </p>
+          </ScrollReveal>
 
           {/* Pull quote */}
-          <blockquote className="font-editorial text-base md:text-xl font-light leading-[1.5] text-foreground/80 border-l-2 border-foreground/10 pl-4 md:pl-6">
-            Guided by a deep curiosity for life&apos;s quiet wonders, creating
-            work that reflects the rhythm of nature and human connection.
-          </blockquote>
+          <ScrollReveal delay={0.5} offset={16}>
+            <blockquote className="font-editorial text-base md:text-xl font-light leading-[1.5] text-foreground/80 border-l-2 border-foreground/10 pl-4 md:pl-6">
+              Guided by a deep curiosity for life&apos;s quiet wonders, creating
+              work that reflects the rhythm of nature and human connection.
+            </blockquote>
+          </ScrollReveal>
 
-          <Link
-            href="/about"
-            className="inline-flex items-center gap-3 text-xs tracking-widest uppercase text-foreground group w-fit"
-          >
-            <span className="border-b border-foreground/30 pb-1 group-hover:border-foreground transition-colors duration-300">
-              Discover
-            </span>
-            <span className="transition-transform duration-300 group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
+          <ScrollReveal delay={0.6} offset={12}>
+            <Link
+              href="/about"
+              className="inline-flex items-center gap-3 text-xs tracking-widest uppercase text-foreground group w-fit"
+            >
+              <span className="border-b border-foreground/30 pb-1 group-hover:border-foreground transition-colors duration-300">
+                Discover
+              </span>
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+          </ScrollReveal>
         </div>
       </div>
     </section>

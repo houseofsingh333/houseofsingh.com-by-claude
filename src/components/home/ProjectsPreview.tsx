@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import ScrollReveal from "@/components/ScrollReveal";
 import type { ProjectCategory } from "@/lib/placeholder-data";
 
 type Props = {
@@ -20,18 +21,20 @@ export default function ProjectsPreview({ categories }: Props) {
   return (
     <section className="px-6 md:px-16 py-20 md:py-36">
       {/* Section header */}
-      <div className="flex items-baseline justify-between mb-6">
-        <h2 className="font-editorial text-2xl md:text-3xl font-light text-foreground">
-          Projects
-        </h2>
-        <Link
-          href="/projects"
-          className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 border-b border-foreground/30 pb-0.5"
-        >
-          See all
-        </Link>
-      </div>
-      <div className="w-full h-px bg-border mb-10 md:mb-14" />
+      <ScrollReveal>
+        <div className="flex items-baseline justify-between mb-6">
+          <h2 className="font-editorial text-2xl md:text-3xl font-light text-foreground">
+            Projects
+          </h2>
+          <Link
+            href="/projects"
+            className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 border-b border-foreground/30 pb-0.5"
+          >
+            See all
+          </Link>
+        </div>
+        <div className="w-full h-px bg-border mb-10 md:mb-14" />
+      </ScrollReveal>
 
       {/* Mobile: vertical card stack */}
       <div className="flex flex-col gap-4 md:hidden">

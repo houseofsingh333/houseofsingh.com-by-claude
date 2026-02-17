@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
+import ScrollReveal from "@/components/ScrollReveal";
 import type { JournalEntry } from "@/lib/placeholder-data";
 
 type Props = {
@@ -34,17 +35,19 @@ export default function JournalPreview({ entries }: Props) {
 
   return (
     <section className="px-6 md:px-16 py-20 md:py-36">
-      <div className="flex items-baseline justify-between mb-10 md:mb-14">
-        <h2 className="text-xs tracking-widest uppercase text-muted-foreground">
-          Journal
-        </h2>
-        <Link
-          href="/journal"
-          className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
-        >
-          Browse all
-        </Link>
-      </div>
+      <ScrollReveal>
+        <div className="flex items-baseline justify-between mb-10 md:mb-14">
+          <h2 className="text-xs tracking-widest uppercase text-muted-foreground">
+            Journal
+          </h2>
+          <Link
+            href="/journal"
+            className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+          >
+            Browse all
+          </Link>
+        </div>
+      </ScrollReveal>
 
       <div className="relative">
         {displayed.map((entry, index) => (

@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import NavOverlay from "./NavOverlay";
 import NewsletterModal from "@/components/NewsletterModal";
 import type { NavItem } from "@/lib/placeholder-data";
+
+const SESSION_KEY = "hos-intro-seen";
 
 type Props = {
   items: NavItem[];
@@ -14,6 +16,39 @@ export default function Header({ items }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [newsletterOpen, setNewsletterOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [introActive, setIntroActive] = useState(false);
+
+  // Hide the header logo while the intro overlay is playing
+  useEffect(() => {
+    try {
+      if (!sessionStorage.getItem(SESSION_KEY)) {
+        const prefersReduced = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+        if (!prefersReduced) {
+          setIntroActive(true);
+          // Listen for intro completion — the IntroLogo sets sessionStorage when done
+          const check = setInterval(() => {
+            if (sessionStorage.getItem(SESSION_KEY)) {
+              setIntroActive(false);
+              clearInterval(check);
+            }
+          }, 100);
+          // Safety timeout: never stay hidden more than 3s
+          const safety = setTimeout(() => {
+            setIntroActive(false);
+            clearInterval(check);
+          }, 3000);
+          return () => {
+            clearInterval(check);
+            clearTimeout(safety);
+          };
+        }
+      }
+    } catch {
+      /* sessionStorage not available */
+    }
+  }, []);
 
   const handleNewsletterOpen = () => {
     setMenuOpen(false);
@@ -44,10 +79,12 @@ export default function Header({ items }: Props) {
           </span>
         </button>
 
-        {/* Centered logo */}
+        {/* Centered logo — hidden while intro animation is playing */}
         <Link
           href="/"
-          className="absolute left-1/2 -translate-x-1/2 text-[11px] md:text-sm font-medium tracking-widest uppercase text-foreground"
+          className={`absolute left-1/2 -translate-x-1/2 text-[11px] md:text-sm font-medium tracking-widest uppercase text-foreground transition-opacity duration-300 ${
+            introActive ? "opacity-0" : "opacity-100"
+          }`}
         >
           House of Singh
         </Link>

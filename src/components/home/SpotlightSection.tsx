@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
+import ScrollReveal from "@/components/ScrollReveal";
 import type { SpotlightProject } from "@/lib/placeholder-data";
 
 type Props = {
@@ -8,7 +9,7 @@ type Props = {
 
 export default function SpotlightSection({ project }: Props) {
   return (
-    <section className="relative">
+    <ScrollReveal as="section" offset={0} duration={0.8} className="relative">
       <Link
         href={`/projects/${project.slug}`}
         className="group block relative w-full aspect-[4/3] md:aspect-[16/7] overflow-hidden bg-secondary"
@@ -40,6 +41,6 @@ export default function SpotlightSection({ project }: Props) {
           </span>
         </div>
       </Link>
-    </section>
+    </ScrollReveal>
   );
 }
