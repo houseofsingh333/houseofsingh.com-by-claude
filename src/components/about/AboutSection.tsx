@@ -183,7 +183,7 @@ function TimelineMilestone({
               <img
                 src={imgSrc}
                 alt={m.title}
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-[filter] duration-700"
+                className="w-full h-full object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
               />
             </div>
           )}
@@ -205,7 +205,7 @@ function TimelineMilestone({
               <img
                 src={imgSrc}
                 alt={m.title}
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-[filter] duration-700"
+                className="w-full h-full object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
               />
             </div>
           ) : (
@@ -251,7 +251,7 @@ function TimelineMilestone({
           <img
             src={imgSrc}
             alt={m.title}
-            className="w-full h-full object-cover grayscale"
+            className="w-full h-full object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
           />
         </div>
       </div>
@@ -346,12 +346,12 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
           </div>
 
           {/* Portrait — right */}
-          <div className="md:col-span-5 md:col-start-8 order-1 md:order-2">
+          <div className="md:col-span-5 md:col-start-8 order-1 md:order-2 group">
             <div className="w-full aspect-[3/4] overflow-hidden bg-secondary">
               <img
                 src={portrait ?? "/images/hero-placeholder-1.svg"}
                 alt={`${founderName} — ${roles[0]}`}
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-top grayscale scale-[1.03] group-hover:grayscale-0 group-hover:scale-100 transition-all duration-1000 ease-out"
               />
             </div>
           </div>

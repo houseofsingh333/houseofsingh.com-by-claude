@@ -1,9 +1,21 @@
+"use client";
+
 import { ArrowUpRight } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export default function StudioRedirect() {
+  const { ref, visible } = useScrollReveal(0.15);
+
   return (
-    <section className="bg-foreground text-background px-8 md:px-16 py-16 md:py-24">
-      <div className="max-w-5xl mx-auto flex flex-col items-center text-center gap-6">
+    <section
+      ref={ref}
+      className="bg-foreground text-background px-8 md:px-16 py-16 md:py-24"
+    >
+      <div
+        className={`max-w-5xl mx-auto flex flex-col items-center text-center gap-6 transition-all duration-1000 ease-out ${
+          visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
+      >
         <p className="text-[10px] tracking-[0.3em] uppercase text-background/40">
           A different practice
         </p>

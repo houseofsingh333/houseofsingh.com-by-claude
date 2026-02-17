@@ -1,3 +1,7 @@
+"use client";
+
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+
 type Props = {
   playlistUrl?: string;
 };
@@ -5,17 +9,10 @@ type Props = {
 /**
  * Convert any Spotify URL to its embed form so the iframe renders
  * an inline player instead of redirecting to the Spotify app.
- *
- * Accepts:
- *   https://open.spotify.com/playlist/ID
- *   https://open.spotify.com/embed/playlist/ID
- *   spotify:playlist:ID
  */
 function toEmbedUrl(raw: string): string {
-  // Already an embed URL – return as-is
   if (raw.includes("open.spotify.com/embed/")) return raw;
 
-  // Regular open.spotify.com link → insert /embed/ after the domain
   const openMatch = raw.match(
     /https?:\/\/open\.spotify\.com\/(playlist|album|track|episode|show)\/([^?#]+)/,
   );
@@ -24,7 +21,6 @@ function toEmbedUrl(raw: string): string {
     return `https://open.spotify.com/embed/${type}/${id}?utm_source=generator`;
   }
 
-  // Spotify URI (spotify:playlist:ID) → convert to embed URL
   const uriMatch = raw.match(
     /spotify:(playlist|album|track|episode|show):(\w+)/,
   );
@@ -33,23 +29,35 @@ function toEmbedUrl(raw: string): string {
     return `https://open.spotify.com/embed/${type}/${id}?utm_source=generator`;
   }
 
-  // Unrecognised format – return as-is and hope for the best
   return raw;
 }
 
 export default function SpotifyEmbed({ playlistUrl }: Props) {
+  const { ref, visible } = useScrollReveal(0.1);
+
   if (!playlistUrl) return null;
 
   const embedSrc = toEmbedUrl(playlistUrl);
 
   return (
-    <section className="px-8 md:px-16 py-24 md:py-36">
-      <p className="text-xs tracking-widest uppercase text-muted-foreground mb-4">
-        Now Playing
-      </p>
-      <div className="w-full h-px bg-border mb-12" />
+    <section ref={ref} className="px-8 md:px-16 py-24 md:py-36">
+      <div
+        className={`transition-all duration-700 ease-out ${
+          visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+        }`}
+      >
+        <p className="text-xs tracking-widest uppercase text-muted-foreground mb-4">
+          Now Playing
+        </p>
+        <div className="w-full h-px bg-border mb-12" />
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+      <div
+        className={`grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center transition-all duration-1000 ease-out ${
+          visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
+        style={{ transitionDelay: "200ms" }}
+      >
         {/* Spotify embed */}
         <iframe
           title="House of Singh Spotify Playlist"

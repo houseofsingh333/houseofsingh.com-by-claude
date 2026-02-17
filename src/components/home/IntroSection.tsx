@@ -2,16 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const PORTRAIT_IMAGE = "/images/hero-placeholder-1.svg";
 
 export default function IntroSection() {
   const [revealed, setRevealed] = useState(false);
+  const { ref: sectionRef, visible } = useScrollReveal(0.1);
 
   return (
-    <section className="px-8 md:px-16 py-24 md:py-36">
+    <section ref={sectionRef} className="px-8 md:px-16 py-24 md:py-36">
       {/* Section label */}
-      <div className="mb-16">
+      <div
+        className={`mb-16 transition-all duration-700 ease-out ${
+          visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+        }`}
+      >
         <p className="text-xs tracking-widest uppercase text-muted-foreground">
           About
         </p>
@@ -22,7 +28,10 @@ export default function IntroSection() {
       <div className="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         {/* Portrait — left, tall, overlaps into the text zone */}
         <div
-          className="md:col-span-5 md:col-start-1 relative z-10"
+          className={`md:col-span-5 md:col-start-1 relative z-10 transition-all duration-1000 ease-out ${
+            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+          style={{ transitionDelay: "200ms" }}
           onMouseEnter={() => setRevealed(true)}
         >
           <div className="w-full aspect-[3/4] overflow-hidden bg-secondary">
@@ -37,7 +46,12 @@ export default function IntroSection() {
         </div>
 
         {/* Text content — right, vertically centered against portrait */}
-        <div className="md:col-span-5 md:col-start-7 flex flex-col gap-10 md:pt-16 lg:pt-28">
+        <div
+          className={`md:col-span-5 md:col-start-7 flex flex-col gap-10 md:pt-16 lg:pt-28 transition-all duration-1000 ease-out ${
+            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+          style={{ transitionDelay: "400ms" }}
+        >
           {/* Roles stacked as a typographic element */}
           <div className="space-y-0">
             {["Creative Director", "Multidisciplinary Designer", "Photographer"].map(
