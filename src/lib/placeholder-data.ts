@@ -62,24 +62,32 @@ export type SiteSettings = {
   spotifyPlaylistUrl?: string;
 };
 
-export type AboutPageHighlight = {
-  label: string;
-  value: string;
+export type AboutMilestone = {
+  year: string;
+  title: string;
+  text: string;
+  image: string | null;
 };
 
-export type PortableTextBlock = {
-  _type: "block";
-  _key: string;
-  children: { _type: string; text: string }[];
-  style?: string;
+export type AboutTestimonial = {
+  quote: string;
+  name: string;
+  role?: string;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type PortableTextBlock = any;
 
 export type AboutPageData = {
-  title: string;
-  intro: PortableTextBlock[] | null;
+  introQuote: string | null;
+  founderName: string;
+  founderRoles: string[] | null;
+  founderBio: PortableTextBlock[] | null;
   portrait: string | null;
-  body: PortableTextBlock[] | null;
-  highlights: AboutPageHighlight[] | null;
+  monikerLogo: string | null;
+  monikerText: PortableTextBlock[] | null;
+  milestones: AboutMilestone[] | null;
+  testimonials: AboutTestimonial[] | null;
   seoTitle: string | null;
   seoDescription: string | null;
 };
@@ -234,14 +242,75 @@ export const fallbackSiteSettings: SiteSettings = {
 // --------------- Fallback About Page ---------------
 
 export const fallbackAboutPage: AboutPageData = {
-  title: "About",
-  intro: null,
+  introQuote:
+    "The world is filled with beauty, waiting to be seen, felt, and celebrated.",
+  founderName: "Maninder Singh",
+  founderRoles: [
+    "Creative Director",
+    "Multidisciplinary Designer",
+    "Photographer",
+  ],
+  founderBio: null,
   portrait: "/images/hero-placeholder-1.svg",
-  body: null,
-  highlights: [
-    { label: "Based in", value: "Toronto, Canada" },
-    { label: "Disciplines", value: "Design, Photography, Direction" },
-    { label: "Experience", value: "10+ Years" },
+  monikerLogo: null,
+  monikerText: null,
+  milestones: [
+    {
+      year: "2014",
+      title: "Founded House of Singh",
+      text: "Began the journey in New Delhi.",
+      image: null,
+    },
+    {
+      year: "2016",
+      title: "First Brand Identity",
+      text: "Delivered a full visual system for a heritage label.",
+      image: null,
+    },
+    {
+      year: "2018",
+      title: "The Sikh Turban",
+      text: "A personal project celebrating Sikh identity.",
+      image: null,
+    },
+    {
+      year: "2020",
+      title: "Editorial & Print",
+      text: "Expanded into editorial design and print storytelling.",
+      image: null,
+    },
+    {
+      year: "2021",
+      title: "Relocation to Canada",
+      text: "A new chapter rooted in Toronto.",
+      image: null,
+    },
+    {
+      year: "2024",
+      title: "A Decade of Craft",
+      text: "Ten years of evolving practice and perspective.",
+      image: null,
+    },
+  ],
+  testimonials: [
+    {
+      quote:
+        "Working with Maninder felt less like a transaction and more like a conversation — one that left our brand feeling truly seen.",
+      name: "Placeholder Name",
+      role: "Creative Lead",
+    },
+    {
+      quote:
+        "He has a rare ability to listen deeply and translate feeling into form. The work speaks quietly but stays with you.",
+      name: "Placeholder Name",
+      role: "Brand Director",
+    },
+    {
+      quote:
+        "Every detail was intentional. The result was not just beautiful — it was meaningful.",
+      name: "Placeholder Name",
+      role: "Founder & CEO",
+    },
   ],
   seoTitle: null,
   seoDescription: null,

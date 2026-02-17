@@ -1,148 +1,365 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PortableText } from "@portabletext/react";
 import type {
   AboutPageData,
-  AboutPageHighlight,
-  PortableTextBlock,
+  AboutMilestone,
+  AboutTestimonial,
 } from "@/lib/placeholder-data";
 
-type Props = {
-  data: AboutPageData;
-};
+/* ——— Fallback bio shown when Sanity founderBio is empty ——— */
+const FALLBACK_BIO_PARAGRAPHS = [
+  "Guided by a curiosity for life\u2019s quiet wonders, Maninder crafts narratives that celebrate the rhythm of nature and human connection. Based in Toronto, his work bridges the visual and the emotional, creating impactful stories through different mediums, including design and photography.",
+  "Beyond his creative practice, he finds balance and inspiration in flying FPV drones, playing golf, and staying committed to fitness, grounding his work in discipline, movement, and reflection.",
+];
 
-function Portrait({ src }: { src: string }) {
-  const [revealed, setRevealed] = useState(false);
+/* ——— Fallback moniker text ——— */
+const FALLBACK_MONIKER_PARAGRAPHS = [
+  "Under the identity of House of Singh, Maninder has created a platform where design, photography, and storytelling come together to inspire connection and reflection. It serves as a space to showcase an evolving body of work, spanning present explorations and future ventures across diverse mediums and collaborations.",
+  "Guided by empathy and curiosity, House of Singh bridges the visual and emotional, crafting narratives that celebrate beauty, purpose, and meaning.",
+];
 
-  return (
-    <div
-      className="w-full aspect-[3/4] overflow-hidden bg-secondary"
-      onMouseEnter={() => setRevealed(true)}
-    >
-      <img
-        src={src}
-        alt="Maninder Singh — Creative Director, Designer & Photographer"
-        className={`w-full h-full object-cover object-top transition-all duration-1000 ${
-          revealed ? "grayscale-0 scale-100" : "grayscale scale-[1.03]"
-        }`}
-      />
-    </div>
-  );
-}
+/* =================================================================
+   Sub-components
+   ================================================================= */
 
-function Highlights({ items }: { items: AboutPageHighlight[] }) {
-  return (
-    <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-10 gap-y-8">
-      {items.map((h) => (
-        <div key={h.label}>
-          <dt className="text-xs tracking-widest uppercase text-muted-foreground">
-            {h.label}
-          </dt>
-          <dd className="mt-1 font-editorial text-lg font-light text-foreground">
-            {h.value}
-          </dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
+function TestimonialCarousel({
+  testimonials,
+}: {
+  testimonials: AboutTestimonial[];
+}) {
+  const [index, setIndex] = useState(0);
+  const [fadeClass, setFadeClass] = useState("opacity-100");
 
-function RichText({ value }: { value: PortableTextBlock[] }) {
-  return (
-    <div className="prose-neutral text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-none [&>p]:mb-4">
-      <PortableText value={value} />
-    </div>
-  );
-}
+  const change = (next: number) => {
+    setFadeClass("opacity-0");
+    setTimeout(() => {
+      setIndex(next);
+      setFadeClass("opacity-100");
+    }, 300);
+  };
 
-export default function AboutSection({ data }: Props) {
-  const { title, intro, portrait, body, highlights } = data;
+  const prev = () =>
+    change(index === 0 ? testimonials.length - 1 : index - 1);
+  const next = () =>
+    change(index === testimonials.length - 1 ? 0 : index + 1);
+
+  const t = testimonials[index];
 
   return (
-    <article className="px-8 md:px-16 py-24 md:py-36">
-      {/* Section label */}
-      <div className="mb-16">
-        <p className="text-xs tracking-widest uppercase text-muted-foreground">
-          {title}
+    <div className="max-w-2xl mx-auto text-center">
+      <div
+        className={`transition-opacity duration-300 ease-in-out ${fadeClass}`}
+      >
+        <blockquote className="font-editorial text-xl md:text-2xl font-light leading-[1.5] text-foreground mb-8 min-h-[120px] flex items-center justify-center">
+          &ldquo;{t.quote}&rdquo;
+        </blockquote>
+        <p className="text-xs tracking-[0.15em] uppercase text-foreground">
+          {t.name}
         </p>
-        <div className="w-full h-px bg-border mt-4" />
-      </div>
-
-      {/* Portrait + intro layout */}
-      <div className="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-        {/* Portrait */}
-        {portrait && (
-          <div className="md:col-span-5 md:col-start-1 relative z-10">
-            <Portrait src={portrait} />
-          </div>
+        {t.role && (
+          <p className="text-xs text-muted-foreground mt-1">{t.role}</p>
         )}
-
-        {/* Intro + roles */}
-        <div
-          className={`flex flex-col gap-10 md:pt-16 lg:pt-28 ${
-            portrait
-              ? "md:col-span-5 md:col-start-7"
-              : "md:col-span-8 md:col-start-3"
-          }`}
-        >
-          <div className="space-y-0">
-            {["Creative Director", "Multidisciplinary Designer", "Photographer"].map(
-              (role, i) => (
-                <p
-                  key={role}
-                  className={`font-editorial text-xl md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5] ${
-                    i === 1
-                      ? "opacity-80"
-                      : i === 2
-                        ? "opacity-60"
-                        : "opacity-100"
-                  }`}
-                >
-                  {role}
-                </p>
-              ),
-            )}
-          </div>
-
-          {intro && <RichText value={intro} />}
-
-          {!intro && (
-            <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-sm">
-              Based in Toronto, Maninder Singh blends design and photography to
-              craft stories that feel both visually refined and emotionally
-              resonant. His practice spans brand identities, editorial work, and
-              fine art — always grounded in intention and detail.
-            </p>
-          )}
-        </div>
       </div>
 
-      {/* Highlights */}
-      {highlights && highlights.length > 0 && (
-        <div className="mt-24 md:mt-32">
-          <div className="mb-12">
-            <p className="text-xs tracking-widest uppercase text-muted-foreground">
-              At a Glance
-            </p>
-            <div className="w-full h-px bg-border mt-4" />
-          </div>
-          <Highlights items={highlights} />
+      <div className="flex items-center justify-center gap-6 mt-10">
+        <button
+          onClick={prev}
+          className="text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Previous testimonial"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <div className="flex items-center gap-2">
+          {testimonials.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => change(i)}
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                i === index
+                  ? "bg-foreground scale-125"
+                  : "bg-foreground/25 hover:bg-foreground/50"
+              }`}
+              aria-label={`Testimonial ${i + 1}`}
+            />
+          ))}
         </div>
+        <button
+          onClick={next}
+          className="text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Next testimonial"
+        >
+          <ChevronRight size={20} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Timeline({ milestones }: { milestones: AboutMilestone[] }) {
+  return (
+    <div className="relative max-w-4xl mx-auto">
+      {/* Center line */}
+      <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-border md:-translate-x-px" />
+
+      {milestones.map((m, idx) => {
+        const isEven = idx % 2 === 0;
+        const imgSrc = m.image ?? "/images/project-placeholder-1.svg";
+
+        return (
+          <div
+            key={m.year}
+            className="relative mb-14 last:mb-0 md:mb-0 md:min-h-[160px] group"
+            tabIndex={0}
+          >
+            {/* Dot */}
+            <div className="absolute left-6 md:left-1/2 top-3 -translate-x-1/2 z-10">
+              <div className="w-2 h-2 rounded-full bg-foreground/25 group-hover:bg-foreground/60 group-focus-within:bg-foreground/60" />
+            </div>
+
+            {/* Desktop: two-column grid */}
+            <div className="hidden md:grid md:grid-cols-2 md:gap-0">
+              {/* Left column */}
+              <div
+                className={`flex ${isEven ? "justify-end pr-12" : "justify-start pl-12"} ${!isEven ? "order-2" : "order-1"}`}
+              >
+                {isEven ? (
+                  <div className="text-right max-w-[280px] py-4">
+                    <p className="font-editorial text-5xl font-light text-foreground leading-none mb-2">
+                      {m.year}
+                    </p>
+                    <p className="text-[11px] tracking-[0.15em] uppercase text-foreground mb-1">
+                      {m.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-[1.6]">
+                      {m.text}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4">
+                    <img
+                      src={imgSrc}
+                      alt={m.title}
+                      className="w-full h-full object-cover grayscale hover:grayscale-0 transition-[filter] duration-700"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Right column */}
+              <div
+                className={`flex ${!isEven ? "justify-end pr-12" : "justify-start pl-12"} ${!isEven ? "order-1" : "order-2"}`}
+              >
+                {isEven ? (
+                  <div className="w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4">
+                    <img
+                      src={imgSrc}
+                      alt={m.title}
+                      className="w-full h-full object-cover grayscale hover:grayscale-0 transition-[filter] duration-700"
+                    />
+                  </div>
+                ) : (
+                  <div className="text-left max-w-[280px] py-4">
+                    <p className="font-editorial text-5xl font-light text-foreground leading-none mb-2">
+                      {m.year}
+                    </p>
+                    <p className="text-[11px] tracking-[0.15em] uppercase text-foreground mb-1">
+                      {m.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-[1.6]">
+                      {m.text}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Mobile: single column */}
+            <div className="md:hidden pl-14">
+              <p className="font-editorial text-4xl font-light text-foreground leading-none mb-2">
+                {m.year}
+              </p>
+              <p className="text-[11px] tracking-[0.15em] uppercase text-foreground mb-1">
+                {m.title}
+              </p>
+              <p className="text-xs text-muted-foreground leading-[1.6] mb-3">
+                {m.text}
+              </p>
+              <div className="w-[180px] aspect-[4/3] overflow-hidden bg-secondary">
+                <img
+                  src={imgSrc}
+                  alt={m.title}
+                  className="w-full h-full object-cover grayscale"
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* =================================================================
+   Main component
+   ================================================================= */
+
+export default function AboutSection({ data }: { data: AboutPageData }) {
+  const {
+    introQuote,
+    founderName,
+    founderRoles,
+    founderBio,
+    portrait,
+    monikerLogo,
+    monikerText,
+    milestones,
+    testimonials,
+  } = data;
+
+  const roles = founderRoles ?? [
+    "Creative Director",
+    "Multidisciplinary Designer",
+    "Photographer",
+  ];
+
+  return (
+    <div className="overflow-hidden">
+      {/* ——— 1 · Intro Quote ——— */}
+      <section className="px-8 md:px-16 pt-32 md:pt-44 pb-24 md:pb-36 flex items-center justify-center">
+        <p className="font-editorial text-2xl md:text-3xl lg:text-[2.5rem] font-light leading-[1.4] text-center max-w-3xl">
+          &ldquo;
+          {introQuote ??
+            "The world is filled with beauty, waiting to be seen, felt, and celebrated."}
+          &rdquo;
+        </p>
+      </section>
+
+      {/* ——— 2 · Founder Section ——— */}
+      <section className="px-8 md:px-16 pb-24 md:pb-36">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-start">
+          {/* Text — left */}
+          <div className="md:col-span-6 flex flex-col gap-10 order-2 md:order-1">
+            <div>
+              <h2 className="text-xs tracking-[0.25em] uppercase text-foreground mb-4">
+                {founderName}
+              </h2>
+              <div className="space-y-1 mb-8">
+                {roles.map((role) => (
+                  <p
+                    key={role}
+                    className="font-editorial text-lg md:text-xl font-light text-muted-foreground leading-[1.5]"
+                  >
+                    {role}
+                  </p>
+                ))}
+              </div>
+              <div className="space-y-6 max-w-md">
+                {founderBio ? (
+                  <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-6 last:[&>p]:mb-0">
+                    <PortableText value={founderBio} />
+                  </div>
+                ) : (
+                  FALLBACK_BIO_PARAGRAPHS.map((p, i) => (
+                    <p
+                      key={i}
+                      className="text-sm md:text-[15px] text-muted-foreground leading-[1.8]"
+                    >
+                      {p}
+                    </p>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Portrait — right */}
+          <div className="md:col-span-5 md:col-start-8 order-1 md:order-2">
+            <div className="w-full aspect-[3/4] overflow-hidden bg-secondary">
+              <img
+                src={portrait ?? "/images/hero-placeholder-1.svg"}
+                alt={`${founderName} — ${roles[0]}`}
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ——— 3 · House of Singh ——— */}
+      <section className="px-8 md:px-16 py-24 md:py-36">
+        <div className="mb-16">
+          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
+            The Moniker
+          </p>
+          <div className="w-full h-px bg-border" />
+        </div>
+
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-center">
+            {/* Logo — left */}
+            <div className="md:col-span-4 flex justify-center">
+              {monikerLogo ? (
+                <img
+                  src={monikerLogo}
+                  alt="House of Singh"
+                  className="w-36 md:w-44 object-contain opacity-40"
+                />
+              ) : (
+                <span className="font-editorial text-3xl font-light text-foreground/40">
+                  HoS
+                </span>
+              )}
+            </div>
+
+            {/* Text — right */}
+            <div className="md:col-span-8 space-y-6">
+              {monikerText ? (
+                <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-6 last:[&>p]:mb-0">
+                  <PortableText value={monikerText} />
+                </div>
+              ) : (
+                FALLBACK_MONIKER_PARAGRAPHS.map((p, i) => (
+                  <p
+                    key={i}
+                    className="text-sm md:text-[15px] text-muted-foreground leading-[1.8]"
+                  >
+                    {p}
+                  </p>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ——— 4 · Timeline ——— */}
+      {milestones && milestones.length > 0 && (
+        <section className="px-8 md:px-16 py-24 md:py-36">
+          <div className="mb-16">
+            <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
+              Ten Years On
+            </p>
+            <div className="w-full h-px bg-border" />
+          </div>
+          <Timeline milestones={milestones} />
+        </section>
       )}
 
-      {/* Body */}
-      {body && (
-        <div className="mt-24 md:mt-32 max-w-2xl">
+      {/* ——— 5 · Words Shared ——— */}
+      {testimonials && testimonials.length > 0 && (
+        <section className="px-8 md:px-16 py-24 md:py-36">
           <div className="mb-12">
-            <p className="text-xs tracking-widest uppercase text-muted-foreground">
-              The Story
+            <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
+              Words Shared
             </p>
-            <div className="w-full h-px bg-border mt-4" />
+            <div className="w-full h-px bg-border" />
           </div>
-          <RichText value={body} />
-        </div>
+          <TestimonialCarousel testimonials={testimonials} />
+        </section>
       )}
-    </article>
+    </div>
   );
 }

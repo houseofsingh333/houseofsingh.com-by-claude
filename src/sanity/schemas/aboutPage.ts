@@ -5,18 +5,36 @@ export const aboutPage = defineType({
   title: "About Page",
   type: "document",
   fields: [
+    /* ——— 1 · Intro Quote ——— */
     defineField({
-      name: "title",
-      title: "Title",
+      name: "introQuote",
+      title: "Intro Quote",
+      type: "string",
+      description:
+        "Large opening quote displayed hero-style at the top of the page.",
+    }),
+
+    /* ——— 2 · Founder Section ——— */
+    defineField({
+      name: "founderName",
+      title: "Founder Name",
       type: "string",
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "intro",
-      title: "Intro",
+      name: "founderRoles",
+      title: "Founder Roles",
+      type: "array",
+      of: [{ type: "string" }],
+      description:
+        'Displayed as stacked role titles (e.g. "Creative Director", "Photographer").',
+    }),
+    defineField({
+      name: "founderBio",
+      title: "Founder Bio",
       type: "array",
       of: [{ type: "block" }],
-      description: "Opening paragraph displayed below the title.",
+      description: "Bio paragraphs beside the portrait.",
     }),
     defineField({
       name: "portrait",
@@ -24,42 +42,97 @@ export const aboutPage = defineType({
       type: "image",
       options: { hotspot: true },
     }),
+
+    /* ——— 3 · The Moniker ——— */
     defineField({
-      name: "body",
-      title: "Body",
-      type: "array",
-      of: [{ type: "block" }],
-      description: "Main body content (rich text).",
+      name: "monikerLogo",
+      title: "Moniker Logo",
+      type: "image",
+      description: "House of Singh logo shown in The Moniker section.",
     }),
     defineField({
-      name: "highlights",
-      title: "Highlights",
+      name: "monikerText",
+      title: "Moniker Text",
+      type: "array",
+      of: [{ type: "block" }],
+      description: "Description of the House of Singh identity.",
+    }),
+
+    /* ——— 4 · Timeline ——— */
+    defineField({
+      name: "milestones",
+      title: "Timeline Milestones",
       type: "array",
       of: [
         {
           type: "object",
           fields: [
             defineField({
-              name: "label",
-              title: "Label",
+              name: "year",
+              title: "Year",
               type: "string",
               validation: (rule) => rule.required(),
             }),
             defineField({
-              name: "value",
-              title: "Value",
+              name: "title",
+              title: "Title",
               type: "string",
               validation: (rule) => rule.required(),
             }),
+            defineField({
+              name: "text",
+              title: "Description",
+              type: "string",
+            }),
+            defineField({
+              name: "image",
+              title: "Image",
+              type: "image",
+              options: { hotspot: true },
+            }),
           ],
           preview: {
-            select: { title: "label", subtitle: "value" },
+            select: { title: "title", subtitle: "year" },
           },
         },
       ],
-      description:
-        "Key stats or highlights displayed as label/value pairs (e.g. Years Experience → 10+).",
     }),
+
+    /* ——— 5 · Testimonials ——— */
+    defineField({
+      name: "testimonials",
+      title: "Testimonials",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "quote",
+              title: "Quote",
+              type: "text",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "name",
+              title: "Name",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "role",
+              title: "Role",
+              type: "string",
+            }),
+          ],
+          preview: {
+            select: { title: "name", subtitle: "role" },
+          },
+        },
+      ],
+    }),
+
+    /* ——— SEO ——— */
     defineField({
       name: "seoTitle",
       title: "SEO Title",
@@ -74,6 +147,6 @@ export const aboutPage = defineType({
     }),
   ],
   preview: {
-    select: { title: "title" },
+    select: { title: "founderName" },
   },
 });

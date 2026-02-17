@@ -17,11 +17,15 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
 // --------------- About Page ---------------
 
 export const aboutPageQuery = `*[_type == "aboutPage"][0]{
-  title,
-  intro,
+  introQuote,
+  founderName,
+  founderRoles,
+  founderBio,
   "portrait": portrait.asset->url,
-  body,
-  highlights[]{ label, value },
+  "monikerLogo": monikerLogo.asset->url,
+  monikerText,
+  milestones[]{ year, title, text, "image": image.asset->url },
+  testimonials[]{ quote, name, role },
   seoTitle,
   seoDescription
 }`;
