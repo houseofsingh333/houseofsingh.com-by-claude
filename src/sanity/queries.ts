@@ -14,6 +14,18 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   siteTitle, tagline, footerText, spotifyPlaylistUrl
 }`;
 
+// --------------- About Page ---------------
+
+export const aboutPageQuery = `*[_type == "aboutPage"][0]{
+  title,
+  intro,
+  "portrait": portrait.asset->url,
+  body,
+  highlights[]{ label, value },
+  seoTitle,
+  seoDescription
+}`;
+
 // --------------- Hero Slides ---------------
 
 export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){

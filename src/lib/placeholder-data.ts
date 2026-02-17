@@ -62,6 +62,28 @@ export type SiteSettings = {
   spotifyPlaylistUrl?: string;
 };
 
+export type AboutPageHighlight = {
+  label: string;
+  value: string;
+};
+
+export type PortableTextBlock = {
+  _type: "block";
+  _key: string;
+  children: { _type: string; text: string }[];
+  style?: string;
+};
+
+export type AboutPageData = {
+  title: string;
+  intro: PortableTextBlock[] | null;
+  portrait: string | null;
+  body: PortableTextBlock[] | null;
+  highlights: AboutPageHighlight[] | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+};
+
 // --------------- Fallback Navigation ---------------
 
 export const fallbackNavItems: NavItem[] = [
@@ -207,4 +229,20 @@ export const fallbackSiteSettings: SiteSettings = {
   footerText: "\u00A9 2026 House of Singh Studios Inc.",
   spotifyPlaylistUrl:
     "https://open.spotify.com/embed/playlist/5siljeAcGgaINDEqVRBsAg?utm_source=generator",
+};
+
+// --------------- Fallback About Page ---------------
+
+export const fallbackAboutPage: AboutPageData = {
+  title: "About",
+  intro: null,
+  portrait: "/images/hero-placeholder-1.svg",
+  body: null,
+  highlights: [
+    { label: "Based in", value: "Toronto, Canada" },
+    { label: "Disciplines", value: "Design, Photography, Direction" },
+    { label: "Experience", value: "10+ Years" },
+  ],
+  seoTitle: null,
+  seoDescription: null,
 };

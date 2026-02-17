@@ -1,17 +1,31 @@
 import type { Metadata } from "next";
+import AboutSection from "@/components/about/AboutSection";
+import { sanityFetch } from "@/sanity/fetch";
+import { aboutPageQuery } from "@/sanity/queries";
+import {
+  fallbackAboutPage,
+  type AboutPageData,
+} from "@/lib/placeholder-data";
 
-export const metadata: Metadata = {
-  title: "About",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await sanityFetch<AboutPageData | null>({
+    query: aboutPageQuery,
+  });
 
-export default function AboutPage() {
-  return (
-    <section className="mx-auto max-w-3xl px-6 py-20">
-      <h1 className="text-4xl font-bold tracking-tight">About</h1>
-      <p className="mt-6 text-lg leading-relaxed text-neutral-600">
-        Content coming soon. This page will share the story behind House of
-        Singh, our values, and the team.
-      </p>
-    </section>
-  );
+  return {
+    title: data?.seoTitle ?? "About",
+    description:
+      data?.seoDescription ??
+      "Learn about the story, values, and vision behind House of Singh.",
+  };
+}
+
+export default async function AboutPage() {
+  const data = await sanityFetch<AboutPageData | null>({
+    query: aboutPageQuery,
+  });
+
+  const about = data ?? fallbackAboutPage;
+
+  return <AboutSection data={about} />;
 }
