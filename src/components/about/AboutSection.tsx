@@ -116,7 +116,7 @@ function Timeline({ milestones }: { milestones: AboutMilestone[] }) {
           >
             {/* Dot */}
             <div className="absolute left-6 md:left-1/2 top-3 -translate-x-1/2 z-10">
-              <div className="w-2 h-2 rounded-full bg-foreground/25 group-hover:bg-foreground/60 group-focus-within:bg-foreground/60" />
+              <div className="w-2 h-2 rounded-full bg-foreground/25 group-hover:bg-foreground/60 group-focus-within:bg-foreground/60 transition-colors duration-300" />
             </div>
 
             {/* Desktop: two-column grid */}
@@ -229,7 +229,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
     <div className="overflow-hidden">
       {/* ——— 1 · Intro Quote ——— */}
       <section className="px-8 md:px-16 pt-32 md:pt-44 pb-24 md:pb-36 flex items-center justify-center">
-        <p className="font-editorial text-2xl md:text-3xl lg:text-[2.5rem] font-light leading-[1.4] text-center max-w-3xl">
+        <p className="font-editorial text-2xl md:text-3xl lg:text-[2.5rem] font-light leading-[1.4] text-center max-w-3xl animate-editorial-fade-in">
           &ldquo;
           {introQuote ??
             "The world is filled with beauty, waiting to be seen, felt, and celebrated."}
