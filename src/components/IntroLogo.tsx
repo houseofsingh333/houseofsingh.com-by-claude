@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 
 const SESSION_KEY = "hos-intro-seen";
 const HOLD_MS = 800;
+const LOGO_SRC = "/images/hos-logo.svg";
 
 /**
  * First-visit opening animation:
@@ -71,61 +73,66 @@ export default function IntroLogo() {
   return (
     <AnimatePresence>
       <>
-          {/* Full-screen background overlay */}
-          <motion.div
-            key="intro-overlay"
-            className="fixed inset-0 z-[9999] bg-background"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-          />
+        {/* Full-screen background overlay */}
+        <motion.div
+          key="intro-overlay"
+          className="fixed inset-0 z-[9999] bg-background"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+        />
 
-          {/* Logo element that animates from center to header position */}
-          <motion.div
-            key="intro-logo"
-            className="fixed z-[10000] pointer-events-none"
-            initial={{
-              top: "50%",
-              left: "50%",
-              x: "-50%",
-              y: "-50%",
-              scale: 2.5,
-              opacity: 0,
-            }}
-            animate={
-              phase === "hold"
-                ? {
-                    top: "50%",
-                    left: "50%",
-                    x: "-50%",
-                    y: "-50%",
-                    scale: 2.5,
-                    opacity: 1,
-                  }
-                : {
-                    top: "20px",
-                    left: "50%",
-                    x: "-50%",
-                    y: "0%",
-                    scale: 1,
-                    opacity: 1,
-                  }
-            }
-            exit={{ opacity: 0 }}
-            transition={
-              phase === "hold"
-                ? { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }
-                : {
-                    duration: 0.9,
-                    ease: [0.25, 0.1, 0.25, 1],
-                  }
-            }
-            onAnimationComplete={handleAnimationComplete}
-          >
-            <span className="text-[11px] md:text-sm font-medium tracking-widest uppercase text-foreground whitespace-nowrap">
-              House of Singh
-            </span>
-          </motion.div>
+        {/* Logo that animates from center to header position */}
+        <motion.div
+          key="intro-logo"
+          className="fixed z-[10000] pointer-events-none"
+          initial={{
+            top: "50%",
+            left: "50%",
+            x: "-50%",
+            y: "-50%",
+            scale: 1,
+            opacity: 0,
+          }}
+          animate={
+            phase === "hold"
+              ? {
+                  top: "50%",
+                  left: "50%",
+                  x: "-50%",
+                  y: "-50%",
+                  scale: 1,
+                  opacity: 1,
+                }
+              : {
+                  top: "10px",
+                  left: "50%",
+                  x: "-50%",
+                  y: "0%",
+                  scale: 0.29,
+                  opacity: 1,
+                }
+          }
+          exit={{ opacity: 0 }}
+          transition={
+            phase === "hold"
+              ? { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }
+              : {
+                  duration: 0.9,
+                  ease: [0.25, 0.1, 0.25, 1],
+                }
+          }
+          onAnimationComplete={handleAnimationComplete}
+        >
+          <Image
+            src={LOGO_SRC}
+            alt="House of Singh"
+            width={120}
+            height={120}
+            priority
+            className="dark:invert"
+          />
+        </motion.div>
       </>
     </AnimatePresence>
   );

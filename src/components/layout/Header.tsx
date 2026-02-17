@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import NavOverlay from "./NavOverlay";
 import NewsletterModal from "@/components/NewsletterModal";
@@ -82,11 +83,19 @@ export default function Header({ items }: Props) {
         {/* Centered logo — hidden while intro animation is playing */}
         <Link
           href="/"
-          className={`absolute left-1/2 -translate-x-1/2 text-[11px] md:text-sm font-medium tracking-widest uppercase text-foreground transition-opacity duration-300 ${
+          className={`absolute left-1/2 -translate-x-1/2 transition-opacity duration-300 ${
             introActive ? "opacity-0" : "opacity-100"
           }`}
+          aria-label="House of Singh — Home"
         >
-          House of Singh
+          <Image
+            src="/images/hos-logo.svg"
+            alt="House of Singh"
+            width={36}
+            height={36}
+            priority
+            className="dark:invert"
+          />
         </Link>
 
         <div className="w-10" />
