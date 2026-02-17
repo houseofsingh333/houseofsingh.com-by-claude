@@ -79,7 +79,7 @@ export default function IntroLogo() {
           className="fixed inset-0 z-[9999] bg-background"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
         />
 
         {/* Logo that animates from center to header position */}
@@ -105,21 +105,21 @@ export default function IntroLogo() {
                   opacity: 1,
                 }
               : {
-                  top: "10px",
+                  top: "6px",
                   left: "50%",
                   x: "-50%",
                   y: "0%",
-                  scale: 0.29,
+                  scale: 0.48,
                   opacity: 1,
                 }
           }
           exit={{ opacity: 0 }}
           transition={
             phase === "hold"
-              ? { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }
+              ? { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }
               : {
-                  duration: 0.9,
-                  ease: [0.25, 0.1, 0.25, 1],
+                  duration: 2.2,
+                  ease: [0.16, 1, 0.3, 1],
                 }
           }
           onAnimationComplete={handleAnimationComplete}
@@ -127,8 +127,8 @@ export default function IntroLogo() {
           <Image
             src={LOGO_SRC}
             alt="House of Singh"
-            width={120}
-            height={120}
+            width={300}
+            height={300}
             priority
             className="dark:invert"
           />

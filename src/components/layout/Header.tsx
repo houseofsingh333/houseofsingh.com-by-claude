@@ -35,11 +35,11 @@ export default function Header({ items }: Props) {
               clearInterval(check);
             }
           }, 100);
-          // Safety timeout: never stay hidden more than 3s
+          // Safety timeout: never stay hidden more than 5s
           const safety = setTimeout(() => {
             setIntroActive(false);
             clearInterval(check);
-          }, 3000);
+          }, 5000);
           return () => {
             clearInterval(check);
             clearTimeout(safety);
@@ -91,8 +91,8 @@ export default function Header({ items }: Props) {
           <Image
             src="/images/hos-logo.svg"
             alt="House of Singh"
-            width={36}
-            height={36}
+            width={144}
+            height={144}
             priority
             className="dark:invert"
           />
