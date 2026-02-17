@@ -8,10 +8,16 @@ import { useTheme } from "@/components/ThemeProvider";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  onNewsletterOpen: () => void;
   items: NavItem[];
 };
 
-export default function NavOverlay({ isOpen, onClose, items }: Props) {
+export default function NavOverlay({
+  isOpen,
+  onClose,
+  onNewsletterOpen,
+  items,
+}: Props) {
   const sorted = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const { theme, toggle } = useTheme();
 
@@ -33,12 +39,12 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Close button */}
-        <div className="flex items-center justify-between px-8 py-6">
+        {/* Close button + theme toggle */}
+        <div className="flex items-center justify-between px-6 py-5 md:px-8 md:py-6">
           <button
             onClick={onClose}
             aria-label="Close menu"
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2 group min-h-[44px]"
           >
             <X className="h-4 w-4 text-foreground" />
             <span className="text-xs tracking-widest uppercase text-foreground">
@@ -50,7 +56,7 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
           <button
             onClick={toggle}
             aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-            className="text-muted-foreground hover:text-foreground transition-colors duration-300"
+            className="text-muted-foreground hover:text-foreground transition-colors duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
             {theme === "light" ? (
               <Moon className="h-4 w-4" />
@@ -60,8 +66,8 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
           </button>
         </div>
 
-        {/* Nav items — sans-serif font */}
-        <ul className="flex flex-col gap-0 px-8 pt-12 flex-1">
+        {/* Nav items — sans-serif font, mobile-optimized sizing */}
+        <ul className="flex flex-col gap-0 px-6 md:px-8 pt-8 md:pt-12 flex-1 overflow-y-auto">
           {sorted.map((item) => (
             <li key={item.label} className="border-b border-border/50">
               {item.external ? (
@@ -70,7 +76,7 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={onClose}
-                  className="flex items-center justify-between py-5 text-2xl md:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300"
+                  className="flex items-center justify-between py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[48px]"
                 >
                   {item.label}
                   <span className="text-xs tracking-widest text-muted-foreground">
@@ -81,7 +87,7 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
                 <Link
                   href={item.href}
                   onClick={onClose}
-                  className="block py-5 text-2xl md:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300"
+                  className="block py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[48px]"
                 >
                   {item.label}
                 </Link>
@@ -91,23 +97,22 @@ export default function NavOverlay({ isOpen, onClose, items }: Props) {
         </ul>
 
         {/* Bottom: Instagram + Newsletter */}
-        <div className="px-8 pb-8 flex items-center gap-6">
+        <div className="px-6 md:px-8 pb-6 md:pb-8 pt-4 flex items-center gap-6">
           <a
-            href="https://www.instagram.com/houseofsingh.studio"
+            href="https://www.instagram.com/houseofsingh"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-2"
           >
             Instagram
           </a>
-          <span className="text-border">·</span>
-          <Link
-            href="/contact"
-            onClick={onClose}
-            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+          <span className="text-border">&middot;</span>
+          <button
+            onClick={onNewsletterOpen}
+            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-2"
           >
             Newsletter
-          </Link>
+          </button>
         </div>
       </nav>
     </>

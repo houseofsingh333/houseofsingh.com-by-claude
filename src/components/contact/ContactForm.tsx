@@ -76,15 +76,15 @@ export default function ContactForm() {
   }
 
   return (
-    <div className="min-h-[80vh] flex flex-col px-8 md:px-16 py-16 md:py-24">
+    <div className="min-h-[80vh] flex flex-col px-6 md:px-16 py-12 md:py-24">
       {/* Main content — split layout */}
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start pt-8 md:pt-16">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 items-start pt-8 md:pt-16">
         {/* Left — step label + description */}
         <div>
-          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-6">
+          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4 md:mb-6">
             {steps[step].label}
           </p>
-          <h2 className="font-editorial text-3xl md:text-4xl lg:text-[2.75rem] font-light text-foreground leading-[1.2] whitespace-pre-line">
+          <h2 className="font-editorial text-2xl md:text-4xl lg:text-[2.75rem] font-light text-foreground leading-[1.2] whitespace-pre-line">
             {steps[step].description}
           </h2>
         </div>
@@ -114,7 +114,7 @@ export default function ContactForm() {
                       <span className="w-2 h-2 rounded-full bg-background" />
                     )}
                   </span>
-                  <span className="text-2xl md:text-3xl font-light tracking-tight">
+                  <span className="text-xl md:text-3xl font-light tracking-tight">
                     {r}
                   </span>
                 </button>
@@ -204,11 +204,11 @@ export default function ContactForm() {
       </div>
 
       {/* Bottom bar — step indicator + navigation */}
-      <div className="flex items-end justify-between pt-16 md:pt-24">
+      <div className="flex items-end justify-between pt-10 md:pt-24">
         {/* Step indicator */}
-        <div className="text-7xl md:text-8xl lg:text-9xl font-light text-foreground/10 leading-none tracking-tighter select-none">
+        <div className="text-5xl md:text-8xl lg:text-9xl font-light text-foreground/10 leading-none tracking-tighter select-none">
           {step + 1}
-          <span className="text-5xl md:text-6xl lg:text-7xl">
+          <span className="text-3xl md:text-6xl lg:text-7xl">
             /{steps.length}
           </span>
         </div>

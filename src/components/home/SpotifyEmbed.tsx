@@ -40,7 +40,7 @@ export default function SpotifyEmbed({ playlistUrl }: Props) {
   const embedSrc = toEmbedUrl(playlistUrl);
 
   return (
-    <section ref={ref} className="px-8 md:px-16 py-24 md:py-36">
+    <section ref={ref} className="px-6 md:px-16 py-20 md:py-36">
       <div
         className={`transition-all duration-700 ease-out ${
           visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"

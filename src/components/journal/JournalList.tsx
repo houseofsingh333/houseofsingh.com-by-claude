@@ -90,12 +90,12 @@ export default function JournalList({ entries }: Props) {
   return (
     <div className="overflow-hidden">
       {/* Page Header */}
-      <section className="px-8 md:px-16 pt-32 md:pt-44 pb-16 md:pb-20">
+      <section className="px-6 md:px-16 pt-28 md:pt-44 pb-12 md:pb-20">
         <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
           Archive
         </p>
-        <div className="w-full h-px bg-border mb-10" />
-        <h1 className="font-editorial text-5xl md:text-7xl lg:text-[6rem] font-light text-foreground leading-none">
+        <div className="w-full h-px bg-border mb-8 md:mb-10" />
+        <h1 className="font-editorial text-3xl md:text-5xl lg:text-[6rem] font-light text-foreground leading-none">
           Journal
         </h1>
       </section>
@@ -105,7 +105,7 @@ export default function JournalList({ entries }: Props) {
 
       {/* Sticky Horizontal Timeline */}
       <section
-        className={`px-8 md:px-16 pb-20 md:pb-28 transition-all duration-300 ${
+        className={`px-6 md:px-16 pb-16 md:pb-28 transition-all duration-300 ${
           isSticky
             ? "sticky top-0 z-30 bg-background/95 backdrop-blur-sm py-6 border-b border-border/50 shadow-sm"
             : ""
@@ -113,8 +113,8 @@ export default function JournalList({ entries }: Props) {
       >
         {/* Scrollable timeline with fade edges */}
         <div className="relative">
-          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-5 md:w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-5 md:w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
           <div className="overflow-x-auto scrollbar-hide snap-x snap-mandatory">
             <div className="relative min-w-max px-4">
@@ -198,7 +198,7 @@ export default function JournalList({ entries }: Props) {
       </section>
 
       {/* Article Grid */}
-      <section className="px-8 md:px-16 pb-24 md:pb-36">
+      <section className="px-6 md:px-16 pb-24 md:pb-36">
         {filtered.length === 0 ? (
           <div className="py-24 text-center">
             <p className="text-sm text-muted-foreground/60 uppercase tracking-[0.2em]">

@@ -32,8 +32,8 @@ export default function JournalPreview({ entries }: Props) {
   const displayed = entries.slice(0, 4);
 
   return (
-    <section className="px-8 md:px-16 py-24 md:py-36">
-      <div className="flex items-baseline justify-between mb-14">
+    <section className="px-6 md:px-16 py-20 md:py-36">
+      <div className="flex items-baseline justify-between mb-10 md:mb-14">
         <h2 className="text-xs tracking-widest uppercase text-muted-foreground">
           Journal
         </h2>
@@ -55,7 +55,7 @@ export default function JournalPreview({ entries }: Props) {
             onMouseLeave={() => setHoveredId(null)}
             onMouseMove={handleMouseMove}
           >
-            <div className="flex items-baseline justify-between gap-8">
+            <div className="flex items-baseline justify-between gap-4 md:gap-8">
               {/* Index number */}
               <span className="hidden md:block text-xs tracking-widest text-muted-foreground w-12 shrink-0 transition-colors duration-300 group-hover:text-foreground">
                 {String(index + 1).padStart(2, "0")}
@@ -63,7 +63,7 @@ export default function JournalPreview({ entries }: Props) {
 
               {/* Title / excerpt */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-editorial text-xl md:text-3xl lg:text-4xl font-light text-foreground leading-tight transition-all duration-500 group-hover:tracking-wide">
+                <h3 className="font-editorial text-lg md:text-3xl lg:text-4xl font-light text-foreground leading-tight transition-all duration-500 group-hover:tracking-wide">
                   {entry.title || entry.excerpt}
                 </h3>
               </div>
@@ -79,9 +79,12 @@ export default function JournalPreview({ entries }: Props) {
               </div>
             </div>
 
-            {/* Excerpt on hover */}
-            <div className="overflow-hidden transition-all duration-500 max-h-0 group-hover:max-h-16 opacity-0 group-hover:opacity-100">
-              <p className="text-sm text-muted-foreground mt-3 md:ml-12 max-w-lg leading-relaxed">
+            {/* Excerpt — always visible on mobile, hover-only on desktop */}
+            <p className="text-sm text-muted-foreground mt-2 max-w-lg leading-relaxed md:hidden line-clamp-2">
+              {entry.excerpt}
+            </p>
+            <div className="hidden md:block overflow-hidden transition-all duration-500 max-h-0 group-hover:max-h-16 opacity-0 group-hover:opacity-100">
+              <p className="text-sm text-muted-foreground mt-3 ml-12 max-w-lg leading-relaxed">
                 {entry.excerpt}
               </p>
             </div>

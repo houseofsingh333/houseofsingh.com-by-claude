@@ -40,7 +40,7 @@ export default function HeroSlider({ slides }: Props) {
       ))}
 
       {/* Bottom-left: dots + caption */}
-      <div className="absolute bottom-8 left-8 z-10 flex items-center gap-5">
+      <div className="absolute bottom-6 left-5 md:bottom-8 md:left-8 z-10 flex items-center gap-4 md:gap-5">
         <div className="flex gap-2">
           {slides.map((_, i) => (
             <button
@@ -60,14 +60,14 @@ export default function HeroSlider({ slides }: Props) {
           ))}
         </div>
         {slide.caption && (
-          <p className="text-xs tracking-widest uppercase text-foreground/70">
+          <p className="hidden md:block text-xs tracking-widest uppercase text-foreground/70">
             {slide.caption}
           </p>
         )}
       </div>
 
       {/* Right side: scroll indicator */}
-      <div className="absolute bottom-8 right-8 z-10 flex flex-col items-center gap-2">
+      <div className="absolute bottom-6 right-5 md:bottom-8 md:right-8 z-10 hidden md:flex flex-col items-center gap-2">
         <span className="text-[10px] tracking-widest uppercase text-foreground/40">
           Scroll
         </span>

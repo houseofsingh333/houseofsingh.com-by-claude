@@ -10,21 +10,39 @@ type Props = {
 
 export default function Footer({ items }: Props) {
   const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubscribed(true);
-    setEmail("");
+    if (!email.trim()) return;
+
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      if (!res.ok) {
+        setStatus("error");
+        return;
+      }
+
+      setStatus("success");
+      setEmail("");
+    } catch {
+      setStatus("error");
+    }
   };
 
   const internalItems = items.filter((item) => !item.external);
 
   return (
-    <footer className="px-8 md:px-16 py-24 md:py-36 border-t border-border">
+    <footer className="px-6 md:px-16 py-16 md:py-36 border-t border-border">
       {/* CTA */}
-      <div className="mb-16">
-        <p className="font-editorial text-2xl md:text-3xl lg:text-4xl font-light text-foreground leading-snug max-w-lg">
+      <div className="mb-12 md:mb-16">
+        <p className="font-editorial text-xl md:text-3xl lg:text-4xl font-light text-foreground leading-snug max-w-lg">
           Want to work together?
         </p>
         <p className="text-sm text-muted-foreground mt-3 max-w-md">
@@ -43,12 +61,12 @@ export default function Footer({ items }: Props) {
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 pt-8 border-t border-border/50">
         {/* Left — nav links + copyright */}
         <div>
-          <div className="flex flex-wrap gap-6 mb-4">
+          <div className="flex flex-wrap gap-4 md:gap-6 mb-4">
             {internalItems.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+                className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-1"
               >
                 {link.label}
               </Link>
@@ -77,7 +95,7 @@ export default function Footer({ items }: Props) {
           <p className="text-[11px] tracking-widest uppercase text-muted-foreground mb-3">
             Newsletter
           </p>
-          {subscribed ? (
+          {status === "success" ? (
             <p className="text-sm text-muted-foreground">
               Thank you for subscribing.
             </p>
@@ -96,11 +114,17 @@ export default function Footer({ items }: Props) {
               />
               <button
                 type="submit"
-                className="px-3 py-2 text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+                disabled={status === "loading"}
+                className="px-3 py-2 text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 disabled:opacity-50"
               >
-                →
+                {status === "loading" ? "..." : "→"}
               </button>
             </form>
+          )}
+          {status === "error" && (
+            <p className="text-xs text-red-500 mt-2">
+              Something went wrong. Please try again.
+            </p>
           )}
         </div>
       </div>

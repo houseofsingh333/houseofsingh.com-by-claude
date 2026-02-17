@@ -10,7 +10,7 @@ export default function SpotlightSection({ project }: Props) {
     <section className="relative">
       <Link
         href={`/projects/${project.slug}`}
-        className="group block relative w-full aspect-[16/7] overflow-hidden bg-secondary"
+        className="group block relative w-full aspect-[4/3] md:aspect-[16/7] overflow-hidden bg-secondary"
       >
         <img
           src={project.image}
@@ -21,11 +21,11 @@ export default function SpotlightSection({ project }: Props) {
         <div className="absolute inset-0 bg-black/50" />
 
         {/* Content overlay */}
-        <div className="absolute inset-0 flex flex-col justify-end px-8 md:px-16 pb-12 md:pb-20">
+        <div className="absolute inset-0 flex flex-col justify-end px-6 md:px-16 pb-8 md:pb-20">
           <p className="text-[10px] tracking-[0.3em] uppercase text-white/60 mb-4">
             Spotlight
           </p>
-          <h3 className="font-editorial text-3xl md:text-5xl lg:text-6xl font-light text-white leading-[1.1] max-w-2xl">
+          <h3 className="font-editorial text-2xl md:text-5xl lg:text-6xl font-light text-white leading-[1.1] max-w-2xl">
             {project.title}
           </h3>
           <p className="text-white/60 text-sm md:text-base leading-relaxed mt-4 max-w-lg">

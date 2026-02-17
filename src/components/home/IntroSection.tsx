@@ -11,7 +11,7 @@ export default function IntroSection() {
   const { ref: sectionRef, visible } = useScrollReveal(0.1);
 
   return (
-    <section ref={sectionRef} className="px-8 md:px-16 py-24 md:py-36">
+    <section ref={sectionRef} className="px-6 md:px-16 py-20 md:py-36">
       {/* Section label */}
       <div
         className={`mb-16 transition-all duration-700 ease-out ${
@@ -34,7 +34,7 @@ export default function IntroSection() {
           style={{ transitionDelay: "200ms" }}
           onMouseEnter={() => setRevealed(true)}
         >
-          <div className="w-full aspect-[3/4] overflow-hidden bg-secondary">
+          <div className="w-full aspect-square md:aspect-[3/4] overflow-hidden bg-secondary">
             <img
               src={PORTRAIT_IMAGE}
               alt="Maninder Singh — Creative Director, Designer & Photographer"
@@ -58,7 +58,7 @@ export default function IntroSection() {
               (role, i) => (
                 <p
                   key={role}
-                  className="font-editorial text-xl md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5]"
+                  className="font-editorial text-lg md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5]"
                   style={{ opacity: 1 - i * 0.2 }}
                 >
                   {role}
@@ -75,7 +75,7 @@ export default function IntroSection() {
           </p>
 
           {/* Pull quote */}
-          <blockquote className="font-editorial text-lg md:text-xl font-light leading-[1.5] text-foreground/80 border-l-2 border-foreground/10 pl-6">
+          <blockquote className="font-editorial text-base md:text-xl font-light leading-[1.5] text-foreground/80 border-l-2 border-foreground/10 pl-4 md:pl-6">
             Guided by a deep curiosity for life&apos;s quiet wonders, creating
             work that reflects the rhythm of nature and human connection.
           </blockquote>

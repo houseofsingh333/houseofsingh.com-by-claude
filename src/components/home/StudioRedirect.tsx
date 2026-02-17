@@ -9,7 +9,7 @@ export default function StudioRedirect() {
   return (
     <section
       ref={ref}
-      className="bg-foreground text-background px-8 md:px-16 py-16 md:py-24"
+      className="bg-foreground text-background px-6 md:px-16 py-14 md:py-24"
     >
       <div
         className={`max-w-5xl mx-auto flex flex-col items-center text-center gap-6 transition-all duration-1000 ease-out ${

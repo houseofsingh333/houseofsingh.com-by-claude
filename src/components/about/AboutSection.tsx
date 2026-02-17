@@ -298,8 +298,8 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
   return (
     <div className="overflow-hidden">
       {/* ——— 1 · Intro Quote ——— */}
-      <section className="px-8 md:px-16 pt-32 md:pt-44 pb-24 md:pb-36 flex items-center justify-center">
-        <p className="font-editorial text-2xl md:text-3xl lg:text-[2.5rem] font-light leading-[1.4] text-center max-w-3xl animate-editorial-fade-in">
+      <section className="px-6 md:px-16 pt-28 md:pt-44 pb-20 md:pb-36 flex items-center justify-center">
+        <p className="font-editorial text-xl md:text-3xl lg:text-[2.5rem] font-light leading-[1.4] text-center max-w-3xl animate-editorial-fade-in">
           &ldquo;
           {introQuote ??
             "The world is filled with beauty, waiting to be seen, felt, and celebrated."}
@@ -308,7 +308,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       </section>
 
       {/* ——— 2 · Founder Section ——— */}
-      <section className="px-8 md:px-16 pb-24 md:pb-36">
+      <section className="px-6 md:px-16 pb-24 md:pb-36">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-start">
           {/* Text — left */}
           <div className="md:col-span-6 flex flex-col gap-10 order-2 md:order-1">
@@ -359,7 +359,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       </section>
 
       {/* ——— 3 · House of Singh ——— */}
-      <section className="px-8 md:px-16 py-24 md:py-36">
+      <section className="px-6 md:px-16 py-24 md:py-36">
         <div className="mb-16">
           <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
             The Moniker
@@ -407,7 +407,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— 4 · Timeline ——— */}
       {milestones && milestones.length > 0 && (
-        <section className="px-8 md:px-16 py-24 md:py-36">
+        <section className="px-6 md:px-16 py-24 md:py-36">
           <div className="mb-16">
             <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
               Ten Years On
@@ -420,7 +420,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— 5 · Words Shared ——— */}
       {testimonials && testimonials.length > 0 && (
-        <section className="px-8 md:px-16 py-24 md:py-36">
+        <section className="px-6 md:px-16 py-24 md:py-36">
           <div className="mb-12">
             <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
               Words Shared
