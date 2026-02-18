@@ -140,7 +140,7 @@ export default function Header({ items }: Props) {
         className={`fixed top-0 left-0 right-0 z-40 flex justify-center pointer-events-none transition-opacity duration-[250ms] ease-in-out ${
           showState1 ? "opacity-100" : "opacity-0"
         }`}
-        style={{ paddingTop: 32 }}
+        style={{ paddingTop: 22 }}
         aria-hidden
       >
         <Image
@@ -208,13 +208,24 @@ export default function Header({ items }: Props) {
           aria-label="House of Singh — Home"
           className="absolute left-1/2 -translate-x-1/2 select-none"
         >
-          <span className="text-xs font-medium tracking-[0.25em] uppercase text-foreground">
+          <span className="text-sm font-medium tracking-[0.25em] uppercase text-foreground">
             House of Singh
           </span>
         </Link>
 
-        {/* Right: empty spacer for balanced layout */}
-        <div className="min-w-[44px]" />
+        {/* Right: theme toggle */}
+        <button
+          onClick={toggle}
+          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+          tabIndex={showState2 ? 0 : -1}
+          className="text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center"
+        >
+          {theme === "light" ? (
+            <Moon className="h-4 w-4" />
+          ) : (
+            <Sun className="h-4 w-4" />
+          )}
+        </button>
       </header>
 
       <NavOverlay
