@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Sun, Moon } from "lucide-react";
@@ -9,28 +9,9 @@ import NewsletterModal from "@/components/NewsletterModal";
 import { useTheme } from "@/components/ThemeProvider";
 import type { NavItem } from "@/lib/placeholder-data";
 
-const SESSION_KEY = "hos-intro-seen";
+const SESSION_KEY = "hos_intro_seen";
 const SCROLL_SHOW = 60;
 const SCROLL_HIDE = 20;
-
-/*
-  Intro phases (State 0):
-    idle    → checking sessionStorage
-    enter   → overlay + crest rendered at center / 500px / opacity 0
-    fadein  → crest opacity transitions 0→1  (600ms)
-    hold    → pause at center                 (500ms)
-    moving  → crest transitions to top / 400px (700ms)
-    landing → overlay fades out               (300ms)
-    done    → normal page
-*/
-type IntroPhase =
-  | "idle"
-  | "enter"
-  | "fadein"
-  | "hold"
-  | "moving"
-  | "landing"
-  | "done";
 
 type Props = {
   items: NavItem[];
@@ -40,67 +21,51 @@ export default function Header({ items }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [newsletterOpen, setNewsletterOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [intro, setIntro] = useState<IntroPhase>("idle");
+  const [introVisible, setIntroVisible] = useState(false);
+  const [introFading, setIntroFading] = useState(false);
+  const [introDone, setIntroDone] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const { theme, toggle } = useTheme();
 
-  /* ── State 0: intro sequence ── */
+  /* ── State 0: decide whether to play intro ── */
   useEffect(() => {
+    let skip = false;
     try {
-      if (sessionStorage.getItem(SESSION_KEY)) {
-        setIntro("done");
-        return;
-      }
+      if (sessionStorage.getItem(SESSION_KEY)) skip = true;
     } catch {
-      setIntro("done");
-      return;
+      skip = true;
     }
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (
+      !skip &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       try {
         sessionStorage.setItem(SESSION_KEY, "1");
       } catch {}
-      setIntro("done");
-      return;
+      skip = true;
     }
 
-    document.body.style.overflow = "hidden";
-    setIntro("enter");
+    if (skip) {
+      setIntroDone(true);
+    } else {
+      document.body.style.overflow = "hidden";
+      setIntroVisible(true);
+    }
   }, []);
 
-  /* Phase chain: enter → fadein → hold → moving  (landing triggered by transitionEnd) */
-  useEffect(() => {
-    if (intro === "enter") {
-      const raf = requestAnimationFrame(() => setIntro("fadein"));
-      return () => cancelAnimationFrame(raf);
-    }
-    if (intro === "fadein") {
-      const t = setTimeout(() => setIntro("hold"), 600);
-      return () => clearTimeout(t);
-    }
-    if (intro === "hold") {
-      const t = setTimeout(() => setIntro("moving"), 500);
-      return () => clearTimeout(t);
-    }
-    if (intro === "landing") {
-      const t = setTimeout(() => {
-        setIntro("done");
-        document.body.style.overflow = "";
-      }, 350);
-      return () => clearTimeout(t);
-    }
-  }, [intro]);
-
-  const handleCrestTransitionEnd = useCallback(
-    (e: React.TransitionEvent) => {
-      if (intro === "moving" && e.propertyName === "top") {
-        try {
-          sessionStorage.setItem(SESSION_KEY, "1");
-        } catch {}
-        setIntro("landing");
-      }
-    },
-    [intro],
-  );
+  /* Video ended → fade out overlay, reveal site */
+  const handleVideoEnded = useCallback(() => {
+    try {
+      sessionStorage.setItem(SESSION_KEY, "1");
+    } catch {}
+    setIntroFading(true);
+    setTimeout(() => {
+      setIntroVisible(false);
+      setIntroFading(false);
+      setIntroDone(true);
+      document.body.style.overflow = "";
+    }, 500);
+  }, []);
 
   /* ── Scroll listener with hysteresis (State 1 ↔ State 2) ── */
   useEffect(() => {
@@ -128,50 +93,43 @@ export default function Header({ items }: Props) {
   }, []);
 
   /* ── Derived state ── */
-  const introActive =
-    intro !== "idle" && intro !== "done";
-  const introDone = intro === "idle" || intro === "done";
   const showState1 = introDone && !scrolled;
   const showState2 = introDone && scrolled;
 
-  /* ── Intro crest positioning ── */
-  const isCentered =
-    intro === "enter" || intro === "fadein" || intro === "hold";
-
   return (
     <>
-      {/* ═══ STATE 0 : Intro overlay + animated crest ═══ */}
-      {introActive && (
+      {/* ═══ STATE 0 : Video intro overlay ═══ */}
+      {introVisible && (
         <div
-          className="fixed inset-0 z-[9999] bg-background"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-white dark:bg-white"
           style={{
-            opacity: intro === "landing" ? 0 : 1,
-            transition: "opacity 300ms ease-in-out",
+            opacity: introFading ? 0 : 1,
+            transition: "opacity 500ms ease-in-out",
+            pointerEvents: introFading ? "none" : "auto",
           }}
         >
-          <div
-            style={{
-              position: "absolute",
-              left: "50%",
-              top: isCentered ? "50%" : "32px",
-              transform: isCentered
-                ? "translate(-50%, -50%)"
-                : "translate(-50%, 0)",
-              width: isCentered ? 500 : 400,
-              opacity: intro === "enter" ? 0 : 1,
-              transitionProperty: "top, transform, width, opacity",
-              transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
-              transitionDuration: isCentered ? "600ms" : "700ms",
-            }}
-            onTransitionEnd={handleCrestTransitionEnd}
-          >
-            <Image
-              src="/images/hos-logo.svg"
-              alt="House of Singh"
-              width={500}
-              height={500}
-              priority
-              className="dark:invert w-full h-auto"
+          {/* Centered video container with overflow hidden */}
+          <div className="relative w-[480px] max-w-[85vw] overflow-hidden">
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              playsInline
+              preload="auto"
+              onEnded={handleVideoEnded}
+              className="w-full h-auto object-cover"
+            >
+              <source
+                src="/images/HOS Logo Animation.mp4"
+                type="video/mp4"
+              />
+            </video>
+            {/* Edge feather mask — blends video edges into white overlay */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                boxShadow: "inset 0 0 40px 20px white",
+              }}
             />
           </div>
         </div>
@@ -188,10 +146,10 @@ export default function Header({ items }: Props) {
         <Image
           src="/images/hos-logo.svg"
           alt=""
-          width={400}
-          height={400}
+          width={250}
+          height={250}
           priority
-          style={{ width: 400, height: "auto" }}
+          style={{ width: 250, height: "auto" }}
           className="dark:invert"
         />
       </div>
@@ -209,7 +167,7 @@ export default function Header({ items }: Props) {
           tabIndex={showState1 ? 0 : -1}
           className="flex items-center min-h-[44px] min-w-[44px]"
         >
-          <span className="block w-2 h-2 rounded-full bg-foreground" />
+          <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
         </button>
 
         <button
@@ -233,14 +191,14 @@ export default function Header({ items }: Props) {
         }`}
         aria-hidden={!showState2}
       >
-        {/* Left: dot menu */}
+        {/* Left: dot icon (opens NavOverlay) */}
         <button
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
           tabIndex={showState2 ? 0 : -1}
           className="flex items-center min-h-[44px] min-w-[44px]"
         >
-          <span className="block w-2 h-2 rounded-full bg-foreground" />
+          <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
         </button>
 
         {/* Center: text mark only — no crest */}
@@ -250,20 +208,13 @@ export default function Header({ items }: Props) {
           aria-label="House of Singh — Home"
           className="absolute left-1/2 -translate-x-1/2 select-none"
         >
-          <span className="text-[13px] font-medium tracking-[0.25em] uppercase text-foreground">
+          <span className="text-xs font-medium tracking-[0.25em] uppercase text-foreground">
             House of Singh
           </span>
         </Link>
 
-        {/* Right: menu button */}
-        <button
-          onClick={() => setMenuOpen(true)}
-          aria-label="Open menu"
-          tabIndex={showState2 ? 0 : -1}
-          className="text-[11px] tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 min-h-[44px] flex items-center"
-        >
-          Menu
-        </button>
+        {/* Right: empty spacer for balanced layout */}
+        <div className="min-w-[44px]" />
       </header>
 
       <NavOverlay
