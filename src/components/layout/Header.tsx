@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Sun, Moon } from "lucide-react";
 import NavOverlay from "./NavOverlay";
@@ -135,47 +134,52 @@ export default function Header({ items }: Props) {
         </div>
       )}
 
-      {/* ═══ STATE 1 : Crest at top center (separate from nav bar) ═══ */}
-      <div
-        className={`fixed top-0 left-0 right-0 z-40 flex justify-center pointer-events-none transition-opacity duration-[250ms] ease-in-out ${
-          showState1 ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ paddingTop: 32 }}
-        aria-hidden
-      >
-        <Image
-          src="/images/hos-logo.svg"
-          alt=""
-          width={250}
-          height={250}
-          priority
-          style={{ width: 250, height: "auto" }}
-          className="dark:invert"
-        />
-      </div>
-
-      {/* ═══ STATE 1 : Transparent nav bar — 32px top rail, top-aligned ═══ */}
+      {/* ═══ STATE 1 : Crest + icons — all top-edges at 32px rail ═══ */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 flex items-start justify-between px-5 md:px-8 transition-opacity duration-[250ms] ease-in-out ${
+        className={`fixed inset-x-0 top-0 z-50 transition-opacity duration-[250ms] ease-in-out ${
           showState1 ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
-        style={{ paddingTop: 32 }}
         aria-hidden={!showState1}
       >
+        {/* Crest — center, CSS mask so it renders in currentColor */}
+        <div
+          className="absolute top-[32px] left-1/2 -translate-x-1/2 pointer-events-none"
+        >
+          <div
+            className="text-foreground"
+            style={{
+              width: 225,
+              height: 225,
+              backgroundColor: "currentColor",
+              WebkitMaskImage: "url(/images/hos-logo.svg)",
+              maskImage: "url(/images/hos-logo.svg)",
+              WebkitMaskSize: "contain",
+              maskSize: "contain",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+              marginTop: -51,
+            }}
+            role="img"
+            aria-label="House of Singh crest"
+          />
+        </div>
+
+        {/* Dot menu — left, top edge at 32px rail */}
         <button
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
           tabIndex={showState1 ? 0 : -1}
-          className="min-h-[44px] min-w-[44px] flex items-start pt-[3px]"
+          className="absolute top-[32px] left-5 md:left-8 min-h-[44px] min-w-[44px] p-0"
         >
           <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
         </button>
 
+        {/* Theme toggle — right, top edge at 32px rail */}
         <button
           onClick={toggle}
           aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
           tabIndex={showState1 ? 0 : -1}
-          className="text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[44px] min-w-[44px] flex items-start"
+          className="absolute top-[32px] right-5 md:right-8 text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[44px] min-w-[44px] p-0"
         >
           {theme === "light" ? (
             <Moon className="h-4 w-4" />
