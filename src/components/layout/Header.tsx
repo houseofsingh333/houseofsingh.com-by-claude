@@ -209,7 +209,7 @@ export default function Header({ items }: Props) {
           aria-label="House of Singh — Home"
           className="absolute left-1/2 -translate-x-1/2 select-none"
         >
-          <span className="text-sm font-medium tracking-[0.25em] uppercase text-foreground">
+          <span className="text-xs sm:text-sm font-medium tracking-[0.2em] sm:tracking-[0.25em] uppercase text-foreground">
             House of Singh
           </span>
         </Link>

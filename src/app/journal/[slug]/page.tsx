@@ -69,7 +69,7 @@ export default async function JournalDetailPage({ params }: Props) {
       {/* Reading progress bar */}
       <ReadingProgress />
 
-      <div className="px-8 md:px-16 page-top-offset pb-16 max-w-4xl mx-auto">
+      <div className="px-6 md:px-16 page-top-offset pb-16 max-w-4xl mx-auto">
         {/* Back to journal */}
         <Link
           href="/journal"
@@ -113,7 +113,7 @@ export default async function JournalDetailPage({ params }: Props) {
 
         {/* Prev / Next navigation */}
         <div className="border-t border-border pt-10">
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-2 gap-4 md:gap-8">
             {/* Previous (newer) */}
             <div>
               {prevEntry ? (
