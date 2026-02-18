@@ -91,12 +91,12 @@ export default function JournalList({ entries }: Props) {
   return (
     <div className="overflow-hidden">
       {/* Page Header */}
-      <section className="px-6 md:px-16 pt-28 md:pt-44 pb-12 md:pb-20">
+      <section className="px-6 md:px-16 page-top-offset pb-12 md:pb-20">
         <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
           Archive
         </p>
         <div className="w-full h-px bg-border mb-8 md:mb-10" />
-        <h1 className="font-editorial text-3xl md:text-5xl lg:text-[6rem] font-light text-foreground leading-none">
+        <h1 className="font-editorial text-3xl md:text-5xl lg:text-6xl font-light text-foreground leading-none">
           Journal
         </h1>
       </section>
@@ -112,50 +112,41 @@ export default function JournalList({ entries }: Props) {
             : ""
         }`}
       >
-        {/* Scrollable timeline with fade edges */}
-        <div className="relative">
-          <div className="absolute left-0 top-0 bottom-0 w-5 md:w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-5 md:w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+        {/* Timeline — evenly distributed years */}
+        <div className="relative overflow-x-auto md:overflow-visible scrollbar-hide snap-x snap-mandatory">
+          <div className="relative w-full min-w-[480px] md:min-w-0">
+            {/* The line */}
+            <div className="absolute top-[5px] left-0 right-0 h-px bg-border z-0" />
 
-          <div className="overflow-x-auto scrollbar-hide snap-x snap-mandatory">
-            <div className="relative min-w-max px-4">
-              {/* The line */}
-              <div className="absolute top-[5px] left-0 right-0 h-px bg-border z-0" />
-
-              {/* Year markers */}
-              <div className="flex items-start">
-                {YEARS.map((year, i) => {
-                  const isActive = activeYear === year;
-                  return (
-                    <button
-                      key={year}
-                      onClick={() => handleYearClick(year)}
-                      className={`flex flex-col items-center snap-start group ${
-                        i < YEARS.length - 1
-                          ? "min-w-[100px] md:min-w-[140px]"
-                          : ""
+            {/* Year markers — flex-1 for even distribution */}
+            <div className="flex items-start">
+              {YEARS.map((year) => {
+                const isActive = activeYear === year;
+                return (
+                  <button
+                    key={year}
+                    onClick={() => handleYearClick(year)}
+                    className="flex-1 flex flex-col items-center snap-start group min-w-0"
+                  >
+                    <div
+                      className={`rounded-full transition-all duration-300 relative z-10 ${
+                        isActive
+                          ? "w-3 h-3 bg-foreground"
+                          : "w-[10px] h-[10px] bg-border group-hover:bg-foreground/50"
+                      }`}
+                    />
+                    <span
+                      className={`font-editorial text-sm md:text-base mt-3 transition-all duration-300 ${
+                        isActive
+                          ? "text-foreground font-medium"
+                          : "text-muted-foreground/40 group-hover:text-muted-foreground"
                       }`}
                     >
-                      <div
-                        className={`rounded-full transition-all duration-300 relative z-10 ${
-                          isActive
-                            ? "w-3 h-3 bg-foreground"
-                            : "w-[10px] h-[10px] bg-border group-hover:bg-foreground/50"
-                        }`}
-                      />
-                      <span
-                        className={`font-editorial text-sm md:text-base mt-3 transition-all duration-300 ${
-                          isActive
-                            ? "text-foreground font-medium"
-                            : "text-muted-foreground/40 group-hover:text-muted-foreground"
-                        }`}
-                      >
-                        {year}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+                      {year}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

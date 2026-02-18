@@ -305,7 +305,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
   return (
     <div className="overflow-hidden">
       {/* ——— 1 · Intro Quote ——— */}
-      <section className="px-6 md:px-16 pt-28 md:pt-44 pb-20 md:pb-36 flex items-center justify-center">
+      <section className="px-6 md:px-16 page-top-offset pb-20 md:pb-36 flex items-center justify-center">
         <p className="font-editorial text-xl md:text-3xl lg:text-[2.5rem] font-light leading-[1.4] text-center max-w-3xl animate-editorial-fade-in">
           &ldquo;
           {introQuote ??

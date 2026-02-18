@@ -76,7 +76,7 @@ export default function ContactForm() {
   }
 
   return (
-    <div className="min-h-[80vh] flex flex-col px-6 md:px-16 py-12 md:py-24">
+    <div className="min-h-[80vh] flex flex-col px-6 md:px-16 page-top-offset pb-12 md:pb-24">
       {/* Main content — split layout */}
       <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20 items-start pt-8 md:pt-16">
         {/* Left — step label + description */}

@@ -89,6 +89,18 @@ body {
   transition: opacity 0.5s ease;
 }
 
+/* ——— Page top offset — clears the State 1 crest on subpages ——— */
+
+.page-top-offset {
+  padding-top: 300px;
+}
+
+@media (min-width: 768px) {
+  .page-top-offset {
+    padding-top: 320px;
+  }
+}
+
 /* ——— Utility animations ——— */
 
 .editorial-fade-in {

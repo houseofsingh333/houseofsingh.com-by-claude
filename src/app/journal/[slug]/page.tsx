@@ -69,7 +69,7 @@ export default async function JournalDetailPage({ params }: Props) {
       {/* Reading progress bar */}
       <ReadingProgress />
 
-      <div className="px-8 md:px-16 pt-32 md:pt-40 pb-16 max-w-4xl mx-auto">
+      <div className="px-8 md:px-16 page-top-offset pb-16 max-w-4xl mx-auto">
         {/* Back to journal */}
         <Link
           href="/journal"

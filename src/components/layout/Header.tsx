@@ -140,7 +140,7 @@ export default function Header({ items }: Props) {
         className={`fixed top-0 left-0 right-0 z-40 flex justify-center pointer-events-none transition-opacity duration-[250ms] ease-in-out ${
           showState1 ? "opacity-100" : "opacity-0"
         }`}
-        style={{ paddingTop: 22 }}
+        style={{ paddingTop: 32 }}
         aria-hidden
       >
         <Image
@@ -154,18 +154,19 @@ export default function Header({ items }: Props) {
         />
       </div>
 
-      {/* ═══ STATE 1 : Transparent nav bar (dot left, theme toggle right) ═══ */}
+      {/* ═══ STATE 1 : Transparent nav bar — 32px top rail, top-aligned ═══ */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-[68px] flex items-center justify-between px-5 md:px-8 transition-opacity duration-[250ms] ease-in-out ${
+        className={`fixed top-0 left-0 right-0 z-50 flex items-start justify-between px-5 md:px-8 transition-opacity duration-[250ms] ease-in-out ${
           showState1 ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
+        style={{ paddingTop: 32 }}
         aria-hidden={!showState1}
       >
         <button
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
           tabIndex={showState1 ? 0 : -1}
-          className="flex items-center min-h-[44px] min-w-[44px]"
+          className="min-h-[44px] min-w-[44px] flex items-start pt-[3px]"
         >
           <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
         </button>
@@ -174,7 +175,7 @@ export default function Header({ items }: Props) {
           onClick={toggle}
           aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
           tabIndex={showState1 ? 0 : -1}
-          className="text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center"
+          className="text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[44px] min-w-[44px] flex items-start"
         >
           {theme === "light" ? (
             <Moon className="h-4 w-4" />
