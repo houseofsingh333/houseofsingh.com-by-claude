@@ -34,9 +34,14 @@ export default async function RootLayout({
   const navItems = navData?.items ?? fallbackNavItems;
 
   /* Read server-side cookie so the initial HTML class avoids a flash */
-  const cookieStore = await cookies();
-  const themeCookie = cookieStore.get("theme")?.value;
-  const initialClass = themeCookie === "dark" ? "dark" : "";
+  let initialClass = "";
+  try {
+    const cookieStore = await cookies();
+    const themeCookie = cookieStore.get("theme")?.value;
+    initialClass = themeCookie === "dark" ? "dark" : "";
+  } catch {
+    // cookies() can fail in certain serverless contexts — fall back to light
+  }
 
   return (
     <html lang="en" className={initialClass}>
