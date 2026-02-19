@@ -24,8 +24,16 @@ export const projectCategory = defineType({
       type: "number",
       description: "Lower numbers appear first.",
     }),
+    defineField({
+      name: "thumbnail",
+      title: "Thumbnail",
+      type: "image",
+      description:
+        "Preview image shown in the homepage accordion. Recommended: landscape, at least 1200 × 800 px.",
+      options: { hotspot: true },
+    }),
   ],
   preview: {
-    select: { title: "title" },
+    select: { title: "title", media: "thumbnail" },
   },
 });

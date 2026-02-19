@@ -32,6 +32,7 @@ export type ProjectCategory = {
   slug: string;
   title: string;
   order: number;
+  thumbnail?: SanityImage | null;
 };
 
 export type ProjectSummary = {

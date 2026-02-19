@@ -57,7 +57,8 @@ export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
 // --------------- Project Categories ---------------
 
 export const projectCategoriesQuery = `*[_type == "projectCategory"] | order(order asc){
-  _id, "slug": slug.current, title, order
+  _id, "slug": slug.current, title, order,
+  "thumbnail": thumbnail ${_imageAsset}
 }`;
 
 // --------------- Projects ---------------
