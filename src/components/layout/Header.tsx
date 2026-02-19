@@ -95,6 +95,8 @@ export default function Header({ items }: Props) {
   const showState1 = introDone && !scrolled;
   const showState2 = introDone && scrolled;
 
+  const sortedItems = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
   return (
     <>
       {/* ═══ STATE 0 : Video intro overlay ═══ */}
@@ -196,27 +198,56 @@ export default function Header({ items }: Props) {
         }`}
         aria-hidden={!showState2}
       >
-        {/* Left: dot icon (opens NavOverlay) */}
-        <button
-          onClick={() => setMenuOpen(true)}
-          aria-label="Open menu"
-          tabIndex={showState2 ? 0 : -1}
-          className="flex items-center min-h-[44px] min-w-[44px]"
-        >
-          <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
-        </button>
+        {/* Left: logo + mobile dot menu */}
+        <div className="flex items-center gap-4">
+          {/* Dot menu — mobile only */}
+          <button
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            tabIndex={showState2 ? 0 : -1}
+            className="flex items-center min-h-[44px] min-w-[44px] md:hidden"
+          >
+            <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
+          </button>
 
-        {/* Center: text mark only — no crest */}
-        <Link
-          href="/"
-          tabIndex={showState2 ? 0 : -1}
-          aria-label="House of Singh — Home"
-          className="absolute left-1/2 -translate-x-1/2 select-none"
-        >
-          <span className="text-xs sm:text-sm font-medium tracking-[0.2em] sm:tracking-[0.25em] uppercase text-foreground">
-            House of Singh
-          </span>
-        </Link>
+          <Link
+            href="/"
+            tabIndex={showState2 ? 0 : -1}
+            aria-label="House of Singh — Home"
+            className="select-none"
+          >
+            <span className="text-xs sm:text-sm font-medium tracking-[0.2em] sm:tracking-[0.25em] uppercase text-foreground">
+              House of Singh
+            </span>
+          </Link>
+        </div>
+
+        {/* Center: navigation tabs — desktop only */}
+        <nav className="hidden md:flex items-center gap-6 lg:gap-8" aria-label="Primary navigation">
+          {sortedItems.map((item) =>
+            item.external ? (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                tabIndex={showState2 ? 0 : -1}
+                className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+              >
+                {item.label}
+              </a>
+            ) : (
+              <Link
+                key={item.label}
+                href={item.href}
+                tabIndex={showState2 ? 0 : -1}
+                className="text-[11px] tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+              >
+                {item.label}
+              </Link>
+            )
+          )}
+        </nav>
 
         {/* Right: theme toggle */}
         <button

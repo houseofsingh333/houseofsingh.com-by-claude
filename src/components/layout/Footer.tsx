@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import type { NavItem } from "@/lib/placeholder-data";
 
@@ -36,41 +37,57 @@ export default function Footer({ items }: Props) {
     }
   };
 
-  const internalItems = items.filter((item) => !item.external);
+  const sortedItems = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const pathname = usePathname();
+  const isContactPage = pathname === "/contact";
 
   return (
     <footer className="px-6 md:px-16 py-16 md:py-36 border-t border-border">
-      {/* CTA */}
-      <div className="mb-12 md:mb-16">
-        <p className="font-editorial text-xl md:text-3xl lg:text-4xl font-light text-foreground leading-snug max-w-lg">
-          Want to work together?
-        </p>
-        <p className="text-sm text-muted-foreground mt-3 max-w-md">
-          Let&apos;s talk about a project, collaboration or an idea you may
-          have.
-        </p>
-        <Link
-          href="/contact"
-          className="inline-block mt-6 text-xs tracking-widest uppercase text-foreground border-b border-foreground/30 pb-1 hover:border-foreground transition-colors duration-300"
-        >
-          Get in touch
-        </Link>
-      </div>
+      {/* CTA — hidden on contact page since user is already there */}
+      {!isContactPage && (
+        <div className="mb-12 md:mb-16">
+          <p className="font-editorial text-xl md:text-3xl lg:text-4xl font-light text-foreground leading-snug max-w-lg">
+            Want to work together?
+          </p>
+          <p className="text-sm text-muted-foreground mt-3 max-w-md">
+            Let&apos;s talk about a project, collaboration or an idea you may
+            have.
+          </p>
+          <Link
+            href="/contact"
+            className="inline-block mt-6 text-xs tracking-widest uppercase text-foreground border-b border-foreground/30 pb-1 hover:border-foreground transition-colors duration-300"
+          >
+            Get in touch
+          </Link>
+        </div>
+      )}
 
       {/* Bottom row */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 pt-8 border-t border-border/50">
         {/* Left — nav links + copyright */}
         <div>
           <div className="flex flex-wrap gap-4 md:gap-6 mb-4">
-            {internalItems.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-1"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {sortedItems.map((link) =>
+              link.external ? (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-1"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-1"
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] tracking-widest uppercase text-muted-foreground">
             <span>&copy; 2026 House of Singh Studios Inc.</span>

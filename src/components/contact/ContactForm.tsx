@@ -38,7 +38,7 @@ function EditorialSidebar() {
 /* ── Two-column wrapper ────────────────────────────────── */
 function TwoColumnLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-[80vh] px-6 md:px-8 py-16 md:py-24">
+    <div className="min-h-[80vh] px-6 md:px-8 page-top-offset pb-16 md:pb-24">
       <div className="grid md:grid-cols-[2fr_3fr] gap-12 md:gap-24 max-w-6xl mx-auto">
         <EditorialSidebar />
         <div>{children}</div>
