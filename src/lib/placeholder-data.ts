@@ -106,13 +106,13 @@ export const fallbackNavItems: NavItem[] = [
   { label: "About", href: "/about", order: 2 },
   { label: "Projects", href: "/projects", order: 3 },
   { label: "Journal", href: "/journal", order: 4 },
-  { label: "Contact", href: "/contact", order: 5 },
   {
     label: "Studio",
     href: "https://studios.houseofsingh.com",
     external: true,
-    order: 6,
+    order: 5,
   },
+  { label: "Contact", href: "/contact", order: 6 },
 ];
 
 // --------------- Fallback Hero Slides ---------------

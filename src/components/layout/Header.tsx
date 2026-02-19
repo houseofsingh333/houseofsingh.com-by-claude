@@ -171,9 +171,12 @@ export default function Header({ items }: Props) {
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
           tabIndex={showState1 ? 0 : -1}
-          className="absolute top-[32px] left-5 md:left-8 min-h-[44px] min-w-[44px] p-0"
+          className="absolute top-[32px] left-5 md:left-8 min-h-[44px] min-w-[44px] p-0 flex items-center gap-2 group"
         >
           <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
+          <span className="text-xs tracking-widest uppercase text-foreground transition-all duration-300 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0">
+            Menu
+          </span>
         </button>
 
         {/* Theme toggle — right, top edge at 32px rail */}
@@ -205,9 +208,12 @@ export default function Header({ items }: Props) {
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
             tabIndex={showState2 ? 0 : -1}
-            className="flex items-center min-h-[44px] min-w-[44px] md:hidden"
+            className="flex items-center gap-2 group min-h-[44px] min-w-[44px] md:hidden"
           >
             <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
+            <span className="text-xs tracking-widest uppercase text-foreground transition-all duration-300 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0">
+              Menu
+            </span>
           </button>
 
           <Link

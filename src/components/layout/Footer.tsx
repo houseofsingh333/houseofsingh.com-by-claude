@@ -37,7 +37,9 @@ export default function Footer({ items }: Props) {
     }
   };
 
-  const sortedItems = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const internalItems = [...items]
+    .filter((item) => !item.external)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const pathname = usePathname();
   const isContactPage = pathname === "/contact";
 
@@ -67,27 +69,15 @@ export default function Footer({ items }: Props) {
         {/* Left — nav links + copyright */}
         <div>
           <div className="flex flex-wrap gap-4 md:gap-6 mb-4">
-            {sortedItems.map((link) =>
-              link.external ? (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-1"
-                >
-                  {link.label}
-                </a>
-              ) : (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-1"
-                >
-                  {link.label}
-                </Link>
-              )
-            )}
+            {internalItems.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-1"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] tracking-widest uppercase text-muted-foreground">
             <span>&copy; 2026 House of Singh Studios Inc.</span>
