@@ -6,6 +6,13 @@ export const contactSubmission = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "intent",
+      title: "Intent",
+      type: "string",
+      description:
+        "What brought them here (Commercial Project, Collaboration, Media / Feature, Something Else).",
+    }),
+    defineField({
       name: "name",
       title: "Name",
       type: "string",
@@ -18,14 +25,20 @@ export const contactSubmission = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "subject",
-      title: "Subject",
+      name: "phone",
+      title: "Phone",
       type: "string",
     }),
     defineField({
-      name: "message",
-      title: "Message",
+      name: "details",
+      title: "Details",
       type: "text",
+      description: "Formatted summary of all detail responses.",
+    }),
+    defineField({
+      name: "referralSource",
+      title: "Referral Source",
+      type: "string",
     }),
     defineField({
       name: "submittedAt",
@@ -33,7 +46,14 @@ export const contactSubmission = defineType({
       type: "datetime",
     }),
   ],
+  orderings: [
+    {
+      title: "Newest First",
+      name: "submittedAtDesc",
+      by: [{ field: "submittedAt", direction: "desc" }],
+    },
+  ],
   preview: {
-    select: { title: "name", subtitle: "subject" },
+    select: { title: "name", subtitle: "intent" },
   },
 });
