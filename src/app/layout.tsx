@@ -31,7 +31,10 @@ export default async function RootLayout({
     query: navigationQuery,
   });
 
-  const navItems = navData?.items ?? fallbackNavItems;
+  // Use fallback when Sanity returns no items or incomplete nav data
+  const sanityItems = navData?.items;
+  const navItems =
+    sanityItems && sanityItems.length >= 4 ? sanityItems : fallbackNavItems;
 
   /* Read server-side cookie so the initial HTML class avoids a flash */
   let initialClass = "";

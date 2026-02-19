@@ -1,9 +1,8 @@
 "use client";
 
-import { X, Sun, Moon } from "lucide-react";
+import { X } from "lucide-react";
 import Link from "next/link";
 import type { NavItem } from "@/lib/placeholder-data";
-import { useTheme } from "@/components/ThemeProvider";
 
 type Props = {
   isOpen: boolean;
@@ -19,7 +18,6 @@ export default function NavOverlay({
   items,
 }: Props) {
   const sorted = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  const { theme, toggle } = useTheme();
 
   return (
     <>
@@ -39,8 +37,8 @@ export default function NavOverlay({
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Close button + theme toggle */}
-        <div className="flex items-center justify-between px-6 py-5 md:px-8 md:py-6">
+        {/* Close button */}
+        <div className="flex items-center px-6 py-5 md:px-8 md:py-6">
           <button
             onClick={onClose}
             aria-label="Close menu"
@@ -50,19 +48,6 @@ export default function NavOverlay({
             <span className="text-xs tracking-widest uppercase text-foreground">
               Close
             </span>
-          </button>
-
-          {/* Theme toggle */}
-          <button
-            onClick={toggle}
-            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-            className="text-muted-foreground hover:text-foreground transition-colors duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center"
-          >
-            {theme === "light" ? (
-              <Moon className="h-4 w-4" />
-            ) : (
-              <Sun className="h-4 w-4" />
-            )}
           </button>
         </div>
 
