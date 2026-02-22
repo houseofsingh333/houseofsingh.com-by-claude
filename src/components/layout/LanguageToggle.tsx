@@ -7,28 +7,37 @@ type Props = {
 };
 
 /*
- * ── TEST CHECKLIST ──────────────────────────────────────────────────
- * 1. Navigate to /about  → "E" should be black with bullet, "ਪ" gray.
- *    Click "ਪ" → URL should become /pa/about, "ਪ" black with bullet.
- * 2. Navigate to /pa/about → "ਪ" should be black with bullet, "E" gray.
- *    Click "E" → URL should become /about, "E" black with bullet.
- * 3. Navigate to / → click "ਪ" → URL should become /pa (not /pa/).
- *    Click "E" → URL should become / (not empty string).
- * 4. Repeat all above on mobile (touch) — every tap must register.
- * 5. Add ?foo=bar#section to URL, toggle — params and hash preserved.
- * 6. Rapidly toggle 5× — should never produce /pa/pa double prefix.
- * ────────────────────────────────────────────────────────────────────
+ * ── DESKTOP RELIABILITY FIX ───────────────────────────────────────
+ * Root cause: NavOverlay (z-50) and NewsletterModal (z-60/61) render
+ * full-screen fixed elements even when closed, relying on
+ * pointer-events:none. On desktop, mouse hit-testing through 5+
+ * stacked pointer-events:none layers is unreliable — clicks silently
+ * fail. Mobile touch is unaffected because touch target resolution
+ * happens at touchstart before hit-testing the layer stack.
+ *
+ * Fix: explicit pointer-events:auto + relative positioning + z-index
+ * on the toggle group and every button, so they assertively capture
+ * clicks regardless of what sits above or below in the stacking order.
+ * ──────────────────────────────────────────────────────────────────
+ *
+ * ── TEST CHECKLIST ───────────────────────────────────────────────
+ * 1. /about  → E black+bullet, ਪ gray. Click ਪ → /pa/about.
+ * 2. /pa/about → ਪ black+bullet, E gray. Click E → /about.
+ * 3. / → click ਪ → /pa. Click E → /.
+ * 4. Desktop: click each letter 10× rapidly — every click navigates.
+ * 5. Mobile: tap each letter — every tap navigates.
+ * 6. ?foo=bar#s in URL → toggle preserves params and hash.
+ * 7. Rapid toggle → never produces /pa/pa.
+ * ─────────────────────────────────────────────────────────────────
  */
 
 export default function LanguageToggle({ tabIndex = 0 }: Props) {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Robust check: only match /pa or /pa/… (not /pages, /party, etc.)
   const isPa = pathname === "/pa" || pathname.startsWith("/pa/");
 
   const switchTo = (lang: "en" | "pa") => {
-    // Preserve query params and hash from the browser URL
     const suffix =
       typeof window !== "undefined"
         ? window.location.search + window.location.hash
@@ -37,11 +46,10 @@ export default function LanguageToggle({ tabIndex = 0 }: Props) {
     let next: string;
 
     if (lang === "en") {
-      if (!isPa) return; // already English
+      if (!isPa) return;
       next = pathname.slice(3) || "/";
     } else {
-      if (isPa) return; // already Punjabi
-      // Guard: never double-prefix
+      if (isPa) return;
       next = "/pa" + (pathname === "/" ? "" : pathname);
     }
 
@@ -49,7 +57,12 @@ export default function LanguageToggle({ tabIndex = 0 }: Props) {
   };
 
   return (
-    <div role="group" aria-label="Language" className="flex items-center gap-3">
+    <div
+      role="group"
+      aria-label="Language"
+      className="relative z-10 flex items-center gap-1.5"
+      style={{ pointerEvents: "auto" }}
+    >
       <LangButton
         label="E"
         ariaLabel="English"
@@ -101,23 +114,24 @@ function LangButton({
       aria-pressed={active}
       aria-label={ariaLabel}
       tabIndex={tabIndex}
-      className="flex flex-col items-center justify-center min-h-[44px] min-w-[36px] px-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/60 focus-visible:ring-offset-2"
+      className="relative flex flex-col items-center justify-center min-h-[36px] min-w-[36px] rounded cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/60 focus-visible:ring-offset-2"
+      style={{ pointerEvents: "auto" }}
     >
       <span
-        className="select-none leading-none"
+        className="select-none leading-none transition-opacity duration-150"
         style={{
           ...fontStyle,
           color: active ? "var(--foreground)" : "rgba(0,0,0,0.35)",
-          transition: "color 150ms ease-out",
+          transition: "color 150ms ease-out, opacity 150ms ease-out",
         }}
       >
         {label}
       </span>
 
-      {/* Bullet indicator — always in DOM for stable layout, invisible when inactive */}
+      {/* Bullet — always in DOM for stable layout, transparent when inactive */}
       <span
         aria-hidden="true"
-        className="block w-[5px] h-[5px] rounded-full mt-[4px]"
+        className="block w-[5px] h-[5px] rounded-full mt-[3px]"
         style={{
           backgroundColor: active ? "var(--foreground)" : "transparent",
           transition: "background-color 150ms ease-out",

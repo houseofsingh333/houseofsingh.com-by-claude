@@ -157,12 +157,14 @@ export default function Header({ items }: Props) {
           />
         </div>
 
-        {/* Dot menu — left, top edge at 32px rail */}
+        {/* Dot menu — left, top edge at 32px rail.
+            z-10 + pointer-events:auto — same fix as toggle (see comment there). */}
         <button
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
           tabIndex={showState1 ? 0 : -1}
-          className="absolute top-[32px] left-5 md:left-8 min-h-[44px] min-w-[44px] p-0 flex items-center gap-2 group"
+          className="absolute top-[32px] left-5 md:left-8 z-10 min-h-[44px] min-w-[44px] p-0 flex items-center gap-2 group"
+          style={{ pointerEvents: "auto" }}
         >
           <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
           <span className="text-xs tracking-widest uppercase text-foreground transition-all duration-300 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0">
@@ -170,8 +172,15 @@ export default function Header({ items }: Props) {
           </span>
         </button>
 
-        {/* Language toggle — right, top edge at 32px rail */}
-        <div className="absolute top-[32px] right-5 md:right-8 flex items-center min-h-[44px]">
+        {/* Language toggle — right, top edge at 32px rail.
+            z-10 + pointer-events:auto ensures clicks register above
+            the crest and any closed overlay layers (NavOverlay z-50,
+            NewsletterModal z-60/61) that sit in the DOM with
+            pointer-events:none. */}
+        <div
+          className="absolute top-[32px] right-5 md:right-8 z-10 flex items-center min-h-[44px]"
+          style={{ pointerEvents: "auto" }}
+        >
           <LanguageToggle tabIndex={showState1 ? 0 : -1} />
         </div>
       </header>
