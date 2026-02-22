@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
-import type { HeroSlide } from "@/lib/placeholder-data";
+import { normalizeText, type HeroSlide } from "@/lib/placeholder-data";
 
 type Props = {
   slides: HeroSlide[];
@@ -25,9 +25,9 @@ export default function HeroSlider({ slides }: Props) {
   if (slides.length === 0) return null;
 
   const slide = slides[current];
-  const heading = slide.heading ?? "";
-  const subheading = slide.subheading ?? "";
-  const caption = slide.caption ?? "";
+  const heading = normalizeText(slide.heading);
+  const subheading = normalizeText(slide.subheading);
+  const caption = normalizeText(slide.caption);
 
   const inner = (
     <div className="relative w-full h-screen bg-secondary flex items-center justify-center overflow-hidden cursor-pointer">
@@ -42,7 +42,7 @@ export default function HeroSlider({ slides }: Props) {
           <SanityImage
             image={s.image}
             context="hero"
-            alt={s.imageAlt || s.caption || "Hero"}
+            alt={normalizeText(s.imageAlt) || normalizeText(s.caption) || "Hero"}
             priority={i === 0}
             fill
             className="object-cover"

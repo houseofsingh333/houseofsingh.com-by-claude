@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
-import type { SpotlightProject } from "@/lib/placeholder-data";
+import { normalizeText, type SpotlightProject } from "@/lib/placeholder-data";
 
 type Props = {
   project: SpotlightProject;
@@ -17,7 +17,7 @@ export default function SpotlightSection({ project }: Props) {
         <SanityImage
           image={project.image}
           context="hero"
-          alt={project.title}
+          alt={normalizeText(project.title)}
           priority
           fill
           className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-[1.03]"
@@ -31,10 +31,10 @@ export default function SpotlightSection({ project }: Props) {
             Spotlight
           </p>
           <h3 className="font-editorial text-2xl md:text-5xl lg:text-6xl font-light text-white leading-[1.1] max-w-2xl">
-            {project.title}
+            {normalizeText(project.title)}
           </h3>
           <p className="text-white/60 text-sm md:text-base leading-relaxed mt-4 max-w-lg">
-            {project.description}
+            {normalizeText(project.description)}
           </p>
           <span className="inline-block mt-8 text-xs tracking-widest uppercase text-white/80 border-b border-white/30 pb-1 group-hover:border-white transition-colors duration-500 w-fit">
             View project

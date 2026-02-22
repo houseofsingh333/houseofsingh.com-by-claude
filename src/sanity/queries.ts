@@ -18,27 +18,39 @@ const _imageAsset = `{
 // --------------- Navigation ---------------
 
 export const navigationQuery = `*[_type == "navigation"][0]{
-  items[]{ label, href, external, order }
+  items[]{ "label": coalesce(label.en, label), href, external, order }
 }`;
 
 // --------------- Site Settings ---------------
 
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
-  siteTitle, tagline, footerText, spotifyPlaylistUrl
+  siteTitle,
+  "tagline": coalesce(tagline.en, tagline),
+  "footerText": coalesce(footerText.en, footerText),
+  spotifyPlaylistUrl
 }`;
 
 // --------------- About Page ---------------
 
 export const aboutPageQuery = `*[_type == "aboutPage"][0]{
-  introQuote,
+  "introQuote": coalesce(introQuote.en, introQuote),
   founderName,
-  founderRoles,
-  founderBio,
+  "founderRoles": coalesce(founderRoles.en, founderRoles),
+  "founderBio": coalesce(founderBio.en, founderBio),
   "portrait": portrait ${_imageAsset},
   "monikerLogo": monikerLogo.asset->url,
-  monikerText,
-  milestones[]{ year, title, text, "image": image ${_imageAsset} },
-  testimonials[]{ quote, name, role },
+  "monikerText": coalesce(monikerText.en, monikerText),
+  milestones[]{
+    year,
+    "title": coalesce(title.en, title),
+    "text": coalesce(text.en, text),
+    "image": image ${_imageAsset}
+  },
+  testimonials[]{
+    "quote": coalesce(quote.en, quote),
+    name,
+    role
+  },
   seoTitle,
   seoDescription
 }`;
@@ -47,11 +59,11 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
 
 export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
   _id,
-  heading,
-  subheading,
+  "heading": coalesce(heading.en, heading),
+  "subheading": coalesce(subheading.en, subheading),
   "image": image ${_imageAsset},
   "imageAlt": coalesce(image.alt, imageAlt),
-  caption,
+  "caption": coalesce(caption.en, caption),
   internalLink,
   externalLink
 }`;
@@ -66,38 +78,43 @@ export const projectCategoriesQuery = `*[_type == "projectCategory"] | order(ord
 // --------------- Projects ---------------
 
 export const projectsListQuery = `*[_type == "project"] | order(title asc){
-  _id, title, "slug": slug.current, category,
+  _id, "title": coalesce(title.en, title), "slug": slug.current, category,
   "thumbnail": thumbnail ${_imageAsset},
-  thumbnailAlt, excerpt
+  thumbnailAlt, "excerpt": coalesce(excerpt.en, excerpt)
 }`;
 
 export const projectsByCategoryQuery = `*[_type == "project" && category == $category] | order(title asc){
-  _id, title, "slug": slug.current, category,
+  _id, "title": coalesce(title.en, title), "slug": slug.current, category,
   "thumbnail": thumbnail ${_imageAsset},
-  thumbnailAlt, excerpt
+  thumbnailAlt, "excerpt": coalesce(excerpt.en, excerpt)
 }`;
 
 export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug][0]{
-  _id, title, "slug": slug.current, category, excerpt, body,
+  _id, "title": coalesce(title.en, title), "slug": slug.current, category,
+  "excerpt": coalesce(excerpt.en, excerpt),
+  "body": coalesce(body.en, body),
   "images": images[]${_imageAsset}
 }`;
 
 // --------------- Spotlight Project ---------------
 
 export const spotlightProjectQuery = `*[_type == "project" && spotlight == true][0]{
-  _id, title, "slug": slug.current,
-  "description": excerpt,
+  _id, "title": coalesce(title.en, title), "slug": slug.current,
+  "description": coalesce(excerpt.en, excerpt),
   "image": thumbnail ${_imageAsset}
 }`;
 
 // --------------- Journal ---------------
 
 export const journalFeedQuery = `*[_type == "journalEntry"] | order(date desc){
-  _id, title, "slug": slug.current, date, excerpt,
+  _id, "title": coalesce(title.en, title), "slug": slug.current, date,
+  "excerpt": coalesce(excerpt.en, excerpt),
   "coverImage": coverImage ${_imageAsset}
 }`;
 
 export const journalBySlugQuery = `*[_type == "journalEntry" && slug.current == $slug][0]{
-  _id, title, "slug": slug.current, date, excerpt, body,
+  _id, "title": coalesce(title.en, title), "slug": slug.current, date,
+  "excerpt": coalesce(excerpt.en, excerpt),
+  "body": coalesce(body.en, body),
   "coverImage": coverImage ${_imageAsset}
 }`;

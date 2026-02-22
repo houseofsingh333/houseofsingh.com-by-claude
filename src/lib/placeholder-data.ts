@@ -9,6 +9,26 @@ import type { SanityImageAsset } from "@/lib/sanityImage";
 /** Image field from Sanity can be a full asset object or a plain URL string. */
 export type SanityImage = SanityImageAsset | string;
 
+// --------------- Helpers ---------------
+
+/**
+ * Normalise a CMS text value to a plain string.
+ *
+ * If the field hasn't been migrated yet it may still be a bilingual
+ * object like `{ en: "Hello", pa: "ਸਤ ਸ੍ਰੀ ਅਕਾਲ" }`. This helper
+ * extracts the English value and guarantees a string return type,
+ * preventing React error #31 ("Objects are not valid as a React child").
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function normalizeText(value: any): string {
+  if (value == null) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return value.en ?? value.pa ?? "";
+  }
+  return String(value);
+}
+
 // --------------- Types ---------------
 
 export type NavItem = {

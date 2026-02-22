@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
-import type { JournalEntry } from "@/lib/placeholder-data";
+import { normalizeText, type JournalEntry } from "@/lib/placeholder-data";
 
 type Props = {
   entries: JournalEntry[];
@@ -68,7 +68,7 @@ export default function JournalPreview({ entries }: Props) {
               {/* Title / excerpt */}
               <div className="flex-1 min-w-0">
                 <h3 className="font-editorial text-lg md:text-3xl lg:text-4xl font-light text-foreground leading-tight transition-all duration-500 group-hover:tracking-wide">
-                  {entry.title || entry.excerpt}
+                  {normalizeText(entry.title) || normalizeText(entry.excerpt)}
                 </h3>
               </div>
 
@@ -85,11 +85,11 @@ export default function JournalPreview({ entries }: Props) {
 
             {/* Excerpt — always visible on mobile, hover-only on desktop */}
             <p className="text-sm text-muted-foreground mt-2 max-w-lg leading-relaxed md:hidden line-clamp-2">
-              {entry.excerpt}
+              {normalizeText(entry.excerpt)}
             </p>
             <div className="hidden md:block overflow-hidden transition-all duration-500 max-h-0 group-hover:max-h-16 opacity-0 group-hover:opacity-100">
               <p className="text-sm text-muted-foreground mt-3 ml-12 max-w-lg leading-relaxed">
-                {entry.excerpt}
+                {normalizeText(entry.excerpt)}
               </p>
             </div>
 
