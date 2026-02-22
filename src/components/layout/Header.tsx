@@ -2,10 +2,9 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { Sun, Moon } from "lucide-react";
 import NavOverlay from "./NavOverlay";
 import NewsletterModal from "@/components/NewsletterModal";
-import { useTheme } from "@/components/ThemeProvider";
+import LanguageToggle from "./LanguageToggle";
 import type { NavItem } from "@/lib/placeholder-data";
 
 const SESSION_KEY = "hos_intro_seen";
@@ -24,7 +23,6 @@ export default function Header({ items }: Props) {
   const [introFading, setIntroFading] = useState(false);
   const [introDone, setIntroDone] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { theme, toggle } = useTheme();
 
   /* ── State 0: decide whether to play intro ── */
   useEffect(() => {
@@ -100,7 +98,7 @@ export default function Header({ items }: Props) {
       {/* ═══ STATE 0 : Video intro overlay ═══ */}
       {introVisible && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-white dark:bg-white"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-white"
           style={{
             opacity: introFading ? 0 : 1,
             transition: "opacity 500ms ease-in-out",
@@ -134,7 +132,7 @@ export default function Header({ items }: Props) {
         </div>
       )}
 
-      {/* ═══ STATE 1 : Crest + icons — all top-edges at 32px rail ═══ */}
+      {/* ═══ STATE 1 : Crest + controls — top-edges at 32px rail ═══ */}
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-opacity duration-[250ms] ease-in-out ${
           showState1 ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -142,9 +140,7 @@ export default function Header({ items }: Props) {
         aria-hidden={!showState1}
       >
         {/* Crest — center, CSS mask so it renders in currentColor */}
-        <div
-          className="absolute top-[32px] left-1/2 -translate-x-1/2 pointer-events-none"
-        >
+        <div className="absolute top-[32px] left-1/2 -translate-x-1/2 pointer-events-none">
           <div
             className="text-foreground w-[104px] h-[104px] md:w-[225px] md:h-[225px] -mt-6 md:-mt-[51px]"
             style={{
@@ -174,24 +170,15 @@ export default function Header({ items }: Props) {
           </span>
         </button>
 
-        {/* Theme toggle — right, top edge at 32px rail */}
-        <button
-          onClick={toggle}
-          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-          tabIndex={showState1 ? 0 : -1}
-          className="absolute top-[32px] right-5 md:right-8 text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[44px] min-w-[44px] p-0"
-        >
-          {theme === "light" ? (
-            <Moon className="h-4 w-4" />
-          ) : (
-            <Sun className="h-4 w-4" />
-          )}
-        </button>
+        {/* Language toggle — right, top edge at 32px rail */}
+        <div className="absolute top-[32px] right-5 md:right-8 flex items-center min-h-[44px]">
+          <LanguageToggle tabIndex={showState1 ? 0 : -1} />
+        </div>
       </header>
 
-      {/* ═══ STATE 2 : Scrolled white strip header ═══ */}
+      {/* ═══ STATE 2 : Scrolled white bar header ═══ */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-[68px] flex items-center justify-between px-5 md:px-8 bg-background/95 backdrop-blur-sm border-b border-border/40 transition-opacity duration-[250ms] ease-in-out ${
+        className={`fixed top-0 left-0 right-0 z-50 h-[68px] flex items-center justify-between px-5 md:px-8 bg-white border-b border-border/40 transition-opacity duration-[250ms] ease-in-out ${
           showState2 ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         aria-hidden={!showState2}
@@ -221,19 +208,8 @@ export default function Header({ items }: Props) {
           </span>
         </Link>
 
-        {/* Right: theme toggle */}
-        <button
-          onClick={toggle}
-          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-          tabIndex={showState2 ? 0 : -1}
-          className="text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center"
-        >
-          {theme === "light" ? (
-            <Moon className="h-4 w-4" />
-          ) : (
-            <Sun className="h-4 w-4" />
-          )}
-        </button>
+        {/* Right: language toggle */}
+        <LanguageToggle tabIndex={showState2 ? 0 : -1} />
       </header>
 
       <NavOverlay

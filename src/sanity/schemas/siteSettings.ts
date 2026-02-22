@@ -14,12 +14,20 @@ export const siteSettings = defineType({
     defineField({
       name: "tagline",
       title: "Tagline",
-      type: "string",
+      type: "object",
+      fields: [
+        defineField({ name: "en", title: "English", type: "string" }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
+      ],
     }),
     defineField({
       name: "footerText",
       title: "Footer Text",
-      type: "string",
+      type: "object",
+      fields: [
+        defineField({ name: "en", title: "English", type: "string" }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
+      ],
     }),
     defineField({
       name: "spotifyPlaylistUrl",

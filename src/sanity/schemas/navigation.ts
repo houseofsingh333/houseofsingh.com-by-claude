@@ -16,8 +16,20 @@ export const navigation = defineType({
             defineField({
               name: "label",
               title: "Label",
-              type: "string",
-              validation: (rule) => rule.required(),
+              type: "object",
+              fields: [
+                defineField({
+                  name: "en",
+                  title: "English",
+                  type: "string",
+                  validation: (rule) => rule.required(),
+                }),
+                defineField({
+                  name: "pa",
+                  title: "Punjabi (ਪੰਜਾਬੀ)",
+                  type: "string",
+                }),
+              ],
             }),
             defineField({
               name: "href",

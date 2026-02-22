@@ -1,5 +1,17 @@
 import { defineField, defineType } from "sanity";
 
+const bodyMembers = [
+  { type: "block" },
+  {
+    type: "image",
+    options: { hotspot: true },
+    fields: [
+      defineField({ name: "alt", title: "Alt Text", type: "string" }),
+      defineField({ name: "caption", title: "Caption", type: "string" }),
+    ],
+  },
+];
+
 export const journalEntry = defineType({
   name: "journalEntry",
   title: "Journal Entry",
@@ -8,14 +20,17 @@ export const journalEntry = defineType({
     defineField({
       name: "title",
       title: "Title",
-      type: "string",
-      validation: (rule) => rule.required(),
+      type: "object",
+      fields: [
+        defineField({ name: "en", title: "English", type: "string", validation: (r) => r.required() }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
+      ],
     }),
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "title", maxLength: 96 },
+      options: { source: "title.en", maxLength: 96 },
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -27,9 +42,12 @@ export const journalEntry = defineType({
     defineField({
       name: "excerpt",
       title: "Excerpt",
-      type: "text",
-      rows: 3,
+      type: "object",
       description: "Short summary shown in listings.",
+      fields: [
+        defineField({ name: "en", title: "English", type: "text", rows: 3 }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "text", rows: 3 }),
+      ],
     }),
     defineField({
       name: "coverImage",
@@ -57,25 +75,10 @@ export const journalEntry = defineType({
     defineField({
       name: "body",
       title: "Body",
-      type: "array",
-      of: [
-        { type: "block" },
-        {
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            defineField({
-              name: "alt",
-              title: "Alt Text",
-              type: "string",
-            }),
-            defineField({
-              name: "caption",
-              title: "Caption",
-              type: "string",
-            }),
-          ],
-        },
+      type: "object",
+      fields: [
+        defineField({ name: "en", title: "English", type: "array", of: bodyMembers }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "array", of: bodyMembers }),
       ],
     }),
     defineField({
@@ -97,6 +100,6 @@ export const journalEntry = defineType({
     },
   ],
   preview: {
-    select: { title: "title", subtitle: "date", media: "coverImage" },
+    select: { title: "title.en", subtitle: "date", media: "coverImage" },
   },
 });

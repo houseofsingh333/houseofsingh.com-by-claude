@@ -8,23 +8,40 @@ export const contactPage = defineType({
     defineField({
       name: "heading",
       title: "Page Heading",
-      type: "string",
+      type: "object",
       description: "Main heading shown on the contact page.",
+      fields: [
+        defineField({ name: "en", title: "English", type: "string" }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
+      ],
     }),
     defineField({
       name: "subheading",
       title: "Subheading",
-      type: "text",
-      rows: 2,
+      type: "object",
       description: "Text shown below the heading.",
+      fields: [
+        defineField({ name: "en", title: "English", type: "text", rows: 2 }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "text", rows: 2 }),
+      ],
     }),
     defineField({
       name: "reasons",
       title: "Contact Reasons",
       type: "array",
-      of: [{ type: "string" }],
-      description:
-        'Options shown in Step 1 (e.g. "Project Query", "Collaboration", "Media").',
+      description: 'Options shown in Step 1 (e.g. "Project Query", "Collaboration", "Media").',
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({ name: "en", title: "English", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
+          ],
+          preview: {
+            select: { title: "en" },
+          },
+        },
+      ],
     }),
     defineField({
       name: "seoTitle",

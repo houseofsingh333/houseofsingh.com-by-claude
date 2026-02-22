@@ -9,9 +9,12 @@ export const aboutPage = defineType({
     defineField({
       name: "introQuote",
       title: "Intro Quote",
-      type: "string",
-      description:
-        "Large opening quote displayed hero-style at the top of the page.",
+      type: "object",
+      description: "Large opening quote displayed hero-style at the top of the page.",
+      fields: [
+        defineField({ name: "en", title: "English", type: "string" }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
+      ],
     }),
 
     /* ——— 2 · Founder Section ——— */
@@ -24,17 +27,22 @@ export const aboutPage = defineType({
     defineField({
       name: "founderRoles",
       title: "Founder Roles",
-      type: "array",
-      of: [{ type: "string" }],
-      description:
-        'Displayed as stacked role titles (e.g. "Creative Director", "Photographer").',
+      type: "object",
+      description: 'Displayed as stacked role titles (e.g. "Creative Director", "Photographer").',
+      fields: [
+        defineField({ name: "en", title: "English", type: "array", of: [{ type: "string" }] }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "array", of: [{ type: "string" }] }),
+      ],
     }),
     defineField({
       name: "founderBio",
       title: "Founder Bio",
-      type: "array",
-      of: [{ type: "block" }],
+      type: "object",
       description: "Bio paragraphs beside the portrait.",
+      fields: [
+        defineField({ name: "en", title: "English", type: "array", of: [{ type: "block" }] }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "array", of: [{ type: "block" }] }),
+      ],
     }),
     defineField({
       name: "portrait",
@@ -65,9 +73,12 @@ export const aboutPage = defineType({
     defineField({
       name: "monikerText",
       title: "Moniker Text",
-      type: "array",
-      of: [{ type: "block" }],
+      type: "object",
       description: "Description of the House of Singh identity.",
+      fields: [
+        defineField({ name: "en", title: "English", type: "array", of: [{ type: "block" }] }),
+        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "array", of: [{ type: "block" }] }),
+      ],
     }),
 
     /* ——— 4 · Timeline ——— */
@@ -88,13 +99,20 @@ export const aboutPage = defineType({
             defineField({
               name: "title",
               title: "Title",
-              type: "string",
-              validation: (rule) => rule.required(),
+              type: "object",
+              fields: [
+                defineField({ name: "en", title: "English", type: "string", validation: (r) => r.required() }),
+                defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
+              ],
             }),
             defineField({
               name: "text",
               title: "Description",
-              type: "string",
+              type: "object",
+              fields: [
+                defineField({ name: "en", title: "English", type: "string" }),
+                defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
+              ],
             }),
             defineField({
               name: "image",
@@ -115,7 +133,7 @@ export const aboutPage = defineType({
             }),
           ],
           preview: {
-            select: { title: "title", subtitle: "year" },
+            select: { title: "title.en", subtitle: "year" },
           },
         },
       ],
@@ -133,8 +151,11 @@ export const aboutPage = defineType({
             defineField({
               name: "quote",
               title: "Quote",
-              type: "text",
-              validation: (rule) => rule.required(),
+              type: "object",
+              fields: [
+                defineField({ name: "en", title: "English", type: "text", validation: (r) => r.required() }),
+                defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "text" }),
+              ],
             }),
             defineField({
               name: "name",

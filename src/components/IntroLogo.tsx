@@ -130,7 +130,7 @@ export default function IntroLogo() {
             width={300}
             height={300}
             priority
-            className="dark:invert"
+            className=""
           />
         </motion.div>
       </>

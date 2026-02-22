@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import ThemeProvider from "@/components/ThemeProvider";
+import LangProvider, { type Lang } from "@/components/LangProvider";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -31,31 +31,34 @@ export default async function RootLayout({
     query: navigationQuery,
   });
 
-  // Use fallback when Sanity returns no items or incomplete nav data
   const sanityItems = navData?.items;
   const navItems =
     sanityItems && sanityItems.length >= 4 ? sanityItems : fallbackNavItems;
 
-  /* Read server-side cookie so the initial HTML class avoids a flash */
-  let initialClass = "";
+  // Read lang from the x-lang header set by middleware
+  // This is available server-side without a client round-trip
+  let lang: Lang = "en";
   try {
-    const cookieStore = await cookies();
-    const themeCookie = cookieStore.get("theme")?.value;
-    initialClass = themeCookie === "dark" ? "dark" : "";
+    const headersList = await headers();
+    const xLang = headersList.get("x-lang");
+    if (xLang === "pa") lang = "pa";
   } catch {
-    // cookies() can fail in certain serverless contexts — fall back to light
+    // headers() can fail in certain environments — default to English
   }
 
   return (
-    <html lang="en" className={initialClass}>
+    <html
+      lang={lang === "pa" ? "pa" : "en"}
+      data-lang={lang}
+    >
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
-        <ThemeProvider>
+        <LangProvider lang={lang}>
           <Header items={navItems} />
           <main id="main-content" className="flex-1">
             {children}
           </main>
           <Footer items={navItems} />
-        </ThemeProvider>
+        </LangProvider>
         <SpeedInsights />
       </body>
     </html>
