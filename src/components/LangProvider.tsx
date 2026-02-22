@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 export type Lang = "en" | "pa";
 
@@ -11,11 +12,13 @@ export function useLang(): Lang {
 }
 
 export default function LangProvider({
-  lang,
   children,
 }: {
-  lang: Lang;
+  lang?: Lang;
   children: ReactNode;
 }) {
+  const pathname = usePathname();
+  const lang: Lang = pathname.startsWith("/pa") ? "pa" : "en";
+
   return <LangContext.Provider value={lang}>{children}</LangContext.Provider>;
 }
