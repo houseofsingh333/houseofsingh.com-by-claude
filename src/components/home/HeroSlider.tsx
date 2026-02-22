@@ -25,8 +25,6 @@ export default function HeroSlider({ slides }: Props) {
   if (slides.length === 0) return null;
 
   const slide = slides[current];
-  const heading = normalizeText(slide.heading);
-  const subheading = normalizeText(slide.subheading);
   const caption = normalizeText(slide.caption);
 
   /* Link destination for the current slide (may change between slides). */
@@ -75,26 +73,6 @@ export default function HeroSlider({ slides }: Props) {
             />
           </div>
         ))}
-
-        {/* Centre overlay: heading + subheading */}
-        {(heading || subheading) && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
-            {heading && (
-              <h1
-                className="text-3xl md:text-5xl lg:text-6xl font-semibold text-foreground drop-shadow-lg"
-              >
-                {heading}
-              </h1>
-            )}
-            {subheading && (
-              <p
-                className="mt-3 text-base md:text-xl lg:text-2xl text-foreground/80 drop-shadow-md"
-              >
-                {subheading}
-              </p>
-            )}
-          </div>
-        )}
 
         {/* Bottom-left: dots + caption */}
         <div className="absolute bottom-6 left-5 md:bottom-8 md:left-8 z-10 flex items-center gap-4 md:gap-5">
