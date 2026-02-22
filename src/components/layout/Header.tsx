@@ -146,10 +146,8 @@ export default function Header({ items }: Props) {
           className="absolute top-[32px] left-1/2 -translate-x-1/2 pointer-events-none"
         >
           <div
-            className="text-foreground"
+            className="text-foreground w-[90px] h-[90px] md:w-[225px] md:h-[225px] -mt-5 md:-mt-[51px]"
             style={{
-              width: 225,
-              height: 225,
               backgroundColor: "currentColor",
               WebkitMaskImage: "url(/images/hos-logo.svg)",
               maskImage: "url(/images/hos-logo.svg)",
@@ -157,7 +155,6 @@ export default function Header({ items }: Props) {
               maskSize: "contain",
               WebkitMaskRepeat: "no-repeat",
               maskRepeat: "no-repeat",
-              marginTop: -51,
             }}
             role="img"
             aria-label="House of Singh crest"
