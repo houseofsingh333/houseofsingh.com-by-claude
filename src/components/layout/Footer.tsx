@@ -3,15 +3,13 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useLang } from "@/components/LangProvider";
-import { getText, type NavItem } from "@/lib/placeholder-data";
+import type { NavItem } from "@/lib/placeholder-data";
 
 type Props = {
   items: NavItem[];
 };
 
 export default function Footer({ items }: Props) {
-  const lang = useLang();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
@@ -77,7 +75,7 @@ export default function Footer({ items }: Props) {
                 href={link.href}
                 className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-1"
               >
-                {getText(link.label, lang)}
+                {link.label}
               </Link>
             ))}
           </div>

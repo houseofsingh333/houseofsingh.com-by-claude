@@ -8,17 +8,14 @@ export const project = defineType({
     defineField({
       name: "title",
       title: "Title",
-      type: "object",
-      fields: [
-        defineField({ name: "en", title: "English", type: "string", validation: (r) => r.required() }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
-      ],
+      type: "string",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "title.en" },
+      options: { source: "title" },
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -30,21 +27,15 @@ export const project = defineType({
     defineField({
       name: "excerpt",
       title: "Excerpt",
-      type: "object",
-      fields: [
-        defineField({ name: "en", title: "English", type: "text", rows: 3 }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "text", rows: 3 }),
-      ],
+      type: "text",
+      rows: 3,
       description: "Short summary shown in project grid cards.",
     }),
     defineField({
       name: "body",
       title: "Body",
-      type: "object",
-      fields: [
-        defineField({ name: "en", title: "English", type: "array", of: [{ type: "block" }] }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "array", of: [{ type: "block" }] }),
-      ],
+      type: "array",
+      of: [{ type: "block" }],
       description: "Full project write-up (Portable Text).",
     }),
     defineField({
@@ -98,6 +89,6 @@ export const project = defineType({
     }),
   ],
   preview: {
-    select: { title: "title.en", subtitle: "category", media: "thumbnail" },
+    select: { title: "title", subtitle: "category", media: "thumbnail" },
   },
 });

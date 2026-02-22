@@ -2,8 +2,7 @@
 
 import { X } from "lucide-react";
 import Link from "next/link";
-import { useLang } from "@/components/LangProvider";
-import { getText, type NavItem } from "@/lib/placeholder-data";
+import type { NavItem } from "@/lib/placeholder-data";
 
 type Props = {
   isOpen: boolean;
@@ -18,7 +17,6 @@ export default function NavOverlay({
   onNewsletterOpen,
   items,
 }: Props) {
-  const lang = useLang();
   const sorted = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   return (
@@ -53,42 +51,34 @@ export default function NavOverlay({
           </button>
         </div>
 
-        {/* Nav items — sans-serif font, mobile-optimized sizing */}
+        {/* Nav items */}
         <ul className="flex flex-col gap-0 px-6 md:px-8 pt-8 md:pt-12 flex-1 overflow-y-auto">
-          {sorted.map((item) => {
-            const label = getText(item.label, lang);
-            const isPa = lang === "pa" && item.label?.pa;
-            return (
-              <li key={item.href} className="border-b border-border/50">
-                {item.external ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={onClose}
-                    className={`flex items-center justify-between py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[48px] ${
-                      isPa ? "font-[NotoSansGurmukhi]" : ""
-                    }`}
-                  >
-                    {label}
-                    <span className="text-xs tracking-widest text-muted-foreground">
-                      ↗
-                    </span>
-                  </a>
-                ) : (
-                  <Link
-                    href={item.href}
-                    onClick={onClose}
-                    className={`block py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[48px] ${
-                      isPa ? "font-[NotoSansGurmukhi]" : ""
-                    }`}
-                  >
-                    {label}
-                  </Link>
-                )}
-              </li>
-            );
-          })}
+          {sorted.map((item) => (
+            <li key={item.href} className="border-b border-border/50">
+              {item.external ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={onClose}
+                  className="flex items-center justify-between py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[48px]"
+                >
+                  {item.label}
+                  <span className="text-xs tracking-widest text-muted-foreground">
+                    ↗
+                  </span>
+                </a>
+              ) : (
+                <Link
+                  href={item.href}
+                  onClick={onClose}
+                  className="block py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[48px]"
+                >
+                  {item.label}
+                </Link>
+              )}
+            </li>
+          ))}
         </ul>
 
         {/* Bottom: Instagram + Newsletter */}

@@ -14,27 +14,19 @@ export const siteSettings = defineType({
     defineField({
       name: "tagline",
       title: "Tagline",
-      type: "object",
-      fields: [
-        defineField({ name: "en", title: "English", type: "string" }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
-      ],
+      type: "string",
     }),
     defineField({
       name: "footerText",
       title: "Footer Text",
-      type: "object",
-      fields: [
-        defineField({ name: "en", title: "English", type: "string" }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
-      ],
+      type: "string",
     }),
     defineField({
       name: "spotifyPlaylistUrl",
       title: "Spotify Playlist Embed URL",
       type: "url",
       description:
-        'The embed URL for your Spotify playlist (e.g. https://open.spotify.com/embed/playlist/...)',
+        "The embed URL for your Spotify playlist (e.g. https://open.spotify.com/embed/playlist/...)",
     }),
   ],
 });

@@ -12,34 +12,19 @@ export type SanityImage = SanityImageAsset | string;
 // --------------- Types ---------------
 
 export type NavItem = {
-  label: BilingualText;
+  label: string;
   href: string;
   external?: boolean;
   order?: number;
 };
 
-export type BilingualText = {
-  en?: string;
-  pa?: string;
-};
-
-/** Extract the current-language string from a bilingual field (or pass through a plain string). */
-export function getText(
-  field: BilingualText | string | undefined | null,
-  lang: "en" | "pa",
-): string {
-  if (!field) return "";
-  if (typeof field === "string") return field;
-  return field[lang] || field.en || "";
-}
-
 export type HeroSlide = {
   _id: string;
-  heading?: BilingualText;
-  subheading?: BilingualText;
+  heading?: string;
+  subheading?: string;
   image: SanityImage;
   imageAlt?: string;
-  caption?: BilingualText;
+  caption?: string;
   internalLink?: string;
   externalLink?: string;
 };
@@ -119,17 +104,17 @@ export type AboutPageData = {
 // --------------- Fallback Navigation ---------------
 
 export const fallbackNavItems: NavItem[] = [
-  { label: { en: "Home" }, href: "/", order: 1 },
-  { label: { en: "About" }, href: "/about", order: 2 },
-  { label: { en: "Projects" }, href: "/projects", order: 3 },
-  { label: { en: "Journal" }, href: "/journal", order: 4 },
+  { label: "Home", href: "/", order: 1 },
+  { label: "About", href: "/about", order: 2 },
+  { label: "Projects", href: "/projects", order: 3 },
+  { label: "Journal", href: "/journal", order: 4 },
   {
-    label: { en: "Studio" },
+    label: "Studio",
     href: "https://studios.houseofsingh.com",
     external: true,
     order: 5,
   },
-  { label: { en: "Contact" }, href: "/contact", order: 6 },
+  { label: "Contact", href: "/contact", order: 6 },
 ];
 
 // --------------- Fallback Hero Slides ---------------
@@ -138,19 +123,19 @@ export const fallbackHeroSlides: HeroSlide[] = [
   {
     _id: "hero-1",
     image: "/images/hero-placeholder-1.svg",
-    caption: { en: "House of Singh — Design Studio" },
+    caption: "House of Singh — Design Studio",
     internalLink: "/about",
   },
   {
     _id: "hero-2",
     image: "/images/hero-placeholder-2.svg",
-    caption: { en: "Crafted Spaces — Where vision meets execution" },
+    caption: "Crafted Spaces — Where vision meets execution",
     internalLink: "/projects",
   },
   {
     _id: "hero-3",
     image: "/images/hero-placeholder-3.svg",
-    caption: { en: "Timeless Interiors — Built to inspire and endure" },
+    caption: "Timeless Interiors — Built to inspire and endure",
     internalLink: "/journal",
   },
 ];

@@ -8,20 +8,12 @@ export const heroSlide = defineType({
     defineField({
       name: "heading",
       title: "Heading",
-      type: "object",
-      fields: [
-        defineField({ name: "en", title: "English", type: "string", validation: (r) => r.required() }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
-      ],
+      type: "string",
     }),
     defineField({
       name: "subheading",
       title: "Subheading",
-      type: "object",
-      fields: [
-        defineField({ name: "en", title: "English", type: "string" }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
-      ],
+      type: "string",
     }),
     defineField({
       name: "image",
@@ -52,12 +44,8 @@ export const heroSlide = defineType({
     defineField({
       name: "caption",
       title: "Caption",
-      type: "object",
+      type: "string",
       description: 'Overlay text shown on the slide, e.g. "House of Singh — Design Studio"',
-      fields: [
-        defineField({ name: "en", title: "English", type: "string" }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
-      ],
     }),
     defineField({
       name: "internalLink",
@@ -86,6 +74,6 @@ export const heroSlide = defineType({
     },
   ],
   preview: {
-    select: { title: "heading.en", subtitle: "subheading.en", media: "image" },
+    select: { title: "heading", subtitle: "subheading", media: "image" },
   },
 });

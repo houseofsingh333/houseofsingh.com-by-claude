@@ -1,56 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
 @import "tailwindcss";
 
-/* ——— Noto Sans Gurmukhi — local WOFF2 ——— */
-
-@font-face {
-  font-family: "NotoSansGurmukhi";
-  src: url("/fonts/NotoSansGurmukhi-Thin.woff2") format("woff2");
-  font-weight: 100;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "NotoSansGurmukhi";
-  src: url("/fonts/NotoSansGurmukhi-Light.woff2") format("woff2");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "NotoSansGurmukhi";
-  src: url("/fonts/NotoSansGurmukhi-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "NotoSansGurmukhi";
-  src: url("/fonts/NotoSansGurmukhi-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "NotoSansGurmukhi";
-  src: url("/fonts/NotoSansGurmukhi-SemiBold.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "NotoSansGurmukhi";
-  src: url("/fonts/NotoSansGurmukhi-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* ——— Design tokens ——— */
 
 :root {
@@ -59,7 +9,6 @@
   --secondary: hsl(40 10% 93%);
   --muted-foreground: hsl(30 5% 50%);
   --border: hsl(40 10% 88%);
-  --font-pa: "NotoSansGurmukhi", system-ui, sans-serif;
 }
 
 @theme inline {
@@ -82,20 +31,6 @@ body {
   color: var(--foreground);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-feature-settings: "kern" 1, "liga" 1;
-}
-
-/* ——— Punjabi font — activated when html[data-lang="pa"] ——— */
-
-html[data-lang="pa"] body,
-html[data-lang="pa"] button,
-html[data-lang="pa"] input,
-html[data-lang="pa"] a,
-html[data-lang="pa"] p,
-html[data-lang="pa"] h1,
-html[data-lang="pa"] h2,
-html[data-lang="pa"] h3,
-html[data-lang="pa"] span:not(.lang-toggle-glyph) {
-  font-family: var(--font-pa);
 }
 
 /* ——— Timeline milestone interactions ——— */

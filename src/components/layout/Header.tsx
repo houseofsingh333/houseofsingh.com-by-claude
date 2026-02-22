@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import NavOverlay from "./NavOverlay";
 import NewsletterModal from "@/components/NewsletterModal";
-import LanguageToggle from "./LanguageToggle";
 import type { NavItem } from "@/lib/placeholder-data";
 
 const SESSION_KEY = "hos_intro_seen";
@@ -172,17 +171,6 @@ export default function Header({ items }: Props) {
           </span>
         </button>
 
-        {/* Language toggle — right, top edge at 32px rail.
-            z-10 + pointer-events:auto ensures clicks register above
-            the crest and any closed overlay layers (NavOverlay z-50,
-            NewsletterModal z-60/61) that sit in the DOM with
-            pointer-events:none. */}
-        <div
-          className="absolute top-[32px] right-5 md:right-8 z-10 flex items-center min-h-[44px]"
-          style={{ pointerEvents: "auto" }}
-        >
-          <LanguageToggle tabIndex={showState1 ? 0 : -1} />
-        </div>
       </header>
 
       {/* ═══ STATE 2 : Scrolled white bar header ═══ */}
@@ -217,8 +205,6 @@ export default function Header({ items }: Props) {
           </span>
         </Link>
 
-        {/* Right: language toggle */}
-        <LanguageToggle tabIndex={showState2 ? 0 : -1} />
       </header>
 
       <NavOverlay

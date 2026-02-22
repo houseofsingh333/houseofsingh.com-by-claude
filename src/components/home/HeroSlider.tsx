@@ -3,15 +3,13 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
-import { useLang } from "@/components/LangProvider";
-import { getText, type HeroSlide } from "@/lib/placeholder-data";
+import type { HeroSlide } from "@/lib/placeholder-data";
 
 type Props = {
   slides: HeroSlide[];
 };
 
 export default function HeroSlider({ slides }: Props) {
-  const lang = useLang();
   const [current, setCurrent] = useState(0);
 
   const next = useCallback(() => {
@@ -27,10 +25,9 @@ export default function HeroSlider({ slides }: Props) {
   if (slides.length === 0) return null;
 
   const slide = slides[current];
-  const heading = getText(slide.heading, lang);
-  const subheading = getText(slide.subheading, lang);
-  const caption = getText(slide.caption, lang);
-  const isPa = lang === "pa";
+  const heading = slide.heading ?? "";
+  const subheading = slide.subheading ?? "";
+  const caption = slide.caption ?? "";
 
   const inner = (
     <div className="relative w-full h-screen bg-secondary flex items-center justify-center overflow-hidden cursor-pointer">
@@ -45,7 +42,7 @@ export default function HeroSlider({ slides }: Props) {
           <SanityImage
             image={s.image}
             context="hero"
-            alt={s.imageAlt || getText(s.caption, "en") || "Hero"}
+            alt={s.imageAlt || s.caption || "Hero"}
             priority={i === 0}
             fill
             className="object-cover"
@@ -58,18 +55,14 @@ export default function HeroSlider({ slides }: Props) {
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
           {heading && (
             <h1
-              className={`text-3xl md:text-5xl lg:text-6xl font-semibold text-foreground drop-shadow-lg ${
-                isPa ? "font-[NotoSansGurmukhi]" : ""
-              }`}
+              className="text-3xl md:text-5xl lg:text-6xl font-semibold text-foreground drop-shadow-lg"
             >
               {heading}
             </h1>
           )}
           {subheading && (
             <p
-              className={`mt-3 text-base md:text-xl lg:text-2xl text-foreground/80 drop-shadow-md ${
-                isPa ? "font-[NotoSansGurmukhi]" : ""
-              }`}
+              className="mt-3 text-base md:text-xl lg:text-2xl text-foreground/80 drop-shadow-md"
             >
               {subheading}
             </p>
@@ -99,9 +92,7 @@ export default function HeroSlider({ slides }: Props) {
         </div>
         {caption && (
           <p
-            className={`hidden md:block text-xs tracking-widest uppercase text-foreground/70 ${
-              isPa ? "font-[NotoSansGurmukhi]" : ""
-            }`}
+            className="hidden md:block text-xs tracking-widest uppercase text-foreground/70"
           >
             {caption}
           </p>

@@ -20,17 +20,14 @@ export const journalEntry = defineType({
     defineField({
       name: "title",
       title: "Title",
-      type: "object",
-      fields: [
-        defineField({ name: "en", title: "English", type: "string", validation: (r) => r.required() }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "string" }),
-      ],
+      type: "string",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "title.en", maxLength: 96 },
+      options: { source: "title", maxLength: 96 },
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -42,12 +39,9 @@ export const journalEntry = defineType({
     defineField({
       name: "excerpt",
       title: "Excerpt",
-      type: "object",
+      type: "text",
+      rows: 3,
       description: "Short summary shown in listings.",
-      fields: [
-        defineField({ name: "en", title: "English", type: "text", rows: 3 }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "text", rows: 3 }),
-      ],
     }),
     defineField({
       name: "coverImage",
@@ -75,11 +69,8 @@ export const journalEntry = defineType({
     defineField({
       name: "body",
       title: "Body",
-      type: "object",
-      fields: [
-        defineField({ name: "en", title: "English", type: "array", of: bodyMembers }),
-        defineField({ name: "pa", title: "Punjabi (ਪੰਜਾਬੀ)", type: "array", of: bodyMembers }),
-      ],
+      type: "array",
+      of: bodyMembers,
     }),
     defineField({
       name: "seoTitle",
@@ -100,6 +91,6 @@ export const journalEntry = defineType({
     },
   ],
   preview: {
-    select: { title: "title.en", subtitle: "date", media: "coverImage" },
+    select: { title: "title", subtitle: "date", media: "coverImage" },
   },
 });
