@@ -32,15 +32,11 @@ function TestimonialCarousel({
   testimonials: AboutTestimonial[];
 }) {
   const [index, setIndex] = useState(0);
-  const [fadeClass, setFadeClass] = useState("opacity-100");
 
-  const change = (next: number) => {
-    setFadeClass("opacity-0");
-    setTimeout(() => {
-      setIndex(next);
-      setFadeClass("opacity-100");
-    }, 300);
-  };
+  /* No setTimeout — index updates immediately on tap, CSS animation
+     handles the fade-in via key prop forcing a re-mount each change.
+     This removes the 300ms main-thread block that caused high INP. */
+  const change = (next: number) => setIndex(next);
 
   const prev = () =>
     change(index === 0 ? testimonials.length - 1 : index - 1);
@@ -51,9 +47,9 @@ function TestimonialCarousel({
 
   return (
     <div className="max-w-2xl mx-auto text-center">
-      <div
-        className={`transition-opacity duration-300 ease-in-out ${fadeClass}`}
-      >
+      {/* key={index} causes React to remount this div on change,
+          triggering the CSS entry animation with zero JS delay. */}
+      <div key={index} className="animate-testimonial-fade">
         <blockquote className="font-editorial text-xl md:text-2xl font-light leading-[1.5] text-foreground mb-8 min-h-[120px] flex items-center justify-center">
           &ldquo;{t.quote}&rdquo;
         </blockquote>
@@ -78,7 +74,7 @@ function TestimonialCarousel({
             <button
               key={i}
               onClick={() => change(i)}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+              className={`w-1.5 h-1.5 rounded-full transition-[background-color,transform] duration-300 ${
                 i === index
                   ? "bg-foreground scale-125"
                   : "bg-foreground/25 hover:bg-foreground/50"

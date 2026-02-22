@@ -24,11 +24,8 @@ export default function JournalPreview({ entries }: Props) {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
+    /* Use offsetX/offsetY — no getBoundingClientRect(), no forced layout flush. */
+    setMousePos({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
   };
 
   const displayed = entries.slice(0, 4);
@@ -67,7 +64,7 @@ export default function JournalPreview({ entries }: Props) {
 
               {/* Title / excerpt */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-editorial text-lg md:text-3xl lg:text-4xl font-light text-foreground leading-tight transition-all duration-500 group-hover:tracking-wide">
+                <h3 className="font-editorial text-lg md:text-3xl lg:text-4xl font-light text-foreground leading-tight">
                   {normalizeText(entry.title) || normalizeText(entry.excerpt)}
                 </h3>
               </div>
@@ -77,7 +74,7 @@ export default function JournalPreview({ entries }: Props) {
                 <time className="text-xs tracking-widest text-muted-foreground transition-colors duration-300 group-hover:text-foreground">
                   {formatDate(entry.date)}
                 </time>
-                <span className="text-foreground/0 group-hover:text-foreground transition-all duration-500 translate-x-[-8px] group-hover:translate-x-0">
+                <span className="text-foreground/0 group-hover:text-foreground transition-[color,transform] duration-500 translate-x-[-8px] group-hover:translate-x-0">
                   →
                 </span>
               </div>
@@ -87,7 +84,7 @@ export default function JournalPreview({ entries }: Props) {
             <p className="text-sm text-muted-foreground mt-2 max-w-lg leading-relaxed md:hidden line-clamp-2">
               {normalizeText(entry.excerpt)}
             </p>
-            <div className="hidden md:block overflow-hidden transition-all duration-500 max-h-0 group-hover:max-h-16 opacity-0 group-hover:opacity-100">
+            <div className="hidden md:block transition-[opacity,transform] duration-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0">
               <p className="text-sm text-muted-foreground mt-3 ml-12 max-w-lg leading-relaxed">
                 {normalizeText(entry.excerpt)}
               </p>

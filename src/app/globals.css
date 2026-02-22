@@ -19,6 +19,7 @@
   --font-editorial: var(--font-playfair), Georgia, serif;
   --animate-fade-in: fadeIn 0.3s ease-out;
   --animate-editorial-fade-in: editorialFadeIn 1.2s ease-out both;
+  --animate-testimonial-fade: testimonialFade 0.3s ease-out both;
 }
 
 html {
@@ -148,6 +149,17 @@ body {
   from {
     opacity: 0;
     transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes testimonialFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
