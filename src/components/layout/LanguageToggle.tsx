@@ -7,11 +7,13 @@ type Props = {
 };
 
 /**
- * Segmented language toggle — E · ਪ
+ * Pill language toggle — E · ਪ
  *
- * A single black dot slides behind the active glyph (200ms ease-out).
- * Active glyph is white; inactive is foreground colour.
- * No icons, no dividers, no button chrome — matches the dot-menu aesthetic.
+ * Outer pill: white bg, thin black stroke, rounded-full.
+ * Inner knob: black filled circle that slides left (EN) or right (PA).
+ * Active label sits inside the knob → white text.
+ * Inactive label sits on white bg → black text.
+ * Transition: 200ms ease-out, no bounce.
  */
 export default function LanguageToggle({ tabIndex = 0 }: Props) {
   const pathname = usePathname();
@@ -19,63 +21,112 @@ export default function LanguageToggle({ tabIndex = 0 }: Props) {
 
   const isPa = pathname.startsWith("/pa");
 
-  const handleToggle = () => {
-    if (isPa) {
-      // Strip /pa prefix — preserve rest of path
-      const next = pathname.slice(3) || "/";
-      router.push(next);
-    } else {
-      // Add /pa prefix — preserve rest of path
-      const next = "/pa" + (pathname === "/" ? "" : pathname);
-      router.push(next);
-    }
+  const goEnglish = () => {
+    if (!isPa) return;
+    const next = pathname.slice(3) || "/";
+    router.push(next);
+  };
+
+  const goPunjabi = () => {
+    if (isPa) return;
+    const next = "/pa" + (pathname === "/" ? "" : pathname);
+    router.push(next);
   };
 
   return (
-    <button
-      onClick={handleToggle}
-      aria-label={
-        isPa
-          ? "Switch to English"
-          : "ਪੰਜਾਬੀ ਵਿੱਚ ਬਦਲੋ (Switch to Punjabi)"
-      }
-      tabIndex={tabIndex}
-      className="relative flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 rounded-full"
-      style={{ width: 56, height: 28 }}
+    /*
+     * Outer pill — white background, 1px black border.
+     * 56 × 28 px keeps parity with the old size so header layout is unaffected.
+     */
+    <div
+      role="group"
+      aria-label="Language"
+      className="relative flex items-center rounded-full bg-white"
+      style={{
+        width: 56,
+        height: 28,
+        border: "1.5px solid black",
+        /* Clip the knob so it never overflows the pill edge */
+        overflow: "hidden",
+      }}
     >
-      {/* Sliding circle indicator */}
+      {/* ── Sliding knob ─────────────────────────────────────────────── */}
       <span
         aria-hidden="true"
-        className="absolute w-7 h-7 rounded-full bg-foreground pointer-events-none"
+        className="absolute rounded-full bg-black pointer-events-none"
         style={{
-          transform: isPa ? "translateX(28px)" : "translateX(0)",
+          /*
+           * Knob is 26×26 px — 1px inset on each side so the pill border
+           * stays visible around it. translateX(0) = left (EN),
+           * translateX(27px) = right (PA).
+           */
+          width: 26,
+          height: 26,
+          top: 0,
+          left: 0,
+          transform: isPa ? "translateX(27px)" : "translateX(0px)",
           transition: "transform 200ms ease-out",
         }}
       />
 
-      {/* E glyph */}
-      <span
-        aria-hidden="true"
-        className="lang-toggle-glyph relative z-10 w-7 h-7 flex items-center justify-center text-[11px] font-medium tracking-wider select-none"
+      {/* ── English button ───────────────────────────────────────────── */}
+      <button
+        onClick={goEnglish}
+        aria-pressed={!isPa}
+        aria-label="English"
+        tabIndex={tabIndex}
+        className={[
+          "relative z-10 flex items-center justify-center",
+          "focus-visible:outline-none focus-visible:ring-2",
+          "focus-visible:ring-black focus-visible:ring-offset-1",
+          "rounded-full select-none",
+          /* Subtle press feedback */
+          "active:scale-95",
+          "transition-transform duration-100",
+        ].join(" ")}
         style={{
-          color: isPa ? "var(--foreground)" : "white",
+          width: 27,
+          height: 26,
+          /* White when active (inside knob), black when inactive */
+          color: isPa ? "black" : "white",
+          transition: "color 200ms ease-out, transform 100ms",
+          fontSize: 11,
           fontFamily: "system-ui, -apple-system, sans-serif",
+          fontWeight: 500,
+          letterSpacing: "0.08em",
+          cursor: isPa ? "pointer" : "default",
         }}
       >
         E
-      </span>
+      </button>
 
-      {/* ਪ glyph */}
-      <span
-        aria-hidden="true"
-        className="lang-toggle-glyph relative z-10 w-7 h-7 flex items-center justify-center text-sm select-none"
+      {/* ── Punjabi button ───────────────────────────────────────────── */}
+      <button
+        onClick={goPunjabi}
+        aria-pressed={isPa}
+        aria-label="ਪੰਜਾਬੀ"
+        tabIndex={tabIndex}
+        className={[
+          "relative z-10 flex items-center justify-center",
+          "focus-visible:outline-none focus-visible:ring-2",
+          "focus-visible:ring-black focus-visible:ring-offset-1",
+          "rounded-full select-none",
+          "active:scale-95",
+          "transition-transform duration-100",
+        ].join(" ")}
         style={{
-          color: isPa ? "white" : "var(--foreground)",
+          width: 27,
+          height: 26,
+          /* White when active (inside knob), black when inactive */
+          color: isPa ? "white" : "black",
+          transition: "color 200ms ease-out, transform 100ms",
+          fontSize: 14,
           fontFamily: "var(--font-pa)",
+          cursor: isPa ? "default" : "pointer",
         }}
       >
         ਪ
-      </span>
-    </button>
+      </button>
+    </div>
   );
 }
