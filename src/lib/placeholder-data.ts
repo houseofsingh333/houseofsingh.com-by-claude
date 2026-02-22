@@ -12,7 +12,7 @@ export type SanityImage = SanityImageAsset | string;
 // --------------- Types ---------------
 
 export type NavItem = {
-  label: string;
+  label: BilingualText;
   href: string;
   external?: boolean;
   order?: number;
@@ -22,6 +22,16 @@ export type BilingualText = {
   en?: string;
   pa?: string;
 };
+
+/** Extract the current-language string from a bilingual field (or pass through a plain string). */
+export function getText(
+  field: BilingualText | string | undefined | null,
+  lang: "en" | "pa",
+): string {
+  if (!field) return "";
+  if (typeof field === "string") return field;
+  return field[lang] || field.en || "";
+}
 
 export type HeroSlide = {
   _id: string;
@@ -109,17 +119,17 @@ export type AboutPageData = {
 // --------------- Fallback Navigation ---------------
 
 export const fallbackNavItems: NavItem[] = [
-  { label: "Home", href: "/", order: 1 },
-  { label: "About", href: "/about", order: 2 },
-  { label: "Projects", href: "/projects", order: 3 },
-  { label: "Journal", href: "/journal", order: 4 },
+  { label: { en: "Home" }, href: "/", order: 1 },
+  { label: { en: "About" }, href: "/about", order: 2 },
+  { label: { en: "Projects" }, href: "/projects", order: 3 },
+  { label: { en: "Journal" }, href: "/journal", order: 4 },
   {
-    label: "Studio",
+    label: { en: "Studio" },
     href: "https://studios.houseofsingh.com",
     external: true,
     order: 5,
   },
-  { label: "Contact", href: "/contact", order: 6 },
+  { label: { en: "Contact" }, href: "/contact", order: 6 },
 ];
 
 // --------------- Fallback Hero Slides ---------------

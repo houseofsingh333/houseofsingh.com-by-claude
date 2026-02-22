@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import type { NavItem } from "@/lib/placeholder-data";
+import { useLang } from "@/components/LangProvider";
+import { getText, type NavItem } from "@/lib/placeholder-data";
 
 type Props = {
   items: NavItem[];
 };
 
 export default function Footer({ items }: Props) {
+  const lang = useLang();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
@@ -71,11 +73,11 @@ export default function Footer({ items }: Props) {
           <div className="flex flex-wrap gap-4 md:gap-6 mb-4">
             {internalItems.map((link) => (
               <Link
-                key={link.label}
+                key={link.href}
                 href={link.href}
                 className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-1"
               >
-                {link.label}
+                {getText(link.label, lang)}
               </Link>
             ))}
           </div>

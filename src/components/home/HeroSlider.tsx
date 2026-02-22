@@ -4,17 +4,11 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import { useLang } from "@/components/LangProvider";
-import type { HeroSlide, BilingualText } from "@/lib/placeholder-data";
+import { getText, type HeroSlide } from "@/lib/placeholder-data";
 
 type Props = {
   slides: HeroSlide[];
 };
-
-/** Extract the current-language string from a bilingual field, falling back to English. */
-function t(field: BilingualText | undefined, lang: "en" | "pa"): string {
-  if (!field) return "";
-  return field[lang] || field.en || "";
-}
 
 export default function HeroSlider({ slides }: Props) {
   const lang = useLang();
@@ -33,9 +27,9 @@ export default function HeroSlider({ slides }: Props) {
   if (slides.length === 0) return null;
 
   const slide = slides[current];
-  const heading = t(slide.heading, lang);
-  const subheading = t(slide.subheading, lang);
-  const caption = t(slide.caption, lang);
+  const heading = getText(slide.heading, lang);
+  const subheading = getText(slide.subheading, lang);
+  const caption = getText(slide.caption, lang);
   const isPa = lang === "pa";
 
   const inner = (
@@ -51,7 +45,7 @@ export default function HeroSlider({ slides }: Props) {
           <SanityImage
             image={s.image}
             context="hero"
-            alt={s.imageAlt || t(s.caption, "en") || "Hero"}
+            alt={s.imageAlt || getText(s.caption, "en") || "Hero"}
             priority={i === 0}
             fill
             className="object-cover"
