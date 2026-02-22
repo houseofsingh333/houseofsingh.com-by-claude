@@ -67,6 +67,63 @@ export type ProjectSummary = {
   excerpt: string;
 };
 
+// --------------- Content Section Types ---------------
+
+export type TextSectionBlock = {
+  _type: "textSection";
+  _key: string;
+  heading?: string;
+  body: PortableTextBlock[];
+};
+
+export type ImageSingleBlock = {
+  _type: "imageSingle";
+  _key: string;
+  image: SanityImageAsset;
+  caption?: string;
+  size: "full" | "large" | "medium";
+};
+
+export type ImagePairBlock = {
+  _type: "imagePair";
+  _key: string;
+  images: SanityImageAsset[];
+  layout: "sideBySide" | "stacked";
+};
+
+export type ImageGridBlock = {
+  _type: "imageGrid";
+  _key: string;
+  images: SanityImageAsset[];
+  layout: "2col" | "3col";
+};
+
+export type StickyChapterBlock = {
+  _type: "stickyChapter";
+  _key: string;
+  stickyText: PortableTextBlock[];
+  images: SanityImageAsset[];
+  layoutPreset: "heroThenGrid" | "gridThenHero" | "allSingles";
+};
+
+export type ContentSection =
+  | TextSectionBlock
+  | ImageSingleBlock
+  | ImagePairBlock
+  | ImageGridBlock
+  | StickyChapterBlock;
+
+export type ProjectDetail = {
+  _id: string;
+  title: string;
+  slug: string;
+  category: string;
+  excerpt?: string;
+  shortIntro?: string;
+  coverImage?: SanityImageAsset | null;
+  contentSections?: ContentSection[];
+};
+
 export type JournalEntry = {
   _id: string;
   title: string;

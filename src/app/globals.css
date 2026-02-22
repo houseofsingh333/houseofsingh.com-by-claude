@@ -112,6 +112,16 @@ body {
   display: none;
 }
 
+/* ——— Sticky chapter (bounded per section) ——— */
+
+.sticky-chapter-grid {
+  align-items: start;
+}
+
+.sticky-chapter-text {
+  align-self: start;
+}
+
 /* ——— Reading progress bar ——— */
 
 .reading-progress {

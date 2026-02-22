@@ -92,8 +92,39 @@ export const projectsByCategoryQuery = `*[_type == "project" && category == $cat
 export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug][0]{
   _id, "title": coalesce(title.en, title), "slug": slug.current, category,
   "excerpt": coalesce(excerpt.en, excerpt),
-  "body": coalesce(body.en, body),
-  "images": images[]${_imageAsset}
+  "shortIntro": coalesce(shortIntro.en, shortIntro),
+  "coverImage": coverImage ${_imageAsset},
+  contentSections[]{
+    _type,
+    _key,
+    // textSection
+    _type == "textSection" => {
+      heading,
+      body
+    },
+    // imageSingle
+    _type == "imageSingle" => {
+      "image": image ${_imageAsset},
+      caption,
+      size
+    },
+    // imagePair
+    _type == "imagePair" => {
+      "images": images[] ${_imageAsset},
+      layout
+    },
+    // imageGrid
+    _type == "imageGrid" => {
+      "images": images[] ${_imageAsset},
+      layout
+    },
+    // stickyChapter
+    _type == "stickyChapter" => {
+      stickyText,
+      "images": images[] ${_imageAsset},
+      layoutPreset
+    }
+  }
 }`;
 
 // --------------- Spotlight Project ---------------

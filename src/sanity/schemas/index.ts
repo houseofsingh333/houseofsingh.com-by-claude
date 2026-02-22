@@ -7,9 +7,17 @@ import { navigation } from "./navigation";
 import { newsletterSubscriber } from "./newsletterSubscriber";
 import { project } from "./project";
 import { projectCategory } from "./projectCategory";
+import {
+  textSection,
+  imageSingle,
+  imagePair,
+  imageGrid,
+  stickyChapter,
+} from "./sections";
 import { siteSettings } from "./siteSettings";
 
 export const schemaTypes = [
+  // Document types
   aboutPage,
   contactPage,
   contactSubmission,
@@ -20,4 +28,10 @@ export const schemaTypes = [
   project,
   projectCategory,
   siteSettings,
+  // Section block types (used inside project.contentSections)
+  textSection,
+  imageSingle,
+  imagePair,
+  imageGrid,
+  stickyChapter,
 ];
