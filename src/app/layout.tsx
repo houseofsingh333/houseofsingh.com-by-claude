@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import Header from "@/components/layout/Header";
@@ -10,6 +11,21 @@ import {
   type NavItem,
 } from "@/lib/placeholder-data";
 import "./globals.css";
+
+const playfair = localFont({
+  src: [
+    {
+      path: "../../public/fonts/playfair-display-latin-wght-normal.woff2",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/playfair-display-latin-wght-italic.woff2",
+      style: "italic",
+    },
+  ],
+  display: "swap",
+  variable: "--font-playfair",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -34,7 +50,7 @@ export default async function RootLayout({
     sanityItems && sanityItems.length >= 4 ? sanityItems : fallbackNavItems;
 
   return (
-    <html lang="en">
+    <html lang="en" className={playfair.variable}>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
         <Header items={navItems} />
         <main id="main-content" className="flex-1">
