@@ -3,13 +3,21 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
-import type { HeroSlide } from "@/lib/placeholder-data";
+import { useLang } from "@/components/LangProvider";
+import type { HeroSlide, BilingualText } from "@/lib/placeholder-data";
 
 type Props = {
   slides: HeroSlide[];
 };
 
+/** Extract the current-language string from a bilingual field, falling back to English. */
+function t(field: BilingualText | undefined, lang: "en" | "pa"): string {
+  if (!field) return "";
+  return field[lang] || field.en || "";
+}
+
 export default function HeroSlider({ slides }: Props) {
+  const lang = useLang();
   const [current, setCurrent] = useState(0);
 
   const next = useCallback(() => {
@@ -25,6 +33,10 @@ export default function HeroSlider({ slides }: Props) {
   if (slides.length === 0) return null;
 
   const slide = slides[current];
+  const heading = t(slide.heading, lang);
+  const subheading = t(slide.subheading, lang);
+  const caption = t(slide.caption, lang);
+  const isPa = lang === "pa";
 
   const inner = (
     <div className="relative w-full h-screen bg-secondary flex items-center justify-center overflow-hidden cursor-pointer">
@@ -39,13 +51,37 @@ export default function HeroSlider({ slides }: Props) {
           <SanityImage
             image={s.image}
             context="hero"
-            alt={s.imageAlt || s.caption || "Hero"}
+            alt={s.imageAlt || t(s.caption, "en") || "Hero"}
             priority={i === 0}
             fill
             className="object-cover"
           />
         </div>
       ))}
+
+      {/* Centre overlay: heading + subheading */}
+      {(heading || subheading) && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
+          {heading && (
+            <h1
+              className={`text-3xl md:text-5xl lg:text-6xl font-semibold text-foreground drop-shadow-lg ${
+                isPa ? "font-[NotoSansGurmukhi]" : ""
+              }`}
+            >
+              {heading}
+            </h1>
+          )}
+          {subheading && (
+            <p
+              className={`mt-3 text-base md:text-xl lg:text-2xl text-foreground/80 drop-shadow-md ${
+                isPa ? "font-[NotoSansGurmukhi]" : ""
+              }`}
+            >
+              {subheading}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Bottom-left: dots + caption */}
       <div className="absolute bottom-6 left-5 md:bottom-8 md:left-8 z-10 flex items-center gap-4 md:gap-5">
@@ -67,9 +103,13 @@ export default function HeroSlider({ slides }: Props) {
             />
           ))}
         </div>
-        {slide.caption && (
-          <p className="hidden md:block text-xs tracking-widest uppercase text-foreground/70">
-            {slide.caption}
+        {caption && (
+          <p
+            className={`hidden md:block text-xs tracking-widest uppercase text-foreground/70 ${
+              isPa ? "font-[NotoSansGurmukhi]" : ""
+            }`}
+          >
+            {caption}
           </p>
         )}
       </div>

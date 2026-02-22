@@ -47,6 +47,8 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
 
 export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
   _id,
+  heading,
+  subheading,
   "image": image ${_imageAsset},
   "imageAlt": coalesce(image.alt, imageAlt),
   caption,

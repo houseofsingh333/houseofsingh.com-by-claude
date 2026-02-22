@@ -18,11 +18,18 @@ export type NavItem = {
   order?: number;
 };
 
+export type BilingualText = {
+  en?: string;
+  pa?: string;
+};
+
 export type HeroSlide = {
   _id: string;
+  heading?: BilingualText;
+  subheading?: BilingualText;
   image: SanityImage;
   imageAlt?: string;
-  caption?: string;
+  caption?: BilingualText;
   internalLink?: string;
   externalLink?: string;
 };
@@ -121,19 +128,19 @@ export const fallbackHeroSlides: HeroSlide[] = [
   {
     _id: "hero-1",
     image: "/images/hero-placeholder-1.svg",
-    caption: "House of Singh — Design Studio",
+    caption: { en: "House of Singh — Design Studio" },
     internalLink: "/about",
   },
   {
     _id: "hero-2",
     image: "/images/hero-placeholder-2.svg",
-    caption: "Crafted Spaces — Where vision meets execution",
+    caption: { en: "Crafted Spaces — Where vision meets execution" },
     internalLink: "/projects",
   },
   {
     _id: "hero-3",
     image: "/images/hero-placeholder-3.svg",
-    caption: "Timeless Interiors — Built to inspire and endure",
+    caption: { en: "Timeless Interiors — Built to inspire and endure" },
     internalLink: "/journal",
   },
 ];
