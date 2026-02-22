@@ -374,20 +374,25 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-center">
-            {/* Logo — left */}
+            {/* Logo — left: always render the SVG crest via CSS mask
+                so it scales perfectly and respects currentColor */}
             <div className="md:col-span-4 flex justify-center">
-              {monikerLogo ? (
-                <SanityImage
-                  image={monikerLogo}
-                  context="body"
-                  alt="House of Singh"
-                  className="w-36 md:w-44 object-contain opacity-40"
-                />
-              ) : (
-                <span className="font-editorial text-3xl font-light text-foreground/40">
-                  HoS
-                </span>
-              )}
+              <div
+                className="w-36 md:w-44 aspect-square opacity-40 text-foreground"
+                style={{
+                  backgroundColor: "currentColor",
+                  WebkitMaskImage: "url(/images/hos-logo.svg)",
+                  maskImage: "url(/images/hos-logo.svg)",
+                  WebkitMaskSize: "contain",
+                  maskSize: "contain",
+                  WebkitMaskRepeat: "no-repeat",
+                  maskRepeat: "no-repeat",
+                  WebkitMaskPosition: "center",
+                  maskPosition: "center",
+                }}
+                role="img"
+                aria-label="House of Singh"
+              />
             </div>
 
             {/* Text — right */}
