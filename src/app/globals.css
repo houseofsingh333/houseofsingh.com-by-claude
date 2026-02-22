@@ -112,6 +112,43 @@ body {
   display: none;
 }
 
+/* ——— Project cards — desktop: B&W → colour on hover ——— */
+
+@media (min-width: 768px) {
+  .project-card-img {
+    filter: grayscale(1);
+    transition: filter 750ms ease, transform 750ms ease;
+  }
+  .project-card:hover .project-card-img {
+    filter: grayscale(0);
+    transform: scale(1.03);
+  }
+  .project-card-image-wrap {
+    transition: box-shadow 0.3s ease;
+  }
+  .project-card:hover .project-card-image-wrap {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* ——— Project cards — mobile/tablet: always colour, tap feedback ——— */
+
+@media (max-width: 767px) {
+  .project-card-img {
+    filter: grayscale(0);
+    transition: transform 0.2s ease;
+  }
+  .project-card:active .project-card-img {
+    transform: scale(1.02);
+  }
+  .project-card-title {
+    transition: opacity 0.2s ease;
+  }
+  .project-card:active .project-card-title {
+    opacity: 0.7;
+  }
+}
+
 /* ——— Sticky chapter (bounded per section) ——— */
 
 .sticky-chapter-grid {

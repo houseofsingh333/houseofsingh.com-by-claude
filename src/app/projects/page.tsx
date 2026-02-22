@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
 import { sanityFetch } from "@/sanity/fetch";
 import { projectsListQuery } from "@/sanity/queries";
 import { fallbackProjects } from "@/lib/placeholder-data";
 import type { ProjectSummary, SanityImage } from "@/lib/placeholder-data";
+import ProjectsFilteredGrid from "@/components/projects/ProjectsFilteredGrid";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -25,7 +24,6 @@ export default async function ProjectsPage() {
     query: projectsListQuery,
   });
 
-  /* Map Sanity projects to the same shape as fallbacks */
   const projects: ProjectSummary[] =
     data && data.length > 0
       ? data.map((p) => ({
@@ -55,36 +53,7 @@ export default async function ProjectsPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 md:px-16 pb-24 md:pb-36">
-        <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <Link
-              key={project._id}
-              href={`/projects/${project.slug}`}
-              className="group block"
-            >
-              <article>
-                <div className="relative aspect-[4/3] overflow-hidden bg-secondary mb-5 shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                  <Image
-                    src={project.thumbnailSrc}
-                    alt={project.thumbnailAlt}
-                    fill
-                    className="object-cover transition-all duration-700 group-hover:scale-[1.03] grayscale group-hover:grayscale-0"
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  />
-                </div>
-                <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
-                  {project.category}
-                </p>
-                <h2 className="text-[11px] md:text-xs uppercase tracking-[0.15em] text-foreground font-normal leading-[1.6] mb-3">
-                  {project.title}
-                </h2>
-                <p className="text-xs text-muted-foreground leading-[1.6] line-clamp-2">
-                  {project.excerpt}
-                </p>
-              </article>
-            </Link>
-          ))}
-        </div>
+        <ProjectsFilteredGrid projects={projects} />
       </section>
     </div>
   );
