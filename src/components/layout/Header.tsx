@@ -146,7 +146,7 @@ export default function Header({ items }: Props) {
           className="absolute top-[32px] left-1/2 -translate-x-1/2 pointer-events-none"
         >
           <div
-            className="text-foreground w-[90px] h-[90px] md:w-[225px] md:h-[225px] -mt-5 md:-mt-[51px]"
+            className="text-foreground w-[104px] h-[104px] md:w-[225px] md:h-[225px] -mt-6 md:-mt-[51px]"
             style={{
               backgroundColor: "currentColor",
               WebkitMaskImage: "url(/images/hos-logo.svg)",
