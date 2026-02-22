@@ -6,127 +6,123 @@ type Props = {
   tabIndex?: number;
 };
 
-/**
- * Pill language toggle — E · ਪ
- *
- * Outer pill: white bg, thin black stroke, rounded-full.
- * Inner knob: black filled circle that slides left (EN) or right (PA).
- * Active label sits inside the knob → white text.
- * Inactive label sits on white bg → black text.
- * Transition: 200ms ease-out, no bounce.
+/*
+ * ── TEST CHECKLIST ──────────────────────────────────────────────────
+ * 1. Navigate to /about  → "E" should be black with bullet, "ਪ" gray.
+ *    Click "ਪ" → URL should become /pa/about, "ਪ" black with bullet.
+ * 2. Navigate to /pa/about → "ਪ" should be black with bullet, "E" gray.
+ *    Click "E" → URL should become /about, "E" black with bullet.
+ * 3. Navigate to / → click "ਪ" → URL should become /pa (not /pa/).
+ *    Click "E" → URL should become / (not empty string).
+ * 4. Repeat all above on mobile (touch) — every tap must register.
+ * 5. Add ?foo=bar#section to URL, toggle — params and hash preserved.
+ * 6. Rapidly toggle 5× — should never produce /pa/pa double prefix.
+ * ────────────────────────────────────────────────────────────────────
  */
+
 export default function LanguageToggle({ tabIndex = 0 }: Props) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const isPa = pathname.startsWith("/pa");
+  // Robust check: only match /pa or /pa/… (not /pages, /party, etc.)
+  const isPa = pathname === "/pa" || pathname.startsWith("/pa/");
 
-  const goEnglish = () => {
-    if (!isPa) return;
-    const next = pathname.slice(3) || "/";
-    router.push(next);
-  };
+  const switchTo = (lang: "en" | "pa") => {
+    // Preserve query params and hash from the browser URL
+    const suffix =
+      typeof window !== "undefined"
+        ? window.location.search + window.location.hash
+        : "";
 
-  const goPunjabi = () => {
-    if (isPa) return;
-    const next = "/pa" + (pathname === "/" ? "" : pathname);
-    router.push(next);
+    let next: string;
+
+    if (lang === "en") {
+      if (!isPa) return; // already English
+      next = pathname.slice(3) || "/";
+    } else {
+      if (isPa) return; // already Punjabi
+      // Guard: never double-prefix
+      next = "/pa" + (pathname === "/" ? "" : pathname);
+    }
+
+    router.push(next + suffix);
   };
 
   return (
-    /*
-     * Outer pill — white background, 1px black border.
-     * 56 × 28 px keeps parity with the old size so header layout is unaffected.
-     */
-    <div
-      role="group"
-      aria-label="Language"
-      className="relative flex items-center rounded-full bg-white"
-      style={{
-        width: 56,
-        height: 28,
-        border: "1.5px solid black",
-        /* Clip the knob so it never overflows the pill edge */
-        overflow: "hidden",
-      }}
-    >
-      {/* ── Sliding knob ─────────────────────────────────────────────── */}
-      <span
-        aria-hidden="true"
-        className="absolute rounded-full bg-black pointer-events-none"
-        style={{
-          /*
-           * Knob is 26×26 px — 1px inset on each side so the pill border
-           * stays visible around it. translateX(0) = left (EN),
-           * translateX(27px) = right (PA).
-           */
-          width: 26,
-          height: 26,
-          top: 0,
-          left: 0,
-          transform: isPa ? "translateX(27px)" : "translateX(0px)",
-          transition: "transform 200ms ease-out",
-        }}
-      />
-
-      {/* ── English button ───────────────────────────────────────────── */}
-      <button
-        onClick={goEnglish}
-        aria-pressed={!isPa}
-        aria-label="English"
+    <div role="group" aria-label="Language" className="flex items-center gap-3">
+      <LangButton
+        label="E"
+        ariaLabel="English"
+        active={!isPa}
         tabIndex={tabIndex}
-        className={[
-          "relative z-10 flex items-center justify-center",
-          "focus-visible:outline-none focus-visible:ring-2",
-          "focus-visible:ring-black focus-visible:ring-offset-1",
-          "rounded-full select-none",
-          /* Subtle press feedback */
-          "active:scale-95",
-          "transition-transform duration-100",
-        ].join(" ")}
-        style={{
-          width: 27,
-          height: 26,
-          /* White when active (inside knob), black when inactive */
-          color: isPa ? "black" : "white",
-          transition: "color 200ms ease-out, transform 100ms",
+        onClick={() => switchTo("en")}
+        fontStyle={{
           fontSize: 11,
-          fontFamily: "system-ui, -apple-system, sans-serif",
           fontWeight: 500,
           letterSpacing: "0.08em",
-          cursor: isPa ? "pointer" : "default",
+          fontFamily: "system-ui, -apple-system, sans-serif",
         }}
-      >
-        E
-      </button>
-
-      {/* ── Punjabi button ───────────────────────────────────────────── */}
-      <button
-        onClick={goPunjabi}
-        aria-pressed={isPa}
-        aria-label="ਪੰਜਾਬੀ"
+      />
+      <LangButton
+        label="ਪ"
+        ariaLabel="ਪੰਜਾਬੀ (Punjabi)"
+        active={isPa}
         tabIndex={tabIndex}
-        className={[
-          "relative z-10 flex items-center justify-center",
-          "focus-visible:outline-none focus-visible:ring-2",
-          "focus-visible:ring-black focus-visible:ring-offset-1",
-          "rounded-full select-none",
-          "active:scale-95",
-          "transition-transform duration-100",
-        ].join(" ")}
-        style={{
-          width: 27,
-          height: 26,
-          /* White when active (inside knob), black when inactive */
-          color: isPa ? "white" : "black",
-          transition: "color 200ms ease-out, transform 100ms",
+        onClick={() => switchTo("pa")}
+        fontStyle={{
           fontSize: 14,
           fontFamily: "var(--font-pa)",
-          cursor: isPa ? "default" : "pointer",
+        }}
+      />
+    </div>
+  );
+}
+
+/* ── Individual language button ─────────────────────────────────── */
+
+function LangButton({
+  label,
+  ariaLabel,
+  active,
+  tabIndex,
+  onClick,
+  fontStyle,
+}: {
+  label: string;
+  ariaLabel: string;
+  active: boolean;
+  tabIndex: number;
+  onClick: () => void;
+  fontStyle: React.CSSProperties;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-pressed={active}
+      aria-label={ariaLabel}
+      tabIndex={tabIndex}
+      className="flex flex-col items-center justify-center min-h-[44px] min-w-[36px] px-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/60 focus-visible:ring-offset-2"
+    >
+      <span
+        className="select-none leading-none"
+        style={{
+          ...fontStyle,
+          color: active ? "var(--foreground)" : "rgba(0,0,0,0.35)",
+          transition: "color 150ms ease-out",
         }}
       >
-        ਪ
-      </button>
-    </div>
+        {label}
+      </span>
+
+      {/* Bullet indicator — always in DOM for stable layout, invisible when inactive */}
+      <span
+        aria-hidden="true"
+        className="block w-[5px] h-[5px] rounded-full mt-[4px]"
+        style={{
+          backgroundColor: active ? "var(--foreground)" : "transparent",
+          transition: "background-color 150ms ease-out",
+        }}
+      />
+    </button>
   );
 }

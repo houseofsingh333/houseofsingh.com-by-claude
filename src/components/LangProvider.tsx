@@ -18,7 +18,8 @@ export default function LangProvider({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const lang: Lang = pathname.startsWith("/pa") ? "pa" : "en";
+  const lang: Lang =
+    pathname === "/pa" || pathname.startsWith("/pa/") ? "pa" : "en";
 
   return <LangContext.Provider value={lang}>{children}</LangContext.Provider>;
 }

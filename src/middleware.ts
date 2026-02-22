@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const isPa = pathname.startsWith("/pa");
+  const isPa = pathname === "/pa" || pathname.startsWith("/pa/");
   const lang = isPa ? "pa" : "en";
 
   // Redirect homepage to /pa only when lang cookie is already "pa"
