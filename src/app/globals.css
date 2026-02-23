@@ -349,28 +349,49 @@ body {
 
 @media (max-width: 1023px) {
   .journal-stack-card {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.03);
-    transition: filter 700ms ease-in-out, opacity 150ms ease-out;
+    border: 1px solid hsl(30 10% 12% / 0.10);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: filter 700ms ease-in-out;
   }
 
   /* Tap / pressed state */
   .journal-stack-link:active {
     opacity: 0.92;
+    transition: opacity 150ms ease-out;
   }
 
-  /* Grayscale when stacked behind the top card */
+  /* Grayscale when stacked */
   .journal-card-stacked {
     filter: grayscale(1);
   }
 
-  /* Subtle dark overlay for stacked cards — aids text readability */
-  .journal-card-overlay {
-    background: transparent;
-    transition: background 700ms ease-in-out;
+  /* Scrim fades out in stacked state (B&W provides readability) */
+  .journal-card-scrim {
+    transition: opacity 500ms ease-in-out;
   }
 
-  .journal-card-stacked .journal-card-overlay {
-    background: rgba(0, 0, 0, 0.07);
+  .journal-card-stacked .journal-card-scrim {
+    opacity: 0;
+  }
+
+  /* Text crossfade: normal (top-left) ↔ stacked (bottom-right) */
+  .journal-text-normal {
+    opacity: 1;
+    transition: opacity 500ms ease-in-out;
+  }
+
+  .journal-text-stacked {
+    opacity: 0;
+    transition: opacity 500ms ease-in-out;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  }
+
+  .journal-card-stacked .journal-text-normal {
+    opacity: 0;
+  }
+
+  .journal-card-stacked .journal-text-stacked {
+    opacity: 1;
   }
 }
 
@@ -378,13 +399,21 @@ body {
   .journal-stack-card {
     position: relative !important;
     top: auto !important;
+    width: 100% !important;
     filter: none !important;
     transition: none !important;
     margin-bottom: 16px;
   }
 
-  .journal-card-overlay {
+  .journal-card-scrim,
+  .journal-text-normal,
+  .journal-text-stacked {
     transition: none !important;
+  }
+
+  /* Always show normal text, hide stacked text */
+  .journal-text-stacked {
+    display: none !important;
   }
 }
 
