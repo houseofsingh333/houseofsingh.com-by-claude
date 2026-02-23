@@ -212,20 +212,19 @@ body {
   }
 }
 
-/* ——— Category preview crossfade images ——— */
+/* ——— Preview media crossfade images ——— */
 
-.category-preview-img {
+.preview-media-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Match hero slider fade timing: 1.5 s, cinematic easing */
-  transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity var(--preview-fade-duration, 1.5s) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .category-preview-img {
+  .preview-media-img {
     transition: none;
   }
 }
@@ -244,38 +243,32 @@ body {
 
 /* ——— Projects editorial grid — calm fade-focus interaction ——— */
 
-/* Calm easing constant shared across this section */
+/* Calm easing constants shared across this section */
 :root {
   --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --editorial-duration: 800ms;
+  --editorial-duration: 1200ms;
 }
 
-/* Column: opacity transitions for the fade-focus effect */
+/* Column: opacity transitions for the sibling fade effect */
 .projects-col {
   transition: opacity var(--editorial-duration) var(--editorial-ease);
   will-change: opacity;
 }
 
-/* Number: opacity transitions */
-.projects-col-number {
-  color: var(--muted-foreground);
-  transition: opacity var(--editorial-duration) var(--editorial-ease);
-}
-
-/* Title: slight contrast increase + letter-spacing tighten on hover */
+/* Title: slight contrast increase on hover */
 .projects-col-title {
   position: relative;
   color: var(--foreground);
-  transition: letter-spacing var(--editorial-duration) var(--editorial-ease),
-    color var(--editorial-duration) var(--editorial-ease);
+  transition: color var(--editorial-duration) var(--editorial-ease);
 }
 
-/* Title underline — pseudo-element, fade only (no movement) */
+/* Title text wrapper — hosts the underline pseudo-element */
 .projects-col-title-text {
   position: relative;
   display: inline-block;
 }
 
+/* Underline — draws left-to-right via scaleX on hover */
 .projects-col-title-text::after {
   content: "";
   position: absolute;
@@ -284,8 +277,10 @@ body {
   bottom: -4px;
   height: 1px;
   background: var(--foreground);
-  opacity: 0;
-  transition: opacity var(--editorial-duration) var(--editorial-ease);
+  opacity: 0.35;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--editorial-duration) var(--editorial-ease);
 }
 
 /* CTA: opacity transitions */
@@ -296,22 +291,41 @@ body {
 /* Divider: constant, low-contrast, no animation */
 .projects-col-divider {
   border-right: 1px solid;
-  border-color: var(--foreground);
-  border-opacity: 0.15;
-  /* Tailwind v4 doesn't support border-opacity utility inline, use rgba */
   border-right-color: hsl(30 10% 12% / 0.15);
+}
+
+/* Media preview — subtle desaturation at rest, lifts on hover */
+.projects-col-media {
+  transition: filter var(--editorial-duration) var(--editorial-ease);
+  filter: grayscale(0.15) contrast(0.95);
 }
 
 /* ── Hover state ── */
 .projects-col:hover .projects-col-title,
 .projects-col:focus-visible .projects-col-title {
-  letter-spacing: 0.04em;
   color: hsl(30 10% 8%);
 }
 
 .projects-col:hover .projects-col-title-text::after,
 .projects-col:focus-visible .projects-col-title-text::after {
-  opacity: 0.35;
+  transform: scaleX(1);
+}
+
+.projects-col:hover .projects-col-media,
+.projects-col:focus-visible .projects-col-media {
+  filter: grayscale(0) contrast(1);
+}
+
+/* ── Active / pressed state — quick feedback, slow ease-back ── */
+.projects-col:active .projects-col-title-text::after {
+  transform: scaleX(1);
+  opacity: 0.6;
+  transition-duration: 120ms;
+}
+
+.projects-col:active .projects-col-media {
+  filter: grayscale(0.05) contrast(0.9) brightness(0.92);
+  transition-duration: 150ms;
 }
 
 /* ── Focus-visible ring for keyboard navigation ── */
@@ -323,10 +337,10 @@ body {
 /* ── Reduced motion: disable all transitions ── */
 @media (prefers-reduced-motion: reduce) {
   .projects-col,
-  .projects-col-number,
   .projects-col-title,
   .projects-col-title-text::after,
-  .projects-col-cta {
+  .projects-col-cta,
+  .projects-col-media {
     transition: none;
   }
 }

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
 import CategoryBlock from "./CategoryBlock";
+import PreviewMedia from "./PreviewMedia";
 import type { ProjectCategory } from "@/lib/placeholder-data";
 
 type Props = {
@@ -78,16 +79,9 @@ export default function ProjectsPreview({ categories }: Props) {
       <div className="flex flex-col md:hidden">
         {categories.map((cat, i) => {
           const isLast = i === categories.length - 1;
-
-          /*
-           * Stacking order (z-index):
-           *   Collaborations (last) on top, Photography above Design.
-           *   Formula: last item gets highest z; remaining are reverse-ordered.
-           */
           const zIndex = isLast
             ? categories.length
             : categories.length - 1 - i;
-
           const previewImages = resolvePreviewImages(cat);
 
           return (
@@ -102,8 +96,6 @@ export default function ProjectsPreview({ categories }: Props) {
                 gifUrl={cat.previewGif}
                 images={previewImages}
               />
-
-              {/* Hairline divider between blocks */}
               {!isLast && (
                 <div
                   className="h-px"
@@ -115,18 +107,19 @@ export default function ProjectsPreview({ categories }: Props) {
         })}
       </div>
 
-      {/* ── Desktop / Tablet: equal columns · editorial fade focus ── */}
-      <div className="hidden md:flex h-[520px] overflow-hidden projects-editorial-grid">
+      {/* ── Desktop / Tablet: editorial columns with preview media ── */}
+      <div className="hidden md:flex min-h-[520px] projects-editorial-grid">
         {categories.map((cat, i) => {
           const isHovered = hoveredId === cat._id;
           const hasSiblingHover = hoveredId !== null && !isHovered;
           const isLast = i === categories.length - 1;
+          const previewImages = resolvePreviewImages(cat);
 
           return (
             <Link
               key={cat._id}
               href={`/projects?filter=${cat.slug}`}
-              className={`projects-col relative flex-1 bg-background overflow-hidden cursor-pointer focus-visible:z-10 outline-none${!isLast ? " projects-col-divider" : ""}`}
+              className={`projects-col relative flex-1 flex flex-col bg-background cursor-pointer focus-visible:z-10 outline-none${!isLast ? " projects-col-divider" : ""}`}
               style={{
                 opacity: hasSiblingHover ? 0.45 : 1,
               }}
@@ -135,34 +128,35 @@ export default function ProjectsPreview({ categories }: Props) {
               onFocus={() => handleEnter(cat._id)}
               onBlur={handleLeave}
             >
-              {/* Content — always centered */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-8">
-                {/* Order number */}
-                <p
-                  className="projects-col-number text-[10px] tracking-widest mb-3"
-                  style={{
-                    opacity: isHovered ? 0.6 : 0.3,
-                  }}
-                >
-                  {String(cat.order).padStart(2, "0")}
-                </p>
-
-                {/* Title with editorial underline */}
+              {/* Title row — title left, VIEW → right */}
+              <div className="flex items-baseline justify-between px-8 pt-10 pb-6">
                 <h3 className="projects-col-title font-editorial text-base font-light tracking-wider uppercase">
                   <span className="projects-col-title-text">
                     {cat.title}
                   </span>
                 </h3>
-
-                {/* CTA — fades in on hover */}
-                <div
-                  className="projects-col-cta mt-4 flex items-center gap-1.5 text-[11px] tracking-widest uppercase text-muted-foreground"
+                <span
+                  className="projects-col-cta flex items-center gap-1.5 text-[11px] tracking-widest uppercase text-muted-foreground"
                   style={{
-                    opacity: isHovered ? 0.7 : 0,
+                    opacity: isHovered ? 0.6 : 0.3,
                   }}
                 >
                   <span>View</span>
                   <span className="text-xs">→</span>
+                </span>
+              </div>
+
+              {/* Preview media — centered, 80% width, editorial frame */}
+              <div className="flex-1 flex items-start justify-center px-8 pb-8">
+                <div className="projects-col-media relative w-[80%] aspect-[3/2] overflow-hidden border border-foreground/10">
+                  <PreviewMedia
+                    title={cat.title}
+                    gifUrl={cat.previewGif}
+                    images={previewImages}
+                    interval={8000}
+                    fadeDuration="2s"
+                    className="absolute inset-0"
+                  />
                 </div>
               </div>
             </Link>
