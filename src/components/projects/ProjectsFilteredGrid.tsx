@@ -14,22 +14,41 @@ const DEFAULT_CATEGORIES = [
   "Photography",
 ];
 
+/** Lowercase slug-like form for matching: "Visual Identity" → "visual-identity" */
+function slugify(str: string): string {
+  return str.toLowerCase().replace(/\s+/g, "-");
+}
+
 type Props = {
   projects: ProjectSummary[];
+  initialFilter?: string;
 };
 
-export default function ProjectsFilteredGrid({ projects }: Props) {
-  const [active, setActive] = useState("All");
+export default function ProjectsFilteredGrid({
+  projects,
+  initialFilter,
+}: Props) {
+  // Derive unique categories from project data, fall back to defaults
+  const categories = useMemo(() => {
+    const fromData = Array.from(
+      new Set(projects.map((p) => p.category).filter(Boolean)),
+    );
+    return fromData.length > 0 ? fromData : DEFAULT_CATEGORIES;
+  }, [projects]);
+
+  // Resolve initialFilter (slug from URL) → matching category name
+  const [active, setActive] = useState(() => {
+    if (!initialFilter) return "All";
+    const param = initialFilter.toLowerCase();
+    const match = categories.find(
+      (cat) => cat.toLowerCase() === param || slugify(cat) === param,
+    );
+    return match ?? "All";
+  });
 
   const handleFilter = useCallback((category: string) => {
     setActive(category);
   }, []);
-
-  // Derive unique categories from project data, fall back to defaults
-  const categories = useMemo(() => {
-    const fromData = Array.from(new Set(projects.map((p) => p.category).filter(Boolean)));
-    return fromData.length > 0 ? fromData : DEFAULT_CATEGORIES;
-  }, [projects]);
 
   const visibleIds = useMemo(() => {
     if (active === "All") return new Set(projects.map((p) => p._id));
@@ -37,6 +56,8 @@ export default function ProjectsFilteredGrid({ projects }: Props) {
       projects.filter((p) => p.category === active).map((p) => p._id),
     );
   }, [active, projects]);
+
+  const hasInitialFilter = !!initialFilter;
 
   return (
     <div>
@@ -50,7 +71,9 @@ export default function ProjectsFilteredGrid({ projects }: Props) {
       </div>
 
       {/* ——— Project grid ——— */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14 md:gap-y-16 lg:gap-y-20">
+      <div
+        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14 md:gap-y-16 lg:gap-y-20${hasInitialFilter ? " projects-grid-reveal" : ""}`}
+      >
         {projects.map((project, index) => {
           const show = visibleIds.has(project._id);
           return (

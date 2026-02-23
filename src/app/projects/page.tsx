@@ -19,7 +19,13 @@ type SanityProject = {
   excerpt: string;
 };
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ filter?: string }>;
+}) {
+  const params = await searchParams;
+
   const data = await sanityFetch<SanityProject[] | null>({
     query: projectsListQuery,
   });
@@ -54,7 +60,10 @@ export default async function ProjectsPage() {
 
       {/* Filter rail + grid — same max-width and padding as header */}
       <section className="mx-auto max-w-7xl px-6 md:px-16 pb-24 md:pb-36">
-        <ProjectsFilteredGrid projects={projects} />
+        <ProjectsFilteredGrid
+          projects={projects}
+          initialFilter={params.filter}
+        />
       </section>
     </div>
   );

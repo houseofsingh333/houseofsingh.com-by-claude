@@ -40,7 +40,7 @@ export default function ProjectsPreview({ categories }: Props) {
   }, [isTouch]);
 
   return (
-    <section className="px-6 md:px-16 py-20 md:py-36">
+    <section className="px-6 md:px-16 py-12 md:py-36">
       {/* ── Section header ── */}
       <ScrollReveal>
         <div className="flex items-baseline justify-between mb-6">
@@ -54,32 +54,29 @@ export default function ProjectsPreview({ categories }: Props) {
             See all
           </Link>
         </div>
-        <div className="w-full h-px bg-border mb-10 md:mb-14" />
+        <div className="w-full h-px bg-border mb-6 md:mb-14" />
       </ScrollReveal>
 
-      {/* ── Mobile: stacked scroll-reveal cards (no dividers) ── */}
-      <div className="flex flex-col gap-4 md:hidden">
-        {categories.map((cat, i) => (
-          <ScrollReveal key={cat._id} delay={i * 0.15}>
-            <Link
-              href={`/projects?filter=${cat.slug}`}
-              className="group relative block py-8 px-6 bg-background"
-            >
-              <div className="flex flex-col items-center justify-center text-center">
-                <p className="text-[10px] tracking-widest text-muted-foreground/50 mb-2">
-                  {String(cat.order).padStart(2, "0")}
-                </p>
-                <p className="font-editorial text-lg font-light text-foreground tracking-wider uppercase">
+      {/* ── Mobile: editorial category index with sticky rows ── */}
+      <div className="flex flex-col md:hidden">
+        {categories.map((cat, i) => {
+          const isLast = i === categories.length - 1;
+          return (
+            <div key={cat._id} className={isLast ? "" : "min-h-[28vh]"}>
+              <Link
+                href={`/projects?filter=${cat.slug}`}
+                className="projects-mobile-link"
+              >
+                <span className="projects-mobile-title font-editorial text-[15px] font-light tracking-wide">
                   {cat.title}
-                </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] tracking-widest uppercase text-muted-foreground">
-                  <span>View</span>
-                  <span className="text-xs">→</span>
                 </span>
-              </div>
-            </Link>
-          </ScrollReveal>
-        ))}
+                <span className="projects-mobile-arrow text-muted-foreground/40 text-[11px]">
+                  →
+                </span>
+              </Link>
+            </div>
+          );
+        })}
       </div>
 
       {/* ── Desktop / Tablet: equal columns · editorial fade focus ── */}

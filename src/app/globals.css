@@ -154,6 +154,76 @@ body {
   }
 }
 
+/* ——— Mobile projects editorial index — sticky rows ——— */
+
+@media (max-width: 767px) {
+  .projects-mobile-link {
+    position: sticky;
+    top: 72px; /* clears 68px scrolled header + 4px breathing room */
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 52px; /* accessible 44px+ hit area */
+    padding: 14px 0;
+    background: var(--background);
+    border-bottom: 1px solid hsl(30 10% 12% / 0.12);
+  }
+
+  /* Underline reveal — left-to-right on tap */
+  .projects-mobile-title {
+    position: relative;
+    display: inline-block;
+    color: var(--foreground);
+  }
+
+  .projects-mobile-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3px;
+    height: 1px;
+    background: var(--foreground);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 220ms ease-out;
+  }
+
+  .projects-mobile-link:active .projects-mobile-title::after {
+    transform: scaleX(1);
+  }
+
+  /* Arrow subtle slide on tap */
+  .projects-mobile-arrow {
+    transition: transform 220ms ease-out, opacity 220ms ease-out;
+  }
+
+  .projects-mobile-link:active .projects-mobile-arrow {
+    transform: translateX(3px);
+    opacity: 0.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-mobile-title::after,
+  .projects-mobile-arrow {
+    transition: none !important;
+  }
+}
+
+/* ——— Projects grid reveal — premium page-load transition ——— */
+
+.projects-grid-reveal {
+  animation: projectsGridReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-grid-reveal {
+    animation: none;
+  }
+}
+
 /* ——— Projects editorial grid — calm fade-focus interaction ——— */
 
 /* Calm easing constant shared across this section */
@@ -288,6 +358,17 @@ body {
   from {
     opacity: 0;
     transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes projectsGridReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
