@@ -39,7 +39,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
 
       {/* Asymmetric overlap layout */}
       <div className="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-        {/* Portrait — left, tall, overlaps into the text zone */}
+        {/* Portrait — left */}
         <ScrollReveal
           delay={0.15}
           offset={30}
@@ -62,16 +62,22 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
           </div>
         </ScrollReveal>
 
-        {/* Text content — right, vertically centered against portrait */}
-        <div className="md:col-span-5 md:col-start-7 flex flex-col gap-10 md:pt-16 lg:pt-28">
-          {/* Roles stacked as a typographic element */}
-          <ScrollReveal delay={0.3} offset={16}>
+        {/* Text content — right */}
+        <div className="md:col-span-5 md:col-start-7 flex flex-col gap-8 md:pt-16 lg:pt-28">
+          {/* Founder name label */}
+          <ScrollReveal delay={0.25} offset={16}>
+            <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground">
+              {founderName}
+            </p>
+          </ScrollReveal>
+
+          {/* Roles stacked */}
+          <ScrollReveal delay={0.35} offset={16}>
             <div className="space-y-0">
-              {roles.map((role, i) => (
+              {roles.map((role) => (
                 <p
                   key={role}
                   className="font-editorial text-lg md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5]"
-                  style={{ opacity: 1 - i * 0.2 }}
                 >
                   {role}
                 </p>
@@ -79,34 +85,27 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
             </div>
           </ScrollReveal>
 
-          <ScrollReveal delay={0.4} offset={16}>
+          {/* Bio */}
+          <ScrollReveal delay={0.45} offset={16}>
             {data.founderBio ? (
-              <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-sm [&>p]:mb-4 [&>p:last-child]:mb-0">
+              <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-md [&>p]:mb-4 [&>p:last-child]:mb-0">
                 <PortableText value={data.founderBio} />
               </div>
             ) : (
-              <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-sm">
+              <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-md">
                 {FALLBACK_BIO}
               </p>
             )}
           </ScrollReveal>
 
-          {/* Pull quote */}
-          {data.introQuote && (
-            <ScrollReveal delay={0.5} offset={16}>
-              <blockquote className="font-editorial text-base md:text-xl font-light leading-[1.5] text-foreground/80 border-l-2 border-foreground/10 pl-4 md:pl-6">
-                {data.introQuote}
-              </blockquote>
-            </ScrollReveal>
-          )}
-
-          <ScrollReveal delay={0.6} offset={12}>
+          {/* About link */}
+          <ScrollReveal delay={0.55} offset={12}>
             <Link
               href="/about"
               className="inline-flex items-center gap-3 text-xs tracking-widest uppercase text-foreground group w-fit"
             >
               <span className="border-b border-foreground/30 pb-1 group-hover:border-foreground transition-colors duration-300">
-                Discover
+                About
               </span>
               <span className="transition-transform duration-300 group-hover:translate-x-1">
                 →
