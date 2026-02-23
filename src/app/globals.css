@@ -345,6 +345,49 @@ body {
   }
 }
 
+/* ——— Journal sticky stack — mobile / tablet ——— */
+
+@media (max-width: 1023px) {
+  .journal-stack-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: filter 700ms ease-in-out, opacity 150ms ease-out;
+  }
+
+  /* Tap / pressed state */
+  .journal-stack-link:active {
+    opacity: 0.92;
+  }
+
+  /* Grayscale when stacked behind the top card */
+  .journal-card-stacked {
+    filter: grayscale(1);
+  }
+
+  /* Subtle dark overlay for stacked cards — aids text readability */
+  .journal-card-overlay {
+    background: transparent;
+    transition: background 700ms ease-in-out;
+  }
+
+  .journal-card-stacked .journal-card-overlay {
+    background: rgba(0, 0, 0, 0.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal-stack-card {
+    position: relative !important;
+    top: auto !important;
+    filter: none !important;
+    transition: none !important;
+    margin-bottom: 16px;
+  }
+
+  .journal-card-overlay {
+    transition: none !important;
+  }
+}
+
 /* ——— Hero vignette — cinematic film still feel ——— */
 
 .hero-vignette {
