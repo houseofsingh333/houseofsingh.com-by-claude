@@ -159,7 +159,7 @@ body {
 @media (max-width: 767px) {
   .projects-mobile-link {
     position: sticky;
-    top: 72px; /* clears 68px scrolled header + 4px breathing room */
+    top: 68px; /* flush against 68px scrolled header — no gap */
     z-index: 1;
     display: flex;
     align-items: center;
