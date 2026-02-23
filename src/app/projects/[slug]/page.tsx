@@ -11,6 +11,25 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+function ProjectHeader({ category, title, intro }: { category: string; title: string; intro?: string }) {
+  return (
+    <section className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset mb-12 md:mb-16">
+      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mb-4">
+        {category}
+      </p>
+      <div className="w-full h-px bg-border mb-8 md:mb-10" />
+      <h1 className="font-editorial text-3xl md:text-4xl font-light text-foreground leading-[1.2] mb-6">
+        {title}
+      </h1>
+      {intro && (
+        <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8]">
+          {intro}
+        </p>
+      )}
+    </section>
+  );
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const project = await sanityFetch<ProjectDetail>({
@@ -36,21 +55,7 @@ export default async function ProjectDetailPage({ params }: Props) {
   if (project) {
     return (
       <article className="pb-20">
-        {/* Header */}
-        <section className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset mb-12 md:mb-16">
-          <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mb-4">
-            {project.category}
-          </p>
-          <div className="w-full h-px bg-border mb-8 md:mb-10" />
-          <h1 className="font-editorial text-3xl md:text-4xl font-light text-foreground leading-[1.2] mb-6">
-            {project.title}
-          </h1>
-          {project.shortIntro && (
-            <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8]">
-              {project.shortIntro}
-            </p>
-          )}
-        </section>
+        <ProjectHeader category={project.category} title={project.title} intro={project.shortIntro} />
 
         {/* Cover image */}
         {project.coverImage && (
@@ -78,21 +83,14 @@ export default async function ProjectDetailPage({ params }: Props) {
   if (!fallback) notFound();
 
   return (
-    <section className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset pb-20">
-      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mb-4">
-        {fallback.category}
-      </p>
-      <div className="w-full h-px bg-border mb-8 md:mb-10" />
-      <h1 className="font-editorial text-3xl md:text-4xl font-light text-foreground leading-[1.2] mb-6">
-        {fallback.title}
-      </h1>
-      <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-8">
-        {fallback.excerpt}
-      </p>
-      <p className="text-xs text-muted-foreground/40">
-        Full project detail with content sections will render here once Sanity
-        is connected.
-      </p>
-    </section>
+    <article className="pb-20">
+      <ProjectHeader category={fallback.category} title={fallback.title} intro={fallback.excerpt} />
+      <section className="mx-auto max-w-3xl px-6 md:px-16">
+        <p className="text-xs text-muted-foreground/40">
+          Full project detail with content sections will render here once Sanity
+          is connected.
+        </p>
+      </section>
+    </article>
   );
 }

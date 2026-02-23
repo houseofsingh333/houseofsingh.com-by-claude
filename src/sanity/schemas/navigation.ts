@@ -31,6 +31,11 @@ export const navigation = defineType({
               type: "boolean",
               initialValue: false,
             }),
+            defineField({
+              name: "order",
+              title: "Order",
+              type: "number",
+            }),
           ],
         },
       ],

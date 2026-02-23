@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
-import { normalizeText, type HeroSlide } from "@/lib/placeholder-data";
+import type { HeroSlide } from "@/lib/placeholder-data";
 
 type Props = {
   slides: HeroSlide[];
@@ -25,7 +25,7 @@ export default function HeroSlider({ slides }: Props) {
   if (slides.length === 0) return null;
 
   const slide = slides[current];
-  const caption = normalizeText(slide.caption);
+  const caption = slide.caption;
 
   /* Link destination for the current slide (may change between slides). */
   const href = slide.internalLink || slide.externalLink || undefined;
@@ -66,7 +66,7 @@ export default function HeroSlider({ slides }: Props) {
             <SanityImage
               image={s.image}
               context="hero"
-              alt={normalizeText(s.imageAlt) || normalizeText(s.caption) || "Hero"}
+              alt={s.imageAlt || s.caption || "Hero"}
               priority={i === 0}
               fill
               className="object-cover"

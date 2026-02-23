@@ -1,10 +1,3 @@
-import { createImageUrlBuilder } from "@sanity/image-url";
-import { projectId, dataset } from "@/sanity/env";
-
-// --------------- Builder ---------------
-
-const builder = createImageUrlBuilder({ projectId, dataset });
-
 // --------------- Types ---------------
 
 /** Shape returned by GROQ for image fields with asset metadata. */
@@ -204,18 +197,3 @@ export function sanityLoader({
   return buildUrl(src, width, quality || 75, "crop");
 }
 
-/**
- * Convenience: return only the `sizes` string for a given context
- * (useful when rendering `next/image` with `fill` mode).
- */
-export function getSizes(context: ImageContext): string {
-  return profiles[context].sizes;
-}
-
-/**
- * Build a single Sanity CDN URL from an image-url builder source.
- * Useful when you need just one specific size.
- */
-export function urlFor(source: Parameters<typeof builder.image>[0]) {
-  return builder.image(source);
-}

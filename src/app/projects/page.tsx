@@ -35,7 +35,7 @@ export default async function ProjectsPage() {
             typeof p.thumbnail === "string"
               ? p.thumbnail
               : p.thumbnail?.url ?? "/images/project-placeholder-1.svg",
-          thumbnailAlt: p.thumbnailAlt ?? p.title,
+          thumbnailAlt: p.thumbnailAlt,
           excerpt: p.excerpt ?? "",
         }))
       : fallbackProjects;

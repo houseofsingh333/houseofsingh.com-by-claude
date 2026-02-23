@@ -110,8 +110,8 @@ export default function StickyChapterRenderer({ section }: Props) {
       </div>
 
       {/* Desktop: two-column sticky layout */}
-      <div className="hidden md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] md:gap-12 lg:gap-16 sticky-chapter-grid">
-        <div className="sticky-chapter-text">
+      <div className="hidden md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] md:gap-12 lg:gap-16 items-start">
+        <div className="self-start">
           <div className="sticky top-32 text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-6 last:[&>p]:mb-0">
             <PortableText value={section.stickyText} />
           </div>
