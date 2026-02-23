@@ -63,7 +63,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
         </ScrollReveal>
 
         {/* Text content — right */}
-        <div className="md:col-span-5 md:col-start-7 flex flex-col gap-8 md:pt-16 lg:pt-28">
+        <div className="md:col-span-5 md:col-start-7 flex flex-col gap-8 md:gap-10 md:pt-16 lg:pt-28">
           {/* Founder name label */}
           <ScrollReveal delay={0.25} offset={16}>
             <p className="text-xs tracking-[0.2em] uppercase text-muted-foreground">
@@ -77,7 +77,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
               {roles.map((role) => (
                 <p
                   key={role}
-                  className="font-editorial text-lg md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5]"
+                  className="font-editorial text-2xl md:text-[2rem] lg:text-[2.5rem] font-light text-foreground leading-[1.3]"
                 >
                   {role}
                 </p>
@@ -88,11 +88,11 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
           {/* Bio */}
           <ScrollReveal delay={0.45} offset={16}>
             {data.founderBio ? (
-              <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-md [&>p]:mb-4 [&>p:last-child]:mb-0">
+              <div className="text-[15px] md:text-base text-muted-foreground leading-[1.8] max-w-lg [&>p]:mb-4 [&>p:last-child]:mb-0">
                 <PortableText value={data.founderBio} />
               </div>
             ) : (
-              <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-md">
+              <p className="text-[15px] md:text-base text-muted-foreground leading-[1.8] max-w-lg">
                 {FALLBACK_BIO}
               </p>
             )}
