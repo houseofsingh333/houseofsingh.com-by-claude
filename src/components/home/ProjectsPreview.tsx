@@ -1,18 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { ProjectCategory } from "@/lib/placeholder-data";
 
 type Props = {
   categories: ProjectCategory[];
-};
-
-const categoryPreviews: Record<string, string> = {
-  photography: "/images/project-placeholder-1.svg",
-  design: "/images/project-placeholder-2.svg",
-  collaborations: "/images/project-placeholder-3.svg",
 };
 
 /** Returns true when the primary pointer is coarse (finger / stylus). */
@@ -30,29 +24,20 @@ function useTouchDevice(): boolean {
   return isTouch;
 }
 
-/** Resolve a category's preview image — CMS thumbnail URL or local fallback. */
-function getCategoryImage(cat: ProjectCategory): string {
-  if (cat.thumbnail) {
-    const url =
-      typeof cat.thumbnail === "string" ? cat.thumbnail : cat.thumbnail.url;
-    if (url) return url;
-  }
-  return categoryPreviews[cat.slug] || "/images/project-placeholder-1.svg";
-}
-
 export default function ProjectsPreview({ categories }: Props) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const isTouch = useTouchDevice();
 
-  /** Tablet/desktop touch: first tap expands, second tap navigates. */
-  const handleTouchTap = (
-    e: React.MouseEvent,
-    cat: ProjectCategory,
-  ) => {
-    if (hoveredId === cat._id) return; // already expanded — let Link navigate
-    e.preventDefault();
-    setHoveredId(cat._id);
-  };
+  const handleEnter = useCallback(
+    (id: string) => {
+      if (!isTouch) setHoveredId(id);
+    },
+    [isTouch],
+  );
+
+  const handleLeave = useCallback(() => {
+    if (!isTouch) setHoveredId(null);
+  }, [isTouch]);
 
   return (
     <section className="px-6 md:px-16 py-20 md:py-36">
@@ -72,125 +57,79 @@ export default function ProjectsPreview({ categories }: Props) {
         <div className="w-full h-px bg-border mb-10 md:mb-14" />
       </ScrollReveal>
 
-      {/* ── Mobile: stacked scroll-reveal cards ── */}
+      {/* ── Mobile: stacked scroll-reveal cards (no dividers) ── */}
       <div className="flex flex-col gap-4 md:hidden">
-        {categories.map((cat, i) => {
-          const imgSrc = getCategoryImage(cat);
-
-          return (
-            <ScrollReveal key={cat._id} delay={i * 0.15}>
-              <Link
-                href={`/projects?filter=${cat.slug}`}
-                className="group relative block h-[200px] overflow-hidden bg-secondary"
-              >
-                {/* Background image */}
-                <img
-                  src={imgSrc}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover opacity-20 transition-transform duration-700 group-active:scale-[1.02]"
-                />
-
-                {/* Content overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
-                  <p className="text-[10px] tracking-widest text-muted-foreground/50 mb-2">
-                    {String(cat.order).padStart(2, "0")}
-                  </p>
-                  <p className="font-editorial text-lg font-light text-foreground tracking-wider uppercase">
-                    {cat.title}
-                  </p>
-                  <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] tracking-widest uppercase text-muted-foreground">
-                    <span>View</span>
-                    <span className="text-xs">→</span>
-                  </span>
-                </div>
-              </Link>
-            </ScrollReveal>
-          );
-        })}
+        {categories.map((cat, i) => (
+          <ScrollReveal key={cat._id} delay={i * 0.15}>
+            <Link
+              href={`/projects?filter=${cat.slug}`}
+              className="group relative block py-8 px-6 bg-background"
+            >
+              <div className="flex flex-col items-center justify-center text-center">
+                <p className="text-[10px] tracking-widest text-muted-foreground/50 mb-2">
+                  {String(cat.order).padStart(2, "0")}
+                </p>
+                <p className="font-editorial text-lg font-light text-foreground tracking-wider uppercase">
+                  {cat.title}
+                </p>
+                <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] tracking-widest uppercase text-muted-foreground">
+                  <span>View</span>
+                  <span className="text-xs">→</span>
+                </span>
+              </div>
+            </Link>
+          </ScrollReveal>
+        ))}
       </div>
 
-      {/* ── Desktop / Tablet: horizontal accordion strips ── */}
-      <div className="hidden md:flex gap-px bg-border h-[520px] overflow-hidden">
-        {categories.map((cat) => {
-          const isActive = hoveredId === cat._id;
-          const hasActive = hoveredId !== null;
-          const imgSrc = getCategoryImage(cat);
+      {/* ── Desktop / Tablet: equal columns · editorial fade focus ── */}
+      <div className="hidden md:flex h-[520px] overflow-hidden projects-editorial-grid">
+        {categories.map((cat, i) => {
+          const isHovered = hoveredId === cat._id;
+          const hasSiblingHover = hoveredId !== null && !isHovered;
+          const isLast = i === categories.length - 1;
 
           return (
             <Link
               key={cat._id}
               href={`/projects?filter=${cat.slug}`}
-              className="relative bg-background overflow-hidden group cursor-pointer focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+              className={`projects-col relative flex-1 bg-background overflow-hidden cursor-pointer focus-visible:z-10 outline-none${!isLast ? " projects-col-divider" : ""}`}
               style={{
-                flex: isActive ? 4 : hasActive ? 0.5 : 1,
-                transition: "flex 0.7s cubic-bezier(0.25, 0.1, 0.25, 1)",
+                opacity: hasSiblingHover ? 0.45 : 1,
               }}
-              onMouseEnter={
-                isTouch ? undefined : () => setHoveredId(cat._id)
-              }
-              onMouseLeave={
-                isTouch ? undefined : () => setHoveredId(null)
-              }
-              onClick={
-                isTouch ? (e) => handleTouchTap(e, cat) : undefined
-              }
+              onMouseEnter={() => handleEnter(cat._id)}
+              onMouseLeave={handleLeave}
+              onFocus={() => handleEnter(cat._id)}
+              onBlur={handleLeave}
             >
-              {/* Background image */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  opacity: isActive ? 0.2 : 0,
-                  transition: "opacity 0.7s cubic-bezier(0.25,0.1,0.25,1)",
-                }}
-              >
-                <img
-                  src={imgSrc}
-                  alt=""
-                  className="w-full h-full object-cover"
+              {/* Content — always centered */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-8">
+                {/* Order number */}
+                <p
+                  className="projects-col-number text-[10px] tracking-widest mb-3"
                   style={{
-                    transform: isActive ? "scale(1)" : "scale(1.1)",
-                    transition: "transform 1s cubic-bezier(0.25,0.1,0.25,1)",
+                    opacity: isHovered ? 0.6 : 0.3,
                   }}
-                />
-              </div>
-
-              {/* Collapsed — horizontal text at center */}
-              <div
-                className="absolute inset-0 flex flex-col items-center justify-center p-8"
-                style={{
-                  opacity: isActive ? 0 : 1,
-                  transition: "opacity 0.5s cubic-bezier(0.25,0.1,0.25,1)",
-                }}
-              >
-                <p className="text-[10px] tracking-widest text-muted-foreground/50 mb-2">
+                >
                   {String(cat.order).padStart(2, "0")}
                 </p>
-                <p className="font-editorial text-base font-light text-foreground tracking-wider uppercase">
-                  {cat.title}
-                </p>
-              </div>
 
-              {/* Expanded — full info */}
-              <div
-                className="absolute inset-0 flex flex-col items-center justify-center p-10"
-                style={{
-                  opacity: isActive ? 1 : 0,
-                  transition: "opacity 0.5s cubic-bezier(0.25,0.1,0.25,1)",
-                }}
-              >
-                <p className="text-[10px] tracking-widest text-muted-foreground mb-3">
-                  {String(cat.order).padStart(2, "0")}
-                </p>
-                <h3 className="font-editorial text-3xl font-light text-foreground mb-4">
-                  {cat.title}
+                {/* Title with editorial underline */}
+                <h3 className="projects-col-title font-editorial text-base font-light tracking-wider uppercase">
+                  <span className="projects-col-title-text">
+                    {cat.title}
+                  </span>
                 </h3>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs tracking-widest uppercase text-muted-foreground">
-                    View
-                  </span>
-                  <span className="text-muted-foreground text-xs transition-transform duration-300 group-hover:translate-x-1">
-                    →
-                  </span>
+
+                {/* CTA — fades in on hover */}
+                <div
+                  className="projects-col-cta mt-4 flex items-center gap-1.5 text-[11px] tracking-widest uppercase text-muted-foreground"
+                  style={{
+                    opacity: isHovered ? 0.7 : 0,
+                  }}
+                >
+                  <span>View</span>
+                  <span className="text-xs">→</span>
                 </div>
               </div>
             </Link>
