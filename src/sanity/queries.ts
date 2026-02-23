@@ -55,6 +55,16 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   seoDescription
 }`;
 
+// --------------- Homepage Intro (About preview) ---------------
+
+export const homeIntroQuery = `*[_type == "aboutPage"][0]{
+  founderName,
+  founderRoles,
+  founderBio,
+  "portrait": portrait ${_imageAsset},
+  introQuote
+}`;
+
 // --------------- Hero Slides ---------------
 
 export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){

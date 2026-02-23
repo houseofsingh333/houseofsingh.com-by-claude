@@ -8,6 +8,7 @@ import StudioRedirect from "@/components/home/StudioRedirect";
 import { sanityFetch } from "@/sanity/fetch";
 import {
   heroSlidesQuery,
+  homeIntroQuery,
   siteSettingsQuery,
   projectCategoriesQuery,
   journalFeedQuery,
@@ -19,7 +20,9 @@ import {
   fallbackJournalEntries,
   fallbackSpotlightProject,
   fallbackSiteSettings,
+  fallbackHomeIntro,
   type HeroSlide,
+  type HomeIntroData,
   type ProjectCategory,
   type JournalEntry,
   type SpotlightProject,
@@ -27,8 +30,9 @@ import {
 } from "@/lib/placeholder-data";
 
 export default async function HomePage() {
-  const [slides, settings, categories, journal, spotlight] = await Promise.all([
+  const [slides, intro, settings, categories, journal, spotlight] = await Promise.all([
     sanityFetch<HeroSlide[] | null>({ query: heroSlidesQuery }),
+    sanityFetch<HomeIntroData | null>({ query: homeIntroQuery }),
     sanityFetch<SiteSettings | null>({ query: siteSettingsQuery }),
     sanityFetch<ProjectCategory[] | null>({ query: projectCategoriesQuery }),
     sanityFetch<JournalEntry[] | null>({ query: journalFeedQuery }),
@@ -40,6 +44,7 @@ export default async function HomePage() {
       ? slides
       : [...slides, ...fallbackHeroSlides.slice(slides.length)]
     : fallbackHeroSlides;
+  const homeIntro = intro ?? fallbackHomeIntro;
   const projectCategories = categories?.length
     ? categories
     : fallbackProjectCategories;
@@ -51,7 +56,7 @@ export default async function HomePage() {
   return (
     <>
       <CinematicHero slides={heroSlides} />
-      <IntroSection />
+      <IntroSection data={homeIntro} />
       <ProjectsPreview categories={projectCategories} />
       <SpotlightSection project={spotlightProject} />
       <JournalPreview entries={journalEntries} />

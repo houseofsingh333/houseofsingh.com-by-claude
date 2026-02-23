@@ -158,6 +158,14 @@ export type AboutPageData = {
   seoDescription: string | null;
 };
 
+export type HomeIntroData = {
+  founderName: string;
+  founderRoles: string[] | null;
+  founderBio: PortableTextBlock[] | null;
+  portrait: SanityImage | null;
+  introQuote: string | null;
+};
+
 // --------------- Fallback Navigation ---------------
 
 export const fallbackNavItems: NavItem[] = [
@@ -380,4 +388,19 @@ export const fallbackAboutPage: AboutPageData = {
   ],
   seoTitle: null,
   seoDescription: null,
+};
+
+// --------------- Fallback Home Intro ---------------
+
+export const fallbackHomeIntro: HomeIntroData = {
+  founderName: "Maninder Singh",
+  founderRoles: [
+    "Creative Director",
+    "Multidisciplinary Designer",
+    "Photographer",
+  ],
+  founderBio: null,
+  portrait: "/images/hero-placeholder-1.svg",
+  introQuote:
+    "Guided by a deep curiosity for life\u2019s quiet wonders, creating work that reflects the rhythm of nature and human connection.",
 };

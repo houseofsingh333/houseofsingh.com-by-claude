@@ -2,13 +2,28 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { PortableText } from "@portabletext/react";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
+import type { HomeIntroData } from "@/lib/placeholder-data";
 
-const PORTRAIT_IMAGE = "/images/hero-placeholder-1.svg";
+const FALLBACK_ROLES = [
+  "Creative Director",
+  "Multidisciplinary Designer",
+  "Photographer",
+];
 
-export default function IntroSection() {
+const FALLBACK_BIO =
+  "Based in Toronto, Maninder Singh blends design and photography to craft stories that feel both visually refined and emotionally resonant. His practice spans brand identities, editorial work, and fine art — always grounded in intention and detail.";
+
+const FALLBACK_PORTRAIT = "/images/hero-placeholder-1.svg";
+
+export default function IntroSection({ data }: { data: HomeIntroData }) {
   const [revealed, setRevealed] = useState(false);
+
+  const roles = data.founderRoles?.length ? data.founderRoles : FALLBACK_ROLES;
+  const portrait = data.portrait ?? FALLBACK_PORTRAIT;
+  const founderName = data.founderName ?? "Maninder Singh";
 
   return (
     <section className="px-6 md:px-16 py-20 md:py-36">
@@ -36,9 +51,9 @@ export default function IntroSection() {
             onMouseEnter={() => setRevealed(true)}
           >
             <SanityImage
-              image={PORTRAIT_IMAGE}
+              image={portrait}
               context="body"
-              alt="Maninder Singh — Creative Director, Designer & Photographer"
+              alt={`${founderName} — ${roles.join(", ")}`}
               fill
               className={`object-cover object-top transition-all duration-1000 ${
                 revealed ? "grayscale-0 scale-100" : "grayscale scale-[1.03]"
@@ -52,36 +67,38 @@ export default function IntroSection() {
           {/* Roles stacked as a typographic element */}
           <ScrollReveal delay={0.3} offset={16}>
             <div className="space-y-0">
-              {["Creative Director", "Multidisciplinary Designer", "Photographer"].map(
-                (role, i) => (
-                  <p
-                    key={role}
-                    className="font-editorial text-lg md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5]"
-                    style={{ opacity: 1 - i * 0.2 }}
-                  >
-                    {role}
-                  </p>
-                )
-              )}
+              {roles.map((role, i) => (
+                <p
+                  key={role}
+                  className="font-editorial text-lg md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5]"
+                  style={{ opacity: 1 - i * 0.2 }}
+                >
+                  {role}
+                </p>
+              ))}
             </div>
           </ScrollReveal>
 
           <ScrollReveal delay={0.4} offset={16}>
-            <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-sm">
-              Based in Toronto, Maninder Singh blends design and photography to
-              craft stories that feel both visually refined and emotionally
-              resonant. His practice spans brand identities, editorial work, and
-              fine art — always grounded in intention and detail.
-            </p>
+            {data.founderBio ? (
+              <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-sm [&>p]:mb-4 [&>p:last-child]:mb-0">
+                <PortableText value={data.founderBio} />
+              </div>
+            ) : (
+              <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-sm">
+                {FALLBACK_BIO}
+              </p>
+            )}
           </ScrollReveal>
 
           {/* Pull quote */}
-          <ScrollReveal delay={0.5} offset={16}>
-            <blockquote className="font-editorial text-base md:text-xl font-light leading-[1.5] text-foreground/80 border-l-2 border-foreground/10 pl-4 md:pl-6">
-              Guided by a deep curiosity for life&apos;s quiet wonders, creating
-              work that reflects the rhythm of nature and human connection.
-            </blockquote>
-          </ScrollReveal>
+          {data.introQuote && (
+            <ScrollReveal delay={0.5} offset={16}>
+              <blockquote className="font-editorial text-base md:text-xl font-light leading-[1.5] text-foreground/80 border-l-2 border-foreground/10 pl-4 md:pl-6">
+                {data.introQuote}
+              </blockquote>
+            </ScrollReveal>
+          )}
 
           <ScrollReveal delay={0.6} offset={12}>
             <Link
