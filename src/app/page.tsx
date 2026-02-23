@@ -1,4 +1,4 @@
-import HeroSlider from "@/components/home/HeroSlider";
+import CinematicHero from "@/components/home/CinematicHero";
 import IntroSection from "@/components/home/IntroSection";
 import ProjectsPreview from "@/components/home/ProjectsPreview";
 import SpotlightSection from "@/components/home/SpotlightSection";
@@ -50,7 +50,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroSlider slides={heroSlides} />
+      <CinematicHero slides={heroSlides} />
       <IntroSection />
       <ProjectsPreview categories={projectCategories} />
       <SpotlightSection project={spotlightProject} />
