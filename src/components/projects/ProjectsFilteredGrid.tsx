@@ -26,17 +26,23 @@ export default function ProjectsFilteredGrid({ projects }: Props) {
     setActive(label);
   }, []);
 
-  const visible = active === "All"
-    ? projects
-    : projects.filter((p) => p.category === active);
-
-  const visibleIds = new Set(visible.map((p) => p._id));
+  const visibleIds = new Set(
+    active === "All"
+      ? projects.map((p) => p._id)
+      : projects.filter((p) => p.category === active).map((p) => p._id)
+  );
 
   return (
-    <div className="flex flex-col md:flex-row md:gap-16 lg:gap-20">
-      {/* Filter index */}
+    <div className="flex flex-col md:flex-row md:gap-12 lg:gap-14 items-start">
+      {/* ——— Filter index ——— */}
       <nav
-        className="flex flex-row md:flex-col gap-x-6 gap-y-0 md:gap-y-3 mb-10 md:mb-0 md:w-44 md:shrink-0 flex-wrap"
+        className="
+          flex flex-row flex-wrap md:flex-col
+          gap-x-5 gap-y-0 md:gap-y-2
+          mb-9 md:mb-0
+          md:w-40 md:shrink-0
+          md:sticky md:top-24
+        "
         aria-label="Filter projects by category"
       >
         {FILTERS.map((label) => {
@@ -46,20 +52,24 @@ export default function ProjectsFilteredGrid({ projects }: Props) {
               key={label}
               onClick={() => handleFilter(label)}
               className={`
-                project-filter-item
-                text-left text-[11px] tracking-[0.12em] uppercase py-1
+                text-left text-[10.5px] tracking-[0.13em] uppercase
+                py-[3px] md:py-0.5
+                cursor-pointer select-none
+                outline-none focus-visible:underline focus-visible:underline-offset-2
                 transition-opacity duration-200
                 ${isActive
-                  ? "text-foreground"
-                  : "text-muted-foreground/50 hover:text-muted-foreground/80"
+                  ? "text-foreground opacity-100"
+                  : "text-foreground opacity-30 hover:opacity-60"
                 }
               `}
               aria-current={isActive ? "true" : undefined}
             >
-              <span className="relative inline-flex items-center gap-2">
+              <span className="relative inline-flex items-center gap-[7px]">
+                {/* Dot indicator — desktop only, left of active item */}
                 <span
                   className={`
-                    inline-block w-[3px] h-[3px] rounded-full bg-foreground
+                    hidden md:inline-block
+                    w-[3px] h-[3px] rounded-full bg-foreground shrink-0
                     transition-opacity duration-200
                     ${isActive ? "opacity-100" : "opacity-0"}
                   `}
@@ -72,8 +82,8 @@ export default function ProjectsFilteredGrid({ projects }: Props) {
         })}
       </nav>
 
-      {/* Project grid — all cards stay mounted, filtered cards fade via opacity */}
-      <div className="flex-1 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+      {/* ——— Project grid — all cards stay mounted; filter via opacity ——— */}
+      <div className="flex-1 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => {
           const show = visibleIds.has(project._id);
           return (
@@ -89,7 +99,8 @@ export default function ProjectsFilteredGrid({ projects }: Props) {
               tabIndex={show ? undefined : -1}
             >
               <article>
-                <div className="relative aspect-[4/3] overflow-hidden bg-secondary mb-5 shadow-sm project-card-image-wrap">
+                {/* Image container — aspect ratio prevents CLS */}
+                <div className="relative aspect-[4/3] overflow-hidden bg-secondary mb-6 project-card-image-wrap">
                   <Image
                     src={project.thumbnailSrc}
                     alt={project.thumbnailAlt}
@@ -98,13 +109,15 @@ export default function ProjectsFilteredGrid({ projects }: Props) {
                     sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                   />
                 </div>
-                <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
+
+                {/* Text — tight relationship between label and title */}
+                <p className="text-[9.5px] uppercase tracking-[0.16em] text-foreground/40 mb-1">
                   {project.category}
                 </p>
-                <h2 className="text-[11px] md:text-xs uppercase tracking-[0.15em] text-foreground font-normal leading-[1.6] mb-3 project-card-title">
+                <h2 className="text-[11px] md:text-[11.5px] uppercase tracking-[0.14em] text-foreground font-normal leading-[1.65] mb-3 project-card-title">
                   {project.title}
                 </h2>
-                <p className="text-xs text-muted-foreground leading-[1.6] line-clamp-2">
+                <p className="text-[11px] text-muted-foreground leading-[1.65] line-clamp-2">
                   {project.excerpt}
                 </p>
               </article>

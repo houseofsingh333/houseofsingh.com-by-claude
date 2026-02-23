@@ -115,37 +115,42 @@ body {
 /* ——— Project cards — desktop: B&W → colour on hover ——— */
 
 @media (min-width: 768px) {
+  /* Colour reveal: slow and calm */
   .project-card-img {
     filter: grayscale(1);
-    transition: filter 750ms ease, transform 750ms ease;
+    transition:
+      filter 820ms cubic-bezier(0.4, 0, 0.2, 1),
+      transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
   }
   .project-card:hover .project-card-img {
     filter: grayscale(0);
-    transform: scale(1.03);
+    transform: scale(1.02);
   }
-  .project-card-image-wrap {
-    transition: box-shadow 0.3s ease;
-  }
-  .project-card:hover .project-card-image-wrap {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  /* Keyboard focus mirrors hover — accessibility */
+  .project-card:focus-visible .project-card-img {
+    filter: grayscale(0);
+    transform: scale(1.02);
   }
 }
 
-/* ——— Project cards — mobile/tablet: always colour, tap feedback ——— */
+/* ——— Project cards — mobile/tablet: always colour, tap/focus feedback ——— */
 
 @media (max-width: 767px) {
   .project-card-img {
+    /* Always full colour — no hover on touch devices */
     filter: grayscale(0);
-    transition: transform 0.2s ease;
+    transition: transform 180ms ease-out;
   }
-  .project-card:active .project-card-img {
+  .project-card:active .project-card-img,
+  .project-card:focus-visible .project-card-img {
     transform: scale(1.02);
   }
   .project-card-title {
-    transition: opacity 0.2s ease;
+    transition: opacity 180ms ease-out;
   }
-  .project-card:active .project-card-title {
-    opacity: 0.7;
+  .project-card:active .project-card-title,
+  .project-card:focus-visible .project-card-title {
+    opacity: 0.65;
   }
 }
 
