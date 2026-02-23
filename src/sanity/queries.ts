@@ -30,6 +30,15 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   spotifyPlaylistUrl
 }`;
 
+// --------------- Homepage About Preview ---------------
+
+export const homeAboutQuery = `*[_type == "aboutPage"][0]{
+  homeAboutRoles,
+  homeAboutBio,
+  homeAboutQuote,
+  "homeAboutImage": homeAboutImage ${_imageAsset}
+}`;
+
 // --------------- About Page ---------------
 
 export const aboutPageQuery = `*[_type == "aboutPage"][0]{

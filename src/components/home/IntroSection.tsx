@@ -4,11 +4,27 @@ import { useState } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
+import type { HomeAboutData } from "@/lib/placeholder-data";
+import { fallbackHomeAbout } from "@/lib/placeholder-data";
 
-const PORTRAIT_IMAGE = "/images/hero-placeholder-1.svg";
+type Props = {
+  data?: HomeAboutData | null;
+};
 
-export default function IntroSection() {
+export default function IntroSection({ data }: Props) {
   const [revealed, setRevealed] = useState(false);
+
+  const image = data?.homeAboutImage ?? fallbackHomeAbout.homeAboutImage;
+  const roles = data?.homeAboutRoles?.length
+    ? data.homeAboutRoles
+    : fallbackHomeAbout.homeAboutRoles!;
+  const bio = data?.homeAboutBio ?? fallbackHomeAbout.homeAboutBio!;
+  const quote = data?.homeAboutQuote ?? fallbackHomeAbout.homeAboutQuote!;
+
+  const imageAlt =
+    (typeof image === "object" && image !== null && "alt" in image
+      ? (image as { alt?: string }).alt
+      : undefined) ?? "Maninder Singh — Creative Director, Designer & Photographer";
 
   return (
     <section className="px-6 md:px-16 py-20 md:py-36">
@@ -36,9 +52,9 @@ export default function IntroSection() {
             onMouseEnter={() => setRevealed(true)}
           >
             <SanityImage
-              image={PORTRAIT_IMAGE}
+              image={image}
               context="body"
-              alt="Maninder Singh — Creative Director, Designer & Photographer"
+              alt={imageAlt}
               fill
               className={`object-cover object-top transition-all duration-1000 ${
                 revealed ? "grayscale-0 scale-100" : "grayscale scale-[1.03]"
@@ -52,34 +68,28 @@ export default function IntroSection() {
           {/* Roles stacked as a typographic element */}
           <ScrollReveal delay={0.3} offset={16}>
             <div className="space-y-0">
-              {["Creative Director", "Multidisciplinary Designer", "Photographer"].map(
-                (role, i) => (
-                  <p
-                    key={role}
-                    className="font-editorial text-lg md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5]"
-                    style={{ opacity: 1 - i * 0.2 }}
-                  >
-                    {role}
-                  </p>
-                )
-              )}
+              {roles.map((role, i) => (
+                <p
+                  key={role}
+                  className="font-editorial text-lg md:text-2xl lg:text-[1.75rem] font-light text-foreground leading-[1.5]"
+                  style={{ opacity: 1 - i * 0.2 }}
+                >
+                  {role}
+                </p>
+              ))}
             </div>
           </ScrollReveal>
 
           <ScrollReveal delay={0.4} offset={16}>
             <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] max-w-sm">
-              Based in Toronto, Maninder Singh blends design and photography to
-              craft stories that feel both visually refined and emotionally
-              resonant. His practice spans brand identities, editorial work, and
-              fine art — always grounded in intention and detail.
+              {bio}
             </p>
           </ScrollReveal>
 
           {/* Pull quote */}
           <ScrollReveal delay={0.5} offset={16}>
             <blockquote className="font-editorial text-base md:text-xl font-light leading-[1.5] text-foreground/80 border-l-2 border-foreground/10 pl-4 md:pl-6">
-              Guided by a deep curiosity for life&apos;s quiet wonders, creating
-              work that reflects the rhythm of nature and human connection.
+              {quote}
             </blockquote>
           </ScrollReveal>
 

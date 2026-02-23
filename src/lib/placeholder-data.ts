@@ -144,6 +144,13 @@ export type AboutTestimonial = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PortableTextBlock = any;
 
+export type HomeAboutData = {
+  homeAboutImage: SanityImage | null;
+  homeAboutRoles: string[] | null;
+  homeAboutBio: string | null;
+  homeAboutQuote: string | null;
+};
+
 export type AboutPageData = {
   introQuote: string | null;
   founderName: string;
@@ -303,6 +310,21 @@ export const fallbackSiteSettings: SiteSettings = {
   footerText: "\u00A9 2026 House of Singh Studios Inc.",
   spotifyPlaylistUrl:
     "https://open.spotify.com/embed/playlist/5siljeAcGgaINDEqVRBsAg?utm_source=generator",
+};
+
+// --------------- Fallback Homepage About ---------------
+
+export const fallbackHomeAbout: HomeAboutData = {
+  homeAboutImage: "/images/hero-placeholder-1.svg",
+  homeAboutRoles: [
+    "Creative Director",
+    "Multidisciplinary Designer",
+    "Photographer",
+  ],
+  homeAboutBio:
+    "Based in Toronto, Maninder Singh blends design and photography to craft stories that feel both visually refined and emotionally resonant. His practice spans brand identities, editorial work, and fine art — always grounded in intention and detail.",
+  homeAboutQuote:
+    "Guided by a deep curiosity for life's quiet wonders, creating work that reflects the rhythm of nature and human connection.",
 };
 
 // --------------- Fallback About Page ---------------

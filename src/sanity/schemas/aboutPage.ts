@@ -4,7 +4,64 @@ export const aboutPage = defineType({
   name: "aboutPage",
   title: "About Page",
   type: "document",
+  fieldsets: [
+    {
+      name: "homepageAbout",
+      title: "Homepage — About Preview",
+      description:
+        "Controls the About snapshot shown on the homepage. Leave blank to use fallback text.",
+      options: { collapsible: true, collapsed: false },
+    },
+  ],
   fields: [
+    /* ——— 0 · Homepage About Preview ——— */
+    defineField({
+      name: "homeAboutImage",
+      title: "Portrait Image",
+      type: "image",
+      fieldset: "homepageAbout",
+      options: { hotspot: true },
+      description:
+        "Portrait shown in the homepage About section. Recommended: JPEG, portrait orientation (3:4), min 1600 px wide.",
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alt Text",
+          type: "string",
+          description: "Describe the image for screen readers and SEO.",
+          validation: (rule) =>
+            rule.required().warning("Alt text is strongly recommended."),
+        }),
+      ],
+    }),
+    defineField({
+      name: "homeAboutRoles",
+      title: "Roles",
+      type: "array",
+      of: [{ type: "string" }],
+      fieldset: "homepageAbout",
+      description:
+        'Stacked role titles shown on homepage (e.g. "Creative Director", "Photographer").',
+    }),
+    defineField({
+      name: "homeAboutBio",
+      title: "Short Bio",
+      type: "text",
+      rows: 3,
+      fieldset: "homepageAbout",
+      description:
+        "A brief paragraph about the founder, displayed on the homepage.",
+    }),
+    defineField({
+      name: "homeAboutQuote",
+      title: "Pull Quote",
+      type: "text",
+      rows: 2,
+      fieldset: "homepageAbout",
+      description:
+        "An inspirational quote displayed as a blockquote on the homepage About section.",
+    }),
+
     /* ——— 1 · Intro Quote ——— */
     defineField({
       name: "introQuote",

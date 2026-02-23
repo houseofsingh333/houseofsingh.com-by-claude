@@ -8,6 +8,7 @@ import StudioRedirect from "@/components/home/StudioRedirect";
 import { sanityFetch } from "@/sanity/fetch";
 import {
   heroSlidesQuery,
+  homeAboutQuery,
   siteSettingsQuery,
   projectCategoriesQuery,
   journalFeedQuery,
@@ -23,12 +24,14 @@ import {
   type ProjectCategory,
   type JournalEntry,
   type SpotlightProject,
+  type HomeAboutData,
   type SiteSettings,
 } from "@/lib/placeholder-data";
 
 export default async function HomePage() {
-  const [slides, settings, categories, journal, spotlight] = await Promise.all([
+  const [slides, homeAbout, settings, categories, journal, spotlight] = await Promise.all([
     sanityFetch<HeroSlide[] | null>({ query: heroSlidesQuery }),
+    sanityFetch<HomeAboutData | null>({ query: homeAboutQuery }),
     sanityFetch<SiteSettings | null>({ query: siteSettingsQuery }),
     sanityFetch<ProjectCategory[] | null>({ query: projectCategoriesQuery }),
     sanityFetch<JournalEntry[] | null>({ query: journalFeedQuery }),
@@ -51,7 +54,7 @@ export default async function HomePage() {
   return (
     <>
       <CinematicHero slides={heroSlides} />
-      <IntroSection />
+      <IntroSection data={homeAbout} />
       <ProjectsPreview categories={projectCategories} />
       <SpotlightSection project={spotlightProject} />
       <JournalPreview entries={journalEntries} />
