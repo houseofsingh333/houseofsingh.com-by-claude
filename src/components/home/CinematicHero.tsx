@@ -90,6 +90,19 @@ export default function CinematicHero({ slides }: Props) {
     }, CAPTION_IN_DELAY * 1000);
   }, []);
 
+  // ——— Manual slide navigation (dot click) ———
+  const goToSlide = useCallback((index: number) => {
+    if (index === current) return;
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
+    setShowCaption(false);
+    setTimeout(() => {
+      setCurrent(index);
+      setIsFirstSlide(false);
+      scheduleCaptionIn();
+    }, CAPTION_OUT_DURATION * 1000 + 50);
+  }, [current, scheduleCaptionIn]);
+
   // ——— Start first slide when intro completes ———
   useEffect(() => {
     if (!introComplete || slides.length === 0) return;
@@ -161,7 +174,7 @@ export default function CinematicHero({ slides }: Props) {
         <div className="hero-vignette absolute inset-0 pointer-events-none" />
         {slides[0].caption && (
           <div className="absolute bottom-8 left-5 md:bottom-10 md:left-8 z-10">
-            <p className="font-editorial italic text-sm md:text-base font-light tracking-[0.08em] text-white/80">
+            <p className="text-xs tracking-[0.15em] uppercase text-white/70">
               {slides[0].caption}
             </p>
           </div>
@@ -225,12 +238,14 @@ export default function CinematicHero({ slides }: Props) {
         {introComplete && slides.length > 1 && (
           <div className="flex gap-2 mb-0.5">
             {slides.map((_, i) => (
-              <span
+              <button
                 key={i}
-                className={`block w-1.5 h-1.5 rounded-full transition-all duration-500 ${
+                onClick={() => goToSlide(i)}
+                aria-label={`Go to slide ${i + 1}`}
+                className={`block w-1.5 h-1.5 rounded-full transition-all duration-500 cursor-pointer ${
                   i === current
                     ? "bg-white scale-150"
-                    : "bg-white/25"
+                    : "bg-white/25 hover:bg-white/50"
                 }`}
               />
             ))}
@@ -242,7 +257,7 @@ export default function CinematicHero({ slides }: Props) {
           {showCaption && slide.caption && (
             <motion.p
               key={"caption-" + current}
-              className="hidden md:block font-editorial italic text-sm font-light tracking-[0.08em] text-white/80 max-w-md"
+              className="hidden md:block text-xs tracking-[0.15em] uppercase text-white/70 max-w-md"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 0 }}
