@@ -21,7 +21,10 @@ const FALLBACK_PORTRAIT = "/images/hero-placeholder-1.svg";
 export default function IntroSection({ data }: { data: HomeIntroData }) {
   const [revealed, setRevealed] = useState(false);
 
-  const roles = data.founderRoles?.length ? data.founderRoles : FALLBACK_ROLES;
+  const roles =
+    data.founderRoles && data.founderRoles.length > 0
+      ? data.founderRoles
+      : FALLBACK_ROLES;
   const portrait = data.portrait ?? FALLBACK_PORTRAIT;
   const founderName = data.founderName ?? "Maninder Singh";
 
