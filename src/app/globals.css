@@ -348,6 +348,14 @@ body {
 /* ——— Journal sticky stack — mobile / tablet ——— */
 
 @media (max-width: 1023px) {
+  .journal-section-header {
+    position: sticky;
+    top: 76px;
+    z-index: 10;
+    background: var(--background);
+    padding: 12px 0 16px;
+  }
+
   .journal-stack-card {
     border: 1px solid hsl(30 10% 12% / 0.10);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -365,33 +373,9 @@ body {
     filter: grayscale(1);
   }
 
-  /* Scrim fades out in stacked state (B&W provides readability) */
-  .journal-card-scrim {
-    transition: opacity 500ms ease-in-out;
-  }
-
-  .journal-card-stacked .journal-card-scrim {
-    opacity: 0;
-  }
-
-  /* Text crossfade: normal (top-left) ↔ stacked (bottom-right) */
-  .journal-text-normal {
-    opacity: 1;
-    transition: opacity 500ms ease-in-out;
-  }
-
-  .journal-text-stacked {
-    opacity: 0;
-    transition: opacity 500ms ease-in-out;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
-  }
-
-  .journal-card-stacked .journal-text-normal {
-    opacity: 0;
-  }
-
-  .journal-card-stacked .journal-text-stacked {
-    opacity: 1;
+  /* Text shadow for readability over images */
+  .journal-card-text {
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -405,15 +389,9 @@ body {
     margin-bottom: 16px;
   }
 
-  .journal-card-scrim,
-  .journal-text-normal,
-  .journal-text-stacked {
-    transition: none !important;
-  }
-
-  /* Always show normal text, hide stacked text */
-  .journal-text-stacked {
-    display: none !important;
+  .journal-section-header {
+    position: relative !important;
+    top: auto !important;
   }
 }
 

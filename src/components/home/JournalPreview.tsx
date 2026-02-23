@@ -27,8 +27,10 @@ const fmtDate = (d: string) =>
 /* ── Stack constants ── */
 
 const HEADER_PX = 68;
-const STACK_GAP = 8; // breathing room below header
-const STACK_TOP = HEADER_PX + STACK_GAP; // 76px
+const STACK_GAP = 8; // breathing room below global header
+const STACK_TOP = HEADER_PX + STACK_GAP; // 76px — where journal header sticks
+const HEADER_ROW_H = 44; // height of the sticky JOURNAL header row
+const CARD_TOP = STACK_TOP + HEADER_ROW_H; // 120px — where cards start sticking
 const CARD_VH = 39;
 const PEEK_VH = 15; // ~39% of card height
 const MAX_CARDS = 4;
@@ -65,7 +67,7 @@ export default function JournalPreview({ entries }: Props) {
       cardRefs.current.forEach((el, i) => {
         if (!el) return;
         const rect = el.getBoundingClientRect();
-        const stickyTop = STACK_TOP + i * PEEK_VH * vh;
+        const stickyTop = CARD_TOP + i * PEEK_VH * vh;
         const isStuck = Math.abs(rect.top - stickyTop) < 4;
         el.classList.toggle("journal-card-stacked", isStuck);
       });
@@ -91,9 +93,9 @@ export default function JournalPreview({ entries }: Props) {
 
   return (
     <section className="px-6 md:px-16 py-20 md:py-36">
-      {/* ── Section header — shared ── */}
-      <ScrollReveal>
-        <div className="flex items-baseline justify-between mb-10 md:mb-14">
+      {/* ── Section header — desktop: with scroll reveal ── */}
+      <ScrollReveal className="hidden lg:block">
+        <div className="flex items-baseline justify-between mb-14">
           <h2 className="text-xs tracking-widest uppercase text-muted-foreground">
             Journal
           </h2>
@@ -105,6 +107,21 @@ export default function JournalPreview({ entries }: Props) {
           </Link>
         </div>
       </ScrollReveal>
+
+      {/* ── Section header — mobile/tablet: sticky, no ScrollReveal ── */}
+      <div className="lg:hidden journal-section-header">
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-xs tracking-widest uppercase text-muted-foreground">
+            Journal
+          </h2>
+          <Link
+            href="/journal"
+            className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
+          >
+            Browse all
+          </Link>
+        </div>
+      </div>
 
       {/* ═══ DESKTOP (lg+): text-row list — unchanged ═══ */}
       <div className="hidden lg:block relative">
@@ -184,7 +201,7 @@ export default function JournalPreview({ entries }: Props) {
             className="journal-stack-card"
             style={{
               position: "sticky",
-              top: `calc(${STACK_TOP}px + ${i * PEEK_VH}vh)`,
+              top: `calc(${CARD_TOP}px + ${i * PEEK_VH}vh)`,
               zIndex: displayed.length - i,
               height: `${CARD_VH}vh`,
               width: `calc(100% - ${i * WIDTH_STEP}px)`,
@@ -209,26 +226,11 @@ export default function JournalPreview({ entries }: Props) {
                 <div className="absolute inset-0 bg-secondary" />
               )}
 
-              {/* Gradient scrim — fades out in stacked state */}
-              <div className="journal-card-scrim absolute inset-x-0 top-0 h-[50%] bg-gradient-to-b from-black/40 to-transparent pointer-events-none" />
+              {/* Bottom gradient — text readability over color images */}
+              <div className="absolute inset-x-0 bottom-0 h-[60%] bg-gradient-to-t from-black/50 via-black/20 to-transparent pointer-events-none" />
 
-              {/* ── Normal text — top left ── */}
-              <div className="journal-text-normal absolute inset-0 p-6 z-10 flex flex-col justify-start items-start">
-                <time className="block text-white">
-                  <span className="block text-4xl font-bold leading-none tracking-tight">
-                    {fmtDay(entry.date)}
-                  </span>
-                  <span className="block text-[11px] tracking-widest uppercase mt-1.5 text-white/70">
-                    {fmtMonthYear(entry.date)}
-                  </span>
-                </time>
-                <h3 className="mt-4 text-lg font-light text-white leading-snug max-w-[85%]">
-                  {entry.title}
-                </h3>
-              </div>
-
-              {/* ── Stacked text — bottom right ── */}
-              <div className="journal-text-stacked absolute inset-0 p-6 z-10 flex flex-col justify-end items-end text-right">
+              {/* Card text — always visible, bottom right */}
+              <div className="journal-card-text absolute inset-0 p-6 z-10 flex flex-col justify-end items-end text-right">
                 <time className="block text-white">
                   <span className="block text-3xl font-bold leading-none tracking-tight">
                     {fmtDay(entry.date)}
@@ -240,13 +242,16 @@ export default function JournalPreview({ entries }: Props) {
                 <h3 className="mt-3 text-[15px] font-light text-white leading-snug max-w-[80%]">
                   {entry.title}
                 </h3>
-                <span className="mt-2 text-[10px] tracking-[0.2em] uppercase text-white/60">
-                  Read
+                <span className="mt-2 text-[10px] tracking-[0.2em] uppercase text-white/70 underline underline-offset-4 decoration-white/40">
+                  Read more
                 </span>
               </div>
             </Link>
           </div>
         ))}
+
+        {/* Scroll runway — ensures all 4 cards reach their sticky position */}
+        <div className="h-[35vh]" aria-hidden="true" />
       </div>
     </section>
   );
