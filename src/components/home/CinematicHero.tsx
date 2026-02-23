@@ -257,7 +257,7 @@ export default function CinematicHero({ slides }: Props) {
           {showCaption && slide.caption && (
             <motion.p
               key={"caption-" + current}
-              className="hidden md:block text-xs tracking-[0.15em] uppercase text-white/70 max-w-md"
+              className="text-[10px] md:text-xs tracking-[0.15em] uppercase text-white/70 max-w-[200px] md:max-w-md"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 0 }}
