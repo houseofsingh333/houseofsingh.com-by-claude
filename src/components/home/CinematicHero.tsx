@@ -233,16 +233,16 @@ export default function CinematicHero({ slides }: Props) {
       <div className="absolute inset-0 pointer-events-none hero-vignette" />
 
       {/* ——— Bottom-left: dots + caption ——— */}
-      <div className="absolute bottom-6 left-5 md:bottom-8 md:left-8 z-10 flex items-end gap-4 md:gap-5">
+      <div className="absolute bottom-6 left-5 md:bottom-8 md:left-8 z-10 flex items-center gap-4 md:gap-5">
         {/* Slide dots — always visible once intro is done */}
         {introComplete && slides.length > 1 && (
-          <div className="flex gap-2 mb-0.5">
+          <div className="flex items-center gap-2">
             {slides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goToSlide(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`block w-1.5 h-1.5 rounded-full transition-all duration-500 cursor-pointer ${
+                className={`p-0 border-0 block w-1.5 h-1.5 rounded-full transition-all duration-500 cursor-pointer ${
                   i === current
                     ? "bg-white scale-150"
                     : "bg-white/25 hover:bg-white/50"
