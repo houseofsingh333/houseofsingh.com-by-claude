@@ -229,9 +229,20 @@ export default function JournalPreview({ entries }: Props) {
               {/* Bottom gradient — text readability over color images */}
               <div className="absolute inset-x-0 bottom-0 h-[60%] bg-gradient-to-t from-black/50 via-black/20 to-transparent pointer-events-none" />
 
-              {/* Card text — always visible, bottom right */}
-              <div className="journal-card-text absolute inset-0 p-6 z-10 flex flex-col justify-end items-end text-right">
-                <time className="block text-white">
+              {/* Card text — bottom bar: title+read left, date right */}
+              <div className="journal-card-text absolute inset-x-0 bottom-0 p-6 z-10 flex items-end justify-between gap-4">
+                {/* Left: title + read more */}
+                <div className="flex flex-col items-start min-w-0">
+                  <h3 className="text-[15px] font-light text-white leading-snug line-clamp-2">
+                    {entry.title}
+                  </h3>
+                  <span className="mt-2 text-[10px] tracking-[0.2em] uppercase text-white/70 underline underline-offset-4 decoration-white/40">
+                    Read more
+                  </span>
+                </div>
+
+                {/* Right: date */}
+                <time className="flex flex-col items-end text-right shrink-0 text-white">
                   <span className="block text-3xl font-bold leading-none tracking-tight">
                     {fmtDay(entry.date)}
                   </span>
@@ -239,12 +250,6 @@ export default function JournalPreview({ entries }: Props) {
                     {fmtMonthYear(entry.date)}
                   </span>
                 </time>
-                <h3 className="mt-3 text-[15px] font-light text-white leading-snug max-w-[80%]">
-                  {entry.title}
-                </h3>
-                <span className="mt-2 text-[10px] tracking-[0.2em] uppercase text-white/70 underline underline-offset-4 decoration-white/40">
-                  Read more
-                </span>
               </div>
             </Link>
           </div>
