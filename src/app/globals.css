@@ -212,6 +212,24 @@ body {
   }
 }
 
+/* ——— Category preview crossfade images ——— */
+
+.category-preview-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Match hero slider fade timing: 1.5 s, cinematic easing */
+  transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-preview-img {
+    transition: none;
+  }
+}
+
 /* ——— Projects grid reveal — premium page-load transition ——— */
 
 .projects-grid-reveal {

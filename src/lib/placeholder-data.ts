@@ -35,6 +35,8 @@ export type ProjectCategory = {
   title: string;
   order: number;
   thumbnail?: SanityImage | null;
+  previewGif?: string | null;
+  previewImages?: SanityImageAsset[] | null;
 };
 
 export type ProjectSummary = {

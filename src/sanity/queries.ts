@@ -82,7 +82,9 @@ export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
 
 export const projectCategoriesQuery = `*[_type == "projectCategory"] | order(order asc){
   _id, "slug": slug.current, title, order,
-  "thumbnail": thumbnail ${_imageAsset}
+  "thumbnail": thumbnail ${_imageAsset},
+  "previewGif": previewGif.asset->url,
+  "previewImages": previewImages[] ${_imageAsset}
 }`;
 
 // --------------- Projects ---------------

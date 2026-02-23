@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
+import CategoryBlock from "./CategoryBlock";
 import type { ProjectCategory } from "@/lib/placeholder-data";
 
 type Props = {
@@ -22,6 +23,22 @@ function useTouchDevice(): boolean {
   }, []);
 
   return isTouch;
+}
+
+/**
+ * Resolve preview images for a category into a flat array of { url, alt, lqip }.
+ * Handles both SanityImageAsset objects and plain string URLs.
+ */
+function resolvePreviewImages(
+  cat: ProjectCategory,
+): { url: string; alt?: string; lqip?: string }[] | null {
+  if (!cat.previewImages || cat.previewImages.length === 0) return null;
+  return cat.previewImages
+    .map((img) => {
+      if (typeof img === "string") return { url: img };
+      return { url: img.url, alt: img.alt, lqip: img.lqip };
+    })
+    .filter((img) => !!img.url);
 }
 
 export default function ProjectsPreview({ categories }: Props) {
@@ -57,23 +74,42 @@ export default function ProjectsPreview({ categories }: Props) {
         <div className="w-full h-px bg-border mb-6 md:mb-14" />
       </ScrollReveal>
 
-      {/* ── Mobile: editorial category index with sticky rows ── */}
+      {/* ── Mobile: editorial category index with image previews ── */}
       <div className="flex flex-col md:hidden">
         {categories.map((cat, i) => {
           const isLast = i === categories.length - 1;
+
+          /*
+           * Stacking order (z-index):
+           *   Collaborations (last) on top, Photography above Design.
+           *   Formula: last item gets highest z; remaining are reverse-ordered.
+           */
+          const zIndex = isLast
+            ? categories.length
+            : categories.length - 1 - i;
+
+          const previewImages = resolvePreviewImages(cat);
+
           return (
-            <div key={cat._id} className={isLast ? "" : "min-h-[28vh]"}>
-              <Link
+            <div
+              key={cat._id}
+              className="relative"
+              style={{ zIndex }}
+            >
+              <CategoryBlock
+                title={cat.title}
                 href={`/projects?filter=${cat.slug}`}
-                className="projects-mobile-link"
-              >
-                <span className="projects-mobile-title font-editorial text-[15px] font-light tracking-wide">
-                  {cat.title}
-                </span>
-                <span className="projects-mobile-arrow text-muted-foreground/40 text-[11px]">
-                  →
-                </span>
-              </Link>
+                gifUrl={cat.previewGif}
+                images={previewImages}
+              />
+
+              {/* Hairline divider between blocks */}
+              {!isLast && (
+                <div
+                  className="h-px"
+                  style={{ background: "hsl(30 10% 12% / 0.12)" }}
+                />
+              )}
             </div>
           );
         })}
