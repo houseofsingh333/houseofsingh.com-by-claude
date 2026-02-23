@@ -1,3 +1,4 @@
+import ScrollReveal from "@/components/ScrollReveal";
 import type { ContentSection } from "@/lib/placeholder-data";
 import TextSectionRenderer from "./TextSectionRenderer";
 import ImageSingleRenderer from "./ImageSingleRenderer";
@@ -11,22 +12,41 @@ type Props = {
 
 export default function ContentSections({ sections }: Props) {
   return (
-    <div className="content-sections flex flex-col gap-16 md:gap-24">
-      {sections.map((section) => {
+    <div className="content-sections flex flex-col gap-20 md:gap-32 lg:gap-40">
+      {sections.map((section, index) => {
+        let child: React.ReactNode = null;
+
         switch (section._type) {
           case "textSection":
-            return <TextSectionRenderer key={section._key} section={section} />;
+            child = <TextSectionRenderer section={section} />;
+            break;
           case "imageSingle":
-            return <ImageSingleRenderer key={section._key} section={section} />;
+            child = <ImageSingleRenderer section={section} />;
+            break;
           case "imagePair":
-            return <ImagePairRenderer key={section._key} section={section} />;
+            child = <ImagePairRenderer section={section} />;
+            break;
           case "imageGrid":
-            return <ImageGridRenderer key={section._key} section={section} />;
+            child = <ImageGridRenderer section={section} />;
+            break;
           case "stickyChapter":
-            return <StickyChapterRenderer key={section._key} section={section} />;
+            child = <StickyChapterRenderer section={section} />;
+            break;
           default:
             return null;
         }
+
+        return (
+          <ScrollReveal
+            key={section._key}
+            offset={16}
+            duration={0.9}
+            delay={index === 0 ? 0 : 0.05}
+            threshold={0.08}
+          >
+            {child}
+          </ScrollReveal>
+        );
       })}
     </div>
   );

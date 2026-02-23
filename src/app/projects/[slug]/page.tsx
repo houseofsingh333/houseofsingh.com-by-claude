@@ -5,6 +5,8 @@ import { projectBySlugQuery } from "@/sanity/queries";
 import { fallbackProjects as projects } from "@/lib/placeholder-data";
 import type { ProjectDetail } from "@/lib/placeholder-data";
 import SanityImage from "@/components/SanityImage";
+import ScrollReveal from "@/components/ScrollReveal";
+import ReadingProgress from "@/components/ReadingProgress";
 import ContentSections from "@/components/projects/ContentSections";
 
 type Props = {
@@ -13,20 +15,20 @@ type Props = {
 
 function ProjectHeader({ category, title, intro }: { category: string; title: string; intro?: string }) {
   return (
-    <section className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset mb-12 md:mb-16">
-      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mb-4">
+    <ScrollReveal as="section" className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset mb-16 md:mb-20" offset={14} duration={0.8}>
+      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50 mb-4">
         {category}
       </p>
       <div className="w-full h-px bg-border mb-8 md:mb-10" />
-      <h1 className="font-editorial text-3xl md:text-4xl font-light text-foreground leading-[1.2] mb-6">
+      <h1 className="font-editorial text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-[1.15] mb-8">
         {title}
       </h1>
       {intro && (
-        <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.8]">
+        <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] max-w-xl">
           {intro}
         </p>
       )}
-    </section>
+    </ScrollReveal>
   );
 }
 
@@ -54,20 +56,26 @@ export default async function ProjectDetailPage({ params }: Props) {
   // Sanity data available — render full project
   if (project) {
     return (
-      <article className="pb-20">
+      <article className="pb-24 md:pb-36">
+        <ReadingProgress />
         <ProjectHeader category={project.category} title={project.title} intro={project.shortIntro} />
 
-        {/* Cover image */}
+        {/* Cover image — full bleed, generous bottom margin */}
         {project.coverImage && (
-          <div className="w-full mb-16 md:mb-24" style={{ position: "relative", aspectRatio: `${project.coverImage.width || 1920} / ${project.coverImage.height || 1080}` }}>
-            <SanityImage
-              image={project.coverImage}
-              context="hero"
-              priority
-              fill
-              className="object-cover"
-            />
-          </div>
+          <ScrollReveal offset={0} duration={1} threshold={0.05} className="mb-20 md:mb-32 lg:mb-40">
+            <div
+              className="w-full"
+              style={{ position: "relative", aspectRatio: `${project.coverImage.width || 1920} / ${project.coverImage.height || 1080}` }}
+            >
+              <SanityImage
+                image={project.coverImage}
+                context="hero"
+                priority
+                fill
+                className="object-cover"
+              />
+            </div>
+          </ScrollReveal>
         )}
 
         {/* Content sections */}
@@ -83,7 +91,7 @@ export default async function ProjectDetailPage({ params }: Props) {
   if (!fallback) notFound();
 
   return (
-    <article className="pb-20">
+    <article className="pb-24 md:pb-36">
       <ProjectHeader category={fallback.category} title={fallback.title} intro={fallback.excerpt} />
       <section className="mx-auto max-w-3xl px-6 md:px-16">
         <p className="text-xs text-muted-foreground/40">

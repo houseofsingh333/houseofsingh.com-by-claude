@@ -8,15 +8,15 @@ export default function ImagePairRenderer({ section }: Props) {
 
   return (
     <div
-      className={`project-section mx-auto max-w-5xl px-6 md:px-0 ${
-        isSideBySide ? "grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6" : "flex flex-col gap-4 md:gap-6"
+      className={`project-section mx-auto max-w-6xl px-6 md:px-16 ${
+        isSideBySide ? "grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8" : "flex flex-col gap-5 md:gap-8"
       }`}
     >
       {section.images.map((img, i) => (
         <figure key={i}>
-          <AspectImage image={img} className="overflow-hidden rounded-sm" />
+          <AspectImage image={img} className="overflow-hidden" />
           {img.caption && (
-            <figcaption className="mt-2 text-xs text-muted-foreground/60">
+            <figcaption className="mt-3 text-xs text-muted-foreground/50 tracking-wide">
               {img.caption}
             </figcaption>
           )}

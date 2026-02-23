@@ -20,17 +20,15 @@ function ChapterImages({
   images: SanityImageAsset[];
   preset: StickyChapterBlock["layoutPreset"];
 }) {
+  const captionCls = "mt-3 text-xs text-muted-foreground/50 tracking-wide";
+
   if (preset === "allSingles") {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         {images.map((img, i) => (
           <figure key={i}>
-            <AspectImage image={img} priority={i === 0} className="overflow-hidden rounded-sm" />
-            {img.caption && (
-              <figcaption className="mt-2 text-xs text-muted-foreground/60">
-                {img.caption}
-              </figcaption>
-            )}
+            <AspectImage image={img} priority={i === 0} className="overflow-hidden" />
+            {img.caption && <figcaption className={captionCls}>{img.caption}</figcaption>}
           </figure>
         ))}
       </div>
@@ -40,25 +38,17 @@ function ChapterImages({
   if (preset === "heroThenGrid") {
     const [hero, ...rest] = images;
     return (
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         <figure>
-          <AspectImage image={hero} priority className="overflow-hidden rounded-sm" />
-          {hero.caption && (
-            <figcaption className="mt-2 text-xs text-muted-foreground/60">
-              {hero.caption}
-            </figcaption>
-          )}
+          <AspectImage image={hero} priority className="overflow-hidden" />
+          {hero.caption && <figcaption className={captionCls}>{hero.caption}</figcaption>}
         </figure>
         {rest.length > 0 && (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-5">
             {rest.map((img, i) => (
               <figure key={i}>
-                <AspectImage image={img} className="overflow-hidden rounded-sm" />
-                {img.caption && (
-                  <figcaption className="mt-2 text-xs text-muted-foreground/60">
-                    {img.caption}
-                  </figcaption>
-                )}
+                <AspectImage image={img} className="overflow-hidden" />
+                {img.caption && <figcaption className={captionCls}>{img.caption}</figcaption>}
               </figure>
             ))}
           </div>
@@ -71,28 +61,20 @@ function ChapterImages({
   const gridImages = images.slice(0, -1);
   const hero = images[images.length - 1];
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       {gridImages.length > 0 && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-5">
           {gridImages.map((img, i) => (
             <figure key={i}>
-              <AspectImage image={img} priority={i === 0} className="overflow-hidden rounded-sm" />
-              {img.caption && (
-                <figcaption className="mt-2 text-xs text-muted-foreground/60">
-                  {img.caption}
-                </figcaption>
-              )}
+              <AspectImage image={img} priority={i === 0} className="overflow-hidden" />
+              {img.caption && <figcaption className={captionCls}>{img.caption}</figcaption>}
             </figure>
           ))}
         </div>
       )}
       <figure>
-        <AspectImage image={hero} className="overflow-hidden rounded-sm" />
-        {hero.caption && (
-          <figcaption className="mt-2 text-xs text-muted-foreground/60">
-            {hero.caption}
-          </figcaption>
-        )}
+        <AspectImage image={hero} className="overflow-hidden" />
+        {hero.caption && <figcaption className={captionCls}>{hero.caption}</figcaption>}
       </figure>
     </div>
   );
@@ -100,19 +82,19 @@ function ChapterImages({
 
 export default function StickyChapterRenderer({ section }: Props) {
   return (
-    <div className="project-section sticky-chapter mx-auto max-w-6xl px-6 md:px-0">
+    <div className="project-section sticky-chapter mx-auto max-w-7xl px-6 md:px-16">
       {/* Mobile: single column sequence — text then images */}
-      <div className="md:hidden flex flex-col gap-8">
-        <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-6 last:[&>p]:mb-0">
+      <div className="md:hidden flex flex-col gap-10">
+        <div className="text-sm text-muted-foreground leading-[1.9] [&>p]:mb-6 last:[&>p]:mb-0">
           <PortableText value={section.stickyText} />
         </div>
         <ChapterImages images={section.images} preset={section.layoutPreset} />
       </div>
 
-      {/* Desktop: two-column sticky layout */}
-      <div className="hidden md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] md:gap-12 lg:gap-16 items-start">
+      {/* Desktop: two-column sticky layout — text stays while images scroll */}
+      <div className="hidden md:grid md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)] md:gap-16 lg:gap-24 items-start">
         <div className="self-start">
-          <div className="sticky top-32 text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-6 last:[&>p]:mb-0">
+          <div className="sticky top-32 text-sm md:text-[15px] text-muted-foreground leading-[1.9] [&>p]:mb-6 last:[&>p]:mb-0 pr-4">
             <PortableText value={section.stickyText} />
           </div>
         </div>
