@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import PageTransition from "@/components/PageTransition";
 import { sanityFetch } from "@/sanity/fetch";
 import { navigationQuery } from "@/sanity/queries";
 import {
@@ -54,7 +55,7 @@ export default async function RootLayout({
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
         <Header items={navItems} />
         <main id="main-content" className="flex-1">
-          {children}
+          <PageTransition>{children}</PageTransition>
         </main>
         <Footer items={navItems} />
         <SpeedInsights />
