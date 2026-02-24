@@ -497,27 +497,32 @@ body {
   mix-blend-mode: multiply;
 }
 
-/* Hide the horizontal scrollbar + responsive gutters on the archive rail */
+/* Responsive gutters on the archive rail */
 .archive-scroll {
   --archive-gutter: 24px;
   --archive-gap: 20px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
   padding-left: var(--archive-gutter);
   padding-right: var(--archive-gutter);
   scroll-padding-left: var(--archive-gutter);
   scroll-padding-right: var(--archive-gutter);
   scroll-snap-type: x mandatory;
   gap: var(--archive-gap);
-}
-.archive-scroll::-webkit-scrollbar {
-  display: none;
+  background-color: var(--background);
 }
 @media (min-width: 768px) {
   .archive-scroll {
     --archive-gutter: 64px;
     --archive-gap: 32px;
     scroll-snap-type: x proximity;
+  }
+}
+@media (min-width: 1024px) {
+  .archive-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .archive-scroll::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -532,17 +537,66 @@ body {
 }
 @media (min-width: 1024px) {
   .archive-card {
-    width: calc((100vw - var(--archive-gutter) - 3 * var(--archive-gap)) / 3.2);
+    width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 2.25);
   }
 }
 
-/* ——— Reduced motion: disable grain and blur transitions ——— */
+/* ——— Custom micro scrollbar (desktop only) ——— */
+
+.archive-scrollbar-track {
+  position: relative;
+  height: 2px;
+  background: hsl(30 10% 12% / 0.04);
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.section-archive:hover .archive-scrollbar-track {
+  opacity: 1;
+}
+
+.archive-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: hsl(30 10% 12% / 0.15);
+  border-radius: 9999px;
+  will-change: transform;
+}
+
+@media (max-width: 1023px) {
+  .archive-scrollbar-track {
+    display: none;
+  }
+}
+
+/* ——— Scroll hint indicator ——— */
+
+.archive-scroll-hint {
+  opacity: 0.35;
+  transition: opacity 600ms ease;
+}
+
+.archive-scroll-hint[data-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ——— Reduced motion: disable grain, blur, and archive transitions ——— */
 
 @media (prefers-reduced-motion: reduce) {
   .archive-grain {
     display: none;
   }
   .archive-img-reduced {
+    transition: none !important;
+  }
+  .archive-scrollbar-track {
+    transition: none !important;
+  }
+  .archive-scroll-hint {
     transition: none !important;
   }
 }
