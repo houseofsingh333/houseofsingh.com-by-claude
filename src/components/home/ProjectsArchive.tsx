@@ -168,96 +168,6 @@ export default function ProjectsArchive({ projects }: Props) {
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Desktop: lerp-based smooth horizontal scroll (Lenis-style)
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    let target = el.scrollLeft;
-    let animating = false;
-    let rafId = 0;
-    const LERP = 0.1;
-
-    const animate = () => {
-      const current = el.scrollLeft;
-      const diff = target - current;
-
-      if (Math.abs(diff) < 0.5) {
-        el.scrollLeft = target;
-        animating = false;
-        return;
-      }
-
-      el.scrollLeft = current + diff * LERP;
-      rafId = requestAnimationFrame(animate);
-    };
-
-    const startAnimation = () => {
-      if (!animating) {
-        animating = true;
-        rafId = requestAnimationFrame(animate);
-      }
-    };
-
-    const handleWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
-
-      let dy = e.deltaY;
-      if (e.deltaMode === 1) dy *= 40;
-      else if (e.deltaMode === 2) dy *= el.clientHeight;
-
-      const maxScroll = el.scrollWidth - el.clientWidth;
-
-      if ((target <= 0 && dy < 0) || (target >= maxScroll && dy > 0)) return;
-
-      e.preventDefault();
-      target = Math.max(0, Math.min(target + dy, maxScroll));
-
-      if (prefersReducedMotion) {
-        el.scrollLeft = target;
-      } else {
-        startAnimation();
-      }
-    };
-
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => {
-      el.removeEventListener("wheel", handleWheel);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, [prefersReducedMotion]);
-
-  // Scroll nudge — brief auto-scroll on first view to hint scrollability
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || prefersReducedMotion) return;
-
-    let timer1: ReturnType<typeof setTimeout>;
-    let timer2: ReturnType<typeof setTimeout>;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-
-        timer1 = setTimeout(() => {
-          el.scrollTo({ left: 60, behavior: "smooth" });
-          timer2 = setTimeout(() => {
-            el.scrollTo({ left: 0, behavior: "smooth" });
-          }, 600);
-        }, 400);
-      },
-      { threshold: 0.3 },
-    );
-
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
-  }, [prefersReducedMotion]);
-
   // Drag-to-scroll on desktop
   useEffect(() => {
     const el = scrollRef.current;
@@ -347,7 +257,7 @@ export default function ProjectsArchive({ projects }: Props) {
 
         <div
           ref={scrollRef}
-          className="archive-scroll flex gap-5 md:gap-8 overflow-x-auto pt-10 md:pt-14 pb-4"
+          className="archive-scroll flex overflow-x-auto pt-10 md:pt-14 pb-4"
           style={{
             WebkitOverflowScrolling: "touch",
             overscrollBehaviorX: "contain",
@@ -363,10 +273,7 @@ export default function ProjectsArchive({ projects }: Props) {
               onMouseLeave={() => setHoveredIndex(null)}
               onFocus={() => setHoveredIndex(i)}
               onBlur={() => setHoveredIndex(null)}
-              style={{
-                scrollSnapAlign: "start",
-                width: "clamp(260px, 38vw, 520px)",
-              }}
+              style={{ scrollSnapAlign: "start" }}
             />
           ))}
         </div>

@@ -500,6 +500,7 @@ body {
 /* Hide the horizontal scrollbar + responsive gutters on the archive rail */
 .archive-scroll {
   --archive-gutter: 24px;
+  --archive-gap: 20px;
   -ms-overflow-style: none;
   scrollbar-width: none;
   padding-left: var(--archive-gutter);
@@ -507,6 +508,7 @@ body {
   scroll-padding-left: var(--archive-gutter);
   scroll-padding-right: var(--archive-gutter);
   scroll-snap-type: x mandatory;
+  gap: var(--archive-gap);
 }
 .archive-scroll::-webkit-scrollbar {
   display: none;
@@ -514,8 +516,19 @@ body {
 @media (min-width: 768px) {
   .archive-scroll {
     --archive-gutter: 64px;
-    scroll-snap-type: x proximity; /* lerp-compatible — no snap mid-interpolation */
+    --archive-gap: 32px;
+    scroll-snap-type: x proximity; /* soft snap — allows drag momentum to coast */
     cursor: grab;
+  }
+}
+
+/* Card width: ~1.15 cards on mobile (peek), 2.5 cards on desktop (half card visible) */
+.archive-card {
+  width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 1.15);
+}
+@media (min-width: 768px) {
+  .archive-card {
+    width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 2.5);
   }
 }
 
