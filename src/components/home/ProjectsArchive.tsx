@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -106,277 +106,19 @@ function ProjectCard({
   );
 }
 
-/* ─── Desktop: original horizontal scroll strip ─── */
-
-function DesktopStrip({
-  projects,
-  prefersReducedMotion,
-}: {
-  projects: HomepageProject[];
-  prefersReducedMotion: boolean;
-}) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  const updateActiveCard = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const scrollCenter = el.scrollLeft + el.clientWidth / 2;
-    const cards = el.querySelectorAll<HTMLElement>("[data-archive-card]");
-    let closest = 0;
-    let minDist = Infinity;
-
-    cards.forEach((card, i) => {
-      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-      const dist = Math.abs(scrollCenter - cardCenter);
-      if (dist < minDist) {
-        minDist = dist;
-        closest = i;
-      }
-    });
-
-    setActiveIndex(closest);
-  }, []);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    updateActiveCard();
-    el.addEventListener("scroll", updateActiveCard, { passive: true });
-    return () => el.removeEventListener("scroll", updateActiveCard);
-  }, [updateActiveCard]);
-
-  // Vertical wheel → horizontal scroll on desktop
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    let pendingDelta = 0;
-    let rafId = 0;
-
-    const applyScroll = () => {
-      if (pendingDelta !== 0) {
-        el.scrollLeft += pendingDelta;
-        pendingDelta = 0;
-      }
-      rafId = 0;
-    };
-
-    const handleWheel = (e: WheelEvent) => {
-      const absX = Math.abs(e.deltaX);
-      const absY = Math.abs(e.deltaY);
-      if (absX >= absY) return;
-
-      let dy = e.deltaY;
-      if (e.deltaMode === 1) dy *= 40;
-      else if (e.deltaMode === 2) dy *= el.clientHeight;
-
-      const atStart = el.scrollLeft <= 0;
-      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 1;
-      if ((atStart && dy < 0) || (atEnd && dy > 0)) return;
-
-      e.preventDefault();
-      pendingDelta += dy;
-      if (!rafId) {
-        rafId = requestAnimationFrame(applyScroll);
-      }
-    };
-
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => {
-      el.removeEventListener("wheel", handleWheel);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, []);
-
-  const focusedIndex = hoveredIndex ?? activeIndex;
-
-  return (
-    <div
-      ref={scrollRef}
-      className="archive-scroll hidden md:flex gap-8 overflow-x-auto px-16 pt-14 pb-4 scrollbar-hide"
-      style={{ scrollSnapType: "x proximity" }}
-    >
-      {projects.map((project, i) => (
-        <ProjectCard
-          key={project._id}
-          project={project}
-          isFocused={focusedIndex === i}
-          prefersReducedMotion={prefersReducedMotion}
-          onMouseEnter={() => setHoveredIndex(i)}
-          onMouseLeave={() => setHoveredIndex(null)}
-          onFocus={() => setHoveredIndex(i)}
-          onBlur={() => setHoveredIndex(null)}
-          style={{
-            scrollSnapAlign: "start",
-            width: "clamp(280px, 38vw, 520px)",
-          }}
-        />
-      ))}
-      <div className="flex-shrink-0 w-px" aria-hidden="true" />
-    </div>
-  );
-}
-
-/* ─── Mobile: scroll-driven infinite loop strip ─── */
-
-const MOBILE_CARD_WIDTH = 260; // px
-const MOBILE_GAP = 20; // px — matches gap-5
-const PAGE_GUTTER = 24; // px — matches px-6
-const SCROLL_SPEED = 0.6; // translateX multiplier relative to scroll delta
-
-function MobileStrip({
-  projects,
-  prefersReducedMotion,
-}: {
-  projects: HomepageProject[];
-  prefersReducedMotion: boolean;
-}) {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const stripRef = useRef<HTMLDivElement>(null);
-  const translateXRef = useRef(0);
-  const lastScrollY = useRef(0);
-  const rafId = useRef(0);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // Triple the items for seamless looping
-  const tripled = [...projects, ...projects, ...projects];
-  const count = projects.length;
-  // Width of one full set of cards
-  const singleSetWidth = count * MOBILE_CARD_WIDTH + (count - 1) * MOBILE_GAP;
-
-  // Initialize translateX so the middle copy starts roughly centered
-  useEffect(() => {
-    // Start at the beginning of the second copy, offset so first card of
-    // second copy aligns with the left gutter
-    translateXRef.current = -singleSetWidth;
-    lastScrollY.current = window.scrollY;
-
-    if (stripRef.current) {
-      stripRef.current.style.transform = `translate3d(${translateXRef.current}px, 0, 0)`;
-    }
-  }, [singleSetWidth]);
-
-  // Determine which card is closest to viewport center
-  const computeActiveIndex = useCallback(
-    (tx: number) => {
-      const viewportCenter = window.innerWidth / 2;
-      // The strip starts at PAGE_GUTTER offset, so card positions are:
-      // cardLeft = PAGE_GUTTER + tx + i * (MOBILE_CARD_WIDTH + MOBILE_GAP)
-      let closest = 0;
-      let minDist = Infinity;
-
-      for (let i = 0; i < tripled.length; i++) {
-        const cardLeft =
-          PAGE_GUTTER + tx + i * (MOBILE_CARD_WIDTH + MOBILE_GAP);
-        const cardCenter = cardLeft + MOBILE_CARD_WIDTH / 2;
-        const dist = Math.abs(viewportCenter - cardCenter);
-        if (dist < minDist) {
-          minDist = dist;
-          closest = i;
-        }
-      }
-
-      // Map back to original index
-      return closest % count;
-    },
-    [tripled.length, count],
-  );
-
-  // Scroll-driven movement via rAF
-  useEffect(() => {
-    const section = sectionRef.current;
-    const strip = stripRef.current;
-    if (!section || !strip) return;
-
-    const onScroll = () => {
-      if (rafId.current) return;
-
-      rafId.current = requestAnimationFrame(() => {
-        rafId.current = 0;
-
-        const currentY = window.scrollY;
-        const delta = currentY - lastScrollY.current;
-        lastScrollY.current = currentY;
-
-        // Check if section is in view
-        const rect = section.getBoundingClientRect();
-        const inView = rect.bottom > 0 && rect.top < window.innerHeight;
-        if (!inView) return;
-
-        // Apply delta to translateX (scroll down → cards move left)
-        translateXRef.current -= delta * SCROLL_SPEED;
-
-        // Wrap using modulo for seamless loop
-        // Keep translateX within [-2*singleSetWidth, 0] range
-        // When it goes past the third copy, wrap back to second
-        // When it goes before the first copy, wrap forward to second
-        if (translateXRef.current < -2 * singleSetWidth) {
-          translateXRef.current += singleSetWidth;
-        } else if (translateXRef.current > 0) {
-          translateXRef.current -= singleSetWidth;
-        }
-
-        strip.style.transform = `translate3d(${translateXRef.current}px, 0, 0)`;
-
-        setActiveIndex(computeActiveIndex(translateXRef.current));
-      });
-    };
-
-    // Set initial active index
-    setActiveIndex(computeActiveIndex(translateXRef.current));
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (rafId.current) cancelAnimationFrame(rafId.current);
-    };
-  }, [singleSetWidth, computeActiveIndex]);
-
-  return (
-    <div
-      ref={sectionRef}
-      className="mobile-strip-section md:hidden overflow-hidden pt-10 pb-4"
-    >
-      <div
-        ref={stripRef}
-        className="mobile-strip flex will-change-transform"
-        style={{
-          gap: `${MOBILE_GAP}px`,
-          paddingLeft: `${PAGE_GUTTER}px`,
-          paddingRight: `${PAGE_GUTTER}px`,
-        }}
-      >
-        {tripled.map((project, i) => {
-          const originalIndex = i % count;
-          const isFocused = activeIndex === originalIndex;
-
-          return (
-            <ProjectCard
-              key={`${project._id}-${i}`}
-              project={project}
-              isFocused={isFocused}
-              prefersReducedMotion={prefersReducedMotion}
-              className="mobile-strip-card"
-              style={{
-                width: `${MOBILE_CARD_WIDTH}px`,
-                minWidth: `${MOBILE_CARD_WIDTH}px`,
-              }}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 /* ─── Main export ─── */
 
 export default function ProjectsArchive({ projects }: Props) {
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
 
+  const focusedIndex = hoveredIndex ?? activeIndex;
+
+  // Detect reduced motion preference
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setPrefersReducedMotion(mq.matches);
@@ -384,6 +126,68 @@ export default function ProjectsArchive({ projects }: Props) {
       setPrefersReducedMotion(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Center-card detection + edge gradient state
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      // Find card closest to scroll center
+      const scrollCenter = el.scrollLeft + el.clientWidth / 2;
+      const cards = el.querySelectorAll<HTMLElement>("[data-archive-card]");
+      let closest = 0;
+      let minDist = Infinity;
+
+      cards.forEach((card, i) => {
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const dist = Math.abs(scrollCenter - cardCenter);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = i;
+        }
+      });
+
+      setActiveIndex((prev) => (prev === closest ? prev : closest));
+
+      // Edge gradient visibility
+      const atStart = el.scrollLeft <= 2;
+      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2;
+      setCanScrollLeft(!atStart);
+      setCanScrollRight(!atEnd);
+    };
+
+    onScroll();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Desktop: wheel-to-horizontal scroll (direct, no rAF)
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      // Let native horizontal scroll (trackpad) pass through
+      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+
+      // Normalise delta: deltaMode 1 = lines (~40px), deltaMode 2 = pages
+      let dy = e.deltaY;
+      if (e.deltaMode === 1) dy *= 40;
+      else if (e.deltaMode === 2) dy *= el.clientHeight;
+
+      // Allow page scroll when strip can't scroll further
+      const atStart = el.scrollLeft <= 0;
+      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 1;
+      if ((atStart && dy < 0) || (atEnd && dy > 0)) return;
+
+      e.preventDefault();
+      el.scrollLeft += dy;
+    };
+
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => el.removeEventListener("wheel", handleWheel);
   }, []);
 
   return (
@@ -406,17 +210,48 @@ export default function ProjectsArchive({ projects }: Props) {
         </div>
       </ScrollReveal>
 
-      {/* Desktop: original horizontal scroll strip */}
-      <DesktopStrip
-        projects={projects}
-        prefersReducedMotion={prefersReducedMotion}
-      />
+      {/* Scroll strip with edge fade gradients */}
+      <div className="relative">
+        {/* Left fade */}
+        <div
+          className="archive-fade-left pointer-events-none absolute left-0 top-0 bottom-0 z-10"
+          style={{ opacity: canScrollLeft ? 1 : 0 }}
+          aria-hidden="true"
+        />
+        {/* Right fade */}
+        <div
+          className="archive-fade-right pointer-events-none absolute right-0 top-0 bottom-0 z-10"
+          style={{ opacity: canScrollRight ? 1 : 0 }}
+          aria-hidden="true"
+        />
 
-      {/* Mobile: scroll-driven infinite loop strip */}
-      <MobileStrip
-        projects={projects}
-        prefersReducedMotion={prefersReducedMotion}
-      />
+        <div
+          ref={scrollRef}
+          className="archive-scroll flex gap-5 md:gap-8 overflow-x-auto pt-10 md:pt-14 pb-4"
+          style={{
+            WebkitOverflowScrolling: "touch",
+            overscrollBehaviorX: "contain",
+            scrollSnapType: "x mandatory",
+          }}
+        >
+          {projects.map((project, i) => (
+            <ProjectCard
+              key={project._id}
+              project={project}
+              isFocused={focusedIndex === i}
+              prefersReducedMotion={prefersReducedMotion}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onFocus={() => setHoveredIndex(i)}
+              onBlur={() => setHoveredIndex(null)}
+              style={{
+                scrollSnapAlign: "start",
+                width: "clamp(260px, 38vw, 520px)",
+              }}
+            />
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

@@ -497,37 +497,42 @@ body {
   mix-blend-mode: multiply;
 }
 
-/* Hide the horizontal scrollbar on the archive rail */
+/* Hide the horizontal scrollbar + responsive gutters on the archive rail */
 .archive-scroll {
+  --archive-gutter: 24px;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  padding-left: var(--archive-gutter);
+  padding-right: var(--archive-gutter);
+  scroll-padding-left: var(--archive-gutter);
+  scroll-padding-right: var(--archive-gutter);
 }
 .archive-scroll::-webkit-scrollbar {
   display: none;
 }
-
-/* ——— Mobile scroll-driven strip ——— */
-
-@media (max-width: 767px) {
-  .mobile-strip-section {
-    /* Ensure the section clips the translated strip */
-    position: relative;
-  }
-
-  .mobile-strip {
-    /* GPU-accelerated transform for smooth rendering */
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-
-  .mobile-strip-card {
-    /* Smooth active/inactive transitions */
-    flex-shrink: 0;
+@media (min-width: 768px) {
+  .archive-scroll {
+    --archive-gutter: 64px;
   }
 }
 
-/* ——— Reduced motion: disable grain and blur transitions ——— */
+/* ——— Archive edge-fade scroll affordance ——— */
+
+.archive-fade-left,
+.archive-fade-right {
+  width: var(--archive-gutter, 24px);
+  transition: opacity 300ms ease-in-out;
+}
+
+.archive-fade-left {
+  background: linear-gradient(to right, var(--background), transparent);
+}
+
+.archive-fade-right {
+  background: linear-gradient(to left, var(--background), transparent);
+}
+
+/* ——— Reduced motion: disable grain, blur, and fade transitions ——— */
 
 @media (prefers-reduced-motion: reduce) {
   .archive-grain {
@@ -536,7 +541,8 @@ body {
   .archive-img-reduced {
     transition: none !important;
   }
-  .mobile-strip {
-    will-change: auto;
+  .archive-fade-left,
+  .archive-fade-right {
+    transition: none;
   }
 }
