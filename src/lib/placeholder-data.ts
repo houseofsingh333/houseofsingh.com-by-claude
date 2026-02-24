@@ -159,6 +159,36 @@ export const fallbackHomepageProjects: HomepageProject[] = [
     excerpt:
       "Industrial loft converted into a bright, open-plan living space.",
   },
+  {
+    _id: "proj-4",
+    title: "Solace — A Visual Study",
+    slug: "solace-visual-study",
+    category: "Photography",
+    thumbnail: "/images/hero-placeholder-1.svg",
+    thumbnailAlt: "Solace visual study composition",
+    excerpt:
+      "A photographic exploration of stillness and light in everyday spaces.",
+  },
+  {
+    _id: "proj-5",
+    title: "Grain & Thread Identity",
+    slug: "grain-and-thread-identity",
+    category: "Design",
+    thumbnail: "/images/hero-placeholder-2.svg",
+    thumbnailAlt: "Grain & Thread brand identity",
+    excerpt:
+      "Complete visual identity for an artisan textile studio rooted in craft.",
+  },
+  {
+    _id: "proj-6",
+    title: "Folio 2024 — Singh x Atelier",
+    slug: "folio-2024-singh-atelier",
+    category: "Collaborations",
+    thumbnail: "/images/hero-placeholder-3.svg",
+    thumbnailAlt: "Folio 2024 collaboration spread",
+    excerpt:
+      "A limited-edition print collaboration merging photography and type.",
+  },
 ];
 
 // --------------- Fallback Journal ---------------

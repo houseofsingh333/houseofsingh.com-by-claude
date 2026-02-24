@@ -127,8 +127,8 @@ export default function ProjectsArchive({ projects }: Props) {
               onFocus={() => setHoveredIndex(i)}
               onBlur={() => setHoveredIndex(null)}
             >
-              {/* Image — 3:2 ratio */}
-              <div className="relative aspect-[3/2] overflow-hidden mb-4 md:mb-5">
+              {/* Image — 4:5 portrait ratio (matches /projects subpage) */}
+              <div className="relative aspect-[4/5] overflow-hidden mb-4 md:mb-5">
                 {/* Grain overlay */}
                 <div
                   className={`archive-grain absolute inset-0 z-10 pointer-events-none transition-opacity duration-300 ${
