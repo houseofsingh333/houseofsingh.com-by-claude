@@ -8,6 +8,7 @@ import {
 } from "motion/react";
 import SanityImage from "@/components/SanityImage";
 import type { HeroSlide } from "@/lib/placeholder-data";
+import { EASE_SMOOTH, EASE_SLOW } from "@/lib/animation";
 
 // ——— Ken Burns presets ———
 
@@ -17,23 +18,16 @@ type KenBurnsPreset = {
 };
 
 const KEN_BURNS_PRESETS: KenBurnsPreset[] = [
-  // zoom in, pan top-left
   { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.06, x: "-1.5%", y: "-1%" } },
-  // zoom in, drift right
   { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.05, x: "1.5%", y: "0%" } },
-  // zoom out slightly, drift down
   { from: { scale: 1.06, x: "0%", y: "-0.5%" }, to: { scale: 1.0, x: "0%", y: "0.5%" } },
-  // subtle zoom in, pan bottom-right
   { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.04, x: "1%", y: "1%" } },
-  // subtle zoom in, pan top-right
   { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.05, x: "1.2%", y: "-0.8%" } },
-  // zoom in, pan left
   { from: { scale: 1.0, x: "0.5%", y: "0%" }, to: { scale: 1.07, x: "-1%", y: "0.3%" } },
-  // slow zoom out, slight pan up
   { from: { scale: 1.08, x: "0%", y: "0.5%" }, to: { scale: 1.02, x: "0%", y: "-0.3%" } },
 ];
 
-const SLIDE_DURATION = 8000; // 8 seconds per slide
+const SLIDE_DURATION = 8000;
 const IMAGE_FADE_DURATION = 1.5;
 const CAPTION_IN_DELAY = 1.2;
 const CAPTION_IN_DURATION = 1.2;
@@ -41,9 +35,6 @@ const CAPTION_OUT_DURATION = 0.6;
 const FIRST_SLIDE_FADE_DURATION = 1.8;
 
 const SESSION_KEY = "hos_intro_seen";
-
-const cubicSmooth = [0.25, 0.1, 0.25, 1] as const;
-const cubicSlow = [0.4, 0, 0.2, 1] as const;
 
 type Props = {
   slides: HeroSlide[];
@@ -196,7 +187,7 @@ export default function CinematicHero({ slides }: Props) {
           transition={{
             opacity: {
               duration: fadeDuration,
-              ease: cubicSlow,
+              ease: EASE_SLOW,
             },
           }}
         >
@@ -263,7 +254,7 @@ export default function CinematicHero({ slides }: Props) {
               exit={{ opacity: 0, y: 0 }}
               transition={{
                 duration: CAPTION_IN_DURATION,
-                ease: cubicSmooth,
+                ease: EASE_SMOOTH,
               }}
             >
               {slide.caption}

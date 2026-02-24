@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { EASE_SLOW } from "@/lib/animation";
 
 /**
  * Global page transition — wraps route content with a subtle
@@ -34,14 +35,14 @@ export default function PageTransition({
           y: 0,
           transition: {
             duration: prefersReduced ? 0 : 0.2,
-            ease: [0.4, 0, 0.2, 1],
+            ease: EASE_SLOW,
           },
         }}
         exit={{
           opacity: 0,
           transition: {
             duration: prefersReduced ? 0 : 0.15,
-            ease: [0.4, 0, 0.2, 1],
+            ease: EASE_SLOW,
           },
         }}
       >

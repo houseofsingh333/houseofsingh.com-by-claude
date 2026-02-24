@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { EASE_SMOOTH } from "@/lib/animation";
 
 const SESSION_KEY = "hos-intro-seen";
 const HOLD_MS = 800;
@@ -79,7 +80,7 @@ export default function IntroLogo() {
           className="fixed inset-0 z-[9999] bg-background"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 0.8, ease: EASE_SMOOTH }}
         />
 
         {/* Logo that animates from center to header position */}
@@ -116,7 +117,7 @@ export default function IntroLogo() {
           exit={{ opacity: 0 }}
           transition={
             phase === "hold"
-              ? { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }
+              ? { duration: 0.6, ease: EASE_SMOOTH }
               : {
                   duration: 2.2,
                   ease: [0.16, 1, 0.3, 1],
@@ -130,7 +131,6 @@ export default function IntroLogo() {
             width={300}
             height={300}
             priority
-            className=""
           />
         </motion.div>
       </>

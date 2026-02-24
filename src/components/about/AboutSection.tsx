@@ -10,6 +10,17 @@ import {
 import TestimonialCarousel from "./TestimonialCarousel";
 import Timeline from "./Timeline";
 
+function SectionDivider({ label, gap = "mb-16" }: { label: string; gap?: string }) {
+  return (
+    <div className={gap}>
+      <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
+        {label}
+      </p>
+      <div className="w-full h-px bg-border" />
+    </div>
+  );
+}
+
 export default function AboutSection({ data }: { data: AboutPageData }) {
   const {
     introQuote,
@@ -95,12 +106,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— 3 · House of Singh ——— */}
       <section className="px-6 md:px-16 py-24 md:py-36">
-        <div className="mb-16">
-          <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
-            The Moniker
-          </p>
-          <div className="w-full h-px bg-border" />
-        </div>
+        <SectionDivider label="The Moniker" />
 
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-center">
@@ -137,12 +143,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       {/* ——— 4 · Timeline ——— */}
       {milestones && milestones.length > 0 && (
         <section className="px-6 md:px-16 py-24 md:py-36">
-          <div className="mb-16">
-            <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
-              Ten Years On
-            </p>
-            <div className="w-full h-px bg-border" />
-          </div>
+          <SectionDivider label="Ten Years On" />
           <Timeline milestones={milestones} />
         </section>
       )}
@@ -150,12 +151,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       {/* ——— 5 · Words Shared ——— */}
       {testimonials && testimonials.length > 0 && (
         <section className="px-6 md:px-16 py-24 md:py-36">
-          <div className="mb-12">
-            <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
-              Words Shared
-            </p>
-            <div className="w-full h-px bg-border" />
-          </div>
+          <SectionDivider label="Words Shared" gap="mb-12" />
           <TestimonialCarousel testimonials={testimonials} />
         </section>
       )}

@@ -7,6 +7,7 @@ import {
   useReducedMotion,
   type HTMLMotionProps,
 } from "motion/react";
+import { EASE_SMOOTH } from "@/lib/animation";
 
 type Props = {
   /** Stagger delay in seconds (for sequencing sibling reveals). Default 0. */
@@ -67,7 +68,7 @@ export default function ScrollReveal({
       transition={{
         duration,
         delay,
-        ease: [0.25, 0.1, 0.25, 1],
+        ease: EASE_SMOOTH,
       }}
       {...rest}
     >

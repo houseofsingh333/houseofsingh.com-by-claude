@@ -4,17 +4,45 @@ import { useState, useEffect, useRef } from "react";
 import SanityImage from "@/components/SanityImage";
 import type { AboutMilestone } from "@/lib/types";
 
-function TimelineMilestone({
-  m,
-  idx,
-}: {
-  m: AboutMilestone;
-  idx: number;
-}) {
+/* ── Repeated sub-elements ── */
+
+const GRAYSCALE_IMG_CLASS =
+  "object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out";
+
+function MilestoneContent({ m, compact }: { m: AboutMilestone; compact?: boolean }) {
+  return (
+    <>
+      <p className={`timeline-year font-editorial ${compact ? "text-4xl" : "text-5xl"} font-light text-foreground leading-none mb-2`}>
+        {m.year}
+      </p>
+      <p className="text-[11px] tracking-[0.15em] uppercase text-foreground mb-1">
+        {m.title}
+      </p>
+      <p className={`text-xs text-muted-foreground leading-[1.6]${compact ? " mb-3" : ""}`}>
+        {m.text}
+      </p>
+    </>
+  );
+}
+
+function MilestoneImage({ image, alt }: { image: AboutMilestone["image"]; alt: string }) {
+  return (
+    <SanityImage
+      image={image}
+      context="thumbnail"
+      alt={alt}
+      fill
+      className={GRAYSCALE_IMG_CLASS}
+    />
+  );
+}
+
+/* ── Single milestone row ── */
+
+function TimelineMilestone({ m, idx }: { m: AboutMilestone; idx: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const isEven = idx % 2 === 0;
-  const imgData = m.image;
 
   useEffect(() => {
     const el = ref.current;
@@ -32,8 +60,9 @@ function TimelineMilestone({
     return () => observer.disconnect();
   }, []);
 
-  /* Slide direction: even milestones have text on left, odd on right */
   const slideFrom = isEven ? "md:-translate-x-8" : "md:translate-x-8";
+  const fadeClass = (translate: string) =>
+    visible ? "opacity-100 translate-x-0" : `opacity-0 ${translate}`;
 
   return (
     <div
@@ -45,9 +74,7 @@ function TimelineMilestone({
       <div className="absolute left-6 md:left-1/2 top-3 -translate-x-1/2 z-10">
         <div
           className={`timeline-dot w-2 h-2 rounded-full transition-all duration-500 group-hover:bg-foreground/60 group-focus-within:bg-foreground/60 ${
-            visible
-              ? "bg-foreground/25 scale-100"
-              : "bg-foreground/0 scale-0"
+            visible ? "bg-foreground/25 scale-100" : "bg-foreground/0 scale-0"
           }`}
         />
       </div>
@@ -60,39 +87,17 @@ function TimelineMilestone({
         >
           {isEven ? (
             <div
-              className={`timeline-content text-right max-w-[280px] py-4 transition-all duration-700 ease-out ${
-                visible
-                  ? "opacity-100 translate-x-0"
-                  : `opacity-0 ${slideFrom}`
-              }`}
+              className={`timeline-content text-right max-w-[280px] py-4 transition-all duration-700 ease-out ${fadeClass(slideFrom)}`}
               style={{ transitionDelay: `${idx * 100}ms` }}
             >
-              <p className="timeline-year font-editorial text-5xl font-light text-foreground leading-none mb-2">
-                {m.year}
-              </p>
-              <p className="text-[11px] tracking-[0.15em] uppercase text-foreground mb-1">
-                {m.title}
-              </p>
-              <p className="text-xs text-muted-foreground leading-[1.6]">
-                {m.text}
-              </p>
+              <MilestoneContent m={m} />
             </div>
           ) : (
             <div
-              className={`timeline-image relative w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4 transition-all duration-700 ease-out ${
-                visible
-                  ? "opacity-100 translate-x-0"
-                  : "opacity-0 md:-translate-x-8"
-              }`}
+              className={`timeline-image relative w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4 transition-all duration-700 ease-out ${fadeClass("md:-translate-x-8")}`}
               style={{ transitionDelay: `${idx * 100 + 150}ms` }}
             >
-              <SanityImage
-                image={imgData}
-                context="thumbnail"
-                alt={m.title}
-                fill
-                className="object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
-              />
+              <MilestoneImage image={m.image} alt={m.title} />
             </div>
           )}
         </div>
@@ -103,39 +108,17 @@ function TimelineMilestone({
         >
           {isEven ? (
             <div
-              className={`timeline-image relative w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4 transition-all duration-700 ease-out ${
-                visible
-                  ? "opacity-100 translate-x-0"
-                  : "opacity-0 md:translate-x-8"
-              }`}
+              className={`timeline-image relative w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4 transition-all duration-700 ease-out ${fadeClass("md:translate-x-8")}`}
               style={{ transitionDelay: `${idx * 100 + 150}ms` }}
             >
-              <SanityImage
-                image={imgData}
-                context="thumbnail"
-                alt={m.title}
-                fill
-                className="object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
-              />
+              <MilestoneImage image={m.image} alt={m.title} />
             </div>
           ) : (
             <div
-              className={`timeline-content-reverse text-left max-w-[280px] py-4 transition-all duration-700 ease-out ${
-                visible
-                  ? "opacity-100 translate-x-0"
-                  : `opacity-0 ${slideFrom}`
-              }`}
+              className={`timeline-content-reverse text-left max-w-[280px] py-4 transition-all duration-700 ease-out ${fadeClass(slideFrom)}`}
               style={{ transitionDelay: `${idx * 100}ms` }}
             >
-              <p className="timeline-year font-editorial text-5xl font-light text-foreground leading-none mb-2">
-                {m.year}
-              </p>
-              <p className="text-[11px] tracking-[0.15em] uppercase text-foreground mb-1">
-                {m.title}
-              </p>
-              <p className="text-xs text-muted-foreground leading-[1.6]">
-                {m.text}
-              </p>
+              <MilestoneContent m={m} />
             </div>
           )}
         </div>
@@ -148,23 +131,9 @@ function TimelineMilestone({
         }`}
         style={{ transitionDelay: `${idx * 100}ms` }}
       >
-        <p className="timeline-year font-editorial text-4xl font-light text-foreground leading-none mb-2">
-          {m.year}
-        </p>
-        <p className="text-[11px] tracking-[0.15em] uppercase text-foreground mb-1">
-          {m.title}
-        </p>
-        <p className="text-xs text-muted-foreground leading-[1.6] mb-3">
-          {m.text}
-        </p>
+        <MilestoneContent m={m} compact />
         <div className="relative w-[180px] aspect-[4/3] overflow-hidden bg-secondary">
-          <SanityImage
-            image={imgData}
-            context="thumbnail"
-            alt={m.title}
-            fill
-            className="object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out"
-          />
+          <MilestoneImage image={m.image} alt={m.title} />
         </div>
       </div>
     </div>
