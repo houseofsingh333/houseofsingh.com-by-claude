@@ -163,10 +163,36 @@ export default function ProjectsArchive({ projects }: Props) {
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Desktop: wheel-to-horizontal scroll (direct, no rAF)
+  // Desktop: lerp-based smooth horizontal scroll (Lenis-style)
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
+
+    let target = el.scrollLeft;
+    let animating = false;
+    let rafId = 0;
+    const LERP = 0.1; // interpolation intensity — matches Lenis default
+
+    const animate = () => {
+      const current = el.scrollLeft;
+      const diff = target - current;
+
+      if (Math.abs(diff) < 0.5) {
+        el.scrollLeft = target;
+        animating = false;
+        return;
+      }
+
+      el.scrollLeft = current + diff * LERP;
+      rafId = requestAnimationFrame(animate);
+    };
+
+    const startAnimation = () => {
+      if (!animating) {
+        animating = true;
+        rafId = requestAnimationFrame(animate);
+      }
+    };
 
     const handleWheel = (e: WheelEvent) => {
       // Let native horizontal scroll (trackpad) pass through
@@ -177,18 +203,27 @@ export default function ProjectsArchive({ projects }: Props) {
       if (e.deltaMode === 1) dy *= 40;
       else if (e.deltaMode === 2) dy *= el.clientHeight;
 
-      // Allow page scroll when strip can't scroll further
-      const atStart = el.scrollLeft <= 0;
-      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 1;
-      if ((atStart && dy < 0) || (atEnd && dy > 0)) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+
+      // Allow page scroll at boundaries
+      if ((target <= 0 && dy < 0) || (target >= maxScroll && dy > 0)) return;
 
       e.preventDefault();
-      el.scrollLeft += dy;
+      target = Math.max(0, Math.min(target + dy, maxScroll));
+
+      if (prefersReducedMotion) {
+        el.scrollLeft = target;
+      } else {
+        startAnimation();
+      }
     };
 
     el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => el.removeEventListener("wheel", handleWheel);
-  }, []);
+    return () => {
+      el.removeEventListener("wheel", handleWheel);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [prefersReducedMotion]);
 
   return (
     <section className="section-py">
@@ -231,7 +266,6 @@ export default function ProjectsArchive({ projects }: Props) {
           style={{
             WebkitOverflowScrolling: "touch",
             overscrollBehaviorX: "contain",
-            scrollSnapType: "x mandatory",
           }}
         >
           {projects.map((project, i) => (

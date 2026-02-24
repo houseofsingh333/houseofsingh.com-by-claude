@@ -506,6 +506,7 @@ body {
   padding-right: var(--archive-gutter);
   scroll-padding-left: var(--archive-gutter);
   scroll-padding-right: var(--archive-gutter);
+  scroll-snap-type: x mandatory;
 }
 .archive-scroll::-webkit-scrollbar {
   display: none;
@@ -513,6 +514,7 @@ body {
 @media (min-width: 768px) {
   .archive-scroll {
     --archive-gutter: 64px;
+    scroll-snap-type: x proximity; /* lerp-compatible — no snap mid-interpolation */
   }
 }
 
