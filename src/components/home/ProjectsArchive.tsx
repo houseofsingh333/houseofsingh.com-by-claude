@@ -10,7 +10,7 @@ type Props = {
   projects: HomepageProject[];
 };
 
-/* ─── Shared card renderer ─── */
+/* ─── Card renderer ─── */
 
 function ProjectCard({
   project,
@@ -20,8 +20,6 @@ function ProjectCard({
   onMouseLeave,
   onFocus,
   onBlur,
-  style,
-  className = "",
 }: {
   project: HomepageProject;
   isFocused: boolean;
@@ -30,15 +28,13 @@ function ProjectCard({
   onMouseLeave?: () => void;
   onFocus?: () => void;
   onBlur?: () => void;
-  style?: React.CSSProperties;
-  className?: string;
 }) {
   return (
     <Link
       href={`/projects/${project.slug}`}
       data-archive-card
-      className={`archive-card group flex-shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 ${className}`}
-      style={style}
+      className="archive-card group flex-shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+      style={{ scrollSnapAlign: "start" }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onFocus={onFocus}
@@ -113,9 +109,6 @@ export default function ProjectsArchive({ projects }: Props) {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const [scrollProgress, setScrollProgress] = useState(0);
 
   const focusedIndex = hoveredIndex ?? activeIndex;
 
@@ -129,13 +122,12 @@ export default function ProjectsArchive({ projects }: Props) {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  // Center-card detection + edge gradient state + progress
+  // Center-card detection (for grayscale→color focus)
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
     const onScroll = () => {
-      // Find card closest to scroll center
       const scrollCenter = el.scrollLeft + el.clientWidth / 2;
       const cards = el.querySelectorAll<HTMLElement>("[data-archive-card]");
       let closest = 0;
@@ -151,16 +143,6 @@ export default function ProjectsArchive({ projects }: Props) {
       });
 
       setActiveIndex((prev) => (prev === closest ? prev : closest));
-
-      // Edge gradient visibility
-      const atStart = el.scrollLeft <= 2;
-      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2;
-      setCanScrollLeft(!atStart);
-      setCanScrollRight(!atEnd);
-
-      // Scroll progress (0–1)
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      setScrollProgress(maxScroll > 0 ? el.scrollLeft / maxScroll : 0);
     };
 
     onScroll();
@@ -168,56 +150,96 @@ export default function ProjectsArchive({ projects }: Props) {
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Drag-to-scroll on desktop
+  // One-time nudge — subtle scroll hint, once per session, cancellable
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || prefersReducedMotion) return;
+
+    const STORAGE_KEY = "projects-nudge-done";
+    if (sessionStorage.getItem(STORAGE_KEY)) return;
+
+    let cancelled = false;
+    let nudgeRaf: number;
+
+    const cancelNudge = () => {
+      cancelled = true;
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+
+        sessionStorage.setItem(STORAGE_KEY, "1");
+
+        // Cancel on any user interaction
+        el.addEventListener("wheel", cancelNudge, { once: true });
+        el.addEventListener("touchstart", cancelNudge, { once: true });
+        el.addEventListener("mousedown", cancelNudge, { once: true });
+
+        const duration = 600;
+        const distance = 15;
+
+        const start = performance.now();
+        const animateOut = (now: number) => {
+          if (cancelled) return;
+          const t = Math.min((now - start) / duration, 1);
+          const ease = 1 - Math.pow(1 - t, 3);
+          el.scrollLeft = distance * ease;
+          if (t < 1) {
+            nudgeRaf = requestAnimationFrame(animateOut);
+          } else {
+            const start2 = performance.now();
+            const animateBack = (now2: number) => {
+              if (cancelled) return;
+              const t2 = Math.min((now2 - start2) / duration, 1);
+              const ease2 = 1 - Math.pow(1 - t2, 3);
+              el.scrollLeft = distance * (1 - ease2);
+              if (t2 < 1) nudgeRaf = requestAnimationFrame(animateBack);
+            };
+            nudgeRaf = requestAnimationFrame(animateBack);
+          }
+        };
+
+        setTimeout(() => {
+          if (!cancelled) nudgeRaf = requestAnimationFrame(animateOut);
+        }, 300);
+      },
+      { threshold: 0.3 },
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      if (nudgeRaf) cancelAnimationFrame(nudgeRaf);
+      el.removeEventListener("wheel", cancelNudge);
+      el.removeEventListener("touchstart", cancelNudge);
+      el.removeEventListener("mousedown", cancelNudge);
+    };
+  }, [prefersReducedMotion]);
+
+  // Wheel-to-horizontal — map vertical wheel to horizontal scroll
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
-    let isDown = false;
-    let startX = 0;
-    let scrollStart = 0;
-    let hasDragged = false;
+    const handleWheel = (e: WheelEvent) => {
+      // Don't intercept native horizontal scroll (trackpad)
+      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
 
-    const onDown = (e: MouseEvent) => {
-      isDown = true;
-      hasDragged = false;
-      startX = e.pageX;
-      scrollStart = el.scrollLeft;
-      el.classList.add("archive-dragging");
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      const atStart = el.scrollLeft <= 0;
+      const atEnd = el.scrollLeft >= maxScroll;
+
+      // Allow page scroll at boundaries
+      if ((atStart && e.deltaY < 0) || (atEnd && e.deltaY > 0)) return;
+
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
     };
 
-    const onMove = (e: MouseEvent) => {
-      if (!isDown) return;
-      const dx = e.pageX - startX;
-      if (Math.abs(dx) > 3) hasDragged = true;
-      el.scrollLeft = scrollStart - dx;
-    };
-
-    const onUp = () => {
-      if (!isDown) return;
-      isDown = false;
-      el.classList.remove("archive-dragging");
-    };
-
-    const onClick = (e: MouseEvent) => {
-      if (hasDragged) {
-        e.preventDefault();
-        e.stopPropagation();
-        hasDragged = false;
-      }
-    };
-
-    el.addEventListener("mousedown", onDown);
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-    el.addEventListener("click", onClick, { capture: true });
-
-    return () => {
-      el.removeEventListener("mousedown", onDown);
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-      el.removeEventListener("click", onClick, { capture: true });
-    };
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => el.removeEventListener("wheel", handleWheel);
   }, []);
 
   return (
@@ -240,51 +262,27 @@ export default function ProjectsArchive({ projects }: Props) {
         </div>
       </ScrollReveal>
 
-      {/* Scroll strip with edge fade gradients */}
-      <div className="relative">
-        {/* Left fade */}
-        <div
-          className="archive-fade-left pointer-events-none absolute left-0 top-0 bottom-0 z-10"
-          style={{ opacity: canScrollLeft ? 1 : 0 }}
-          aria-hidden="true"
-        />
-        {/* Right fade */}
-        <div
-          className="archive-fade-right pointer-events-none absolute right-0 top-0 bottom-0 z-10"
-          style={{ opacity: canScrollRight ? 1 : 0 }}
-          aria-hidden="true"
-        />
-
-        <div
-          ref={scrollRef}
-          className="archive-scroll flex overflow-x-auto pt-10 md:pt-14 pb-4"
-          style={{
-            WebkitOverflowScrolling: "touch",
-            overscrollBehaviorX: "contain",
-          }}
-        >
-          {projects.map((project, i) => (
-            <ProjectCard
-              key={project._id}
-              project={project}
-              isFocused={focusedIndex === i}
-              prefersReducedMotion={prefersReducedMotion}
-              onMouseEnter={() => setHoveredIndex(i)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              onFocus={() => setHoveredIndex(i)}
-              onBlur={() => setHoveredIndex(null)}
-              style={{ scrollSnapAlign: "start" }}
-            />
-          ))}
-        </div>
-
-        {/* Scroll progress bar */}
-        <div className="archive-progress-track" aria-hidden="true">
-          <div
-            className="archive-progress-bar"
-            style={{ transform: `scaleX(${scrollProgress})` }}
+      {/* Scroll strip */}
+      <div
+        ref={scrollRef}
+        className="archive-scroll flex overflow-x-auto pt-10 md:pt-14 pb-4"
+        style={{
+          WebkitOverflowScrolling: "touch",
+          overscrollBehaviorX: "contain",
+        }}
+      >
+        {projects.map((project, i) => (
+          <ProjectCard
+            key={project._id}
+            project={project}
+            isFocused={focusedIndex === i}
+            prefersReducedMotion={prefersReducedMotion}
+            onMouseEnter={() => setHoveredIndex(i)}
+            onMouseLeave={() => setHoveredIndex(null)}
+            onFocus={() => setHoveredIndex(i)}
+            onBlur={() => setHoveredIndex(null)}
           />
-        </div>
+        ))}
       </div>
     </section>
   );

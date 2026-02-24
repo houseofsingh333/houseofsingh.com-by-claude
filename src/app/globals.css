@@ -517,62 +517,26 @@ body {
   .archive-scroll {
     --archive-gutter: 64px;
     --archive-gap: 32px;
-    scroll-snap-type: x proximity; /* soft snap — allows drag momentum to coast */
-    cursor: grab;
+    scroll-snap-type: x proximity;
   }
 }
 
-/* Card width: ~1.15 cards on mobile (peek), 2.5 cards on desktop (half card visible) */
+/* Card width: partial next-card reveal at every breakpoint */
 .archive-card {
-  width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 1.15);
+  width: calc((100vw - var(--archive-gutter) - var(--archive-gap)) / 1.15);
 }
 @media (min-width: 768px) {
   .archive-card {
-    width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 2.5);
+    width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 2.2);
+  }
+}
+@media (min-width: 1024px) {
+  .archive-card {
+    width: calc((100vw - var(--archive-gutter) - 3 * var(--archive-gap)) / 3.2);
   }
 }
 
-/* Drag-to-scroll cursor states (desktop only) */
-.archive-scroll.archive-dragging {
-  cursor: grabbing;
-  user-select: none;
-}
-.archive-scroll.archive-dragging * {
-  pointer-events: none;
-}
-
-/* ——— Archive scroll progress bar ——— */
-
-.archive-progress-track {
-  margin: 16px var(--archive-gutter) 0;
-  height: 1px;
-  background: hsl(30 10% 12% / 0.08);
-}
-
-.archive-progress-bar {
-  height: 100%;
-  background: hsl(30 10% 12% / 0.25);
-  transform-origin: left;
-  transition: transform 150ms ease-out;
-}
-
-/* ——— Archive edge-fade scroll affordance ——— */
-
-.archive-fade-left,
-.archive-fade-right {
-  width: var(--archive-gutter, 24px);
-  transition: opacity 300ms ease-in-out;
-}
-
-.archive-fade-left {
-  background: linear-gradient(to right, var(--background), transparent);
-}
-
-.archive-fade-right {
-  background: linear-gradient(to left, var(--background), transparent);
-}
-
-/* ——— Reduced motion: disable grain, blur, and fade transitions ——— */
+/* ——— Reduced motion: disable grain and blur transitions ——— */
 
 @media (prefers-reduced-motion: reduce) {
   .archive-grain {
@@ -580,9 +544,5 @@ body {
   }
   .archive-img-reduced {
     transition: none !important;
-  }
-  .archive-fade-left,
-  .archive-fade-right {
-    transition: none;
   }
 }
