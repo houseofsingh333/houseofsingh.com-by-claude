@@ -506,6 +506,27 @@ body {
   display: none;
 }
 
+/* ——— Mobile scroll-driven strip ——— */
+
+@media (max-width: 767px) {
+  .mobile-strip-section {
+    /* Ensure the section clips the translated strip */
+    position: relative;
+  }
+
+  .mobile-strip {
+    /* GPU-accelerated transform for smooth rendering */
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .mobile-strip-card {
+    /* Smooth active/inactive transitions */
+    flex-shrink: 0;
+  }
+}
+
 /* ——— Reduced motion: disable grain and blur transitions ——— */
 
 @media (prefers-reduced-motion: reduce) {
@@ -514,5 +535,8 @@ body {
   }
   .archive-img-reduced {
     transition: none !important;
+  }
+  .mobile-strip {
+    will-change: auto;
   }
 }
