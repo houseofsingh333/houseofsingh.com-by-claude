@@ -62,7 +62,7 @@ export default function ProjectsPreview({ categories }: Props) {
       {/* ── Section header ── */}
       <ScrollReveal>
         <div className="flex items-baseline justify-between mb-6">
-          <h2 className="font-editorial text-2xl md:text-3xl font-light text-foreground">
+          <h2 className="text-2xl md:text-3xl font-normal text-foreground">
             Projects
           </h2>
           <Link
@@ -130,7 +130,7 @@ export default function ProjectsPreview({ categories }: Props) {
             >
               {/* Title row — title left, VIEW → right */}
               <div className="flex items-baseline justify-between px-8 pt-10 pb-6">
-                <h3 className="projects-col-title font-editorial text-base font-light tracking-wider uppercase">
+                <h3 className="projects-col-title text-base font-normal tracking-wider uppercase">
                   <span className="projects-col-title-text">
                     {cat.title}
                   </span>

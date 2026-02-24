@@ -142,7 +142,7 @@ export default function JournalPreview({ entries }: Props) {
 
               {/* Title / excerpt */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-editorial text-lg md:text-3xl lg:text-4xl font-light text-foreground leading-tight">
+                <h3 className="text-lg md:text-3xl lg:text-4xl font-normal text-foreground leading-tight">
                   {entry.title || entry.excerpt}
                 </h3>
               </div>

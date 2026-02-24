@@ -64,7 +64,7 @@ export default function SpotifyEmbed({ playlistUrl }: Props) {
 
           {/* Text */}
           <div>
-            <h3 className="font-editorial text-xl md:text-2xl font-light text-foreground leading-snug">
+            <h3 className="text-xl md:text-2xl font-normal text-foreground leading-snug">
               The Sounds Behind the Work
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed mt-3 max-w-sm">

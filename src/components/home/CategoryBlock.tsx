@@ -36,7 +36,7 @@ export default function CategoryBlock({
     <>
       {/* ── A. Header row — fully clickable ── */}
       <Link href={href} className="projects-mobile-link">
-        <span className="projects-mobile-title font-editorial text-[15px] font-light tracking-wide">
+        <span className="projects-mobile-title text-[15px] font-normal tracking-wide">
           {title}
         </span>
         <span className="projects-mobile-arrow inline-flex items-center gap-1.5 text-[11px] tracking-widest uppercase text-muted-foreground/50">

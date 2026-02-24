@@ -520,6 +520,7 @@ body {
   .archive-scroll {
     -ms-overflow-style: none;
     scrollbar-width: none;
+    scroll-snap-type: none;
   }
   .archive-scroll::-webkit-scrollbar {
     display: none;

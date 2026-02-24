@@ -12,7 +12,7 @@ export default function StudioRedirect() {
             A different practice
           </p>
 
-          <h3 className="font-editorial text-2xl md:text-4xl lg:text-5xl font-light leading-[1.1]">
+          <h3 className="text-2xl md:text-4xl lg:text-5xl font-normal leading-[1.1]">
             House of Singh Studios
           </h3>
 

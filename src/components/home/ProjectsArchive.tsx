@@ -40,8 +40,8 @@ function ProjectCard({
       onFocus={onFocus}
       onBlur={onBlur}
     >
-      {/* Image — 4:5 portrait ratio */}
-      <div className="relative aspect-[4/5] overflow-hidden mb-4 md:mb-5">
+      {/* Image — 4:5 mobile, 1:1 square desktop */}
+      <div className="relative aspect-[4/5] md:aspect-square overflow-hidden mb-4 md:mb-5">
         {/* Grain overlay */}
         <div
           className={`archive-grain absolute inset-0 z-10 pointer-events-none transition-opacity duration-300 ${
@@ -87,7 +87,7 @@ function ProjectCard({
       </p>
 
       {/* Title */}
-      <h3 className="archive-card-title font-editorial text-lg md:text-xl font-light text-foreground leading-snug">
+      <h3 className="archive-card-title text-lg md:text-xl font-normal text-foreground leading-snug">
         <span className="archive-title-text relative inline">
           {project.title}
           <span
@@ -281,7 +281,7 @@ export default function ProjectsArchive({ projects }: Props) {
       <ScrollReveal>
         <div className="px-6 md:px-16">
           <div className="flex items-baseline justify-between mb-6">
-            <h2 className="font-editorial text-2xl md:text-3xl font-light text-foreground">
+            <h2 className="text-2xl md:text-3xl font-normal text-foreground">
               Projects
             </h2>
             <div className="flex items-baseline gap-6">

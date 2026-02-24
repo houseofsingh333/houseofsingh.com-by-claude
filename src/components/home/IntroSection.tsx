@@ -80,7 +80,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
               {roles.map((role) => (
                 <p
                   key={role}
-                  className="font-editorial text-2xl md:text-[2rem] lg:text-[2.5rem] font-light text-foreground leading-[1.3]"
+                  className="text-2xl md:text-[2rem] lg:text-[2.5rem] font-normal text-foreground leading-[1.3]"
                 >
                   {role}
                 </p>

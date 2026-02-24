@@ -30,7 +30,7 @@ export default function SpotlightSection({ project }: Props) {
           <p className="text-[10px] tracking-[0.3em] uppercase text-white/60 mb-4">
             Spotlight
           </p>
-          <h3 className="font-editorial text-2xl md:text-5xl lg:text-6xl font-light text-white leading-[1.1] max-w-2xl">
+          <h3 className="text-2xl md:text-5xl lg:text-6xl font-normal text-white leading-[1.1] max-w-2xl">
             {project.title}
           </h3>
           <p className="text-white/60 text-sm md:text-base leading-relaxed mt-4 max-w-lg">
