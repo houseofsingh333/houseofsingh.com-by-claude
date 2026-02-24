@@ -44,7 +44,7 @@ export default function Footer({ items }: Props) {
   const isContactPage = pathname === "/contact";
 
   return (
-    <footer className="px-6 md:px-16 py-16 md:py-36 border-t border-border">
+    <footer className="px-6 md:px-16 section-py border-t border-border">
       {/* CTA — hidden on contact page since user is already there */}
       {!isContactPage && (
         <div className="mb-12 md:mb-16">

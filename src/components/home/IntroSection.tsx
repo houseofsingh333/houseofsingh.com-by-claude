@@ -29,7 +29,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
   const founderName = data.founderName ?? "Maninder Singh";
 
   return (
-    <section className="px-6 md:px-16 py-20 md:py-36">
+    <section className="px-6 md:px-16 section-py">
       {/* Section label */}
       <ScrollReveal>
         <div className="mb-16">

@@ -59,7 +59,7 @@ export default async function ProjectsPage({
       </section>
 
       {/* Filter rail + grid — same max-width and padding as header */}
-      <section className="mx-auto max-w-7xl px-6 md:px-16 pb-24 md:pb-36">
+      <section className="mx-auto max-w-7xl px-6 md:px-16 section-pb-lg">
         <ProjectsFilteredGrid
           projects={projects}
           initialFilter={params.filter}

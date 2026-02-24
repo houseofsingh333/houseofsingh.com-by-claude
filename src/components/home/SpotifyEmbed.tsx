@@ -38,7 +38,7 @@ export default function SpotifyEmbed({ playlistUrl }: Props) {
   const embedSrc = toEmbedUrl(playlistUrl);
 
   return (
-    <section className="px-6 md:px-16 py-20 md:py-36">
+    <section className="px-6 md:px-16 section-py">
       <ScrollReveal>
         <p className="text-xs tracking-widest uppercase text-muted-foreground mb-4">
           Now Playing

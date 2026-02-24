@@ -56,7 +56,7 @@ export default async function ProjectDetailPage({ params }: Props) {
   // Sanity data available — render full project
   if (project) {
     return (
-      <article className="pb-24 md:pb-36">
+      <article className="section-pb-lg">
         <ReadingProgress />
         <ProjectHeader category={project.category} title={project.title} intro={project.shortIntro} />
 
@@ -91,7 +91,7 @@ export default async function ProjectDetailPage({ params }: Props) {
   if (!fallback) notFound();
 
   return (
-    <article className="pb-24 md:pb-36">
+    <article className="section-pb-lg">
       <ProjectHeader category={fallback.category} title={fallback.title} intro={fallback.excerpt} />
       <section className="mx-auto max-w-3xl px-6 md:px-16">
         <p className="text-xs text-muted-foreground/40">

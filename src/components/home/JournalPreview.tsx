@@ -92,7 +92,7 @@ export default function JournalPreview({ entries }: Props) {
   }, [displayed.length]);
 
   return (
-    <section className="px-6 md:px-16 py-20 md:py-36">
+    <section className="px-6 md:px-16 section-py">
       {/* ── Section header — desktop: with scroll reveal ── */}
       <ScrollReveal className="hidden lg:block">
         <div className="flex items-baseline justify-between mb-14">

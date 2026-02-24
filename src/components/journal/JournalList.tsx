@@ -190,7 +190,7 @@ export default function JournalList({ entries }: Props) {
       </section>
 
       {/* Article Grid */}
-      <section className="px-6 md:px-16 pb-24 md:pb-36">
+      <section className="px-6 md:px-16 section-pb-lg">
         {filtered.length === 0 ? (
           <div className="py-24 text-center">
             <p className="text-sm text-muted-foreground/60 uppercase tracking-[0.2em]">

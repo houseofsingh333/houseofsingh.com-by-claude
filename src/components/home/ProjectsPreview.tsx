@@ -58,7 +58,7 @@ export default function ProjectsPreview({ categories }: Props) {
   }, [isTouch]);
 
   return (
-    <section className="px-6 md:px-16 py-12 md:py-36">
+    <section className="px-6 md:px-16 section-py">
       {/* ── Section header ── */}
       <ScrollReveal>
         <div className="flex items-baseline justify-between mb-6">

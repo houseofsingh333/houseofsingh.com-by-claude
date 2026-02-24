@@ -8,6 +8,23 @@
   --secondary: hsl(40 10% 93%);
   --muted-foreground: hsl(30 5% 50%);
   --border: hsl(40 10% 88%);
+
+  /* Editorial grid easing */
+  --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --editorial-duration: 1200ms;
+
+  /* Section spacing scale — consistent vertical rhythm */
+  --section-space-sm: 4rem;   /* 64px — page header bottoms, tight sections */
+  --section-space-md: 5rem;   /* 80px — standard section rhythm */
+  --section-space-lg: 6rem;   /* 96px — generous: about sections, page closers */
+}
+
+@media (min-width: 768px) {
+  :root {
+    --section-space-sm: 6rem;   /* 96px */
+    --section-space-md: 9rem;   /* 144px */
+    --section-space-lg: 9rem;   /* 144px */
+  }
 }
 
 @theme inline {
@@ -92,6 +109,15 @@ body {
     padding-top: 320px;
   }
 }
+
+/* ——— Section spacing utilities ——— */
+
+.section-py-sm  { padding-top: var(--section-space-sm); padding-bottom: var(--section-space-sm); }
+.section-py     { padding-top: var(--section-space-md); padding-bottom: var(--section-space-md); }
+.section-py-lg  { padding-top: var(--section-space-lg); padding-bottom: var(--section-space-lg); }
+.section-pb-sm  { padding-bottom: var(--section-space-sm); }
+.section-pb     { padding-bottom: var(--section-space-md); }
+.section-pb-lg  { padding-bottom: var(--section-space-lg); }
 
 /* ——— Utility animations ——— */
 
@@ -242,12 +268,6 @@ body {
 }
 
 /* ——— Projects editorial grid — calm fade-focus interaction ——— */
-
-/* Calm easing constants shared across this section */
-:root {
-  --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --editorial-duration: 1200ms;
-}
 
 /* Column: opacity transitions for the sibling fade effect */
 .projects-col {

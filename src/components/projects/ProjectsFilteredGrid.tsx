@@ -48,6 +48,14 @@ export default function ProjectsFilteredGrid({
 
   const handleFilter = useCallback((category: string) => {
     setActive(category);
+    // Keep URL in sync so filter state is shareable and survives refresh
+    const url = new URL(window.location.href);
+    if (category === "All") {
+      url.searchParams.delete("filter");
+    } else {
+      url.searchParams.set("filter", slugify(category));
+    }
+    window.history.replaceState({}, "", url.toString());
   }, []);
 
   const visibleIds = useMemo(() => {
