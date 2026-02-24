@@ -279,11 +279,11 @@ export default function ProjectsArchive({ projects }: Props) {
     <section className="section-py section-archive">
       {/* Section header */}
       <ScrollReveal>
-        <div className="px-6 md:px-16">
-          <div className="flex items-baseline justify-between mb-6">
-            <h2 className="text-2xl md:text-3xl font-normal text-foreground">
+        <div className="px-6 md:px-16 mb-16">
+          <div className="flex items-baseline justify-between">
+            <p className="text-xs tracking-widest uppercase text-muted-foreground">
               Projects
-            </h2>
+            </p>
             <div className="flex items-baseline gap-6">
               <span
                 className="archive-scroll-hint text-xs tracking-widest uppercase text-muted-foreground select-none hidden md:inline"
@@ -294,20 +294,20 @@ export default function ProjectsArchive({ projects }: Props) {
               </span>
               <Link
                 href="/projects"
-                className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 border-b border-foreground/30 pb-0.5"
+                className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
               >
                 See all
               </Link>
             </div>
           </div>
-          <div className="w-full h-px bg-border" />
+          <div className="w-full h-px bg-border mt-4" />
         </div>
       </ScrollReveal>
 
       {/* Scroll strip */}
       <div
         ref={scrollRef}
-        className="archive-scroll flex overflow-x-auto pt-10 md:pt-14 pb-4"
+        className="archive-scroll flex overflow-x-auto pb-4"
         style={{
           WebkitOverflowScrolling: "touch",
           overscrollBehaviorX: "contain",
