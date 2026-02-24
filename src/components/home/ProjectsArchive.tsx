@@ -115,6 +115,7 @@ export default function ProjectsArchive({ projects }: Props) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   const focusedIndex = hoveredIndex ?? activeIndex;
 
@@ -128,7 +129,7 @@ export default function ProjectsArchive({ projects }: Props) {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  // Center-card detection + edge gradient state
+  // Center-card detection + edge gradient state + progress
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -156,6 +157,10 @@ export default function ProjectsArchive({ projects }: Props) {
       const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2;
       setCanScrollLeft(!atStart);
       setCanScrollRight(!atEnd);
+
+      // Scroll progress (0–1)
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      setScrollProgress(maxScroll > 0 ? el.scrollLeft / maxScroll : 0);
     };
 
     onScroll();
@@ -171,7 +176,7 @@ export default function ProjectsArchive({ projects }: Props) {
     let target = el.scrollLeft;
     let animating = false;
     let rafId = 0;
-    const LERP = 0.1; // interpolation intensity — matches Lenis default
+    const LERP = 0.1;
 
     const animate = () => {
       const current = el.scrollLeft;
@@ -195,17 +200,14 @@ export default function ProjectsArchive({ projects }: Props) {
     };
 
     const handleWheel = (e: WheelEvent) => {
-      // Let native horizontal scroll (trackpad) pass through
       if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
 
-      // Normalise delta: deltaMode 1 = lines (~40px), deltaMode 2 = pages
       let dy = e.deltaY;
       if (e.deltaMode === 1) dy *= 40;
       else if (e.deltaMode === 2) dy *= el.clientHeight;
 
       const maxScroll = el.scrollWidth - el.clientWidth;
 
-      // Allow page scroll at boundaries
       if ((target <= 0 && dy < 0) || (target >= maxScroll && dy > 0)) return;
 
       e.preventDefault();
@@ -224,6 +226,89 @@ export default function ProjectsArchive({ projects }: Props) {
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, [prefersReducedMotion]);
+
+  // Scroll nudge — brief auto-scroll on first view to hint scrollability
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || prefersReducedMotion) return;
+
+    let timer1: ReturnType<typeof setTimeout>;
+    let timer2: ReturnType<typeof setTimeout>;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+
+        timer1 = setTimeout(() => {
+          el.scrollTo({ left: 60, behavior: "smooth" });
+          timer2 = setTimeout(() => {
+            el.scrollTo({ left: 0, behavior: "smooth" });
+          }, 600);
+        }, 400);
+      },
+      { threshold: 0.3 },
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, [prefersReducedMotion]);
+
+  // Drag-to-scroll on desktop
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    let isDown = false;
+    let startX = 0;
+    let scrollStart = 0;
+    let hasDragged = false;
+
+    const onDown = (e: MouseEvent) => {
+      isDown = true;
+      hasDragged = false;
+      startX = e.pageX;
+      scrollStart = el.scrollLeft;
+      el.classList.add("archive-dragging");
+    };
+
+    const onMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      const dx = e.pageX - startX;
+      if (Math.abs(dx) > 3) hasDragged = true;
+      el.scrollLeft = scrollStart - dx;
+    };
+
+    const onUp = () => {
+      if (!isDown) return;
+      isDown = false;
+      el.classList.remove("archive-dragging");
+    };
+
+    const onClick = (e: MouseEvent) => {
+      if (hasDragged) {
+        e.preventDefault();
+        e.stopPropagation();
+        hasDragged = false;
+      }
+    };
+
+    el.addEventListener("mousedown", onDown);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    el.addEventListener("click", onClick, { capture: true });
+
+    return () => {
+      el.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      el.removeEventListener("click", onClick, { capture: true });
+    };
+  }, []);
 
   return (
     <section className="section-py">
@@ -284,6 +369,14 @@ export default function ProjectsArchive({ projects }: Props) {
               }}
             />
           ))}
+        </div>
+
+        {/* Scroll progress bar */}
+        <div className="archive-progress-track" aria-hidden="true">
+          <div
+            className="archive-progress-bar"
+            style={{ transform: `scaleX(${scrollProgress})` }}
+          />
         </div>
       </div>
     </section>

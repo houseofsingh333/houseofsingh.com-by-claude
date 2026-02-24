@@ -515,7 +515,32 @@ body {
   .archive-scroll {
     --archive-gutter: 64px;
     scroll-snap-type: x proximity; /* lerp-compatible — no snap mid-interpolation */
+    cursor: grab;
   }
+}
+
+/* Drag-to-scroll cursor states (desktop only) */
+.archive-scroll.archive-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+.archive-scroll.archive-dragging * {
+  pointer-events: none;
+}
+
+/* ——— Archive scroll progress bar ——— */
+
+.archive-progress-track {
+  margin: 16px var(--archive-gutter) 0;
+  height: 1px;
+  background: hsl(30 10% 12% / 0.08);
+}
+
+.archive-progress-bar {
+  height: 100%;
+  background: hsl(30 10% 12% / 0.25);
+  transform-origin: left;
+  transition: transform 150ms ease-out;
 }
 
 /* ——— Archive edge-fade scroll affordance ——— */
