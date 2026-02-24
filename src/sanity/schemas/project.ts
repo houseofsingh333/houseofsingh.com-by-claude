@@ -94,6 +94,21 @@ export const project = defineType({
       description: "Feature this project as the spotlight on the homepage.",
       initialValue: false,
     }),
+    defineField({
+      name: "featuredOnHomepage",
+      title: "Show on Homepage",
+      type: "boolean",
+      description:
+        "If enabled, this project appears in the homepage Projects section.",
+      initialValue: false,
+    }),
+    defineField({
+      name: "homepageOrder",
+      title: "Homepage Order",
+      type: "number",
+      description:
+        "Controls manual order of projects in the homepage section. Lower number appears first.",
+    }),
   ],
   preview: {
     select: { title: "title", subtitle: "category", media: "thumbnail" },

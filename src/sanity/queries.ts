@@ -87,6 +87,20 @@ export const projectCategoriesQuery = `*[_type == "projectCategory"] | order(ord
   "previewImages": previewImages[] ${_imageAsset}
 }`;
 
+// --------------- Homepage Featured Projects ---------------
+
+export const homepageFeaturedProjectsQuery = `*[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc){
+  _id, title, "slug": slug.current, category,
+  "thumbnail": thumbnail ${_imageAsset},
+  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt
+}`;
+
+export const latestProjectsQuery = `*[_type == "project"] | order(_createdAt desc)[0...6]{
+  _id, title, "slug": slug.current, category,
+  "thumbnail": thumbnail ${_imageAsset},
+  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt
+}`;
+
 // --------------- Projects ---------------
 
 export const projectsListQuery = `*[_type == "project"] | order(title asc){

@@ -49,6 +49,16 @@ export type ProjectSummary = {
   excerpt: string;
 };
 
+export type HomepageProject = {
+  _id: string;
+  title: string;
+  slug: string;
+  category: string;
+  thumbnail: SanityImage;
+  thumbnailAlt: string;
+  excerpt: string;
+};
+
 // --------------- Content Section Types ---------------
 
 export type TextSectionBlock = {

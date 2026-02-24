@@ -12,6 +12,7 @@ export type {
   HeroSlide,
   ProjectCategory,
   ProjectSummary,
+  HomepageProject,
   TextSectionBlock,
   ImageSingleBlock,
   ImagePairBlock,
@@ -34,6 +35,7 @@ import type {
   HeroSlide,
   ProjectCategory,
   ProjectSummary,
+  HomepageProject,
   JournalEntry,
   SpotlightProject,
   SiteSettings,
@@ -120,6 +122,39 @@ export const fallbackProjects: ProjectSummary[] = [
     slug: "loft-on-fifth",
     category: "Residential",
     thumbnailSrc: "/images/project-placeholder-3.svg",
+    thumbnailAlt: "Loft on Fifth living area",
+    excerpt:
+      "Industrial loft converted into a bright, open-plan living space.",
+  },
+];
+
+// --------------- Fallback Homepage Projects ---------------
+
+export const fallbackHomepageProjects: HomepageProject[] = [
+  {
+    _id: "proj-1",
+    title: "The Parkview Residence",
+    slug: "parkview-residence",
+    category: "Residential",
+    thumbnail: "/images/project-placeholder-1.svg",
+    thumbnailAlt: "Parkview Residence exterior",
+    excerpt: "A contemporary family home blending indoor and outdoor living.",
+  },
+  {
+    _id: "proj-2",
+    title: "Ember Restaurant",
+    slug: "ember-restaurant",
+    category: "Commercial",
+    thumbnail: "/images/project-placeholder-2.svg",
+    thumbnailAlt: "Ember Restaurant interior",
+    excerpt: "An intimate dining experience rooted in natural materials.",
+  },
+  {
+    _id: "proj-3",
+    title: "Loft on Fifth",
+    slug: "loft-on-fifth",
+    category: "Residential",
+    thumbnail: "/images/project-placeholder-3.svg",
     thumbnailAlt: "Loft on Fifth living area",
     excerpt:
       "Industrial loft converted into a bright, open-plan living space.",
