@@ -58,27 +58,55 @@ export default function ProjectsArchive({ projects }: Props) {
     return () => el.removeEventListener("scroll", updateActiveCard);
   }, [updateActiveCard]);
 
-  // Convert vertical scroll to horizontal on desktop
+  // Convert vertical wheel → horizontal scroll on desktop.
+  // Uses rAF batching for smooth, jank-free rendering.
+  // Normalises deltaMode so Firefox (line-based deltas) matches Chrome/Safari.
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
-    const handleWheel = (e: WheelEvent) => {
-      // Only intercept vertical scrolls when hovering the container
-      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    let pendingDelta = 0;
+    let rafId = 0;
 
+    const applyScroll = () => {
+      if (pendingDelta !== 0) {
+        el.scrollLeft += pendingDelta;
+        pendingDelta = 0;
+      }
+      rafId = 0;
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      const absX = Math.abs(e.deltaX);
+      const absY = Math.abs(e.deltaY);
+
+      // Trackpad horizontal swipe — let the browser handle it natively
+      if (absX >= absY) return;
+
+      // Normalise delta: deltaMode 1 = lines (~40px), deltaMode 2 = pages
+      let dy = e.deltaY;
+      if (e.deltaMode === 1) dy *= 40;
+      else if (e.deltaMode === 2) dy *= el.clientHeight;
+
+      // Edge passthrough: allow page scroll when strip can't scroll further
       const atStart = el.scrollLeft <= 0;
       const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 1;
-
-      // Let page scroll naturally if at edges and scrolling in that direction
-      if ((atStart && e.deltaY < 0) || (atEnd && e.deltaY > 0)) return;
+      if ((atStart && dy < 0) || (atEnd && dy > 0)) return;
 
       e.preventDefault();
-      el.scrollLeft += e.deltaY;
+
+      // Accumulate delta and apply in next frame for smooth rendering
+      pendingDelta += dy;
+      if (!rafId) {
+        rafId = requestAnimationFrame(applyScroll);
+      }
     };
 
     el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => el.removeEventListener("wheel", handleWheel);
+    return () => {
+      el.removeEventListener("wheel", handleWheel);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const focusedIndex = hoveredIndex ?? activeIndex;
