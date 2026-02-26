@@ -30,24 +30,26 @@ type TwoColumnLayoutProps = {
 };
 
 export function TwoColumnLayout({ children, aside }: TwoColumnLayoutProps) {
+  const content = (
+    <>
+      <EditorialSidebar />
+      {children}
+    </>
+  );
+
   return (
     <div className="min-h-[80vh] px-6 md:px-8 page-top-offset section-pb-sm">
       <div className="max-w-6xl mx-auto">
-        <EditorialSidebar />
-        <div
-          className={
-            aside
-              ? "grid md:grid-cols-[1fr_minmax(220px,30%)] md:gap-16"
-              : ""
-          }
-        >
-          <div>{children}</div>
-          {aside && (
+        {aside ? (
+          <div className="grid md:grid-cols-[1fr_minmax(280px,40%)] md:gap-12 lg:gap-16">
+            <div>{content}</div>
             <div className="hidden md:block md:sticky md:top-24 md:self-start">
               {aside}
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          content
+        )}
       </div>
     </div>
   );
