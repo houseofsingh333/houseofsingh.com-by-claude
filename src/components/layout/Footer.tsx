@@ -76,6 +76,12 @@ export default function Footer({ items }: Props) {
                 </span>
               </Link>
             )}
+            <img
+              src="/images/hos-logo.svg"
+              alt="House of Singh"
+              className="mt-10 md:mt-14 opacity-15"
+              style={{ width: '130px', height: '130px' }}
+            />
           </div>
 
           {/* Navigation — subpage links */}
@@ -183,13 +189,8 @@ export default function Footer({ items }: Props) {
             </Link>
           </div>
 
-          {/* Right: crest + signature */}
-          <div className="flex items-center gap-3">
-            <img
-              src="/images/hos-logo.svg"
-              alt=""
-              className="w-5 h-5 opacity-20"
-            />
+          {/* Right: signature */}
+          <div className="flex items-center">
             <span className="text-[10px] tracking-[0.12em] text-muted-foreground/35 italic">
               Made by AI. Curated by humans.
             </span>
