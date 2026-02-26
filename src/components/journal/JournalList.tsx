@@ -139,7 +139,7 @@ export default function JournalList({ entries }: Props) {
                       className={`font-editorial text-sm md:text-base mt-3 transition-all duration-300 ${
                         isActive
                           ? "text-foreground font-medium"
-                          : "text-muted-foreground/40 group-hover:text-muted-foreground"
+                          : "text-muted-foreground/50 group-hover:text-muted-foreground"
                       }`}
                     >
                       {year}
@@ -175,10 +175,10 @@ export default function JournalList({ entries }: Props) {
                     isActive
                       ? "text-foreground border-b border-foreground"
                       : isFuture
-                        ? "text-muted-foreground/20 cursor-not-allowed"
+                        ? "text-muted-foreground/30 cursor-not-allowed"
                         : hasEntries
-                          ? "text-muted-foreground/60 hover:text-foreground border-b border-transparent hover:border-foreground"
-                          : "text-muted-foreground/30 hover:text-muted-foreground/60 border-b border-transparent"
+                          ? "text-muted-foreground/70 hover:text-foreground border-b border-transparent hover:border-foreground"
+                          : "text-muted-foreground/40 hover:text-muted-foreground/60 border-b border-transparent"
                   }`}
                 >
                   {MONTH_LABELS[month - 1]}
