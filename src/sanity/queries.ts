@@ -161,6 +161,17 @@ export const spotlightProjectQuery = `*[_type == "project" && spotlight == true]
   "image": thumbnail ${_imageAsset}
 }`;
 
+// --------------- Contact Page ---------------
+
+export const contactPageQuery = `*[_type == "contactPage"][0]{
+  instagramPhotos[]{
+    "id": _key,
+    "url": image.asset->url,
+    "alt": image.alt,
+    permalink
+  }
+}`;
+
 // --------------- Journal ---------------
 
 export const journalFeedQuery = `*[_type == "journalEntry"] | order(date desc){

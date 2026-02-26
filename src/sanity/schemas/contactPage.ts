@@ -26,6 +26,44 @@ export const contactPage = defineType({
       of: [{ type: "string" }],
     }),
     defineField({
+      name: "instagramPhotos",
+      title: "Instagram Photos",
+      type: "array",
+      description:
+        "Curated Instagram photos shown as a rotating plate on the contact page.",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "image",
+              title: "Photo",
+              type: "image",
+              options: { hotspot: true },
+              validation: (rule) => rule.required(),
+              fields: [
+                defineField({
+                  name: "alt",
+                  title: "Alt Text",
+                  type: "string",
+                }),
+              ],
+            }),
+            defineField({
+              name: "permalink",
+              title: "Instagram Post URL",
+              type: "url",
+              description: "Link to the original Instagram post.",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: { title: "permalink", media: "image" },
+          },
+        },
+      ],
+    }),
+    defineField({
       name: "seoTitle",
       title: "SEO Title",
       type: "string",

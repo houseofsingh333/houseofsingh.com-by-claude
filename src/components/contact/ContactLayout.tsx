@@ -1,9 +1,11 @@
-/* Contact page layout primitives — sidebar, two-column grid, progress bar */
+/* Contact page layout primitives — editorial copy, form grid, progress bar */
 
-/* ── Static left column ────────────────────────────────── */
+import type { ReactNode } from "react";
+
+/* ── Editorial intro copy ────────────────────────────────── */
 export function EditorialSidebar() {
   return (
-    <div className="md:sticky md:top-24 md:self-start">
+    <div className="mb-12 md:mb-16">
       <h1 className="font-editorial text-5xl md:text-6xl lg:text-7xl font-light text-foreground mb-8">
         Say hello.
       </h1>
@@ -19,13 +21,31 @@ export function EditorialSidebar() {
   );
 }
 
-/* ── Two-column wrapper ────────────────────────────────── */
-export function TwoColumnLayout({ children }: { children: React.ReactNode }) {
+/* ── Two-column wrapper (main + optional aside) ───────────── */
+type TwoColumnLayoutProps = {
+  children: ReactNode;
+  aside?: ReactNode;
+};
+
+export function TwoColumnLayout({ children, aside }: TwoColumnLayoutProps) {
   return (
     <div className="min-h-[80vh] px-6 md:px-8 page-top-offset section-pb-sm">
-      <div className="grid md:grid-cols-[2fr_3fr] gap-12 md:gap-24 max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <EditorialSidebar />
-        <div>{children}</div>
+        <div
+          className={
+            aside
+              ? "grid md:grid-cols-[1fr_minmax(220px,30%)] md:gap-16"
+              : ""
+          }
+        >
+          <div>{children}</div>
+          {aside && (
+            <div className="hidden md:block md:sticky md:top-24 md:self-start">
+              {aside}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

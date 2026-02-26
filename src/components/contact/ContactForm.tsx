@@ -8,8 +8,15 @@ import {
 } from "@/components/contact/ReviewConfirmation";
 import { TwoColumnLayout, ProgressBar } from "./ContactLayout";
 import { useContactForm } from "./useContactForm";
+import InstagramPhotoPlate, {
+  type InstagramPhoto,
+} from "./InstagramPhotoPlate";
 
-export default function ContactForm() {
+type Props = {
+  instagramPhotos?: InstagramPhoto[];
+};
+
+export default function ContactForm({ instagramPhotos = [] }: Props) {
   const {
     formData,
     currentStep,
@@ -33,12 +40,17 @@ export default function ContactForm() {
     progressPercent,
   } = useContactForm();
 
+  const aside =
+    instagramPhotos.length > 0 ? (
+      <InstagramPhotoPlate photos={instagramPhotos} />
+    ) : undefined;
+
   /* ── Confirmation ── */
   if (phase === "done") {
     return (
       <>
         <ProgressBar percent={progressPercent} />
-        <TwoColumnLayout>
+        <TwoColumnLayout aside={aside}>
           <ConfirmationScreen />
         </TwoColumnLayout>
       </>
@@ -50,7 +62,7 @@ export default function ContactForm() {
     return (
       <>
         <ProgressBar percent={progressPercent} />
-        <TwoColumnLayout>
+        <TwoColumnLayout aside={aside}>
           {submitError && (
             <p className="text-red-600 text-sm mb-6">{submitError}</p>
           )}
@@ -74,7 +86,14 @@ export default function ContactForm() {
   return (
     <>
       <ProgressBar percent={progressPercent} />
-      <TwoColumnLayout>
+      <TwoColumnLayout aside={aside}>
+        {/* Mobile-only Instagram plate — between intro copy and form */}
+        {instagramPhotos.length > 0 && (
+          <div className="md:hidden mb-10">
+            <InstagramPhotoPlate photos={instagramPhotos} />
+          </div>
+        )}
+
         <div className="min-h-[50vh] flex flex-col justify-center">
           <div key={currentStep} className="editorial-slide-up">
             {/* Question */}
