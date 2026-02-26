@@ -28,7 +28,7 @@ type Props = {
 export default function InstagramPhotoPlate({
   photos,
   interval = 8000,
-  fadeDuration = "1.2s",
+  fadeDuration = "1.6s",
 }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [prefersReduced, setPrefersReduced] = useState(false);
@@ -70,7 +70,7 @@ export default function InstagramPhotoPlate({
   const currentPhoto = photos[activeIndex];
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full px-2 md:px-0">
       <a
         href={currentPhoto.permalink}
         target="_blank"
@@ -96,10 +96,22 @@ export default function InstagramPhotoPlate({
           ))}
         </div>
 
-        {/* Instagram icon — anchored bottom-right, faded, subtle hover lift */}
-        <div className="absolute bottom-3 right-3 z-10">
+        {/* Subtle grain overlay — matches archive-grain pattern */}
+        <div className="absolute inset-0 pointer-events-none archive-grain opacity-40" />
+
+        {/* Subtle vignette — soft edge darkening */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.12) 100%)",
+          }}
+        />
+
+        {/* Instagram icon — anchored bottom-right, very low opacity, subtle hover */}
+        <div className="absolute bottom-4 right-4 z-10">
           <Instagram
-            className="w-4 h-4 text-white/30 group-hover:text-white/50 drop-shadow-sm"
+            className="w-3.5 h-3.5 text-white/20 group-hover:text-white/40 drop-shadow-sm"
             style={{ transition: "color 400ms cubic-bezier(0.22, 1, 0.36, 1)" }}
             strokeWidth={1.5}
           />

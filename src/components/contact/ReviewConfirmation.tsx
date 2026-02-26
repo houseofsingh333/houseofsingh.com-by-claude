@@ -94,7 +94,7 @@ export function ReviewScreen({
       <div className="flex items-center justify-between mt-16">
         <button
           onClick={onBack}
-          className="contact-btn flex items-center gap-2 px-5 py-3 text-sm tracking-widest uppercase text-muted-foreground hover:text-foreground border border-border hover:border-foreground/30 rounded-full"
+          className="contact-btn contact-btn-secondary flex items-center gap-2"
         >
           <ArrowLeft className="contact-btn-arrow contact-btn-arrow-back w-4 h-4" />
           Back
@@ -102,7 +102,7 @@ export function ReviewScreen({
         <button
           onClick={onSubmit}
           disabled={submitting}
-          className="contact-btn flex items-center gap-2 px-8 py-3 text-sm tracking-widest uppercase bg-foreground text-background rounded-full hover:bg-foreground/90 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="contact-btn contact-btn-primary flex items-center gap-2 px-8"
         >
           {submitting ? "Sending…" : "Submit"}
         </button>
@@ -123,13 +123,13 @@ export function ConfirmationScreen() {
       <div className="flex flex-wrap gap-4">
         <Link
           href="/projects"
-          className="contact-btn inline-flex items-center gap-2 px-6 py-3 text-sm tracking-widest uppercase border border-border hover:border-foreground/30 rounded-full text-foreground hover:bg-foreground hover:text-background"
+          className="contact-btn contact-btn-secondary inline-flex items-center gap-2 hover:bg-foreground hover:text-background"
         >
           Explore my projects
         </Link>
         <Link
           href="/journal"
-          className="contact-btn inline-flex items-center gap-2 px-6 py-3 text-sm tracking-widest uppercase border border-border hover:border-foreground/30 rounded-full text-foreground hover:bg-foreground hover:text-background"
+          className="contact-btn contact-btn-secondary inline-flex items-center gap-2 hover:bg-foreground hover:text-background"
         >
           Read the journal
         </Link>

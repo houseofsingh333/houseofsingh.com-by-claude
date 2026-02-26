@@ -126,7 +126,7 @@ body {
 }
 
 .editorial-slide-up {
-  animation: editorialSlideUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: editorialSlideUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -291,15 +291,39 @@ body {
 }
 
 .contact-input:focus {
-  border-bottom-color: hsl(30 10% 25%);
+  border-bottom-color: hsl(30 10% 20%);
   outline: none;
+}
+
+.contact-input:focus::placeholder {
+  color: hsl(30 5% 50% / 0.25);
 }
 
 .contact-input::placeholder {
   color: hsl(30 5% 50% / 0.35);
+  transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Navigation buttons — calm editorial interactions */
+/* Typed text should be distinctly darker than body copy */
+.contact-input:not(:placeholder-shown) {
+  color: hsl(30 10% 10%);
+}
+
+/* Error helper — calm editorial treatment */
+.contact-error {
+  color: hsl(10 50% 45%);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  margin-top: 0.5rem;
+}
+
+.contact-input[aria-invalid="true"] {
+  border-bottom-color: hsl(10 40% 55%);
+}
+
+/* ——— Contact buttons — standardised site-wide tokens ——— */
+
+/* Base: shared transitions and interactions for all contact buttons */
 .contact-btn {
   transition: color 350ms cubic-bezier(0.22, 1, 0.36, 1),
     background-color 350ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -314,6 +338,61 @@ body {
   transition-duration: 100ms;
 }
 
+/* Focus-visible for keyboard navigation — calm ring */
+.contact-btn:focus-visible {
+  outline: 1.5px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* Primary button — filled, site-consistent */
+.contact-btn-primary {
+  padding: 0.75rem 1.5rem;                  /* px-6 py-3 */
+  font-size: 0.8125rem;                     /* ~13px, matches site text-sm */
+  letter-spacing: 0.1em;                    /* tracking-widest */
+  text-transform: uppercase;
+  background-color: var(--foreground);
+  color: var(--background);
+  border-radius: 9999px;
+}
+
+.contact-btn-primary:hover {
+  background-color: hsl(30 10% 18%);
+}
+
+.contact-btn-primary:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Secondary button — outlined, site-consistent */
+.contact-btn-secondary {
+  padding: 0.75rem 1.25rem;                 /* px-5 py-3 */
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+}
+
+.contact-btn-secondary:hover {
+  color: var(--foreground);
+  border-color: hsl(30 10% 12% / 0.3);
+}
+
+/* Ghost button — text only, minimal */
+.contact-btn-ghost {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(30 5% 50% / 0.6);
+}
+
+.contact-btn-ghost:hover {
+  color: var(--muted-foreground);
+}
+
 /* Arrow nudge on hover */
 .contact-btn-arrow {
   transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -325,12 +404,6 @@ body {
 
 .contact-btn:hover .contact-btn-arrow-back {
   transform: translateX(-2px);
-}
-
-/* Focus-visible for keyboard navigation — calm ring */
-.contact-btn:focus-visible {
-  outline: 1.5px solid var(--foreground);
-  outline-offset: 3px;
 }
 
 /* Intent and chip buttons — calm selection feedback */

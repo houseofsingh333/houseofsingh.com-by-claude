@@ -91,27 +91,27 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
       <TwoColumnLayout aside={aside}>
         {/* Mobile-only Instagram plate — between intro copy and form */}
         {instagramPhotos.length > 0 && (
-          <div className="md:hidden mb-10">
+          <div className="md:hidden mb-12 max-w-sm mx-auto">
             <InstagramPhotoPlate photos={instagramPhotos} />
           </div>
         )}
 
-        <div className="min-h-[50vh] flex flex-col justify-center">
+        <div className="min-h-[50vh] flex flex-col justify-center max-w-lg">
           <div key={currentStep} className="editorial-slide-up">
             {/* Question */}
             <h2 className="font-editorial text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-[1.12] mb-5 tracking-[-0.01em]">
               {currentStepDef?.question}
             </h2>
 
-            {/* Helper text */}
+            {/* Helper text — stronger pause before input */}
             {currentStepDef?.helperText && (
-              <p className="text-sm text-muted-foreground/70 leading-relaxed mb-8">
+              <p className="text-sm text-muted-foreground/60 leading-relaxed mb-10">
                 {currentStepDef.helperText}
               </p>
             )}
 
             {/* Input */}
-            <div className="mt-10">
+            <div className={currentStepDef?.helperText ? "mt-4" : "mt-12"}>
               {currentStepDef && (
                 <StepRenderer
                   step={currentStepDef}
@@ -133,12 +133,12 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
           </div>
 
           {/* Navigation buttons */}
-          <div className="flex items-center justify-between pt-14">
+          <div className="flex items-center justify-between pt-16">
             <div>
               {currentStep > 0 && (
                 <button
                   onClick={handlePrev}
-                  className="contact-btn flex items-center gap-2 px-5 py-3 text-sm tracking-widest uppercase text-muted-foreground hover:text-foreground border border-border hover:border-foreground/30 rounded-full"
+                  className="contact-btn contact-btn-secondary flex items-center gap-2"
                 >
                   <ArrowLeft className="contact-btn-arrow contact-btn-arrow-back w-4 h-4" />
                   Back
@@ -149,7 +149,7 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
               {isSkippable && (
                 <button
                   onClick={handleNext}
-                  className="contact-btn px-5 py-3 text-sm tracking-widest uppercase text-muted-foreground/60 hover:text-muted-foreground"
+                  className="contact-btn contact-btn-ghost"
                 >
                   Skip
                 </button>
@@ -158,7 +158,7 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
                 <button
                   onClick={handleNext}
                   disabled={!isValid() && !isSkippable}
-                  className="contact-btn flex items-center gap-2 px-6 py-3 text-sm tracking-widest uppercase bg-foreground text-background rounded-full hover:bg-foreground/90 disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="contact-btn contact-btn-primary flex items-center gap-2"
                 >
                   {currentStep === steps.length - 1 ? "Review" : "Next"}
                   <ArrowRight className="contact-btn-arrow contact-btn-arrow-next w-4 h-4" />
