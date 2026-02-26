@@ -40,17 +40,17 @@ export function ReviewScreen({
 
   return (
     <div className="w-full max-w-xl mx-auto editorial-slide-up">
-      <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
+      <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground/70 mb-4">
         Review
       </p>
-      <h2 className="font-editorial text-3xl md:text-4xl lg:text-5xl font-light text-foreground mb-12">
+      <h2 className="font-editorial text-3xl md:text-4xl lg:text-5xl font-light text-foreground mb-12 leading-[1.12]">
         Before you send.
       </h2>
 
       <div className="space-y-10">
         {Object.entries(sections).map(([section, items]) => (
           <div key={section}>
-            <h3 className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
+            <h3 className="text-xs tracking-[0.25em] uppercase text-muted-foreground/70 mb-4">
               {sectionLabels[section] || section}
             </h3>
             <div className="space-y-0">
@@ -63,7 +63,7 @@ export function ReviewScreen({
                     className="flex items-baseline justify-between border-b border-border py-4 group"
                   >
                     <div className="flex-1 min-w-0">
-                      <span className="text-sm text-muted-foreground block mb-1">
+                      <span className="text-sm text-muted-foreground/70 block mb-1">
                         {step.question.replace(/[?.]/g, "")}
                       </span>
                       <span className="text-base md:text-lg font-light text-foreground break-words">
@@ -78,10 +78,10 @@ export function ReviewScreen({
                     </div>
                     <button
                       onClick={() => onEdit(index)}
-                      className="ml-4 text-muted-foreground hover:text-foreground transition-colors duration-200 opacity-0 group-hover:opacity-100 flex-shrink-0"
+                      className="contact-btn ml-4 text-muted-foreground/40 hover:text-foreground opacity-0 group-hover:opacity-100 flex-shrink-0"
                       aria-label={`Edit ${step.question}`}
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Pencil className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 );
@@ -94,15 +94,15 @@ export function ReviewScreen({
       <div className="flex items-center justify-between mt-16">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-5 py-3 text-sm tracking-widest uppercase text-muted-foreground hover:text-foreground border border-border rounded-full transition-colors duration-300"
+          className="contact-btn flex items-center gap-2 px-5 py-3 text-sm tracking-widest uppercase text-muted-foreground hover:text-foreground border border-border hover:border-foreground/30 rounded-full"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="contact-btn-arrow contact-btn-arrow-back w-4 h-4" />
           Back
         </button>
         <button
           onClick={onSubmit}
           disabled={submitting}
-          className="flex items-center gap-2 px-8 py-3 text-sm tracking-widest uppercase bg-foreground text-background rounded-full hover:bg-foreground/90 transition-colors duration-300 disabled:opacity-50"
+          className="contact-btn flex items-center gap-2 px-8 py-3 text-sm tracking-widest uppercase bg-foreground text-background rounded-full hover:bg-foreground/90 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {submitting ? "Sending…" : "Submit"}
         </button>
@@ -114,22 +114,22 @@ export function ReviewScreen({
 export function ConfirmationScreen() {
   return (
     <div className="w-full max-w-xl mx-auto editorial-slide-up">
-      <h1 className="font-editorial text-4xl md:text-5xl lg:text-6xl font-light text-foreground mb-6">
+      <h1 className="font-editorial text-4xl md:text-5xl lg:text-6xl font-light text-foreground mb-6 leading-[1.08]">
         Thank you for reaching out.
       </h1>
-      <p className="text-muted-foreground text-lg mb-12">
+      <p className="text-muted-foreground/80 text-lg mb-14 leading-relaxed">
         I&apos;ll be in touch shortly.
       </p>
       <div className="flex flex-wrap gap-4">
         <Link
           href="/projects"
-          className="inline-flex items-center gap-2 px-6 py-3 text-sm tracking-widest uppercase border border-border rounded-full text-foreground hover:bg-foreground hover:text-background transition-colors duration-300"
+          className="contact-btn inline-flex items-center gap-2 px-6 py-3 text-sm tracking-widest uppercase border border-border hover:border-foreground/30 rounded-full text-foreground hover:bg-foreground hover:text-background"
         >
           Explore my projects
         </Link>
         <Link
           href="/journal"
-          className="inline-flex items-center gap-2 px-6 py-3 text-sm tracking-widest uppercase border border-border rounded-full text-foreground hover:bg-foreground hover:text-background transition-colors duration-300"
+          className="contact-btn inline-flex items-center gap-2 px-6 py-3 text-sm tracking-widest uppercase border border-border hover:border-foreground/30 rounded-full text-foreground hover:bg-foreground hover:text-background"
         >
           Read the journal
         </Link>

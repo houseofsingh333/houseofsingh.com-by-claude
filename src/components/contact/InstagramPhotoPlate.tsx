@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Instagram } from "lucide-react";
 
 export type InstagramPhoto = {
   id: string;
@@ -70,15 +71,11 @@ export default function InstagramPhotoPlate({
 
   return (
     <div className="relative w-full">
-      <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-3">
-        Instagram
-      </p>
-
       <a
         href={currentPhoto.permalink}
         target="_blank"
         rel="noopener noreferrer"
-        className="block relative aspect-[4/5] overflow-hidden border border-border bg-secondary/30"
+        className="group block relative aspect-[4/5] overflow-hidden border border-border/60 bg-secondary/20"
         aria-label="View on Instagram"
       >
         <div
@@ -97,6 +94,15 @@ export default function InstagramPhotoPlate({
               style={{ opacity: i === activeIndex ? 1 : 0 }}
             />
           ))}
+        </div>
+
+        {/* Instagram icon — anchored bottom-right, faded, subtle hover lift */}
+        <div className="absolute bottom-3 right-3 z-10">
+          <Instagram
+            className="w-4 h-4 text-white/30 group-hover:text-white/50 drop-shadow-sm"
+            style={{ transition: "color 400ms cubic-bezier(0.22, 1, 0.36, 1)" }}
+            strokeWidth={1.5}
+          />
         </div>
       </a>
     </div>

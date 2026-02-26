@@ -126,7 +126,16 @@ body {
 }
 
 .editorial-slide-up {
-  animation: editorialFadeIn 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: editorialSlideUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-fade-in,
+  .editorial-slide-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Hide scrollbar for timeline scrubber */
@@ -269,6 +278,83 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .instagram-plate-img {
     transition: none;
+  }
+}
+
+/* ——— Contact form — editorial input refinements ——— */
+
+/* Underline inputs: calm focus transition */
+.contact-input {
+  border-bottom-width: 1px;
+  border-bottom-color: var(--border);
+  transition: border-color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-input:focus {
+  border-bottom-color: hsl(30 10% 25%);
+  outline: none;
+}
+
+.contact-input::placeholder {
+  color: hsl(30 5% 50% / 0.35);
+}
+
+/* Navigation buttons — calm editorial interactions */
+.contact-btn {
+  transition: color 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-btn:active {
+  transform: translateY(1px);
+  opacity: 0.85;
+  transition-duration: 100ms;
+}
+
+/* Arrow nudge on hover */
+.contact-btn-arrow {
+  transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-btn:hover .contact-btn-arrow-next {
+  transform: translateX(2px);
+}
+
+.contact-btn:hover .contact-btn-arrow-back {
+  transform: translateX(-2px);
+}
+
+/* Focus-visible for keyboard navigation — calm ring */
+.contact-btn:focus-visible {
+  outline: 1.5px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* Intent and chip buttons — calm selection feedback */
+.contact-option {
+  transition: background-color 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-option:focus-visible {
+  outline: 1.5px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* Reduced motion: simplify all contact interactions */
+@media (prefers-reduced-motion: reduce) {
+  .contact-input,
+  .contact-btn,
+  .contact-btn-arrow,
+  .contact-option {
+    transition: none;
+  }
+  .contact-btn:active {
+    transform: none;
   }
 }
 
@@ -466,6 +552,17 @@ body {
   from {
     opacity: 0;
     transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes editorialSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
   }
   to {
     opacity: 1;

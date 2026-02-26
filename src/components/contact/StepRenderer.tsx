@@ -40,10 +40,10 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`w-full text-left px-6 py-5 border rounded-full text-xl md:text-2xl font-light tracking-tight transition-all duration-300 ${
+            className={`contact-option w-full text-left px-6 py-5 border rounded-full text-xl md:text-2xl font-light tracking-tight ${
               value === option
                 ? "bg-foreground text-background border-foreground"
-                : "bg-transparent text-foreground border-border hover:border-foreground"
+                : "bg-transparent text-foreground border-border hover:border-foreground/50"
             }`}
           >
             {option}
@@ -61,10 +61,10 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`px-5 py-3 border rounded-full text-base md:text-lg font-light tracking-tight transition-all duration-300 ${
+            className={`contact-option px-5 py-3 border rounded-full text-base md:text-lg font-light tracking-tight ${
               value === option
                 ? "bg-foreground text-background border-foreground"
-                : "bg-transparent text-foreground border-border hover:border-foreground"
+                : "bg-transparent text-foreground border-border hover:border-foreground/50"
             }`}
           >
             {option}
@@ -82,7 +82,7 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`w-full text-left px-5 py-4 border-b border-border text-lg md:text-xl font-light transition-colors duration-300 ${
+            className={`contact-option w-full text-left px-5 py-4 border-b border-border text-lg md:text-xl font-light ${
               value === option
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground"
@@ -104,7 +104,7 @@ export default function StepRenderer({
         value={value}
         onChange={(e) => handleChange(e.target.value)}
         placeholder="Type here…"
-        className="w-full bg-transparent border-0 border-b border-border px-0 py-3 text-xl md:text-2xl font-light text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground transition-colors duration-300 resize-none"
+        className="contact-input w-full bg-transparent border-0 px-0 py-3 text-xl md:text-2xl font-light text-foreground resize-none"
         autoFocus
       />
     );
@@ -114,14 +114,14 @@ export default function StepRenderer({
   if (step.type === "date") {
     return (
       <div className="relative w-full">
-        <div className="flex items-center gap-3 border-b border-border py-3">
-          <CalendarIcon className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+        <div className="contact-input flex items-center gap-3 py-3">
+          <CalendarIcon className="w-5 h-5 text-muted-foreground/60 flex-shrink-0" />
           {value ? (
             <span className="text-xl md:text-2xl font-light text-foreground">
               {formatDate(value)}
             </span>
           ) : (
-            <span className="text-xl md:text-2xl font-light text-muted-foreground/40">
+            <span className="text-xl md:text-2xl font-light text-muted-foreground/35">
               Pick a date…
             </span>
           )}
@@ -153,7 +153,7 @@ export default function StepRenderer({
             ? "+1 (555) 000-0000"
             : "Type here…"
       }
-      className="w-full bg-transparent border-0 border-b border-border px-0 py-3 text-xl md:text-2xl font-light text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground transition-colors duration-300"
+      className="contact-input w-full bg-transparent border-0 px-0 py-3 text-xl md:text-2xl font-light text-foreground"
       autoFocus
     />
   );
