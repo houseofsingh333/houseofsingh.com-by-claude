@@ -52,6 +52,24 @@ export const aboutPage = defineType({
         }),
       ],
     }),
+    defineField({
+      name: "homePortrait",
+      title: "Homepage About Image",
+      type: "image",
+      options: { hotspot: true },
+      description:
+        "Optional separate image for the homepage About section. Falls back to Portrait if empty.",
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alt Text",
+          type: "string",
+          description: "Describe the image for screen readers and SEO.",
+          validation: (rule) =>
+            rule.required().warning("Alt text is strongly recommended."),
+        }),
+      ],
+    }),
 
     /* ——— 3 · The Moniker ——— */
     defineField({

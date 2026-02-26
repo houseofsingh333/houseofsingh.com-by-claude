@@ -61,7 +61,7 @@ export const homeIntroQuery = `*[_type == "aboutPage"][0]{
   founderName,
   founderRoles,
   founderBio,
-  "portrait": portrait ${_imageAsset},
+  "portrait": coalesce(homePortrait, portrait) ${_imageAsset},
   introQuote
 }`;
 
