@@ -1,6 +1,5 @@
 import CinematicHero from "@/components/home/CinematicHero";
 import IntroSection from "@/components/home/IntroSection";
-import FeaturedOnStrip from "@/components/home/FeaturedOnStrip";
 import ProjectsArchive from "@/components/home/ProjectsArchive";
 import SpotlightSection from "@/components/home/SpotlightSection";
 import JournalPreview from "@/components/home/JournalPreview";
@@ -10,7 +9,6 @@ import { sanityFetch } from "@/sanity/fetch";
 import {
   heroSlidesQuery,
   homeIntroQuery,
-  homeFeaturedOnQuery,
   siteSettingsQuery,
   homepageFeaturedProjectsQuery,
   latestProjectsQuery,
@@ -24,7 +22,6 @@ import {
   fallbackSpotlightProject,
   fallbackSiteSettings,
   fallbackHomeIntro,
-  fallbackAboutPage,
   type HeroSlide,
   type HomeIntroData,
   type HomepageProject,
@@ -32,7 +29,6 @@ import {
   type SpotlightProject,
   type SiteSettings,
 } from "@/lib/placeholder-data";
-import type { FeaturedOutlet } from "@/lib/types";
 
 type SanityHomepageProject = {
   _id: string;
@@ -45,11 +41,10 @@ type SanityHomepageProject = {
 };
 
 export default async function HomePage() {
-  const [slides, intro, featuredOutlets, settings, featured, latest, journal, spotlight] =
+  const [slides, intro, settings, featured, latest, journal, spotlight] =
     await Promise.all([
       sanityFetch<HeroSlide[] | null>({ query: heroSlidesQuery }),
       sanityFetch<HomeIntroData | null>({ query: homeIntroQuery }),
-      sanityFetch<FeaturedOutlet[] | null>({ query: homeFeaturedOnQuery }),
       sanityFetch<SiteSettings | null>({ query: siteSettingsQuery }),
       sanityFetch<SanityHomepageProject[] | null>({
         query: homepageFeaturedProjectsQuery,
@@ -60,10 +55,6 @@ export default async function HomePage() {
       sanityFetch<JournalEntry[] | null>({ query: journalFeedQuery }),
       sanityFetch<SpotlightProject | null>({ query: spotlightProjectQuery }),
     ]);
-
-  const outlets = featuredOutlets?.length
-    ? featuredOutlets
-    : fallbackAboutPage.featuredOn ?? [];
 
   const heroSlides = slides?.length
     ? slides.length >= 3
@@ -89,7 +80,6 @@ export default async function HomePage() {
     <>
       <CinematicHero slides={heroSlides} />
       <IntroSection data={homeIntro} />
-      {outlets.length > 0 && <FeaturedOnStrip outlets={outlets} />}
       <ProjectsArchive projects={homepageProjects} />
       <SpotlightSection project={spotlightProject} />
       <JournalPreview entries={journalEntries} />
