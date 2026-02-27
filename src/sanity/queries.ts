@@ -42,8 +42,12 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   monikerText,
   featuredOn[]{
     name,
+    title,
+    date,
+    description,
     url,
-    "logo": logo.asset->url
+    "logo": logo.asset->url,
+    "image": image ${_imageAsset}
   },
   rapidFire[]{
     question,

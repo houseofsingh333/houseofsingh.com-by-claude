@@ -98,9 +98,28 @@ export const aboutPage = defineType({
           fields: [
             defineField({
               name: "name",
-              title: "Name",
+              title: "Publication Name",
               type: "string",
               validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "title",
+              title: "Feature Title",
+              type: "string",
+              description: "Title of the article or feature.",
+            }),
+            defineField({
+              name: "date",
+              title: "Date",
+              type: "date",
+              description: "Publication date of the feature.",
+            }),
+            defineField({
+              name: "description",
+              title: "Description",
+              type: "text",
+              rows: 2,
+              description: "A short description of the feature (1–2 sentences).",
             }),
             defineField({
               name: "url",
@@ -114,9 +133,24 @@ export const aboutPage = defineType({
               type: "image",
               description: "Publication or outlet logo.",
             }),
+            defineField({
+              name: "image",
+              title: "Feature Image",
+              type: "image",
+              options: { hotspot: true },
+              description: "Image representing the feature. Recommended: landscape, minimum 800px wide.",
+              fields: [
+                defineField({
+                  name: "alt",
+                  title: "Alt Text",
+                  type: "string",
+                  description: "Describe the image for screen readers.",
+                }),
+              ],
+            }),
           ],
           preview: {
-            select: { title: "name", subtitle: "url" },
+            select: { title: "title", subtitle: "name", media: "image" },
           },
         },
       ],

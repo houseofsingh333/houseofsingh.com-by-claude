@@ -157,6 +157,10 @@ export type FeaturedOutlet = {
   name: string;
   url?: string;
   logo?: SanityImage | null;
+  title?: string;
+  date?: string;
+  description?: string;
+  image?: SanityImage | null;
 };
 
 export type RapidFireItem = {
