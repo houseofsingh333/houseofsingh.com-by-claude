@@ -32,18 +32,16 @@ export default function StepRenderer({
     [onChange, step.field],
   );
 
-  // Intent selection — editorial cards
+  // Intent selection — editorial divider-line interaction
   if (step.type === "intent") {
     return (
-      <div className="space-y-3 w-full">
+      <div className="contact-intent-list w-full">
         {step.options?.map((option) => (
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`contact-option w-full text-left px-6 py-5 border border-l-[3px] text-lg md:text-xl font-light tracking-wide uppercase ${
-              value === option
-                ? "bg-foreground text-background border-foreground"
-                : "bg-transparent text-foreground border-border border-l-transparent hover:border-foreground/40 hover:border-l-foreground/30"
+            className={`contact-intent-option w-full text-left py-5 md:py-6 text-lg md:text-xl font-light tracking-wide uppercase${
+              value === option ? " is-selected" : ""
             }`}
           >
             {option}

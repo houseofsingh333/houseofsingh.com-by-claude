@@ -404,7 +404,7 @@ body {
   transform: translateX(-2px);
 }
 
-/* Intent and chip buttons — calm selection feedback */
+/* Chip and select buttons — calm selection feedback */
 .contact-option {
   transition: background-color 400ms cubic-bezier(0.22, 1, 0.36, 1),
     color 400ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -416,12 +416,96 @@ body {
   outline-offset: 3px;
 }
 
+/* ——— Intent options — editorial divider-line interaction ——— */
+
+.contact-intent-list {
+  border-top: 1px solid var(--border);
+}
+
+.contact-intent-option {
+  position: relative;
+  display: block;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Animated underline — overlays the subtle divider */
+.contact-intent-option::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background-color: var(--foreground);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Desktop hover — left-to-right line reveal */
+@media (hover: hover) {
+  .contact-intent-option:hover {
+    color: var(--foreground);
+  }
+
+  .contact-intent-option:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Selected state — darker line stays visible */
+.contact-intent-option.is-selected {
+  color: var(--foreground);
+}
+
+.contact-intent-option.is-selected::after {
+  transform: scaleX(1);
+}
+
+/* Keyboard focus — calm underline, no harsh outline */
+.contact-intent-option:focus-visible {
+  outline: none;
+  color: var(--foreground);
+}
+
+.contact-intent-option:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Touch devices — instant feedback, no directional animation */
+@media (hover: none) {
+  .contact-intent-option::after {
+    transform: scaleX(1);
+    opacity: 0;
+    transition: opacity 150ms ease;
+  }
+
+  .contact-intent-option:active::after {
+    opacity: 1;
+  }
+
+  .contact-intent-option.is-selected::after {
+    opacity: 1;
+  }
+
+  .contact-intent-option:focus-visible::after {
+    opacity: 1;
+  }
+}
+
 /* Reduced motion: simplify all contact interactions */
 @media (prefers-reduced-motion: reduce) {
   .contact-input,
   .contact-btn,
   .contact-btn-arrow,
-  .contact-option {
+  .contact-option,
+  .contact-intent-option,
+  .contact-intent-option::after {
     transition: none;
   }
   .contact-btn:active {
