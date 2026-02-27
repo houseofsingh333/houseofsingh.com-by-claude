@@ -64,6 +64,16 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   seoDescription
 }`;
 
+// --------------- Homepage Featured On ---------------
+
+export const homeFeaturedOnQuery = `*[_type == "aboutPage"][0]{
+  featuredOn[]{
+    name,
+    url,
+    "logo": logo.asset->url
+  }
+}.featuredOn`;
+
 // --------------- Homepage Intro (About preview) ---------------
 
 export const homeIntroQuery = `*[_type == "aboutPage"][0]{
