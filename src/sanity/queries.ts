@@ -40,6 +40,15 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   "portrait": portrait ${_imageAsset},
   "monikerLogo": monikerLogo.asset->url,
   monikerText,
+  featuredOn[]{
+    name,
+    url,
+    "logo": logo.asset->url
+  },
+  rapidFire[]{
+    question,
+    answer
+  },
   milestones[]{
     year,
     title,

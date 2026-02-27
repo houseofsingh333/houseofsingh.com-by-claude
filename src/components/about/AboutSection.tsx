@@ -7,6 +7,8 @@ import {
   FALLBACK_BIO_PARAGRAPHS,
   FALLBACK_MONIKER_PARAGRAPHS,
 } from "./about-constants";
+import FeaturedOn from "./FeaturedOn";
+import RapidFire from "./RapidFire";
 import TestimonialCarousel from "./TestimonialCarousel";
 import Timeline from "./Timeline";
 
@@ -29,8 +31,10 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
     founderBio,
     portrait,
     monikerText,
+    featuredOn,
     milestones,
     testimonials,
+    rapidFire,
   } = data;
 
   const roles = founderRoles ?? [
@@ -140,7 +144,23 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         </div>
       </section>
 
-      {/* ——— 4 · Timeline ——— */}
+      {/* ——— 4 · Featured On ——— */}
+      {featuredOn && featuredOn.length > 0 && (
+        <section className="px-6 md:px-16 section-py-lg">
+          <SectionDivider label="Featured On" />
+          <FeaturedOn outlets={featuredOn} />
+        </section>
+      )}
+
+      {/* ——— 5 · Rapid Fire ——— */}
+      {rapidFire && rapidFire.length > 0 && (
+        <section className="px-6 md:px-16 section-py-lg">
+          <SectionDivider label="Rapid Fire" />
+          <RapidFire items={rapidFire} />
+        </section>
+      )}
+
+      {/* ——— 6 · Timeline ——— */}
       {milestones && milestones.length > 0 && (
         <section className="px-6 md:px-16 section-py-lg">
           <SectionDivider label="Ten Years On" />
@@ -148,7 +168,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         </section>
       )}
 
-      {/* ——— 5 · Words Shared ——— */}
+      {/* ——— 7 · Words Shared ——— */}
       {testimonials && testimonials.length > 0 && (
         <section className="px-6 md:px-16 section-py-lg">
           <SectionDivider label="Words Shared" gap="mb-12" />

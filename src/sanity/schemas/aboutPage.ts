@@ -86,7 +86,73 @@ export const aboutPage = defineType({
       description: "Description of the House of Singh identity.",
     }),
 
-    /* ——— 4 · Timeline ——— */
+    /* ——— 4 · Featured On ——— */
+    defineField({
+      name: "featuredOn",
+      title: "Featured On",
+      type: "array",
+      description: "Publications, outlets, or platforms that have featured your work.",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "name",
+              title: "Name",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "url",
+              title: "URL",
+              type: "url",
+              description: "Link to the feature or publication.",
+            }),
+            defineField({
+              name: "logo",
+              title: "Logo",
+              type: "image",
+              description: "Publication or outlet logo.",
+            }),
+          ],
+          preview: {
+            select: { title: "name", subtitle: "url" },
+          },
+        },
+      ],
+    }),
+
+    /* ——— 5 · Rapid Fire ——— */
+    defineField({
+      name: "rapidFire",
+      title: "Rapid Fire",
+      type: "array",
+      description: "Quick Q&A pairs — fun, personal, and revealing.",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "question",
+              title: "Question",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "answer",
+              title: "Answer",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: { title: "question", subtitle: "answer" },
+          },
+        },
+      ],
+    }),
+
+    /* ——— 6 · Timeline ——— */
     defineField({
       name: "milestones",
       title: "Timeline Milestones",

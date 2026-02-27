@@ -270,7 +270,13 @@ export const fallbackAboutPage: AboutPageData = {
   portrait: "/images/hero-placeholder-1.svg",
   monikerLogo: null,
   monikerText: null,
-  featuredOn: null,
+  featuredOn: [
+    { name: "Design Milk", url: "https://design-milk.com", logo: null },
+    { name: "It\u2019s Nice That", url: "https://itsnicethat.com", logo: null },
+    { name: "Behance", url: "https://behance.net", logo: null },
+    { name: "Communication Arts", url: "https://commarts.com", logo: null },
+    { name: "The Dieline", url: "https://thedieline.com", logo: null },
+  ],
   milestones: [
     {
       year: "2014",
@@ -329,7 +335,16 @@ export const fallbackAboutPage: AboutPageData = {
       role: "Founder & CEO",
     },
   ],
-  rapidFire: null,
+  rapidFire: [
+    { question: "Morning or night?", answer: "Night — always." },
+    { question: "Film or digital?", answer: "Film for feel, digital for speed." },
+    { question: "Tea or coffee?", answer: "Chai, no debate." },
+    { question: "Favourite typeface?", answer: "Anything with good italics." },
+    { question: "One tool you can\u2019t work without?", answer: "A sharp pencil." },
+    { question: "City or countryside?", answer: "City to work, countryside to think." },
+    { question: "Colour or monochrome?", answer: "Monochrome — always honest." },
+    { question: "Design rule you break?", answer: "Grids. Often." },
+  ],
   seoTitle: null,
   seoDescription: null,
 };
