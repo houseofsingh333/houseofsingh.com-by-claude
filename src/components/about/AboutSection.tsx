@@ -155,7 +155,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       {/* ——— 5 · Rapid Fire ——— */}
       {rapidFire && rapidFire.length > 0 && (
         <section className="px-6 md:px-16 section-py-lg">
-          <SectionDivider label="Rapid Fire" />
+          <SectionDivider label="Rapidfire" />
           <RapidFire items={rapidFire} />
         </section>
       )}

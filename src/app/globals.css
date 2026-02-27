@@ -705,6 +705,120 @@ body {
   transition: transform 0.1s linear;
 }
 
+/* ——— Rapidfire accordion — editorial Q&A interaction ——— */
+
+.rapidfire-item {
+  border-bottom: 1px solid hsl(30 10% 12% / 0.15);
+}
+
+.rapidfire-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.25rem 0;
+  min-height: 56px;
+  cursor: pointer;
+  text-align: left;
+  background: none;
+  border: none;
+}
+
+@media (min-width: 768px) {
+  .rapidfire-btn {
+    padding: 1.5rem 0;
+    min-height: auto;
+  }
+}
+
+.rapidfire-btn:focus-visible {
+  outline: 1.5px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+.rapidfire-question {
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Desktop hover — editorial nudge right on closed items */
+@media (hover: hover) {
+  .rapidfire-btn:not([aria-expanded="true"]):hover .rapidfire-question {
+    transform: translateX(6px);
+  }
+
+  .rapidfire-btn:not([aria-expanded="true"]):hover .rapidfire-icon {
+    opacity: 1;
+  }
+}
+
+.rapidfire-icon {
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: 300;
+  color: var(--foreground);
+  opacity: 0.4;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rapidfire-icon[data-open] {
+  transform: rotate(45deg);
+  opacity: 1;
+}
+
+/* Answer panel — grid-based height animation */
+.rapidfire-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 400ms cubic-bezier(0.16, 1, 0.3, 1) 200ms;
+}
+
+.rapidfire-panel[data-open] {
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.rapidfire-panel > div {
+  overflow: hidden;
+}
+
+/* Answer text — staggered fade */
+.rapidfire-answer {
+  opacity: 0;
+  padding-bottom: 1.5rem;
+  transition: opacity 200ms ease;
+}
+
+.rapidfire-panel[data-open] .rapidfire-answer {
+  opacity: 1;
+  transition: opacity 300ms ease 100ms;
+}
+
+/* Responsive answer width — editorial asymmetry */
+@media (min-width: 768px) {
+  .rapidfire-answer {
+    max-width: 80%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rapidfire-answer {
+    max-width: 50%;
+  }
+}
+
+/* Reduced motion: simplify all rapidfire interactions */
+@media (prefers-reduced-motion: reduce) {
+  .rapidfire-question,
+  .rapidfire-icon,
+  .rapidfire-panel,
+  .rapidfire-answer {
+    transition: none;
+  }
+}
+
 /* ——— Keyframes ——— */
 
 @keyframes fadeIn {
