@@ -25,6 +25,8 @@ export type {
   SiteSettings,
   AboutMilestone,
   AboutTestimonial,
+  FeaturedOutlet,
+  RapidFireItem,
   PortableTextBlock,
   AboutPageData,
   HomeIntroData,

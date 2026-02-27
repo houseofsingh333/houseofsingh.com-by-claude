@@ -153,6 +153,17 @@ export type AboutTestimonial = {
   role?: string;
 };
 
+export type FeaturedOutlet = {
+  name: string;
+  url?: string;
+  logo?: SanityImage | null;
+};
+
+export type RapidFireItem = {
+  question: string;
+  answer: string;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PortableTextBlock = any;
 
@@ -164,8 +175,10 @@ export type AboutPageData = {
   portrait: SanityImage | null;
   monikerLogo: SanityImage | null;
   monikerText: PortableTextBlock[] | null;
+  featuredOn: FeaturedOutlet[] | null;
   milestones: AboutMilestone[] | null;
   testimonials: AboutTestimonial[] | null;
+  rapidFire: RapidFireItem[] | null;
   seoTitle: string | null;
   seoDescription: string | null;
 };
