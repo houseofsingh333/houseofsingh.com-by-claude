@@ -1,7 +1,7 @@
 /**
  * Shared animation easing curves and timing constants.
  *
- * Used by CinematicHero, PageTransition, ScrollReveal, IntroLogo.
+ * Used by CinematicHero, PageTransition, ScrollReveal.
  * Keep all motion easing presets here to avoid duplication.
  */
 
