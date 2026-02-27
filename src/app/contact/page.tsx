@@ -3,6 +3,7 @@ import ContactForm from "@/components/contact/ContactForm";
 import { sanityFetch } from "@/sanity/fetch";
 import { contactPageQuery } from "@/sanity/queries";
 import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
+import { fallbackInstagramPhotos } from "@/lib/placeholder-data";
 
 type ContactPageData = {
   instagramPhotos?: InstagramPhoto[] | null;
@@ -17,7 +18,11 @@ export const metadata: Metadata = {
 export default async function ContactPage() {
   const data = await sanityFetch<ContactPageData>({ query: contactPageQuery });
 
+  const photos = data?.instagramPhotos?.length
+    ? data.instagramPhotos
+    : fallbackInstagramPhotos;
+
   return (
-    <ContactForm instagramPhotos={data?.instagramPhotos ?? []} />
+    <ContactForm instagramPhotos={photos} />
   );
 }

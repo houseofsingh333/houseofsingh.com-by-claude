@@ -45,6 +45,8 @@ import type {
   HomeIntroData,
 } from "./types";
 
+import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
+
 // --------------- Fallback Navigation ---------------
 
 export const fallbackNavItems: NavItem[] = [
@@ -255,6 +257,35 @@ export const fallbackSiteSettings: SiteSettings = {
     "https://open.spotify.com/embed/playlist/5siljeAcGgaINDEqVRBsAg?utm_source=generator",
 };
 
+// --------------- Fallback Instagram Photos ---------------
+
+export const fallbackInstagramPhotos: InstagramPhoto[] = [
+  {
+    id: "ig-1",
+    url: "/images/instagram-placeholder-1.svg",
+    permalink: "https://instagram.com/houseofsingh",
+    alt: "Light study — concentric circles and intersecting lines on dark background",
+  },
+  {
+    id: "ig-2",
+    url: "/images/instagram-placeholder-2.svg",
+    permalink: "https://instagram.com/houseofsingh",
+    alt: "Stillness — minimal landscape with warm earth tones",
+  },
+  {
+    id: "ig-3",
+    url: "/images/instagram-placeholder-3.svg",
+    permalink: "https://instagram.com/houseofsingh",
+    alt: "Texture and form — grid composition with warm dark tones",
+  },
+  {
+    id: "ig-4",
+    url: "/images/instagram-placeholder-4.svg",
+    permalink: "https://instagram.com/houseofsingh",
+    alt: "Craft and type — architectural lines with typography element",
+  },
+];
+
 // --------------- Fallback About Page ---------------
 
 export const fallbackAboutPage: AboutPageData = {
@@ -271,48 +302,48 @@ export const fallbackAboutPage: AboutPageData = {
   monikerLogo: null,
   monikerText: null,
   featuredOn: [
-    { name: "Design Milk", url: "https://design-milk.com", logo: null },
-    { name: "It\u2019s Nice That", url: "https://itsnicethat.com", logo: null },
-    { name: "Behance", url: "https://behance.net", logo: null },
-    { name: "Communication Arts", url: "https://commarts.com", logo: null },
-    { name: "The Dieline", url: "https://thedieline.com", logo: null },
+    { name: "Design Milk", url: "https://design-milk.com", logo: "/images/logo-design-milk.svg" },
+    { name: "It\u2019s Nice That", url: "https://itsnicethat.com", logo: "/images/logo-its-nice-that.svg" },
+    { name: "Behance", url: "https://behance.net", logo: "/images/logo-behance.svg" },
+    { name: "Communication Arts", url: "https://commarts.com", logo: "/images/logo-comm-arts.svg" },
+    { name: "The Dieline", url: "https://thedieline.com", logo: "/images/logo-the-dieline.svg" },
   ],
   milestones: [
     {
       year: "2014",
       title: "Founded House of Singh",
-      text: "Began the journey in New Delhi.",
-      image: null,
+      text: "Began the journey in New Delhi — a single desk, a sharp pencil, and an unshakeable belief that design could change how people feel.",
+      image: "/images/milestone-2014.svg",
     },
     {
       year: "2016",
       title: "First Brand Identity",
-      text: "Delivered a full visual system for a heritage label.",
-      image: null,
+      text: "Delivered a full visual system for a heritage textile label — logo, typography, packaging, and print collateral that honoured craft traditions.",
+      image: "/images/milestone-2016.svg",
     },
     {
       year: "2018",
       title: "The Sikh Turban",
-      text: "A personal project celebrating Sikh identity.",
-      image: null,
+      text: "A deeply personal project celebrating Sikh identity through photography and design. Featured across international design publications.",
+      image: "/images/milestone-2018.svg",
     },
     {
       year: "2020",
       title: "Editorial & Print",
-      text: "Expanded into editorial design and print storytelling.",
-      image: null,
+      text: "Expanded into editorial design and print storytelling, creating limited-run publications that merged photography with typography.",
+      image: "/images/milestone-2020.svg",
     },
     {
       year: "2021",
       title: "Relocation to Canada",
-      text: "A new chapter rooted in Toronto.",
-      image: null,
+      text: "A new chapter rooted in Toronto. Fresh perspectives, new collaborations, and a studio practice shaped by two continents.",
+      image: "/images/milestone-2021.svg",
     },
     {
       year: "2024",
       title: "A Decade of Craft",
-      text: "Ten years of evolving practice and perspective.",
-      image: null,
+      text: "Ten years of evolving practice and perspective — from identity design to photography, editorial to spatial storytelling.",
+      image: "/images/milestone-2024.svg",
     },
   ],
   testimonials: [

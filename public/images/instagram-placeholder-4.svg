@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+  <rect fill="#e8e4e0" width="800" height="1000"/>
+  <!-- Architectural lines -->
+  <line x1="100" y1="200" x2="700" y2="200" stroke="#ccc5bd" stroke-width="1"/>
+  <line x1="100" y1="200" x2="100" y2="800" stroke="#ccc5bd" stroke-width="1"/>
+  <line x1="100" y1="800" x2="700" y2="800" stroke="#ccc5bd" stroke-width="1"/>
+  <!-- Diagonal -->
+  <line x1="100" y1="200" x2="700" y2="800" stroke="#d5cec6" stroke-width="0.5"/>
+  <!-- Shadow block -->
+  <rect x="100" y="200" width="300" height="300" fill="#ddd6ce" opacity="0.7"/>
+  <!-- Typography element -->
+  <text x="500" y="700" font-family="Georgia, serif" font-size="72" font-weight="100" fill="#c8c0b6" letter-spacing="-2">Aa</text>
+  <text x="400" y="920" text-anchor="middle" font-family="Georgia, serif" font-size="11" letter-spacing="4" fill="#a09890">CRAFT & TYPE</text>
+</svg>
