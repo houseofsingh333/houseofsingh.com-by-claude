@@ -108,6 +108,8 @@ export default function CinematicHero({ slides }: Props) {
     if (!introComplete || slides.length <= 1 || prefersReduced) return;
 
     const advance = () => {
+      // Skip advance if tab is hidden — autoplay resumes on next interval when visible
+      if (!visibleRef.current) return;
       // 1. Hide caption first
       setShowCaption(false);
 
@@ -132,12 +134,16 @@ export default function CinematicHero({ slides }: Props) {
     };
   }, [introComplete, slides.length, prefersReduced, scheduleCaptionIn]);
 
-  // ——— Pause autoplay when tab is hidden ———
+  // ——— Pause autoplay when tab is hidden, resume when visible ———
+  const visibleRef = useRef(true);
   useEffect(() => {
     const handler = () => {
       if (document.hidden) {
+        visibleRef.current = false;
         if (timerRef.current) clearTimeout(timerRef.current);
         if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
+      } else {
+        visibleRef.current = true;
       }
     };
     document.addEventListener("visibilitychange", handler);

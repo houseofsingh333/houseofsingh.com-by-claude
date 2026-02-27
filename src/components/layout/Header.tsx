@@ -1,9 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import NavOverlay from "./NavOverlay";
-import NewsletterModal from "@/components/NewsletterModal";
+
+const NewsletterModal = dynamic(
+  () => import("@/components/NewsletterModal"),
+  { ssr: false },
+);
 import type { NavItem } from "@/lib/placeholder-data";
 
 const SESSION_KEY = "hos_intro_seen";
@@ -52,17 +57,24 @@ export default function Header({ items }: Props) {
   /* eslint-enable react-hooks/set-state-in-effect */
 
   /* Video ended → fade out overlay, reveal site */
+  const introTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const handleVideoEnded = useCallback(() => {
     try {
       sessionStorage.setItem(SESSION_KEY, "1");
     } catch {}
     setIntroFading(true);
-    setTimeout(() => {
+    introTimerRef.current = setTimeout(() => {
       setIntroVisible(false);
       setIntroFading(false);
       setIntroDone(true);
       document.body.style.overflow = "";
     }, 500);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (introTimerRef.current) clearTimeout(introTimerRef.current);
+    };
   }, []);
 
   /* ── Scroll listener with hysteresis (State 1 ↔ State 2) ── */

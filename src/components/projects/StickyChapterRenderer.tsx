@@ -26,7 +26,7 @@ function ChapterImages({
     return (
       <div className="flex flex-col gap-8">
         {images.map((img, i) => (
-          <figure key={i}>
+          <figure key={img.url || i}>
             <AspectImage image={img} priority={i === 0} className="overflow-hidden" />
             {img.caption && <figcaption className={captionCls}>{img.caption}</figcaption>}
           </figure>
@@ -46,7 +46,7 @@ function ChapterImages({
         {rest.length > 0 && (
           <div className="grid grid-cols-2 gap-5">
             {rest.map((img, i) => (
-              <figure key={i}>
+              <figure key={img.url || i}>
                 <AspectImage image={img} className="overflow-hidden" />
                 {img.caption && <figcaption className={captionCls}>{img.caption}</figcaption>}
               </figure>
@@ -65,7 +65,7 @@ function ChapterImages({
       {gridImages.length > 0 && (
         <div className="grid grid-cols-2 gap-5">
           {gridImages.map((img, i) => (
-            <figure key={i}>
+            <figure key={img.url || i}>
               <AspectImage image={img} priority={i === 0} className="overflow-hidden" />
               {img.caption && <figcaption className={captionCls}>{img.caption}</figcaption>}
             </figure>

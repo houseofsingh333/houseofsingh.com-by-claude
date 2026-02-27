@@ -13,7 +13,7 @@ export default function ImagePairRenderer({ section }: Props) {
       }`}
     >
       {section.images.map((img, i) => (
-        <figure key={i}>
+        <figure key={img.url || i}>
           <AspectImage image={img} className="overflow-hidden" />
           {img.caption && (
             <figcaption className="mt-3 text-xs text-muted-foreground/50 tracking-wide">
