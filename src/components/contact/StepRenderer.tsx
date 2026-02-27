@@ -32,7 +32,7 @@ export default function StepRenderer({
     [onChange, step.field],
   );
 
-  // Intent selection — large tappable cards
+  // Intent selection — editorial cards
   if (step.type === "intent") {
     return (
       <div className="space-y-3 w-full">
@@ -40,10 +40,10 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`contact-option w-full text-left px-6 py-5 border rounded-full text-xl md:text-2xl font-light tracking-tight ${
+            className={`contact-option w-full text-left px-6 py-5 border border-l-[3px] text-lg md:text-xl font-light tracking-wide uppercase ${
               value === option
                 ? "bg-foreground text-background border-foreground"
-                : "bg-transparent text-foreground border-border hover:border-foreground/50"
+                : "bg-transparent text-foreground border-border border-l-transparent hover:border-foreground/40 hover:border-l-foreground/30"
             }`}
           >
             {option}
@@ -53,7 +53,7 @@ export default function StepRenderer({
     );
   }
 
-  // Choice chips
+  // Choice chips — editorial
   if (step.type === "chips") {
     return (
       <div className="flex flex-wrap gap-3 w-full">
@@ -61,10 +61,10 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`contact-option px-5 py-3 border rounded-full text-base md:text-lg font-light tracking-tight ${
+            className={`contact-option px-5 py-3 border text-sm md:text-base font-light tracking-widest uppercase ${
               value === option
                 ? "bg-foreground text-background border-foreground"
-                : "bg-transparent text-foreground border-border hover:border-foreground/50"
+                : "bg-transparent text-foreground border-border hover:border-foreground/40"
             }`}
           >
             {option}
