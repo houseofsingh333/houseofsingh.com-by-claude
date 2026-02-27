@@ -270,6 +270,7 @@ export const fallbackAboutPage: AboutPageData = {
   portrait: "/images/hero-placeholder-1.svg",
   monikerLogo: null,
   monikerText: null,
+  featuredOn: null,
   milestones: [
     {
       year: "2014",
@@ -328,6 +329,7 @@ export const fallbackAboutPage: AboutPageData = {
       role: "Founder & CEO",
     },
   ],
+  rapidFire: null,
   seoTitle: null,
   seoDescription: null,
 };
