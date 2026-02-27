@@ -24,6 +24,7 @@ export default function Header({ items }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   /* ── State 0: decide whether to play intro ── */
+  /* eslint-disable react-hooks/set-state-in-effect -- one-time init from browser APIs */
   useEffect(() => {
     let skip = false;
     try {
@@ -48,6 +49,7 @@ export default function Header({ items }: Props) {
       setIntroVisible(true);
     }
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   /* Video ended → fade out overlay, reveal site */
   const handleVideoEnded = useCallback(() => {

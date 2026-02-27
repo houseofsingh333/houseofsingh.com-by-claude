@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Instagram } from "lucide-react";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 export type InstagramPhoto = {
   id: string;
@@ -31,17 +32,8 @@ export default function InstagramPhotoPlate({
   fadeDuration = "1.6s",
 }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [prefersReduced, setPrefersReduced] = useState(false);
+  const prefersReduced = usePrefersReducedMotion();
   const [isVisible, setIsVisible] = useState(true);
-
-  // Detect reduced-motion preference
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReduced(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
 
   // Page Visibility API — pause rotation when tab is hidden
   const handleVisibility = useCallback(() => {

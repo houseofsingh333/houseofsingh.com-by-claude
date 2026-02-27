@@ -1,30 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
 import CategoryBlock from "./CategoryBlock";
 import PreviewMedia from "./PreviewMedia";
+import { useTouchDevice } from "@/hooks/useMediaQuery";
 import type { ProjectCategory } from "@/lib/placeholder-data";
 
 type Props = {
   categories: ProjectCategory[];
 };
-
-/** Returns true when the primary pointer is coarse (finger / stylus). */
-function useTouchDevice(): boolean {
-  const [isTouch, setIsTouch] = useState(false);
-
-  useEffect(() => {
-    const query = window.matchMedia("(pointer: coarse)");
-    setIsTouch(query.matches);
-    const handler = (e: MediaQueryListEvent) => setIsTouch(e.matches);
-    query.addEventListener("change", handler);
-    return () => query.removeEventListener("change", handler);
-  }, []);
-
-  return isTouch;
-}
 
 /**
  * Resolve preview images for a category into a flat array of { url, alt, lqip }.

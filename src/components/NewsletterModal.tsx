@@ -14,16 +14,18 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
   const [errorMsg, setErrorMsg] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Reset form state when modal opens — intentional reset synced to isOpen prop
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (isOpen) {
       setEmail("");
       setStatus("idle");
       setErrorMsg("");
-      // Focus input after transition
       const timer = setTimeout(() => inputRef.current?.focus(), 300);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Lock body scroll when open
   useEffect(() => {
@@ -116,10 +118,11 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">
+                  <label htmlFor="newsletter-email" className="block text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">
                     Email Address
                   </label>
                   <input
+                    id="newsletter-email"
                     ref={inputRef}
                     type="email"
                     required

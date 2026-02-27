@@ -54,11 +54,10 @@ export default function SpotifyEmbed({ playlistUrl }: Props) {
             src={embedSrc}
             width="100%"
             height="152"
-            frameBorder="0"
             allowFullScreen
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
             loading="lazy"
-            style={{ borderRadius: 12 }}
+            style={{ border: 0, borderRadius: 12 }}
             className="opacity-80 hover:opacity-100 transition-opacity duration-500"
           />
 

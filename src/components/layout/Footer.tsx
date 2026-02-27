@@ -120,6 +120,7 @@ export default function Footer({ items }: Props) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
+                  aria-label="Email for newsletter"
                   className="flex-1 bg-transparent border-0 border-b border-border px-0 py-2 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground transition-colors duration-300"
                 />
                 <button
@@ -173,20 +174,7 @@ export default function Footer({ items }: Props) {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           {/* Left: copyright + legal */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] tracking-widest uppercase text-muted-foreground/50">
-            <span>&copy; 2026 House of Singh</span>
-            <span className="text-border">&middot;</span>
-            <Link
-              href="/privacy"
-              className="hover:text-foreground transition-colors duration-300"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="/terms"
-              className="hover:text-foreground transition-colors duration-300"
-            >
-              Terms
-            </Link>
+            <span>&copy; {new Date().getFullYear()} House of Singh</span>
           </div>
 
           {/* Right: signature */}

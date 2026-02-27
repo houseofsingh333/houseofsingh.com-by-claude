@@ -3,10 +3,10 @@ import { projectId, dataset, apiVersion, isSanityConfigured } from "./env";
 
 /**
  * Sanity client with write access — used only in server-side API routes.
- * Requires SANITY_API_WRITE_TOKEN in environment variables.
+ * Requires SANITY_API_TOKEN in environment variables.
  * Returns null when env vars are not set.
  */
-const token = process.env.SANITY_API_WRITE_TOKEN ?? "";
+const token = process.env.SANITY_API_TOKEN ?? "";
 
 export const writeClient =
   isSanityConfigured && token.length > 0

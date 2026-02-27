@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ReadingProgress from "@/components/journal/ReadingProgress";
+import ReadingProgress from "@/components/ReadingProgress";
 import SanityImage from "@/components/SanityImage";
 import { sanityFetch } from "@/sanity/fetch";
 import { journalBySlugQuery, journalFeedQuery } from "@/sanity/queries";

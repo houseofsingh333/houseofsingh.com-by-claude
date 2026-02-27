@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 type ImageItem = {
   url: string;
@@ -37,16 +38,7 @@ export default function PreviewMedia({
   className = "",
 }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [prefersReduced, setPrefersReduced] = useState(false);
-
-  // Detect reduced-motion preference
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReduced(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+  const prefersReduced = usePrefersReducedMotion();
 
   // Crossfade timer — only for image arrays with 2+ items
   useEffect(() => {
