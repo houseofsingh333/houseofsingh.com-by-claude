@@ -15,44 +15,23 @@ function formatDate(dateStr?: string): string | null {
 function FeaturedRow({
   outlet,
   index,
+  isLast,
 }: {
   outlet: FeaturedOutlet;
   index: number;
+  isLast: boolean;
 }) {
   const date = formatDate(outlet.date);
   const hasImage = !!outlet.image;
-  const hasRichContent = outlet.title || outlet.description || hasImage;
 
-  // Fall back to simple inline display for legacy entries without rich content
-  if (!hasRichContent) {
-    return (
-      <ScrollReveal delay={index * 0.08}>
-        <div className="py-6">
-          {outlet.url ? (
-            <a
-              href={outlet.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
-            >
-              {outlet.name}
-            </a>
-          ) : (
-            <span className="text-xs tracking-[0.2em] uppercase text-muted-foreground">
-              {outlet.name}
-            </span>
-          )}
-        </div>
-        <div className="w-full h-px bg-border" />
-      </ScrollReveal>
-    );
-  }
+  // Metadata line: combine publication name and date
+  const meta = date ? `${outlet.name}  ·  ${date}` : outlet.name;
 
   const rowContent = (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 py-10 md:py-12">
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 lg:gap-16 py-12 md:py-16 lg:py-20">
       {/* Image column */}
       {hasImage && (
-        <div className="md:col-span-5">
+        <div className="md:col-span-5 px-4 md:px-0">
           <div className="relative w-full aspect-[3/2] overflow-hidden bg-secondary">
             <SanityImage
               image={outlet.image!}
@@ -70,46 +49,37 @@ function FeaturedRow({
         className={
           hasImage
             ? "md:col-span-6 md:col-start-7 flex flex-col justify-center"
-            : "md:col-span-8 flex flex-col justify-center"
+            : "md:col-span-8 md:col-start-3 flex flex-col justify-center"
         }
       >
-        {/* Date */}
-        {date && (
-          <p className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/60 mb-3">
-            {date}
-          </p>
-        )}
+        {/* Metadata: publication name + date */}
+        <p className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground/50 mb-4 md:mb-5">
+          {meta}
+        </p>
 
-        {/* Title */}
-        <h3 className="font-editorial text-lg md:text-xl lg:text-[1.375rem] font-light leading-[1.35] text-foreground/80 group-hover:text-foreground transition-colors duration-300 mb-3">
+        {/* Title — visual anchor of the row */}
+        <h3 className="font-editorial text-xl md:text-2xl lg:text-[1.75rem] font-light leading-[1.3] text-foreground group-hover:text-foreground/70 transition-colors duration-500 mb-4 md:mb-5 max-w-lg">
           {outlet.title || outlet.name}
         </h3>
 
-        {/* Publication name (when title is present, show name as byline) */}
-        {outlet.title && (
-          <p className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground/50 mb-4">
-            {outlet.name}
-          </p>
-        )}
-
         {/* Description */}
         {outlet.description && (
-          <p className="text-sm text-muted-foreground leading-[1.8] max-w-md mb-5">
+          <p className="text-sm md:text-[15px] text-muted-foreground/70 leading-[1.8] max-w-lg mb-6 md:mb-7">
             {outlet.description}
           </p>
         )}
 
-        {/* Read More link — visible on desktop as interactive element */}
+        {/* Read More */}
         {outlet.url && (
           <span
-            className="inline-flex items-center gap-1.5 text-[11px] tracking-[0.12em] uppercase text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300"
+            className="inline-flex items-center gap-1.5 text-[11px] tracking-[0.14em] uppercase text-muted-foreground/60 group-hover:text-foreground transition-colors duration-500"
             aria-hidden="true"
           >
             Read More
             <ArrowRight
-              size={12}
+              size={11}
               strokeWidth={1.5}
-              className="transition-transform duration-300 group-hover:translate-x-0.5"
+              className="transition-transform duration-500 group-hover:translate-x-0.5"
             />
           </span>
         )}
@@ -118,7 +88,7 @@ function FeaturedRow({
   );
 
   return (
-    <ScrollReveal delay={index * 0.1}>
+    <ScrollReveal delay={index * 0.12}>
       {outlet.url ? (
         <a
           href={outlet.url}
@@ -131,8 +101,8 @@ function FeaturedRow({
       ) : (
         <div className="group">{rowContent}</div>
       )}
-      {/* Divider between rows */}
-      <div className="w-full h-px bg-border" />
+      {/* Divider between rows — softer contrast, omit after last */}
+      {!isLast && <div className="w-full h-px bg-border/70" />}
     </ScrollReveal>
   );
 }
@@ -146,12 +116,13 @@ export default function FeaturedOn({
 
   return (
     <div role="list" aria-label="Press and media features">
-      {/* Opening divider */}
-      <div className="w-full h-px bg-border" />
-
       {outlets.map((outlet, i) => (
         <div key={outlet.title || outlet.name} role="listitem">
-          <FeaturedRow outlet={outlet} index={i} />
+          <FeaturedRow
+            outlet={outlet}
+            index={i}
+            isLast={i === outlets.length - 1}
+          />
         </div>
       ))}
     </div>
