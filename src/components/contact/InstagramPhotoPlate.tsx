@@ -70,12 +70,12 @@ export default function InstagramPhotoPlate({
   const currentPhoto = photos[activeIndex];
 
   return (
-    <div className="relative w-full px-2 md:px-0">
+    <div className="relative w-full md:px-0">
       <a
         href={currentPhoto.permalink}
         target="_blank"
         rel="noopener noreferrer"
-        className="group block relative aspect-[4/5] overflow-hidden border border-border/60 bg-secondary/20"
+        className="group block relative aspect-[4/5] max-h-[60vh] md:max-h-none overflow-hidden border border-border/60 bg-secondary/20"
         aria-label="View on Instagram"
       >
         <div
@@ -108,12 +108,12 @@ export default function InstagramPhotoPlate({
           }}
         />
 
-        {/* Instagram icon — anchored bottom-right, very low opacity, subtle hover */}
-        <div className="absolute bottom-4 right-4 z-10">
+        {/* Instagram icon — top-right, 2× size, editorial opacity */}
+        <div className="absolute top-4 right-4 z-10">
           <Instagram
-            className="w-3.5 h-3.5 text-white/20 group-hover:text-white/40 drop-shadow-sm"
+            className="w-7 h-7 text-white/25 group-hover:text-white/45 drop-shadow-sm"
             style={{ transition: "color 400ms cubic-bezier(0.22, 1, 0.36, 1)" }}
-            strokeWidth={1.5}
+            strokeWidth={1.4}
           />
         </div>
       </a>

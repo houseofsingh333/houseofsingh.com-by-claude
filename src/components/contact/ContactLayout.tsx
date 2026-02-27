@@ -5,16 +5,16 @@ import type { ReactNode } from "react";
 /* ── Editorial intro copy ────────────────────────────────── */
 export function EditorialSidebar() {
   return (
-    <div className="mb-16 md:mb-20 lg:mb-24">
-      <h1 className="font-editorial text-5xl md:text-6xl lg:text-7xl font-light text-foreground mb-8 leading-[1.05]">
+    <div className="mb-12 md:mb-20 lg:mb-24">
+      <h1 className="font-editorial text-[2.5rem] sm:text-5xl md:text-6xl lg:text-7xl font-light text-foreground mb-6 md:mb-8 leading-[1.08] sm:leading-[1.05] text-balance">
         Say hello.
       </h1>
       <div className="max-w-md">
-        <p className="text-muted-foreground/80 text-base leading-[1.7] mb-3">
+        <p className="text-muted-foreground/80 text-[0.9375rem] md:text-base leading-[1.7] mb-3">
           Whether it&apos;s a project, a collaboration, or simply a conversation,
           I&apos;m always open to hearing from thoughtful people.
         </p>
-        <p className="text-muted-foreground/80 text-base leading-[1.7]">
+        <p className="text-muted-foreground/80 text-[0.9375rem] md:text-base leading-[1.7]">
           If you&apos;d like to catch up over coffee, go for a walk, or explore an
           idea together, feel free to reach out.
         </p>

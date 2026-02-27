@@ -89,17 +89,10 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
     <>
       <ProgressBar percent={progressPercent} />
       <TwoColumnLayout aside={aside}>
-        {/* Mobile-only Instagram plate — between intro copy and form */}
-        {instagramPhotos.length > 0 && (
-          <div className="md:hidden mb-12 max-w-sm mx-auto">
-            <InstagramPhotoPlate photos={instagramPhotos} />
-          </div>
-        )}
-
         <div className="min-h-[50vh] flex flex-col justify-center max-w-lg">
           <div key={currentStep} className="editorial-slide-up">
             {/* Question */}
-            <h2 className="font-editorial text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-[1.12] mb-5 tracking-[-0.01em]">
+            <h2 className="font-editorial text-[1.75rem] sm:text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-[1.15] sm:leading-[1.12] mb-5 tracking-[-0.01em] text-balance">
               {currentStepDef?.question}
             </h2>
 
@@ -121,11 +114,11 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
               )}
             </div>
 
-            {/* Clear draft link on first step */}
-            {currentStep === 0 && hasDraft && (
+            {/* Clear draft — only after the user has progressed past the first screen */}
+            {currentStep > 0 && hasDraft && (
               <button
                 onClick={clearDraft}
-                className="contact-btn mt-8 text-xs tracking-[0.15em] uppercase text-muted-foreground/50 hover:text-muted-foreground"
+                className="contact-btn mt-8 text-xs tracking-[0.08em] text-muted-foreground/50 hover:text-muted-foreground"
               >
                 Clear saved progress
               </button>
@@ -133,7 +126,7 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
           </div>
 
           {/* Navigation buttons */}
-          <div className="flex items-center justify-between pt-16">
+          <div className="flex items-center justify-between pt-10 md:pt-16">
             <div>
               {currentStep > 0 && (
                 <button
@@ -167,6 +160,13 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Mobile-only Instagram plate — placed near footer, after form content */}
+        {instagramPhotos.length > 0 && (
+          <div className="md:hidden mt-16 mb-4 px-2">
+            <InstagramPhotoPlate photos={instagramPhotos} />
+          </div>
+        )}
       </TwoColumnLayout>
     </>
   );

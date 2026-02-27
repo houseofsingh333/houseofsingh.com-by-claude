@@ -40,7 +40,7 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`contact-intent-option w-full text-left py-5 md:py-6 text-lg md:text-xl font-light tracking-wide uppercase${
+            className={`contact-intent-option w-full text-left py-5 md:py-6 text-lg md:text-xl font-light tracking-[0.02em]${
               value === option ? " is-selected" : ""
             }`}
           >
