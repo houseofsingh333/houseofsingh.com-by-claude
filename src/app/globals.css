@@ -352,7 +352,6 @@ body {
   text-transform: uppercase;
   background-color: var(--foreground);
   color: var(--background);
-  border-radius: 9999px;
 }
 
 .contact-btn-primary:hover {
@@ -372,7 +371,6 @@ body {
   text-transform: uppercase;
   color: var(--muted-foreground);
   border: 1px solid var(--border);
-  border-radius: 9999px;
 }
 
 .contact-btn-secondary:hover {

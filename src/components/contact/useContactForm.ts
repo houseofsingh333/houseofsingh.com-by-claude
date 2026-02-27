@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   type ContactFormData,
   emptyFormData,
@@ -133,9 +133,15 @@ export function useContactForm() {
     setHasDraft(false);
   }, []);
 
-  // Auto-advance on intent selection
+  // Auto-advance on intent selection (only when intent value actually changes)
+  const prevIntentRef = useRef(formData.intent);
   useEffect(() => {
-    if (currentStepDef?.type === "intent" && formData.intent) {
+    if (
+      currentStepDef?.type === "intent" &&
+      formData.intent &&
+      formData.intent !== prevIntentRef.current
+    ) {
+      prevIntentRef.current = formData.intent;
       const timer = setTimeout(() => setCurrentStep((s) => s + 1), 300);
       return () => clearTimeout(timer);
     }
