@@ -1074,3 +1074,221 @@ body {
     transition: none !important;
   }
 }
+
+/* ── Spotlight Billboard ── */
+
+.spotlight-section {
+  position: relative;
+  width: 100%;
+}
+
+/* Mobile: image block with 16:9 aspect ratio */
+.spotlight-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+/* Gradient overlay — lighter on mobile since text is below, not on top */
+.spotlight-img-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0.2) 50%,
+    rgba(0, 0, 0, 0.03) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Mobile: content block below the image, on site background */
+.spotlight-content {
+  padding: 32px 1.5rem 40px;
+}
+
+.spotlight-content-inner {
+  /* Mobile: no max-width constraint */
+}
+
+.spotlight-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--muted-foreground);
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+.spotlight-title-el {
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--foreground);
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+.spotlight-desc {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+/* CTA link with animated underline (clip-path technique) */
+.spotlight-cta {
+  position: relative;
+  display: inline-block;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  color: var(--foreground);
+  text-decoration: none;
+  padding-bottom: 4px;
+}
+
+/* Underline: starts at 30% width, expands to 100% on hover */
+.spotlight-cta::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  /* clip-path: inset(0 70% 0 0) = show left 30%, clip right 70% */
+  clip-path: inset(0 70% 0 0);
+  /* Leave: contract right-to-left in 500ms */
+  transition: clip-path 500ms ease-out;
+}
+
+/* Hover: expand left-to-right to full width in 400ms */
+.spotlight-cta:hover::after {
+  clip-path: inset(0 0% 0 0);
+  transition: clip-path 400ms ease-out;
+}
+
+.spotlight-cta:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* ── Tablet (768px+): overlaid layout ── */
+@media (min-width: 768px) {
+  .spotlight-section {
+    min-height: 70vh;
+  }
+
+  /* Image fills the full section as absolute background */
+  .spotlight-img-wrap {
+    position: absolute;
+    inset: 0;
+    aspect-ratio: unset;
+    overflow: hidden;
+  }
+
+  /* Full-strength gradient on overlay layout */
+  .spotlight-img-wrap::after {
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.75) 0%,
+      rgba(0, 0, 0, 0.3) 50%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+  }
+
+  /* Content sits over the image, anchored to bottom-left */
+  .spotlight-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 4rem 48px;
+    z-index: 2;
+  }
+
+  .spotlight-content-inner {
+    max-width: 600px;
+  }
+
+  /* White text on dark gradient */
+  .spotlight-label {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .spotlight-title-el {
+    font-size: 36px;
+    color: #ffffff;
+    max-width: 600px;
+  }
+
+  .spotlight-desc {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 480px;
+  }
+
+  .spotlight-cta {
+    color: #ffffff;
+  }
+
+  .spotlight-cta:focus-visible {
+    outline-color: white;
+  }
+}
+
+/* ── Desktop (1280px+): larger type and padding ── */
+@media (min-width: 1280px) {
+  .spotlight-section {
+    min-height: 80vh;
+  }
+
+  .spotlight-content {
+    padding: 0 5rem 64px;
+  }
+
+  .spotlight-title-el {
+    font-size: 48px;
+    max-width: 700px;
+  }
+
+  .spotlight-desc {
+    font-size: 16px;
+    max-width: 520px;
+  }
+}
+
+/* ── Ken Burns drift — Spotlight (desktop 1024px+ only) ── */
+@keyframes kbSpotlight {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  50%       { transform: scale(1.02) translate(0.2%, 0.15%); }
+}
+
+@media (min-width: 1024px) {
+  .spotlight-kb {
+    animation: kbSpotlight 25s ease-in-out infinite;
+    will-change: transform;
+  }
+}
+
+@media (max-width: 1023px) {
+  .spotlight-kb {
+    animation: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-kb {
+    animation: none !important;
+  }
+
+  .spotlight-cta::after,
+  .spotlight-cta:hover::after {
+    transition: none !important;
+  }
+}
