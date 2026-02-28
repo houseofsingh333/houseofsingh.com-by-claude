@@ -40,11 +40,8 @@ export default function FooterInstagram({ photos }: Props) {
   if (photos.length === 0) return null;
 
   return (
-    <div
-      className="footer-ig-container"
-      style={{ maxWidth: 280, aspectRatio: "1 / 1", overflow: "hidden" }}
-    >
-      <div className="footer-ig-drift" style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div className="footer-ig-box">
+      <div style={{ position: "relative", width: "100%", height: "100%" }}>
         {photos.map((photo, i) => (
           <img
             key={photo.id}
