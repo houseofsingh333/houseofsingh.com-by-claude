@@ -1,6 +1,6 @@
 import CinematicHero from "@/components/home/CinematicHero";
 import IntroSection from "@/components/home/IntroSection";
-import ProjectsGrid from "@/components/home/ProjectsGrid";
+import EditorialProjects from "@/components/home/EditorialProjects";
 import SpotlightBillboard from "@/components/home/SpotlightBillboard";
 import JournalPreview from "@/components/home/JournalPreview";
 import SpotifyEmbed from "@/components/home/SpotifyEmbed";
@@ -80,7 +80,7 @@ export default async function HomePage() {
     <>
       <CinematicHero slides={heroSlides} />
       <IntroSection data={homeIntro} />
-      <ProjectsGrid projects={homepageProjects} />
+      <EditorialProjects projects={homepageProjects} />
       <SpotlightBillboard project={spotlightProject} />
       <JournalPreview entries={journalEntries} />
       <SpotifyEmbed playlistUrl={spotifyUrl} />

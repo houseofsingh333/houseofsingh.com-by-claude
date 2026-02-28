@@ -901,176 +901,72 @@ body {
   }
 }
 
-/* ——— Projects Broken Grid — editorial layout ——— */
-
-/* Desktop: 12-column CSS Grid */
-@media (min-width: 1280px) {
-  .pg-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-auto-rows: auto;
-  }
-}
-
-/* Tablet: 2-column layout */
-@media (min-width: 768px) and (max-width: 1279px) {
-  .pg-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px !important;
-  }
-
-  /* Reset all desktop grid placements */
-  .pg-grid .pg-card {
-    grid-column: auto !important;
-    grid-row: auto !important;
-    margin-top: 0 !important;
-  }
-
-  /* Project 1: full width */
-  .pg-grid .pg-card:nth-child(1) {
-    grid-column: 1 / -1 !important;
-  }
-
-  /* Project 3: 40px offset for editorial misalignment */
-  .pg-grid .pg-card:nth-child(3) {
-    margin-top: 40px !important;
-  }
-
-  /* Project 4: full width (4-project layout) */
-  .pg-grid .pg-card:nth-child(4) {
-    grid-column: 1 / -1 !important;
-    margin-top: 0 !important;
-  }
-}
-
-/* Mobile: single column stack */
-@media (max-width: 767px) {
-  .pg-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 32px !important;
-  }
-
-  /* Reset all desktop grid placements */
-  .pg-grid .pg-card {
-    grid-column: auto !important;
-    grid-row: auto !important;
-    margin-top: 0 !important;
-  }
-}
-
-/* ── Tablet aspect ratio overrides ── */
-@media (min-width: 768px) and (max-width: 1279px) {
-  /* Project 1: 4:5 portrait */
-  .pg-grid .pg-card:nth-child(1) > div:first-child {
-    aspect-ratio: 4/5 !important;
-  }
-  /* Project 2: 3:2 landscape */
-  .pg-grid .pg-card:nth-child(2) > div:first-child {
-    aspect-ratio: 3/2 !important;
-  }
-  /* Project 3: 1:1 square */
-  .pg-grid .pg-card:nth-child(3) > div:first-child {
-    aspect-ratio: 1/1 !important;
-  }
-  /* Project 4: 16:9 wide */
-  .pg-grid .pg-card:nth-child(4) > div:first-child {
-    aspect-ratio: 16/9 !important;
-  }
-}
-
-/* ── Mobile: all images 4:3 landscape ── */
-@media (max-width: 767px) {
-  .pg-grid .pg-card > div:first-child {
-    aspect-ratio: 4/3 !important;
-  }
-}
+/* ——— Editorial Projects — vertical stack ——— */
 
 /* ── Image hover zoom (desktop 1024px+) ── */
 @media (min-width: 1024px) {
-  .pg-img-zoom {
-    transition: transform 600ms cubic-bezier(0.25, 0.1, 0.25, 1);
-  }
-
-  .pg-card:hover .pg-img-zoom {
-    transform: scale(1.03);
-    transition: transform 600ms cubic-bezier(0.25, 0.1, 0.25, 1);
-  }
-
   /* Slower return on mouse leave */
-  .pg-card .pg-img-zoom {
+  .ep-img-zoom {
     transition: transform 800ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .ep-card:hover .ep-img-zoom {
+    transform: scale(1.02);
+    transition: transform 600ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 }
 
 /* ── Title nudge on hover (desktop 1024px+) ── */
 @media (min-width: 1024px) {
-  .pg-card-title {
-    transition: transform 400ms ease-out;
+  .ep-card-title {
+    transition: transform 500ms ease-out;
   }
 
-  .pg-card:hover .pg-card-title {
+  .ep-card:hover .ep-card-title {
     transform: translateX(4px);
     transition: transform 400ms ease-out;
   }
-
-  .pg-card .pg-card-title {
-    transition: transform 500ms ease-out;
-  }
 }
 
-/* Cursor: pointer on cards */
-.pg-card {
-  cursor: pointer;
-}
+/* ── Ken Burns idle drift — editorial cards (desktop 1024px+ only) ── */
 
-/* ── Ken Burns idle drift (desktop 1024px+ only) ── */
-
-@keyframes kbDriftA {
+@keyframes epDriftA {
   0%, 100% { transform: scale(1) translate(0, 0); }
-  50% { transform: scale(1.005) translate(0.3%, 0.2%); }
+  50%       { transform: scale(1.005) translate(0.2%, 0.15%); }
 }
 
-@keyframes kbDriftB {
+@keyframes epDriftB {
   0%, 100% { transform: scale(1) translate(0, 0); }
-  50% { transform: scale(1.006) translate(-0.2%, 0.3%); }
+  50%       { transform: scale(1.006) translate(-0.15%, 0.2%); }
 }
 
-@keyframes kbDriftC {
+@keyframes epDriftC {
   0%, 100% { transform: scale(1) translate(0, 0); }
-  50% { transform: scale(1.004) translate(0.2%, -0.15%); }
-}
-
-@keyframes kbDriftD {
-  0%, 100% { transform: scale(1) translate(0, 0); }
-  50% { transform: scale(1.005) translate(-0.3%, -0.2%); }
+  50%       { transform: scale(1.004) translate(0.1%, -0.1%); }
 }
 
 @media (min-width: 1024px) {
-  .kb-drift-a { animation: kbDriftA 20s ease-in-out infinite; }
-  .kb-drift-b { animation: kbDriftB 24s ease-in-out infinite; }
-  .kb-drift-c { animation: kbDriftC 18s ease-in-out infinite; }
-  .kb-drift-d { animation: kbDriftD 22s ease-in-out infinite; }
+  .ep-drift-a { animation: epDriftA 22s ease-in-out infinite; will-change: transform; }
+  .ep-drift-b { animation: epDriftB 26s ease-in-out infinite; will-change: transform; }
+  .ep-drift-c { animation: epDriftC 19s ease-in-out infinite; will-change: transform; }
 }
 
-/* Disable Ken Burns on tablet/mobile and reduced motion */
 @media (max-width: 1023px) {
-  .kb-drift-a, .kb-drift-b, .kb-drift-c, .kb-drift-d {
+  .ep-drift-a, .ep-drift-b, .ep-drift-c {
     animation: none !important;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .kb-drift-a, .kb-drift-b, .kb-drift-c, .kb-drift-d {
+  .ep-drift-a, .ep-drift-b, .ep-drift-c {
     animation: none !important;
   }
 
-  .pg-img-zoom {
+  .ep-img-zoom {
     transition: none !important;
   }
 
-  .pg-card-title {
+  .ep-card-title {
     transition: none !important;
   }
 }
