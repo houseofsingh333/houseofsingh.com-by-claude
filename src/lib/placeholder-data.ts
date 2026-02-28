@@ -10,7 +10,6 @@ export type {
   SanityImage,
   NavItem,
   HeroSlide,
-  ProjectCategory,
   ProjectSummary,
   HomepageProject,
   TextSectionBlock,
@@ -34,7 +33,6 @@ export type {
 import type {
   NavItem,
   HeroSlide,
-  ProjectCategory,
   ProjectSummary,
   HomepageProject,
   JournalEntry,
@@ -82,19 +80,6 @@ export const fallbackHeroSlides: HeroSlide[] = [
     image: "/images/hero-placeholder-3.svg",
     caption: "Timeless Interiors — Built to inspire and endure",
     internalLink: "/journal",
-  },
-];
-
-// --------------- Fallback Project Categories ---------------
-
-export const fallbackProjectCategories: ProjectCategory[] = [
-  { _id: "cat-1", slug: "photography", title: "Photography", order: 1 },
-  { _id: "cat-2", slug: "design", title: "Design", order: 2 },
-  {
-    _id: "cat-3",
-    slug: "collaborations",
-    title: "Collaborations",
-    order: 3,
   },
 ];
 

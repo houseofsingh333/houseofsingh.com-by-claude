@@ -111,7 +111,6 @@ body {
 
 /* ——— Section spacing utilities ——— */
 
-.section-py-sm  { padding-top: var(--section-space-sm); padding-bottom: var(--section-space-sm); }
 .section-py     { padding-top: var(--section-space-md); padding-bottom: var(--section-space-md); }
 .section-py-lg  { padding-top: var(--section-space-lg); padding-bottom: var(--section-space-lg); }
 .section-pb-sm  { padding-bottom: var(--section-space-sm); }
@@ -188,81 +187,6 @@ body {
   }
 }
 
-/* ——— Mobile projects editorial index — sticky rows ——— */
-
-@media (max-width: 767px) {
-  .projects-mobile-link {
-    position: sticky;
-    top: 68px; /* flush against 68px scrolled header — no gap */
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 52px; /* accessible 44px+ hit area */
-    padding: 14px 0;
-    background: var(--background);
-    border-bottom: 1px solid hsl(30 10% 12% / 0.12);
-  }
-
-  /* Underline reveal — left-to-right on tap */
-  .projects-mobile-title {
-    position: relative;
-    display: inline-block;
-    color: var(--foreground);
-  }
-
-  .projects-mobile-title::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -3px;
-    height: 1px;
-    background: var(--foreground);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 220ms ease-out;
-  }
-
-  .projects-mobile-link:active .projects-mobile-title::after {
-    transform: scaleX(1);
-  }
-
-  /* Arrow subtle slide on tap */
-  .projects-mobile-arrow {
-    transition: transform 220ms ease-out, opacity 220ms ease-out;
-  }
-
-  .projects-mobile-link:active .projects-mobile-arrow {
-    transform: translateX(3px);
-    opacity: 0.8;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .projects-mobile-title::after,
-  .projects-mobile-arrow {
-    transition: none !important;
-  }
-}
-
-/* ——— Preview media crossfade images ——— */
-
-.preview-media-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity var(--preview-fade-duration, 1.5s) cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .preview-media-img {
-    transition: none;
-  }
-}
-
 /* ——— Instagram photo plate crossfade ——— */
 
 .instagram-plate-img {
@@ -332,14 +256,6 @@ body {
 /* Typed text should be distinctly darker than body copy */
 .contact-input:not(:placeholder-shown) {
   color: hsl(30 10% 10%);
-}
-
-/* Error helper — calm editorial treatment */
-.contact-error {
-  color: hsl(10 50% 45%);
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  margin-top: 0.5rem;
 }
 
 .contact-input[aria-invalid="true"] {
@@ -562,104 +478,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .projects-grid-reveal {
     animation: none;
-  }
-}
-
-/* ——— Projects editorial grid — calm fade-focus interaction ——— */
-
-/* Column: opacity transitions for the sibling fade effect */
-.projects-col {
-  transition: opacity var(--editorial-duration) var(--editorial-ease);
-  will-change: opacity;
-}
-
-/* Title: slight contrast increase on hover */
-.projects-col-title {
-  position: relative;
-  color: var(--foreground);
-  transition: color var(--editorial-duration) var(--editorial-ease);
-}
-
-/* Title text wrapper — hosts the underline pseudo-element */
-.projects-col-title-text {
-  position: relative;
-  display: inline-block;
-}
-
-/* Underline — draws left-to-right via scaleX on hover */
-.projects-col-title-text::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -4px;
-  height: 1px;
-  background: var(--foreground);
-  opacity: 0.35;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--editorial-duration) var(--editorial-ease);
-}
-
-/* CTA: opacity transitions */
-.projects-col-cta {
-  transition: opacity var(--editorial-duration) var(--editorial-ease);
-}
-
-/* Divider: constant, low-contrast, no animation */
-.projects-col-divider {
-  border-right: 1px solid;
-  border-right-color: hsl(30 10% 12% / 0.15);
-}
-
-/* Media preview — subtle desaturation at rest, lifts on hover */
-.projects-col-media {
-  transition: filter var(--editorial-duration) var(--editorial-ease);
-  filter: grayscale(0.15) contrast(0.95);
-}
-
-/* ── Hover state ── */
-.projects-col:hover .projects-col-title,
-.projects-col:focus-visible .projects-col-title {
-  color: hsl(30 10% 8%);
-}
-
-.projects-col:hover .projects-col-title-text::after,
-.projects-col:focus-visible .projects-col-title-text::after {
-  transform: scaleX(1);
-}
-
-.projects-col:hover .projects-col-media,
-.projects-col:focus-visible .projects-col-media {
-  filter: grayscale(0) contrast(1);
-}
-
-/* ── Active / pressed state — quick feedback, slow ease-back ── */
-.projects-col:active .projects-col-title-text::after {
-  transform: scaleX(1);
-  opacity: 0.6;
-  transition-duration: 120ms;
-}
-
-.projects-col:active .projects-col-media {
-  filter: grayscale(0.05) contrast(0.9) brightness(0.92);
-  transition-duration: 150ms;
-}
-
-/* ── Focus-visible ring for keyboard navigation ── */
-.projects-col:focus-visible {
-  outline: 2px solid var(--foreground);
-  outline-offset: -2px;
-}
-
-/* ── Reduced motion: disable all transitions ── */
-@media (prefers-reduced-motion: reduce) {
-  .projects-col,
-  .projects-col-title,
-  .projects-col-title-text::after,
-  .projects-col-cta,
-  .projects-col-media {
-    transition: none;
   }
 }
 

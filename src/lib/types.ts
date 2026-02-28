@@ -29,16 +29,6 @@ export type HeroSlide = {
   externalLink?: string;
 };
 
-export type ProjectCategory = {
-  _id: string;
-  slug: string;
-  title: string;
-  order: number;
-  thumbnail?: SanityImage | null;
-  previewGif?: string | null;
-  previewImages?: SanityImageAsset[] | null;
-};
-
 export type ProjectSummary = {
   _id: string;
   title: string;

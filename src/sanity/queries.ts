@@ -86,15 +86,6 @@ export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
   externalLink
 }`;
 
-// --------------- Project Categories ---------------
-
-export const projectCategoriesQuery = `*[_type == "projectCategory"] | order(order asc){
-  _id, "slug": slug.current, title, order,
-  "thumbnail": thumbnail ${_imageAsset},
-  "previewGif": previewGif.asset->url,
-  "previewImages": previewImages[] ${_imageAsset}
-}`;
-
 // --------------- Homepage Featured Projects ---------------
 
 export const homepageFeaturedProjectsQuery = `*[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc){
@@ -112,12 +103,6 @@ export const latestProjectsQuery = `*[_type == "project"] | order(_createdAt des
 // --------------- Projects ---------------
 
 export const projectsListQuery = `*[_type == "project"] | order(title asc){
-  _id, title, "slug": slug.current, category,
-  "thumbnail": thumbnail ${_imageAsset},
-  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt
-}`;
-
-export const projectsByCategoryQuery = `*[_type == "project" && category == $category] | order(title asc){
   _id, title, "slug": slug.current, category,
   "thumbnail": thumbnail ${_imageAsset},
   "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt
