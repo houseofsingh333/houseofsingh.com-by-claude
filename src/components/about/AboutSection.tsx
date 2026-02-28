@@ -150,19 +150,19 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         </section>
       )}
 
-      {/* ——— 5 · Rapid Fire ——— */}
-      {rapidFire && rapidFire.length > 0 && (
-        <section className="px-6 md:px-16 section-py-lg">
-          <SectionDivider label="Rapidfire" />
-          <RapidFire items={rapidFire} />
-        </section>
-      )}
-
-      {/* ——— 6 · Timeline ——— */}
+      {/* ——— 5 · Timeline ——— */}
       {milestones && milestones.length > 0 && (
         <section className="px-6 md:px-16 section-py-lg">
           <SectionDivider label="Ten Years On" />
           <Timeline milestones={milestones} />
+        </section>
+      )}
+
+      {/* ——— 6 · Rapid Fire — bottom of page, above footer ——— */}
+      {rapidFire && rapidFire.length > 0 && (
+        <section className="px-6 md:px-16 section-py-lg">
+          <SectionDivider label="Rapidfire" gap="mb-8" />
+          <RapidFire items={rapidFire} />
         </section>
       )}
 

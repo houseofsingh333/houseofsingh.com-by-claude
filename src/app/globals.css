@@ -732,6 +732,11 @@ body {
 
 /* ——— Rapidfire accordion — editorial Q&A interaction ——— */
 
+.rapidfire-section {
+  --rf-num-w: 34px;
+  --rf-gap: 24px;
+}
+
 .rapidfire-item {
   border-bottom: 1px solid hsl(30 10% 12% / 0.15);
 }
@@ -739,22 +744,12 @@ body {
 .rapidfire-btn {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
   width: 100%;
-  padding: 1.25rem 0;
-  min-height: 56px;
+  padding: 24px 0;
   cursor: pointer;
   text-align: left;
   background: none;
   border: none;
-}
-
-@media (min-width: 768px) {
-  .rapidfire-btn {
-    padding: 1.5rem 0;
-    min-height: auto;
-  }
 }
 
 .rapidfire-btn:focus-visible {
@@ -762,85 +757,138 @@ body {
   outline-offset: 3px;
 }
 
-.rapidfire-question {
-  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Desktop hover — editorial nudge right on closed items */
-@media (hover: hover) {
-  .rapidfire-btn:not([aria-expanded="true"]):hover .rapidfire-question {
-    transform: translateX(6px);
-  }
-
-  .rapidfire-btn:not([aria-expanded="true"]):hover .rapidfire-icon {
-    opacity: 1;
-  }
-}
-
-.rapidfire-icon {
+/* Number index: (01), (02) ... */
+.rapidfire-number {
   flex-shrink: 0;
-  font-size: 1.5rem;
-  line-height: 1;
-  font-weight: 300;
+  min-width: var(--rf-num-w);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted-foreground);
+  transition: transform 200ms ease;
+}
+
+/* Question text */
+.rapidfire-question {
+  flex: 1;
+  margin-left: var(--rf-gap);
+  font-size: 18px;
+  font-weight: 500;
   color: var(--foreground);
-  opacity: 0.4;
-  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 200ms ease;
 }
 
-.rapidfire-icon[data-open] {
-  transform: rotate(45deg);
-  opacity: 1;
+/* Eye toggle container — stacks two SVGs for crossfade */
+.rapidfire-toggle {
+  flex-shrink: 0;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  margin-left: 16px;
+  color: var(--muted-foreground);
 }
 
-/* Answer panel — grid-based height animation */
+.rapidfire-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
+.rapidfire-eye {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 250ms ease;
+}
+
+/* Desktop hover (1024px+) — dim question, nudge number on closed items */
+@media (min-width: 1024px) {
+  .rapidfire-btn:not([data-open]):hover .rapidfire-question {
+    opacity: 0.6;
+  }
+
+  .rapidfire-btn:not([data-open]):hover .rapidfire-number {
+    transform: translateX(2px);
+  }
+}
+
+/* Answer panel — CSS grid height animation */
 .rapidfire-panel {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 400ms cubic-bezier(0.16, 1, 0.3, 1) 200ms;
+  transition: grid-template-rows 400ms cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .rapidfire-panel[data-open] {
   grid-template-rows: 1fr;
-  transition: grid-template-rows 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .rapidfire-panel > div {
   overflow: hidden;
 }
 
-/* Answer text — staggered fade */
+/* Answer text — indented to align with question, not number */
 .rapidfire-answer {
-  opacity: 0;
-  padding-bottom: 1.5rem;
-  transition: opacity 200ms ease;
+  padding-left: calc(var(--rf-num-w) + var(--rf-gap));
+  padding-top: 8px;
+  padding-bottom: 24px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--foreground);
+  opacity: 0.8;
+  max-width: 720px;
 }
 
-.rapidfire-panel[data-open] .rapidfire-answer {
-  opacity: 1;
-  transition: opacity 300ms ease 100ms;
-}
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  .rapidfire-section {
+    --rf-num-w: 28px;
+    --rf-gap: 16px;
+  }
 
-/* Responsive answer width — editorial asymmetry */
-@media (min-width: 768px) {
+  .rapidfire-btn {
+    padding: 20px 0;
+  }
+
+  .rapidfire-number {
+    font-size: 12px;
+  }
+
+  .rapidfire-question {
+    font-size: 16px;
+  }
+
+  .rapidfire-toggle {
+    width: 18px;
+    height: 18px;
+  }
+
+  .rapidfire-toggle svg {
+    width: 18px;
+    height: 18px;
+  }
+
   .rapidfire-answer {
-    max-width: 80%;
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: none;
   }
 }
 
-@media (min-width: 1024px) {
-  .rapidfire-answer {
-    max-width: 50%;
-  }
-}
-
-/* Reduced motion: simplify all rapidfire interactions */
+/* Reduced motion: show items immediately, instant expand/collapse */
 @media (prefers-reduced-motion: reduce) {
+  .rapidfire-item {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .rapidfire-number,
   .rapidfire-question,
-  .rapidfire-icon,
-  .rapidfire-panel,
-  .rapidfire-answer {
-    transition: none;
+  .rapidfire-eye,
+  .rapidfire-panel {
+    transition: none !important;
   }
 }
 
