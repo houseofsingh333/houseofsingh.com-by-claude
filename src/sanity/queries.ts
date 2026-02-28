@@ -59,11 +59,6 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
     text,
     "image": image ${_imageAsset}
   },
-  testimonials[]{
-    quote,
-    name,
-    role
-  },
   seoTitle,
   seoDescription
 }`;

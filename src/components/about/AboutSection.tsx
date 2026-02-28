@@ -9,7 +9,6 @@ import {
 } from "./about-constants";
 import FeaturedOn from "./FeaturedOn";
 import RapidFire from "./RapidFire";
-import TestimonialCarousel from "./TestimonialCarousel";
 import Timeline from "./Timeline";
 
 function SectionDivider({ label, gap = "mb-16" }: { label: string; gap?: string }) {
@@ -33,7 +32,6 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
     monikerText,
     featuredOn,
     milestones,
-    testimonials,
     rapidFire,
   } = data;
 
@@ -168,13 +166,6 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         </section>
       )}
 
-      {/* ——— 7 · Words Shared ——— */}
-      {testimonials && testimonials.length > 0 && (
-        <section className="px-6 md:px-16 section-py-lg">
-          <SectionDivider label="Words Shared" gap="mb-12" />
-          <TestimonialCarousel testimonials={testimonials} />
-        </section>
-      )}
     </div>
   );
 }

@@ -24,7 +24,6 @@ export type {
   SpotlightProject,
   SiteSettings,
   AboutMilestone,
-  AboutTestimonial,
   FeaturedOutlet,
   RapidFireItem,
   PortableTextBlock,
@@ -375,26 +374,6 @@ export const fallbackAboutPage: AboutPageData = {
       title: "A Decade of Craft",
       text: "Ten years of evolving practice and perspective — from identity design to photography, editorial to spatial storytelling.",
       image: "/images/milestone-2024.svg",
-    },
-  ],
-  testimonials: [
-    {
-      quote:
-        "Working with Maninder felt less like a transaction and more like a conversation — one that left our brand feeling truly seen.",
-      name: "Placeholder Name",
-      role: "Creative Lead",
-    },
-    {
-      quote:
-        "He has a rare ability to listen deeply and translate feeling into form. The work speaks quietly but stays with you.",
-      name: "Placeholder Name",
-      role: "Brand Director",
-    },
-    {
-      quote:
-        "Every detail was intentional. The result was not just beautiful — it was meaningful.",
-      name: "Placeholder Name",
-      role: "Founder & CEO",
     },
   ],
   rapidFire: [

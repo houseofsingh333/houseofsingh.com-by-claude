@@ -147,12 +147,6 @@ export type AboutMilestone = {
   image: SanityImage | null;
 };
 
-export type AboutTestimonial = {
-  quote: string;
-  name: string;
-  role?: string;
-};
-
 export type FeaturedOutlet = {
   name: string;
   url?: string;
@@ -181,7 +175,6 @@ export type AboutPageData = {
   monikerText: PortableTextBlock[] | null;
   featuredOn: FeaturedOutlet[] | null;
   milestones: AboutMilestone[] | null;
-  testimonials: AboutTestimonial[] | null;
   rapidFire: RapidFireItem[] | null;
   seoTitle: string | null;
   seoDescription: string | null;

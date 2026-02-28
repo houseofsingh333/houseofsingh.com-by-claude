@@ -237,40 +237,6 @@ export const aboutPage = defineType({
       ],
     }),
 
-    /* ——— 5 · Testimonials ——— */
-    defineField({
-      name: "testimonials",
-      title: "Testimonials",
-      type: "array",
-      of: [
-        {
-          type: "object",
-          fields: [
-            defineField({
-              name: "quote",
-              title: "Quote",
-              type: "text",
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: "name",
-              title: "Name",
-              type: "string",
-              validation: (rule) => rule.required(),
-            }),
-            defineField({
-              name: "role",
-              title: "Role",
-              type: "string",
-            }),
-          ],
-          preview: {
-            select: { title: "name", subtitle: "role" },
-          },
-        },
-      ],
-    }),
-
     /* ——— SEO ——— */
     defineField({
       name: "seoTitle",
