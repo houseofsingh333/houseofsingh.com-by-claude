@@ -281,6 +281,32 @@ body {
   }
 }
 
+/* ——— Footer Instagram — subtle Ken Burns drift (desktop 1024px+ only) ——— */
+
+@keyframes footerIgDrift {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  50%       { transform: scale(1.02) translate(0.2%, 0.15%); }
+}
+
+@media (min-width: 1024px) {
+  .footer-ig-drift {
+    animation: footerIgDrift 12s ease-in-out infinite;
+    will-change: transform;
+  }
+}
+
+@media (max-width: 1023px) {
+  .footer-ig-drift {
+    animation: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-ig-drift {
+    animation: none !important;
+  }
+}
+
 /* ——— Contact form — editorial input refinements ——— */
 
 /* Underline inputs: calm focus transition */

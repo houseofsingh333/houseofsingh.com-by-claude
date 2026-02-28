@@ -6,11 +6,13 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PageTransition from "@/components/PageTransition";
 import { sanityFetch } from "@/sanity/fetch";
-import { navigationQuery } from "@/sanity/queries";
+import { navigationQuery, contactPageQuery } from "@/sanity/queries";
 import {
   fallbackNavItems,
+  fallbackInstagramPhotos,
   type NavItem,
 } from "@/lib/placeholder-data";
+import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import "./globals.css";
 
 const playfair = localFont({
@@ -42,13 +44,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const navData = await sanityFetch<{ items: NavItem[] } | null>({
-    query: navigationQuery,
-  });
+  const [navData, contactData] = await Promise.all([
+    sanityFetch<{ items: NavItem[] } | null>({ query: navigationQuery }),
+    sanityFetch<{ instagramPhotos?: InstagramPhoto[] | null } | null>({
+      query: contactPageQuery,
+    }),
+  ]);
 
   const sanityItems = navData?.items;
   const navItems =
     sanityItems && sanityItems.length >= 4 ? sanityItems : fallbackNavItems;
+
+  const instagramPhotos = contactData?.instagramPhotos?.length
+    ? contactData.instagramPhotos
+    : fallbackInstagramPhotos;
 
   return (
     <html lang="en" className={playfair.variable}>
@@ -57,7 +66,7 @@ export default async function RootLayout({
         <main id="main-content" className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>
-        <Footer items={navItems} />
+        <Footer items={navItems} instagramPhotos={instagramPhotos} />
         <SpeedInsights />
       </body>
     </html>

@@ -4,19 +4,18 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import type { NavItem } from "@/lib/placeholder-data";
+import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
+import FooterInstagram from "./FooterInstagram";
 
 type Props = {
   items: NavItem[];
+  instagramPhotos?: InstagramPhoto[];
 };
-
-const SOCIAL_LINKS = [
-  { label: "Instagram", href: "https://www.instagram.com/houseofsingh" },
-];
 
 const LINK_CLASS =
   "text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300";
 
-export default function Footer({ items }: Props) {
+export default function Footer({ items, instagramPhotos = [] }: Props) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -58,15 +57,22 @@ export default function Footer({ items }: Props) {
       {/* Full-width divider — edge to edge */}
       <div className="w-full h-px bg-border" />
 
-      {/* ——— Upper footer ——— */}
-      <div className="px-6 md:px-16 pt-24 md:pt-40 pb-16 md:pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
-          {/* CTA — primary call to action */}
-          <div className="md:col-span-4">
+      {/* ——— Area 1: Instagram + CTA Row ——— */}
+      <div className="px-6 md:px-16 pt-20 md:pt-20 pb-10 md:pb-10">
+        <div className="flex flex-col md:flex-row md:gap-12 lg:gap-16 gap-10">
+          {/* Left: Instagram feed */}
+          {instagramPhotos.length > 0 && (
+            <div className="w-full md:w-[220px] lg:w-[280px] flex-shrink-0">
+              <FooterInstagram photos={instagramPhotos} />
+            </div>
+          )}
+
+          {/* Right: CTA + Newsletter */}
+          <div className="flex-1 flex flex-col justify-center">
             {!isContactPage && (
               <Link
                 href="/contact"
-                className="group inline-flex items-baseline gap-3"
+                className="group inline-flex items-baseline gap-3 mb-10 md:mb-12"
               >
                 <span className="font-editorial text-2xl md:text-3xl lg:text-4xl font-light text-foreground leading-snug">
                   Start a project
@@ -76,109 +82,91 @@ export default function Footer({ items }: Props) {
                 </span>
               </Link>
             )}
+
+            {/* Newsletter */}
+            <div>
+              <p className={`${LINK_CLASS} mb-4 pointer-events-none`}>
+                Newsletter
+              </p>
+
+              {status === "success" ? (
+                <p className="text-sm text-muted-foreground py-2">
+                  Thank you for subscribing.
+                </p>
+              ) : (
+                <form
+                  onSubmit={handleSubscribe}
+                  className="flex items-center max-w-md"
+                >
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    aria-label="Email for newsletter"
+                    className="flex-1 bg-transparent border-0 border-b border-border px-0 py-2 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground transition-colors duration-300"
+                  />
+                  <button
+                    type="submit"
+                    disabled={status === "loading"}
+                    className={`${LINK_CLASS} pl-4 py-2 disabled:opacity-50`}
+                  >
+                    {status === "loading" ? "..." : "Subscribe"}
+                  </button>
+                </form>
+              )}
+
+              {status === "error" && (
+                <p className="text-xs text-red-500 mt-2">
+                  Something went wrong. Please try again.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ——— Divider ——— */}
+      <div className="mx-6 md:mx-16 h-px bg-border/40" />
+
+      {/* ——— Area 2: Info Row ——— */}
+      <div className="px-6 md:px-16 py-8 md:py-10">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 md:gap-6">
+          {/* Left: Logo crest + copyright */}
+          <div className="flex items-center gap-4">
             <img
               src="/images/hos-logo.svg"
               alt="House of Singh"
-              className="mt-10 md:mt-14 opacity-15"
-              style={{ width: '130px', height: '130px' }}
+              className="opacity-15"
+              style={{ width: "40px", height: "40px" }}
             />
+            <span className="text-[10px] tracking-widest uppercase text-muted-foreground/50">
+              &copy; {new Date().getFullYear()} House of Singh
+            </span>
           </div>
 
-          {/* Navigation — subpage links */}
-          <div className="md:col-span-2">
-            <nav className="flex flex-row flex-wrap gap-x-5 gap-y-2 md:flex-col md:gap-3">
-              {internalItems.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`${LINK_CLASS} py-0.5 w-fit`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-
-          {/* Newsletter + Social */}
-          <div className="md:col-span-4">
-            <p className={`${LINK_CLASS} mb-4 pointer-events-none`}>
-              Newsletter
-            </p>
-
-            {status === "success" ? (
-              <p className="text-sm text-muted-foreground py-2">
-                Thank you for subscribing.
-              </p>
-            ) : (
-              <form
-                onSubmit={handleSubscribe}
-                className="flex items-center"
+          {/* Center: Navigation links — horizontal */}
+          <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 md:gap-x-6">
+            {internalItems.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`${LINK_CLASS} py-0.5`}
               >
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  aria-label="Email for newsletter"
-                  className="flex-1 bg-transparent border-0 border-b border-border px-0 py-2 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground transition-colors duration-300"
-                />
-                <button
-                  type="submit"
-                  disabled={status === "loading"}
-                  className={`${LINK_CLASS} pl-4 py-2 disabled:opacity-50`}
-                >
-                  {status === "loading" ? "..." : "Subscribe"}
-                </button>
-              </form>
-            )}
+                {link.label}
+              </Link>
+            ))}
+          </nav>
 
-            {status === "error" && (
-              <p className="text-xs text-red-500 mt-2">
-                Something went wrong. Please try again.
-              </p>
-            )}
-
-            {/* Social links */}
-            <div className="mt-8 flex items-center gap-5">
-              {SOCIAL_LINKS.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${LINK_CLASS} py-0.5`}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Top button — scroll to top */}
-          <div className="md:col-span-2 flex md:justify-end md:items-start">
+          {/* Right: Back to top + tagline */}
+          <div className="flex flex-col items-start md:items-end gap-2">
             <button
               onClick={scrollToTop}
               className={`${LINK_CLASS} py-0.5 cursor-pointer`}
             >
               Top ↑
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ——— Lower strip ——— */}
-      <div className="mx-6 md:mx-16 h-px bg-border/40" />
-
-      <div className="px-6 md:px-16 py-6 md:py-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          {/* Left: copyright + legal */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] tracking-widest uppercase text-muted-foreground/50">
-            <span>&copy; {new Date().getFullYear()} House of Singh</span>
-          </div>
-
-          {/* Right: signature */}
-          <div className="flex items-center">
             <span className="text-[10px] tracking-[0.12em] text-muted-foreground/35 italic">
               Made by AI. Curated by humans.
             </span>
