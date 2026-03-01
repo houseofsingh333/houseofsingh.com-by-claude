@@ -6,7 +6,6 @@ import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import FooterInstagram from "./FooterInstagram";
 
 type Props = {
-  items?: unknown[];
   instagramPhotos?: InstagramPhoto[];
 };
 
@@ -51,116 +50,127 @@ export default function Footer({ instagramPhotos = [] }: Props) {
 
   return (
     <footer className="footer-wrap">
-      {/* ——— Band 1: Full-width CTA ——— */}
-      <div className="footer-band1">
-        <Link href="/contact" className="footer-band1-link">
-          <span className="footer-band1-heading">Start a project</span>
-          <span className="footer-band1-arrow">&rarr;</span>
-        </Link>
-        <p className="footer-band1-subtitle">
-          Let&rsquo;s talk about a project, collaboration or an idea you may
-          have
-        </p>
+      {/* Part 1: Logo Crest — centered above footer content */}
+      <div className="footer-crest-area">
+        <img
+          src="/images/hos-logo.svg"
+          alt="House of Singh"
+          className="footer-crest"
+        />
       </div>
 
-      {/* ——— Band 2: Two-column info area ——— */}
-      <div className="footer-band2">
-        <div className="footer-band2-grid">
-          {/* Left column: nav + logo */}
-          <div className="footer-band2-left">
-            <nav className="footer-band2-nav">
+      {/* Rule below crest */}
+      <div className="footer-rule" />
+
+      {/* Part 2: Main Content — Three Columns */}
+      <div className="footer-main">
+        <div className="footer-grid">
+          {/* Left Column: CTA */}
+          <div className="footer-col-left">
+            <Link href="/contact" className="footer-cta-link">
+              <span className="footer-cta-heading">Start a project</span>
+              <span className="footer-cta-arrow">&rarr;</span>
+            </Link>
+            <p className="footer-cta-subtitle">
+              Let&rsquo;s talk about a project, collaboration or an idea you may
+              have
+            </p>
+          </div>
+
+          {/* Center Column: Nav + Newsletter */}
+          <div className="footer-col-center">
+            <nav className="footer-nav">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="footer-band2-nav-link"
+                  className="footer-nav-link"
                 >
                   {link.label}
                 </Link>
               ))}
             </nav>
-            <div className="footer-band2-brand">
-              <img
-                src="/images/hos-logo.svg"
-                alt="House of Singh"
-                className="footer-band2-crest"
-              />
-              <p className="footer-band2-tagline">
-                Made by AI. Curated by humans.
-              </p>
+
+            <div className="footer-newsletter">
+              <span className="footer-nl-label">NEWSLETTER</span>
+              {status === "success" ? (
+                <span className="footer-nl-thanks">Thank you</span>
+              ) : (
+                <form
+                  onSubmit={handleSubscribe}
+                  className="footer-nl-form"
+                >
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    aria-label="Email for newsletter"
+                    className="footer-nl-input"
+                  />
+                  <button
+                    type="submit"
+                    disabled={status === "loading"}
+                    className="footer-nl-btn"
+                  >
+                    {status === "loading" ? "..." : "SUBSCRIBE"}
+                  </button>
+                </form>
+              )}
+              {status === "error" && (
+                <p className="footer-nl-error">
+                  Something went wrong. Try again.
+                </p>
+              )}
             </div>
           </div>
 
-          {/* Right column: Instagram */}
-          <div className="footer-band2-right">
-            {instagramPhotos.length > 0 && (
-              <FooterInstagram photos={instagramPhotos} />
-            )}
-            <a
-              href="https://www.instagram.com/houseofsingh"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="footer-band2-ig-label"
+          {/* Right Column: TOP ↑ + Instagram */}
+          <div className="footer-col-right">
+            <button
+              onClick={scrollToTop}
+              className="footer-top-btn"
+              type="button"
             >
-              INSTAGRAM
-            </a>
+              TOP <span>↑</span>
+            </button>
+            {instagramPhotos.length > 0 && (
+              <a
+                href="https://www.instagram.com/houseofsingh"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-ig-link"
+              >
+                <FooterInstagram photos={instagramPhotos} />
+              </a>
+            )}
           </div>
         </div>
       </div>
 
-      {/* ——— Band 3: Bottom bar ——— */}
-      <div className="footer-band3">
-        {/* Left: Copyright + Legal */}
-        <div className="footer-band3-legal">
-          <span className="footer-band3-legal-item">
+      {/* Part 3: Bottom Bar */}
+      <div className="footer-rule" />
+      <div className="footer-bottom">
+        <div className="footer-bottom-left">
+          <span className="footer-bottom-copyright">
             &copy; 2026 HOUSE OF SINGH
           </span>
-          <Link href="/privacy" className="footer-band3-legal-link">
-            PRIVACY
-          </Link>
-          <Link href="/terms" className="footer-band3-legal-link">
-            TERMS
-          </Link>
+          <div className="footer-bottom-legal">
+            <Link href="/privacy" className="footer-bottom-link">
+              PRIVACY
+            </Link>
+            <Link href="/terms" className="footer-bottom-link">
+              TERMS
+            </Link>
+          </div>
         </div>
-
-        {/* Center: Newsletter */}
-        <div className="footer-band3-newsletter">
-          {status === "success" ? (
-            <span className="footer-band3-nl-thanks">Thank you</span>
-          ) : (
-            <form
-              onSubmit={handleSubscribe}
-              className="footer-band3-nl-form"
-            >
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                aria-label="Email for newsletter"
-                className="footer-band3-nl-input"
-              />
-              <button
-                type="submit"
-                disabled={status === "loading"}
-                className="footer-band3-nl-btn"
-              >
-                {status === "loading" ? "..." : "SUBSCRIBE"}
-              </button>
-            </form>
-          )}
-          {status === "error" && (
-            <p className="footer-band3-nl-error">
-              Something went wrong. Try again.
-            </p>
-          )}
-        </div>
-
-        {/* Right: Back to top */}
+        <span className="footer-bottom-tagline">
+          Made by AI. Curated by humans.
+        </span>
         <button
           onClick={scrollToTop}
-          className="footer-band3-top-btn"
+          className="footer-mobile-top-btn"
           type="button"
         >
           TOP <span>↑</span>

@@ -66,7 +66,7 @@ export default async function RootLayout({
         <main id="main-content" className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>
-        <Footer items={navItems} instagramPhotos={instagramPhotos} />
+        <Footer instagramPhotos={instagramPhotos} />
         <SpeedInsights />
       </body>
     </html>
