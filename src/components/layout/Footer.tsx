@@ -50,23 +50,19 @@ export default function Footer({ instagramPhotos = [] }: Props) {
 
   return (
     <footer className="footer-wrap">
-      {/* Part 1: Logo Crest — centered above footer content */}
-      <div className="footer-crest-area">
-        <img
-          src="/images/hos-logo.svg"
-          alt="House of Singh"
-          className="footer-crest"
-        />
-      </div>
-
-      {/* Rule below crest */}
+      {/* Rule */}
       <div className="footer-rule" />
 
-      {/* Part 2: Main Content — Three Columns */}
+      {/* Main Content — Three Columns */}
       <div className="footer-main">
         <div className="footer-grid">
-          {/* Left Column: CTA */}
+          {/* Left Column: Crest + CTA */}
           <div className="footer-col-left">
+            <img
+              src="/images/hos-logo.svg"
+              alt="House of Singh"
+              className="footer-crest"
+            />
             <Link href="/contact" className="footer-cta-link">
               <span className="footer-cta-heading">Start a project</span>
               <span className="footer-cta-arrow">&rarr;</span>
