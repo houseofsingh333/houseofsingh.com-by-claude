@@ -223,6 +223,7 @@ body {
   height: auto;
   display: block;
   margin: 0 auto;
+  opacity: 0.75;
 }
 
 /* Horizontal rule separator */
@@ -271,21 +272,18 @@ body {
 .footer-cta-arrow {
   font-size: 0.65em;
   color: var(--muted-foreground);
+  display: inline-block;
+  transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (min-width: 1024px) {
-  .footer-cta-link {
-    transition: opacity 200ms ease;
-  }
-  .footer-cta-link:hover {
-    opacity: 0.6;
+  .footer-cta-link:hover .footer-cta-arrow {
+    transform: translateX(4px);
   }
 }
 
 .footer-cta-subtitle {
   margin-top: 16px;
-  font-family: var(--font-editorial);
-  font-style: italic;
   font-size: 16px;
   color: var(--muted-foreground);
   line-height: 1.6;
@@ -330,11 +328,11 @@ body {
 
 .footer-nl-label {
   display: block;
-  font-size: 10px;
+  font-size: 14px;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: var(--muted-foreground);
-  font-weight: 500;
+  font-weight: 400;
   margin-bottom: 12px;
 }
 
@@ -356,7 +354,8 @@ body {
 }
 
 .footer-nl-input::placeholder {
-  color: #bbb;
+  color: var(--foreground);
+  opacity: 0.5;
 }
 
 .footer-nl-btn {
@@ -437,7 +436,7 @@ body {
 
 .footer-ig-box {
   width: 280px;
-  height: 280px;
+  aspect-ratio: 1;
   overflow: hidden;
   position: relative;
 }
@@ -487,10 +486,10 @@ body {
 }
 
 .footer-bottom-tagline {
-  font-family: var(--font-editorial);
-  font-style: italic;
-  font-size: 13px;
-  color: #ccc;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #bbb;
 }
 
 /* Mobile TOP ↑ in bottom bar — hidden on desktop */
@@ -511,7 +510,7 @@ body {
 
   .footer-ig-box {
     width: 220px;
-    height: 220px;
+    aspect-ratio: 1;
   }
 
   .footer-bottom {
@@ -631,12 +630,16 @@ body {
     color: inherit;
     opacity: 1;
   }
+  .footer-cta-link:hover .footer-cta-arrow {
+    transform: none;
+  }
 }
 
 /* ——— Footer reduced motion ——— */
 
 @media (prefers-reduced-motion: reduce) {
   .footer-cta-link,
+  .footer-cta-arrow,
   .footer-nav-link,
   .footer-bottom-link,
   .footer-nl-btn,

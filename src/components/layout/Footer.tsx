@@ -105,7 +105,7 @@ export default function Footer({ instagramPhotos = [] }: Props) {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
+                    placeholder="Get the latest stories and updates"
                     aria-label="Email for newsletter"
                     className="footer-nl-input"
                   />
@@ -140,7 +140,7 @@ export default function Footer({ instagramPhotos = [] }: Props) {
                 href="https://www.instagram.com/houseofsingh"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="footer-ig-link"
+                className="footer-ig-link group"
               >
                 <FooterInstagram photos={instagramPhotos} />
               </a>

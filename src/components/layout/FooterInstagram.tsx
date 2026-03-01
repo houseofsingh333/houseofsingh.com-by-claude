@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Instagram } from "lucide-react";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 
@@ -57,6 +58,14 @@ export default function FooterInstagram({ photos }: Props) {
             }}
           />
         ))}
+      </div>
+      {/* Instagram icon — top-right, matching Contact page pattern */}
+      <div className="absolute top-4 right-4 z-10">
+        <Instagram
+          className="w-7 h-7 text-white/25 group-hover:text-white/45 drop-shadow-sm"
+          style={{ transition: "color 400ms cubic-bezier(0.22, 1, 0.36, 1)" }}
+          strokeWidth={1.4}
+        />
       </div>
     </div>
   );
