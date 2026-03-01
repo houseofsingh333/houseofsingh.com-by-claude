@@ -349,7 +349,7 @@ body {
 
 .footer-nl-input::placeholder {
   color: var(--foreground);
-  opacity: 0.5;
+  opacity: 0.75;
 }
 
 .footer-nl-btn {
@@ -521,7 +521,7 @@ body {
 @media (max-width: 767px) {
   .footer-crest {
     width: 96px;
-    margin-bottom: 24px;
+    margin: 0 auto 24px;
   }
 
   .footer-main {
@@ -534,9 +534,14 @@ body {
     gap: 0;
   }
 
-  /* CTA — left aligned */
+  /* CTA — centered on mobile */
   .footer-col-left {
     order: 1;
+    text-align: center;
+  }
+
+  .footer-cta-link {
+    justify-content: center;
   }
 
   .footer-cta-subtitle {
