@@ -114,7 +114,9 @@ export default function Footer({ instagramPhotos = [] }: Props) {
                     disabled={status === "loading"}
                     className="footer-nl-btn"
                   >
-                    {status === "loading" ? "..." : "SUBSCRIBE"}
+                    <span className="footer-nl-arrow">
+                      {status === "loading" ? "..." : "\u2192"}
+                    </span>
                   </button>
                 </form>
               )}

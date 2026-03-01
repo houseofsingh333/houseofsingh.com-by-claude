@@ -243,12 +243,12 @@ body {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   gap: 64px;
+  align-items: end;
 }
 
 /* Left Column: CTA */
 
 .footer-col-left {
-  align-self: start;
 }
 
 .footer-cta-link {
@@ -293,7 +293,6 @@ body {
 /* Center Column: Nav + Newsletter */
 
 .footer-col-center {
-  align-self: start;
 }
 
 .footer-nav {
@@ -323,7 +322,7 @@ body {
 /* Newsletter */
 
 .footer-newsletter {
-  margin-top: 32px;
+  /* no extra margin — NEWSLETTER label uses same line-height as nav links */
 }
 
 .footer-nl-label {
@@ -333,7 +332,7 @@ body {
   letter-spacing: 0.1em;
   color: var(--muted-foreground);
   font-weight: 400;
-  margin-bottom: 12px;
+  line-height: 2.8;
 }
 
 .footer-nl-form {
@@ -359,10 +358,6 @@ body {
 }
 
 .footer-nl-btn {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 500;
   border: none;
   background: none;
   cursor: pointer;
@@ -371,12 +366,21 @@ body {
   font-family: inherit;
 }
 
+.footer-nl-arrow {
+  font-size: 15px;
+  display: inline-block;
+  transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @media (min-width: 1024px) {
   .footer-nl-btn {
     transition: color 200ms ease;
   }
   .footer-nl-btn:hover {
     color: var(--foreground);
+  }
+  .footer-nl-btn:hover .footer-nl-arrow {
+    transform: translateX(4px);
   }
 }
 
@@ -402,7 +406,6 @@ body {
 
 .footer-col-right {
   justify-self: end;
-  align-self: start;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -436,7 +439,7 @@ body {
 
 .footer-ig-box {
   width: 280px;
-  aspect-ratio: 1;
+  aspect-ratio: 5 / 4;
   overflow: hidden;
   position: relative;
 }
@@ -510,7 +513,7 @@ body {
 
   .footer-ig-box {
     width: 220px;
-    aspect-ratio: 1;
+    aspect-ratio: 5 / 4;
   }
 
   .footer-bottom {
