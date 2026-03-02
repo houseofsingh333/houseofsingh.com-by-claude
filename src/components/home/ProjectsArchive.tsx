@@ -251,28 +251,65 @@ export default function ProjectsArchive({ projects }: Props) {
     };
   }, [prefersReducedMotion]);
 
-  // Wheel-to-horizontal — map vertical wheel to horizontal scroll
+  // Drag-to-scroll — desktop click-and-drag affordance
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
-    const handleWheel = (e: WheelEvent) => {
-      // Don't intercept native horizontal scroll (trackpad)
-      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+    let isDown = false;
+    let startX = 0;
+    let scrollStart = 0;
+    let dragged = false;
+    const DRAG_THRESHOLD = 3;
 
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      const atStart = el.scrollLeft <= 0;
-      const atEnd = el.scrollLeft >= maxScroll;
-
-      // Allow page scroll at boundaries
-      if ((atStart && e.deltaY < 0) || (atEnd && e.deltaY > 0)) return;
-
-      e.preventDefault();
-      el.scrollLeft += e.deltaY;
+    const onMouseDown = (e: MouseEvent) => {
+      // Only primary button
+      if (e.button !== 0) return;
+      isDown = true;
+      dragged = false;
+      startX = e.clientX;
+      scrollStart = el.scrollLeft;
+      el.style.cursor = "grabbing";
+      el.style.userSelect = "none";
     };
 
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => el.removeEventListener("wheel", handleWheel);
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > DRAG_THRESHOLD) {
+        dragged = true;
+      }
+      el.scrollLeft = scrollStart - dx;
+    };
+
+    const onMouseUp = () => {
+      if (!isDown) return;
+      isDown = false;
+      el.style.cursor = "grab";
+      el.style.userSelect = "";
+    };
+
+    // Prevent link clicks when dragging
+    const onClick = (e: MouseEvent) => {
+      if (dragged) {
+        e.preventDefault();
+        dragged = false;
+      }
+    };
+
+    el.style.cursor = "grab";
+    el.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    el.addEventListener("click", onClick, { capture: true });
+
+    return () => {
+      el.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      el.removeEventListener("click", onClick, { capture: true });
+      el.style.cursor = "";
+    };
   }, []);
 
   return (
