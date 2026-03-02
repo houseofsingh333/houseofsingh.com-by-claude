@@ -1199,72 +1199,105 @@ body {
   }
 }
 
-/* ——— Editorial Projects — vertical stack ——— */
+/* ——— Projects Archive — horizontal scroll strip ——— */
 
-/* ── Image hover zoom (desktop 1024px+) ── */
+/* Responsive gutters on the archive rail */
+.archive-scroll {
+  --archive-gutter: 24px;
+  --archive-gap: 20px;
+  padding-left: var(--archive-gutter);
+  padding-right: var(--archive-gutter);
+  scroll-padding-left: var(--archive-gutter);
+  scroll-padding-right: var(--archive-gutter);
+  scroll-snap-type: x mandatory;
+  gap: var(--archive-gap);
+  background-color: var(--background);
+}
+@media (min-width: 768px) {
+  .archive-scroll {
+    --archive-gutter: 64px;
+    --archive-gap: 32px;
+    scroll-snap-type: x proximity;
+  }
+}
 @media (min-width: 1024px) {
-  /* Slower return on mouse leave */
-  .ep-img-zoom {
-    transition: transform 800ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  .archive-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
-
-  .ep-card:hover .ep-img-zoom {
-    transform: scale(1.02);
-    transition: transform 600ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  .archive-scroll::-webkit-scrollbar {
+    display: none;
   }
 }
 
-/* ── Title nudge on hover (desktop 1024px+) ── */
+/* Card width: partial next-card reveal at every breakpoint */
+.archive-card {
+  width: calc((100vw - var(--archive-gutter) - var(--archive-gap)) / 1.15);
+}
+@media (min-width: 768px) {
+  .archive-card {
+    width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 2.2);
+  }
+}
 @media (min-width: 1024px) {
-  .ep-card-title {
-    transition: transform 500ms ease-out;
-  }
-
-  .ep-card:hover .ep-card-title {
-    transform: translateX(4px);
-    transition: transform 400ms ease-out;
+  .archive-card {
+    width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 2.25);
   }
 }
 
-/* ── Ken Burns idle drift — editorial cards (desktop 1024px+ only) ── */
+/* ——— Custom micro scrollbar (desktop only) ——— */
 
-@keyframes epDriftA {
-  0%, 100% { transform: scale(1) translate(0, 0); }
-  50%       { transform: scale(1.005) translate(0.2%, 0.15%); }
+.archive-scrollbar-track {
+  position: relative;
+  height: 2px;
+  background: hsl(30 10% 12% / 0.04);
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 300ms ease;
 }
 
-@keyframes epDriftB {
-  0%, 100% { transform: scale(1) translate(0, 0); }
-  50%       { transform: scale(1.006) translate(-0.15%, 0.2%); }
+.section-archive:hover .archive-scrollbar-track {
+  opacity: 1;
 }
 
-@keyframes epDriftC {
-  0%, 100% { transform: scale(1) translate(0, 0); }
-  50%       { transform: scale(1.004) translate(0.1%, -0.1%); }
-}
-
-@media (min-width: 1024px) {
-  .ep-drift-a { animation: epDriftA 22s ease-in-out infinite; will-change: transform; }
-  .ep-drift-b { animation: epDriftB 26s ease-in-out infinite; will-change: transform; }
-  .ep-drift-c { animation: epDriftC 19s ease-in-out infinite; will-change: transform; }
+.archive-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: hsl(30 10% 12% / 0.15);
+  border-radius: 9999px;
+  will-change: transform;
 }
 
 @media (max-width: 1023px) {
-  .ep-drift-a, .ep-drift-b, .ep-drift-c {
-    animation: none !important;
+  .archive-scrollbar-track {
+    display: none;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .ep-drift-a, .ep-drift-b, .ep-drift-c {
-    animation: none !important;
-  }
+/* ——— Scroll hint indicator ——— */
 
-  .ep-img-zoom {
+.archive-scroll-hint {
+  opacity: 0.35;
+  transition: opacity 600ms ease;
+}
+
+.archive-scroll-hint[data-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ——— Reduced motion: disable grain, blur, and archive transitions ——— */
+
+@media (prefers-reduced-motion: reduce) {
+  .archive-img-reduced {
     transition: none !important;
   }
-
-  .ep-card-title {
+  .archive-scrollbar-track {
+    transition: none !important;
+  }
+  .archive-scroll-hint {
     transition: none !important;
   }
 }
