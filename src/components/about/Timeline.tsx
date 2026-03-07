@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import SanityImage from "@/components/SanityImage";
 import type { AboutMilestone } from "@/lib/types";
 
@@ -8,10 +8,23 @@ const CARD_W = 280;
 const CARD_W_MOBILE = 240;
 const GAP = 24;
 const GAP_MOBILE = 16;
-const MAX_BLUR = 4;
-const MAX_SEPIA = 0.6;
-const MIN_OPACITY = 0.4;
-const MIN_SCALE = 0.95;
+
+type DeviceCategory = "mobile" | "tablet" | "desktop";
+
+function getDeviceCategory(): DeviceCategory {
+  if (typeof window === "undefined") return "desktop";
+  const w = window.innerWidth;
+  if (w < 768) return "mobile";
+  if (w < 1024) return "tablet";
+  return "desktop";
+}
+
+// Focus-effect parameters per device category
+const FOCUS_PARAMS = {
+  desktop: { maxBlur: 4, maxSepia: 1.0, minOpacity: 0.4, minScale: 0.95 },
+  tablet:  { maxBlur: 2, maxSepia: 0.6, minOpacity: 0.5, minScale: 0.95 },
+  mobile:  null, // no focus effect
+} as const;
 
 export default function Timeline({ milestones }: { milestones: AboutMilestone[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -19,11 +32,41 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
+  const deviceRef = useRef<DeviceCategory>("desktop");
+  const [device, setDevice] = useState<DeviceCategory>("desktop");
+
+  // Keep device category in sync on mount + resize
+  useEffect(() => {
+    const update = () => {
+      const cat = getDeviceCategory();
+      deviceRef.current = cat;
+      setDevice(cat);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   const applyFocus = useCallback(() => {
     const container = scrollRef.current;
     if (!container) return;
+
+    const params = FOCUS_PARAMS[deviceRef.current];
+
+    // On mobile, clear any leftover inline styles and skip
+    if (!params) {
+      for (const card of cardsRef.current) {
+        if (!card) continue;
+        card.style.filter = "";
+        card.style.opacity = "";
+        card.style.transform = "";
+        card.style.removeProperty("--sepia");
+      }
+      return;
+    }
+
     const centerX = container.scrollLeft + container.clientWidth / 2;
+    const { maxBlur, maxSepia, minOpacity, minScale } = params;
 
     for (const card of cardsRef.current) {
       if (!card) continue;
@@ -32,10 +75,10 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
       const maxDist = container.clientWidth / 2;
       const t = Math.min(dist / maxDist, 1); // 0 = center, 1 = edge
 
-      const blur = t * MAX_BLUR;
-      const sepia = t * MAX_SEPIA;
-      const opacity = 1 - t * (1 - MIN_OPACITY);
-      const scale = 1 - t * (1 - MIN_SCALE);
+      const blur = t * maxBlur;
+      const sepia = t * maxSepia;
+      const opacity = 1 - t * (1 - minOpacity);
+      const scale = 1 - t * (1 - minScale);
 
       card.style.setProperty("--sepia", String(sepia));
       card.style.filter = `blur(${blur}px) sepia(${sepia}) saturate(0.8)`;
@@ -48,27 +91,39 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
     const container = scrollRef.current;
     if (!container) return;
 
-    // Set dynamic padding so first/last card can reach center
     const updatePadding = () => {
-      const isMobile = window.innerWidth < 768;
-      const cardW = isMobile ? CARD_W_MOBILE : CARD_W;
-      const pad = Math.max(0, container.clientWidth / 2 - cardW / 2);
-      container.style.paddingLeft = `${pad}px`;
-      container.style.paddingRight = `${pad}px`;
+      const cat = deviceRef.current;
+      const cardW = cat === "mobile" ? CARD_W_MOBILE : CARD_W;
+      // On mobile, no centering padding needed — just small inset
+      if (cat === "mobile") {
+        container.style.paddingLeft = "16px";
+        container.style.paddingRight = "16px";
+      } else {
+        const pad = Math.max(0, container.clientWidth / 2 - cardW / 2);
+        container.style.paddingLeft = `${pad}px`;
+        container.style.paddingRight = `${pad}px`;
+      }
       applyFocus();
     };
 
     updatePadding();
     window.addEventListener("resize", updatePadding);
-    container.addEventListener("scroll", applyFocus, { passive: true });
+
+    const onScroll = () => {
+      // Skip scroll-based focus calculation on mobile
+      if (deviceRef.current !== "mobile") {
+        applyFocus();
+      }
+    };
+    container.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
       window.removeEventListener("resize", updatePadding);
-      container.removeEventListener("scroll", applyFocus);
+      container.removeEventListener("scroll", onScroll);
     };
   }, [applyFocus]);
 
-  // Drag-to-scroll (desktop)
+  // Drag-to-scroll (desktop only)
   const onPointerDown = (e: React.PointerEvent) => {
     const container = scrollRef.current;
     if (!container || e.pointerType === "touch") return;
@@ -92,21 +147,27 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
     scrollRef.current.style.cursor = "grab";
   };
 
+  const isMobile = device === "mobile";
+
   return (
     <div className="relative">
-      {/* Edge fades */}
-      <div
-        className="edge-fade absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
-        style={{
-          background: "linear-gradient(to right, var(--background), transparent)",
-        }}
-      />
-      <div
-        className="edge-fade absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
-        style={{
-          background: "linear-gradient(to left, var(--background), transparent)",
-        }}
-      />
+      {/* Edge fades — hidden on mobile */}
+      {!isMobile && (
+        <>
+          <div
+            className="edge-fade absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+            style={{
+              background: "linear-gradient(to right, var(--background), transparent)",
+            }}
+          />
+          <div
+            className="edge-fade absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+            style={{
+              background: "linear-gradient(to left, var(--background), transparent)",
+            }}
+          />
+        </>
+      )}
 
       {/* Scroll container */}
       <div
@@ -117,9 +178,9 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
         onPointerCancel={onPointerUp}
         className="flex select-none overflow-x-auto"
         style={{
-          gap: GAP,
+          gap: isMobile ? GAP_MOBILE : GAP,
           scrollbarWidth: "none",
-          cursor: "grab",
+          cursor: isMobile ? "default" : "grab",
           WebkitOverflowScrolling: "touch",
         }}
       >
@@ -129,9 +190,13 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
             ref={(el) => { cardsRef.current[idx] = el; }}
             className="film-card flex-shrink-0"
             style={{
-              width: CARD_W,
-              willChange: "filter, opacity, transform",
-              transition: "filter 0.15s ease, opacity 0.15s ease, transform 0.15s ease",
+              width: isMobile ? CARD_W_MOBILE : CARD_W,
+              ...(isMobile
+                ? {}
+                : {
+                    willChange: "filter, opacity, transform",
+                    transition: "filter 0.15s ease, opacity 0.15s ease, transform 0.15s ease",
+                  }),
             }}
           >
             {/* Image frame */}
@@ -179,26 +244,12 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
 
       {/* Responsive & reduced-motion overrides */}
       <style jsx>{`
-        .film-card {
-          width: ${CARD_W}px;
-        }
         .edge-fade {
           width: 120px;
         }
         @media (max-width: 1023px) {
           .edge-fade {
             width: 60px;
-          }
-        }
-        @media (max-width: 767px) {
-          .film-card {
-            width: ${CARD_W_MOBILE}px;
-          }
-          .edge-fade {
-            width: 32px;
-          }
-          div[style*="gap"] {
-            gap: ${GAP_MOBILE}px;
           }
         }
         @media (prefers-reduced-motion: reduce) {
