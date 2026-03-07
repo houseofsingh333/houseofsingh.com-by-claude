@@ -472,6 +472,7 @@ body {
 /* ——— Footer Mobile (below 768px) ——— */
 
 @media (max-width: 767px) {
+  /* SECTION 1: TOP CTA AREA — centered */
   .footer-crest {
     width: 96px;
     margin: 0 auto 24px;
@@ -487,7 +488,6 @@ body {
     gap: 0;
   }
 
-  /* CTA — centered on mobile */
   .footer-col-left {
     order: 1;
     text-align: center;
@@ -497,37 +497,55 @@ body {
     justify-content: center;
   }
 
-  .footer-cta-subtitle {
-    max-width: none;
+  .footer-cta-heading {
+    font-size: 26px;
   }
 
-  /* Nav + Newsletter */
+  .footer-cta-subtitle {
+    font-size: 13px;
+    color: var(--muted-foreground);
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  /* SECTION 2: NAVIGATION — left-aligned, compact */
   .footer-col-center {
     order: 2;
-    margin-top: 36px;
-    padding-top: 36px;
-    border-top: 1px solid var(--border);
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
     text-align: left;
   }
 
-  /* Navigation links: left-aligned, tighter vertical spacing */
   .footer-nav {
     gap: 0;
   }
 
   .footer-nav-link {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    font-weight: 400;
     line-height: 1.2;
-    padding: 7px 0;
+    padding: 8px 0;
     min-height: 44px;
     display: flex;
     align-items: center;
   }
 
-  /* Newsletter section with visual separation */
+  /* Newsletter section — separated by thin line */
   .footer-newsletter {
-    margin-top: 28px;
-    padding-top: 28px;
-    border-top: 1px solid var(--border);
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .footer-nl-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    line-height: 1.2;
+    margin-bottom: 12px;
   }
 
   .footer-nl-form {
@@ -541,27 +559,33 @@ body {
     width: 100%;
     flex: 1;
     min-width: 0;
-    font-size: 14px;
+    font-size: 12px;
+  }
+
+  .footer-nl-input::placeholder {
+    font-size: 12px;
   }
 
   .footer-nl-btn {
-    padding-left: 12px;
+    padding: 0;
     min-width: 44px;
     min-height: 44px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  /* Instagram */
+  /* SECTION 3: INSTAGRAM — visible on mobile */
   .footer-col-right {
     order: 3;
-    margin-top: 36px;
-    padding-top: 36px;
-    border-top: 1px solid var(--border);
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
     justify-self: auto;
     align-items: center;
   }
 
-  /* Hide TOP ↑ in the right column on mobile */
   .footer-top-btn {
     display: none;
   }
@@ -569,27 +593,43 @@ body {
   .footer-ig-box {
     width: 100%;
     max-width: 300px;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 5 / 3;
   }
 
-  /* Bottom bar — stacked vertical, centered */
+  /* SECTION 4: LEGAL BOTTOM — centered, compact */
   .footer-bottom {
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 20px 24px 28px;
+    gap: 4px;
+    padding: 12px 24px 16px;
     text-align: center;
   }
 
   .footer-bottom-left {
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+  }
+
+  .footer-bottom-copyright {
+    font-size: 10px;
+    color: #bbb;
+  }
+
+  .footer-bottom-legal {
+    gap: 16px;
+  }
+
+  .footer-bottom-link {
+    font-size: 10px;
+    color: #bbb;
   }
 
   .footer-bottom-tagline {
     order: 2;
-    margin-top: 4px;
+    font-size: 9px;
+    color: #ccc;
+    margin-top: 2px;
   }
 
   /* Show mobile TOP ↑ button at the very bottom */
