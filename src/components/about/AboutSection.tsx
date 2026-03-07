@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import { PortableText } from "@portabletext/react";
 import SanityImage from "@/components/SanityImage";
 import type { AboutPageData } from "@/lib/types";
@@ -34,6 +35,35 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
     milestones,
     rapidFire,
   } = data;
+
+  const logoRef = useRef<HTMLDivElement>(null);
+  const [logoRevealed, setLogoRevealed] = useState(false);
+
+  useEffect(() => {
+    const el = logoRef.current;
+    if (!el) return;
+
+    // Skip animation for users who prefer reduced motion
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReducedMotion) {
+      setLogoRevealed(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLogoRevealed(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const roles = founderRoles ?? [
     "Creative Director",
@@ -113,16 +143,27 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-center">
             {/* Logo — left */}
-            <div className="md:col-span-4 flex justify-center">
+            <div
+              ref={logoRef}
+              className="md:col-span-5 flex justify-center"
+              style={{
+                clipPath: logoRevealed
+                  ? "circle(75% at 50% 50%)"
+                  : "circle(0% at 50% 50%)",
+                opacity: logoRevealed ? 0.6 : 0,
+                transition:
+                  "clip-path 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s ease",
+              }}
+            >
               <img
                 src="/images/hos-logo.svg"
                 alt="House of Singh"
-                className="w-36 md:w-44 opacity-40"
+                className="w-36 md:w-44"
               />
             </div>
 
             {/* Text — right */}
-            <div className="md:col-span-8 space-y-6">
+            <div className="md:col-span-7 space-y-6">
               {monikerText ? (
                 <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-6 last:[&>p]:mb-0">
                   <PortableText value={monikerText} />
