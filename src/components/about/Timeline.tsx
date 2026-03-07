@@ -154,13 +154,13 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
           <div
             className="edge-fade absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
             style={{
-              background: "linear-gradient(to right, var(--background), transparent)",
+              background: "linear-gradient(to right, var(--background) 0%, color-mix(in srgb, var(--background) 70%, transparent) 30%, color-mix(in srgb, var(--background) 30%, transparent) 60%, transparent 100%)",
             }}
           />
           <div
             className="edge-fade absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
             style={{
-              background: "linear-gradient(to left, var(--background), transparent)",
+              background: "linear-gradient(to left, var(--background) 0%, color-mix(in srgb, var(--background) 70%, transparent) 30%, color-mix(in srgb, var(--background) 30%, transparent) 60%, transparent 100%)",
             }}
           />
         </>
@@ -260,8 +260,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
 
           .film-card--mobile {
             scroll-snap-align: center;
-            transform-origin: center center;
-            will-change: transform, filter, opacity;
+            will-change: filter, opacity;
           }
         }
 
@@ -283,17 +282,14 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
             0% {
               filter: grayscale(1);
               opacity: 0.6;
-              transform: scale(0.88);
             }
             50% {
               filter: grayscale(0);
               opacity: 1;
-              transform: scale(1);
             }
             100% {
               filter: grayscale(1);
               opacity: 0.6;
-              transform: scale(0.88);
             }
           }
 
@@ -309,7 +305,6 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
             .film-card--mobile {
               filter: grayscale(0);
               opacity: 1;
-              transform: scale(1);
             }
           }
         }
@@ -324,7 +319,6 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
             animation: none !important;
             filter: grayscale(var(--grayscale, 0)) !important;
             opacity: 1 !important;
-            transform: scale(1) !important;
           }
         }
       `}</style>
