@@ -177,7 +177,7 @@ export default function JournalPreview({ entries }: Props) {
                 <SanityImage
                   image={entry.coverImage}
                   context="thumbnail"
-                  alt=""
+                  alt={entry.title}
                   fill
                   className="object-cover grayscale"
                 />

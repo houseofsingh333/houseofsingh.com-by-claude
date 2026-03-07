@@ -13,9 +13,6 @@ export default function GlobalError({
       <p className="text-sm text-muted-foreground max-w-md">
         {error.message || "An unexpected error occurred."}
       </p>
-      {error.digest && (
-        <p className="text-xs text-muted-foreground">Digest: {error.digest}</p>
-      )}
       <button
         onClick={reset}
         className="mt-2 rounded border border-border px-4 py-2 text-sm hover:bg-secondary transition-colors"

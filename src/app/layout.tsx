@@ -74,6 +74,12 @@ export default async function RootLayout({
   return (
     <html lang="en" className={playfair.variable}>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[100] focus:block focus:w-full focus:bg-background focus:px-6 focus:py-3 focus:text-sm focus:text-foreground focus:shadow-md"
+        >
+          Skip to content
+        </a>
         <Header items={navItems} />
         <main id="main-content" className="flex-1">
           <PageTransition>{children}</PageTransition>
