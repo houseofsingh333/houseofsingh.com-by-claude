@@ -107,8 +107,6 @@ export default function ProjectsArchive({ projects }: Props) {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [showScrollHint, setShowScrollHint] = useState(true);
-
   const focusedIndex = hoveredIndex ?? activeIndex;
 
   // Detect reduced motion preference
@@ -121,12 +119,10 @@ export default function ProjectsArchive({ projects }: Props) {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  // Center-card detection + scroll hint dismiss + scrollbar thumb
+  // Center-card detection + scrollbar thumb
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-
-    let hintDismissed = false;
 
     const onScroll = () => {
       // 1. Center-card detection (grayscale→color focus)
@@ -146,13 +142,7 @@ export default function ProjectsArchive({ projects }: Props) {
 
       setActiveIndex((prev) => (prev === closest ? prev : closest));
 
-      // 2. Dismiss "Scroll →" hint on first real scroll
-      if (!hintDismissed && el.scrollLeft > 2) {
-        hintDismissed = true;
-        setShowScrollHint(false);
-      }
-
-      // 3. Update custom scrollbar thumb (via ref — no re-render)
+      // 2. Update custom scrollbar thumb (via ref — no re-render)
       const thumb = thumbRef.current;
       if (thumb) {
         const ratio = el.clientWidth / el.scrollWidth;
@@ -318,21 +308,12 @@ export default function ProjectsArchive({ projects }: Props) {
             <h2 className="font-editorial text-2xl md:text-3xl font-light text-foreground">
               Projects
             </h2>
-            <div className="flex items-baseline gap-6">
-              <span
-                className="archive-scroll-hint text-xs tracking-widest uppercase text-muted-foreground select-none hidden md:inline"
-                data-hidden={!showScrollHint}
-              >
-                Scroll{" "}
-                <span aria-hidden="true">&rarr;</span>
-              </span>
-              <Link
-                href="/projects"
-                className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 border-b border-foreground/30 pb-0.5"
-              >
-                See all
-              </Link>
-            </div>
+            <Link
+              href="/projects"
+              className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 border-b border-foreground/30 pb-0.5"
+            >
+              See all
+            </Link>
           </div>
           <div className="w-full h-px bg-border" />
         </div>

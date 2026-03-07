@@ -1205,14 +1205,12 @@ body {
     scroll-snap-type: x proximity;
   }
 }
-@media (min-width: 1024px) {
-  .archive-scroll {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .archive-scroll::-webkit-scrollbar {
-    display: none;
-  }
+.archive-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.archive-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 /* Card width: partial next-card reveal at every breakpoint */
@@ -1261,17 +1259,6 @@ body {
   }
 }
 
-/* ——— Scroll hint indicator ——— */
-
-.archive-scroll-hint {
-  opacity: 0.35;
-  transition: opacity 600ms ease;
-}
-
-.archive-scroll-hint[data-hidden="true"] {
-  opacity: 0;
-  pointer-events: none;
-}
 
 /* ——— Reduced motion: disable grain, blur, and archive transitions ——— */
 
@@ -1280,9 +1267,6 @@ body {
     transition: none !important;
   }
   .archive-scrollbar-track {
-    transition: none !important;
-  }
-  .archive-scroll-hint {
     transition: none !important;
   }
 }
