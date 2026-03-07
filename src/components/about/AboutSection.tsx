@@ -144,7 +144,14 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— 4 · Featured On ——— */}
       {featuredOn && featuredOn.length > 0 && (
-        <section className="px-6 md:px-16 section-py-lg">
+        <section
+          className="px-6 md:px-16 section-py-lg"
+          style={{
+            backgroundColor: "#ede9e4",
+            paddingTop: "70px",
+            paddingBottom: "70px",
+          }}
+        >
           <SectionDivider label="Featured On" />
           <FeaturedOn outlets={featuredOn} />
         </section>

@@ -44,12 +44,22 @@ function FeaturedRow({
 }) {
   const date = formatDate(outlet.date);
   const hasImage = !!outlet.image;
+  const indexLabel = String(index + 1).padStart(2, "0");
 
   const rowContent = (
     <div className="featured-row flex items-center gap-6 py-6 md:py-7">
+      {/* Numbered index */}
+      <span
+        className="shrink-0 w-8 text-center text-xs font-normal text-foreground/20 select-none"
+        aria-hidden="true"
+        style={{ fontFamily: "var(--font-sans, system-ui, sans-serif)" }}
+      >
+        {indexLabel}
+      </span>
+
       {/* Thumbnail */}
       {hasImage && (
-        <div className="featured-row-thumb hidden md:block shrink-0 w-[220px] h-[140px] overflow-hidden bg-secondary">
+        <div className="featured-row-thumb hidden md:block shrink-0 w-[220px] h-[140px] overflow-hidden bg-secondary border border-black/[0.08]">
           <SanityImage
             image={outlet.image!}
             context="thumbnail"
