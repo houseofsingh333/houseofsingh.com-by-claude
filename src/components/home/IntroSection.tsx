@@ -1,9 +1,11 @@
 "use client";
 
+import { useRef, useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
+import { useMediaQuery, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import type { HomeIntroData } from "@/lib/placeholder-data";
 
 const FALLBACK_ROLES = [
@@ -13,7 +15,7 @@ const FALLBACK_ROLES = [
 ];
 
 const FALLBACK_BIO =
-  "Based in Toronto, Maninder Singh blends design and photography to craft stories that feel both visually refined and emotionally resonant. His practice spans brand identities, editorial work, and fine art — always grounded in intention and detail.";
+  "Blending design and photography to craft stories that feel both visually refined and emotionally resonant.";
 
 const FALLBACK_PORTRAIT = "/images/hero-placeholder-1.svg";
 
@@ -24,9 +26,56 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
       : FALLBACK_ROLES;
   const portrait = data.portrait ?? FALLBACK_PORTRAIT;
   const founderName = data.founderName ?? "Maninder Singh";
-  const nameParts = founderName.split(" ");
-  const firstName = nameParts[0];
-  const lastName = nameParts.slice(1).join(" ");
+
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  // Desktop spotlight state
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (prefersReducedMotion || !isDesktop) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
+      e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
+      e.currentTarget.setAttribute("data-hovering", "true");
+    },
+    [prefersReducedMotion, isDesktop],
+  );
+
+  const handleMouseLeave = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.currentTarget.removeAttribute("data-hovering");
+    },
+    [],
+  );
+
+  // Mobile touch reveal state
+  const [isTouching, setIsTouching] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const hintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleTouchStart = useCallback(() => {
+    if (prefersReducedMotion) return;
+    setIsTouching(true);
+    if (!hasInteracted) {
+      setHasInteracted(true);
+    }
+  }, [prefersReducedMotion, hasInteracted]);
+
+  const handleTouchEnd = useCallback(() => {
+    if (prefersReducedMotion) return;
+    setIsTouching(false);
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    return () => {
+      if (hintTimeoutRef.current) clearTimeout(hintTimeoutRef.current);
+    };
+  }, []);
 
   return (
     <section className="px-6 md:px-16 section-py">
@@ -34,7 +83,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
       <ScrollReveal>
         <div className="mb-16">
           <p className="text-xs tracking-widest uppercase text-muted-foreground">
-            About
+            The Creative
           </p>
           <div className="w-full h-px bg-border mt-4" />
         </div>
@@ -42,37 +91,77 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
 
       {/* Two-column layout */}
       <div className="relative grid grid-cols-1 md:grid-cols-12 gap-y-8 md:gap-x-8 md:gap-y-0 items-start">
-        {/* Portrait + name overlap — left */}
+        {/* Portrait + caption — left */}
         <div className="md:col-span-5 md:col-start-1 relative">
           <ScrollReveal delay={0.15} offset={6} duration={0.6}>
-            <div className="relative w-full aspect-square md:aspect-[4/5] max-h-[65vh] overflow-hidden bg-background">
+            <div
+              ref={containerRef}
+              className="intro-portrait-container relative w-full aspect-square md:aspect-[4/5] max-h-[65vh] overflow-hidden bg-background"
+              onMouseMove={!prefersReducedMotion && isDesktop ? handleMouseMove : undefined}
+              onMouseLeave={!prefersReducedMotion && isDesktop ? handleMouseLeave : undefined}
+              onTouchStart={!prefersReducedMotion && !isDesktop ? handleTouchStart : undefined}
+              onTouchEnd={!prefersReducedMotion && !isDesktop ? handleTouchEnd : undefined}
+              onTouchCancel={!prefersReducedMotion && !isDesktop ? handleTouchEnd : undefined}
+              style={
+                !prefersReducedMotion && isDesktop
+                  ? { cursor: "crosshair" }
+                  : undefined
+              }
+            >
+              {/* Clear image layer (bottom) */}
               <SanityImage
                 image={portrait}
                 context="body"
                 alt={`${founderName} — ${roles.join(", ")}`}
                 fill
-                className="object-cover [object-position:35%_20%] grayscale blur-[1px]"
+                className="object-cover [object-position:35%_20%] grayscale"
               />
+              {/* Blurred image layer (top) */}
+              <div
+                className={`absolute inset-0 intro-blur-layer ${
+                  !isDesktop && isTouching ? "intro-blur-layer--revealed" : ""
+                }`}
+              >
+                <SanityImage
+                  image={portrait}
+                  context="body"
+                  alt=""
+                  fill
+                  className="object-cover [object-position:35%_20%] grayscale blur-[8px]"
+                />
+              </div>
               <div
                 className="archive-grain absolute inset-0 z-10 pointer-events-none"
                 aria-hidden="true"
               />
             </div>
-          </ScrollReveal>
 
-          {/* Name — baseline of SINGH aligns with bottom edge of image on desktop */}
-          <div className="mt-6 md:mt-0 md:absolute md:bottom-0 md:-right-8 lg:-right-12 md:z-20">
-            <ScrollReveal delay={0.28} offset={6} duration={0.6}>
-              <p className="text-xl md:text-2xl lg:text-3xl font-light uppercase tracking-[0.2em] text-foreground/65 leading-none">
-                {firstName}
+            {/* Name caption below image */}
+            <p
+              className="mt-[14px] uppercase text-muted-foreground"
+              style={{
+                fontSize: "10px",
+                letterSpacing: "0.2em",
+              }}
+            >
+              {founderName}
+            </p>
+
+            {/* Mobile hint text */}
+            {!isDesktop && !prefersReducedMotion && (
+              <p
+                className={`mt-2 uppercase text-muted-foreground transition-opacity duration-500 ${
+                  hasInteracted ? "opacity-0" : "opacity-100"
+                }`}
+                style={{
+                  fontSize: "9px",
+                  letterSpacing: "0.15em",
+                }}
+              >
+                Hold to reveal
               </p>
-            </ScrollReveal>
-            <ScrollReveal delay={0.4} offset={6} duration={0.6}>
-              <p className="text-[2.5rem] md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-foreground leading-none mt-0.5">
-                {lastName}
-              </p>
-            </ScrollReveal>
-          </div>
+            )}
+          </ScrollReveal>
         </div>
 
         {/* Text content — right */}
@@ -91,14 +180,24 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
             </div>
           </ScrollReveal>
 
-          {/* Bio */}
+          {/* Bio — pull-quote style */}
           <ScrollReveal delay={0.6} offset={10}>
             {data.founderBio ? (
-              <div className="text-[15px] md:text-base text-muted-foreground leading-[1.8] max-w-lg [&>p]:mb-4 [&>p:last-child]:mb-0">
+              <div
+                className="font-editorial italic text-muted-foreground max-w-[420px] leading-[1.5] [&>p]:mb-4 [&>p:last-child]:mb-0"
+                style={{
+                  fontSize: "clamp(20px, 2.2vw, 28px)",
+                }}
+              >
                 <PortableText value={data.founderBio} />
               </div>
             ) : (
-              <p className="text-[15px] md:text-base text-muted-foreground leading-[1.8] max-w-lg">
+              <p
+                className="font-editorial italic text-muted-foreground max-w-[420px] leading-[1.5]"
+                style={{
+                  fontSize: "clamp(20px, 2.2vw, 28px)",
+                }}
+              >
                 {FALLBACK_BIO}
               </p>
             )}
@@ -108,10 +207,20 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
           <ScrollReveal delay={0.7} offset={10}>
             <Link
               href="/about"
-              className="inline-flex items-center gap-3 text-xs tracking-widest uppercase text-foreground group w-fit"
+              className="inline-flex items-center gap-3 uppercase text-foreground group w-fit"
+              style={{
+                fontSize: "11px",
+                letterSpacing: "0.18em",
+              }}
             >
-              <span className="border-b border-foreground/30 pb-1 group-hover:border-foreground transition-colors duration-300">
-                About
+              <span
+                className="group-hover:border-foreground/40 transition-colors duration-300"
+                style={{
+                  borderBottom: "1px solid rgba(0, 0, 0, 0.2)",
+                  paddingBottom: "4px",
+                }}
+              >
+                More about him
               </span>
               <span className="transition-transform duration-300 group-hover:translate-x-1">
                 →
