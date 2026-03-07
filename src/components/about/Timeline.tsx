@@ -5,7 +5,6 @@ import SanityImage from "@/components/SanityImage";
 import type { AboutMilestone } from "@/lib/types";
 
 const CARD_W = 280;
-const CARD_W_MOBILE = 240;
 const GAP = 24;
 const GAP_MOBILE = 16;
 
@@ -23,7 +22,7 @@ function getDeviceCategory(): DeviceCategory {
 const FOCUS_PARAMS = {
   desktop: { maxBlur: 4, maxSepia: 1.0, minOpacity: 0.4, minScale: 0.95 },
   tablet:  { maxBlur: 2, maxSepia: 0.6, minOpacity: 0.5, minScale: 0.95 },
-  mobile:  null, // no focus effect
+  mobile:  null, // no JS focus effect — handled by CSS scroll-driven animations
 } as const;
 
 export default function Timeline({ milestones }: { milestones: AboutMilestone[] }) {
@@ -93,13 +92,13 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
 
     const updatePadding = () => {
       const cat = deviceRef.current;
-      const cardW = cat === "mobile" ? CARD_W_MOBILE : CARD_W;
-      // On mobile, no centering padding needed — just small inset
       if (cat === "mobile") {
-        container.style.paddingLeft = "16px";
-        container.style.paddingRight = "16px";
+        // Center-snap padding: first and last card can snap to center
+        const pad = Math.max(0, container.clientWidth / 2 - CARD_W / 2);
+        container.style.paddingLeft = `${pad}px`;
+        container.style.paddingRight = `${pad}px`;
       } else {
-        const pad = Math.max(0, container.clientWidth / 2 - cardW / 2);
+        const pad = Math.max(0, container.clientWidth / 2 - CARD_W / 2);
         container.style.paddingLeft = `${pad}px`;
         container.style.paddingRight = `${pad}px`;
       }
@@ -109,8 +108,8 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
     updatePadding();
     window.addEventListener("resize", updatePadding);
 
+    // Only attach scroll listener for focus calculation on non-mobile
     const onScroll = () => {
-      // Skip scroll-based focus calculation on mobile
       if (deviceRef.current !== "mobile") {
         applyFocus();
       }
@@ -176,7 +175,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
-        className="flex select-none overflow-x-auto"
+        className={`timeline-scroll flex select-none overflow-x-auto${isMobile ? " timeline-scroll--mobile" : ""}`}
         style={{
           gap: isMobile ? GAP_MOBILE : GAP,
           scrollbarWidth: "none",
@@ -188,9 +187,9 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
           <div
             key={m.year + idx}
             ref={(el) => { cardsRef.current[idx] = el; }}
-            className="film-card flex-shrink-0"
+            className={`film-card flex-shrink-0${isMobile ? " film-card--mobile" : ""}`}
             style={{
-              width: isMobile ? CARD_W_MOBILE : CARD_W,
+              width: CARD_W,
               ...(isMobile
                 ? {}
                 : {
@@ -252,11 +251,90 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
             width: 60px;
           }
         }
+
+        /* ─── Mobile: scroll-snap + CSS scroll-driven animations ─── */
+        @media (max-width: 767px) {
+          /* Scroll-snap on the container for frame-by-frame film feel */
+          .timeline-scroll--mobile {
+            scroll-snap-type: x mandatory;
+            overflow-x: auto;
+          }
+
+          /* Each card snaps to center */
+          .film-card--mobile {
+            scroll-snap-align: center;
+          }
+        }
+
+        /*
+         * CSS Scroll-Driven Animation (mobile only)
+         *
+         * Uses animation-timeline: view(inline) to track each card's
+         * horizontal position within the scroll container's viewport.
+         * As a card enters from either side, it starts sepia/faded/scaled-down
+         * and transitions to full color/opacity/scale at the center snap point,
+         * then fades back out as it exits the other side.
+         *
+         * Browser support: Chrome 115+, Edge 115+. For unsupported browsers
+         * (Safari, Firefox as of early 2026), the @supports fallback shows
+         * all cards at full color/scale with no animation.
+         */
+        @media (max-width: 767px) {
+          /* Scroll-driven animation keyframes */
+          @keyframes sepia-to-color {
+            0% {
+              filter: sepia(0.8);
+              opacity: 0.6;
+              transform: scale(0.88);
+            }
+            50% {
+              filter: sepia(0);
+              opacity: 1;
+              transform: scale(1);
+            }
+            100% {
+              filter: sepia(0.8);
+              opacity: 0.6;
+              transform: scale(0.88);
+            }
+          }
+
+          /* Apply scroll-driven animation when supported */
+          @supports (animation-timeline: view()) {
+            .film-card--mobile {
+              animation: sepia-to-color linear both;
+              animation-timeline: view(inline);
+              /* Start the effect a bit before the card enters and end a bit after it exits */
+              animation-range: entry 0% exit 100%;
+            }
+          }
+
+          /*
+           * Fallback: if scroll-driven animations are NOT supported,
+           * show all cards at full color, full opacity, full scale.
+           * Scroll-snap still works regardless.
+           */
+          @supports not (animation-timeline: view()) {
+            .film-card--mobile {
+              filter: none;
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .film-card {
             transition: opacity 0.15s ease !important;
             filter: sepia(var(--sepia, 0)) saturate(0.8) !important;
             transform: none !important;
+          }
+          /* Disable scroll-driven animation for reduced motion */
+          .film-card--mobile {
+            animation: none !important;
+            filter: none !important;
+            opacity: 1 !important;
+            transform: scale(1) !important;
           }
         }
       `}</style>
