@@ -47,6 +47,7 @@ export default function ProjectsFilteredGrid({
   });
 
   const gridRef = useRef<HTMLDivElement>(null);
+  const filterRowRef = useRef<HTMLDivElement>(null);
   const [fadingOut, setFadingOut] = useState(false);
 
   const handleFilter = useCallback((category: string) => {
@@ -68,8 +69,16 @@ export default function ProjectsFilteredGrid({
       }
       window.history.replaceState({}, "", url.toString());
 
-      // Scroll to grid top
-      gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Scroll so the filter row sits at the top of the viewport,
+      // just below any fixed header.
+      if (filterRowRef.current) {
+        const headerOffset = 80; // accounts for fixed header height
+        const top =
+          filterRowRef.current.getBoundingClientRect().top +
+          window.scrollY -
+          headerOffset;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
 
       // Allow a frame for DOM update, then fade in
       requestAnimationFrame(() => {
@@ -88,7 +97,7 @@ export default function ProjectsFilteredGrid({
   return (
     <div>
       {/* ——— Horizontal filter rail ——— */}
-      <div className="mb-10 md:mb-14">
+      <div ref={filterRowRef} className="mb-10 md:mb-14">
         <ProjectsFiltersHorizontal
           categories={categories}
           active={active}
