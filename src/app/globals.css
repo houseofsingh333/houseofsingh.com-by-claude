@@ -1201,7 +1201,7 @@ body {
 @media (min-width: 768px) {
   .archive-scroll {
     --archive-gutter: 64px;
-    --archive-gap: 32px;
+    --archive-gap: 20px;
     scroll-snap-type: x proximity;
   }
 }

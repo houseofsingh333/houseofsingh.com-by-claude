@@ -40,8 +40,8 @@ function ProjectCard({
       onFocus={onFocus}
       onBlur={onBlur}
     >
-      {/* Image — 4:5 portrait ratio, capped so heading + image + text fit in viewport */}
-      <div className="relative aspect-[4/5] max-h-[60vh] overflow-hidden mb-4 md:mb-5">
+      {/* Image — 3:4 portrait ratio, capped so heading + image + text fit in viewport */}
+      <div className="relative aspect-[3/4] max-h-[60vh] overflow-hidden mb-4 md:mb-5">
         {/* Grain overlay */}
         <div
           className={`archive-grain absolute inset-0 z-10 pointer-events-none transition-opacity duration-300 ${
@@ -53,14 +53,11 @@ function ProjectCard({
           className={`archive-img-wrap w-full h-full ${prefersReducedMotion ? "archive-img-reduced" : ""}`}
           style={
             prefersReducedMotion
-              ? {
-                  filter: isFocused ? "grayscale(0)" : "grayscale(1)",
-                  transition: "filter 300ms ease-in-out",
-                }
+              ? undefined
               : {
                   filter: isFocused
-                    ? "grayscale(0) contrast(1) brightness(1) blur(0px)"
-                    : "grayscale(1) contrast(0.9) brightness(0.95) blur(0.6px)",
+                    ? "brightness(1)"
+                    : "brightness(0.95)",
                   transition: "filter 300ms ease-in-out",
                 }
           }
