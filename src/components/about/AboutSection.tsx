@@ -38,6 +38,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
   const logoRef = useRef<HTMLDivElement>(null);
   const [logoRevealed, setLogoRevealed] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
     const el = logoRef.current;
@@ -48,6 +49,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       "(prefers-reduced-motion: reduce)"
     ).matches;
     if (prefersReducedMotion) {
+      setReducedMotion(true);
       setLogoRevealed(true);
       return;
     }
@@ -158,12 +160,26 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
               <img
                 src="/images/hos-logo.svg"
                 alt="House of Singh"
-                className="w-36 md:w-44"
+                className="w-48 md:w-64"
               />
             </div>
 
             {/* Text — right */}
-            <div className="md:col-span-7 space-y-6">
+            <div
+              className="md:col-span-7 space-y-6"
+              style={
+                reducedMotion
+                  ? {}
+                  : {
+                      opacity: logoRevealed ? 1 : 0,
+                      transform: logoRevealed
+                        ? "translateY(0)"
+                        : "translateY(16px)",
+                      transition:
+                        "opacity 0.8s ease 0.4s, transform 0.8s ease 0.4s",
+                    }
+              }
+            >
               {monikerText ? (
                 <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-6 last:[&>p]:mb-0">
                   <PortableText value={monikerText} />
