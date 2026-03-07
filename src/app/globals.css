@@ -478,7 +478,7 @@ body {
   }
 
   .footer-main {
-    padding: 40px 24px;
+    padding: 32px 24px;
   }
 
   .footer-grid {
@@ -504,28 +504,59 @@ body {
   /* Nav + Newsletter */
   .footer-col-center {
     order: 2;
-    margin-top: 40px;
+    margin-top: 36px;
+    padding-top: 36px;
+    border-top: 1px solid var(--border);
+    text-align: left;
+  }
+
+  /* Navigation links: left-aligned, tighter vertical spacing */
+  .footer-nav {
+    gap: 0;
+  }
+
+  .footer-nav-link {
+    line-height: 1.2;
+    padding: 7px 0;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Newsletter section with visual separation */
+  .footer-newsletter {
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
   }
 
   .footer-nl-form {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
   }
 
   .footer-nl-input {
     width: 100%;
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
   }
 
   .footer-nl-btn {
-    padding-left: 0;
-    align-self: flex-end;
+    padding-left: 12px;
+    min-width: 44px;
+    min-height: 44px;
+    flex-shrink: 0;
   }
 
   /* Instagram */
   .footer-col-right {
     order: 3;
-    margin-top: 40px;
+    margin-top: 36px;
+    padding-top: 36px;
+    border-top: 1px solid var(--border);
     justify-self: auto;
     align-items: center;
   }
@@ -538,26 +569,27 @@ body {
   .footer-ig-box {
     width: 100%;
     max-width: 300px;
-    height: 0;
-    padding-bottom: min(100%, 300px);
+    aspect-ratio: 1 / 1;
   }
 
-  /* Bottom bar — stacked vertical */
+  /* Bottom bar — stacked vertical, centered */
   .footer-bottom {
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     padding: 20px 24px 28px;
+    text-align: center;
   }
 
   .footer-bottom-left {
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
   }
 
   .footer-bottom-tagline {
     order: 2;
+    margin-top: 4px;
   }
 
   /* Show mobile TOP ↑ button at the very bottom */
@@ -571,7 +603,8 @@ body {
     border: none;
     background: none;
     cursor: pointer;
-    padding: 0;
+    padding: 8px 0;
+    min-height: 44px;
     font-family: inherit;
   }
 
