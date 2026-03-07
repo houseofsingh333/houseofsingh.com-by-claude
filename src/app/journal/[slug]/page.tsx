@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PortableText } from "@portabletext/react";
 import ReadingProgress from "@/components/ReadingProgress";
 import SanityImage from "@/components/SanityImage";
 import { sanityFetch } from "@/sanity/fetch";
@@ -110,11 +111,34 @@ export default async function JournalDetailPage({ params }: Props) {
 
         {/* Body */}
         <div className="text-muted-foreground leading-relaxed space-y-6 mb-16">
-          <p>{resolved.excerpt}</p>
-          <p className="text-sm text-muted-foreground/60">
-            Full journal content with Portable Text will render here once Sanity
-            is connected.
-          </p>
+          {resolved.body && resolved.body.length > 0 ? (
+            <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] [&>p]:mb-6 last:[&>p]:mb-0">
+              <PortableText
+                value={resolved.body}
+                components={{
+                  types: {
+                    image: ({ value }: { value: Record<string, unknown> }) => (
+                      <figure className="my-8">
+                        <SanityImage
+                          image={value as unknown as import("@/lib/sanityImage").SanityImageAsset}
+                          context="body"
+                          alt={(value.alt as string) ?? ""}
+                          className="w-full"
+                        />
+                        {typeof value.caption === "string" && (
+                          <figcaption className="text-xs text-muted-foreground/60 mt-2">
+                            {value.caption}
+                          </figcaption>
+                        )}
+                      </figure>
+                    ),
+                  },
+                }}
+              />
+            </div>
+          ) : (
+            <p>{resolved.excerpt}</p>
+          )}
         </div>
 
         {/* Prev / Next navigation */}

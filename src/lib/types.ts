@@ -113,6 +113,7 @@ export type JournalEntry = {
   date: string;
   excerpt: string;
   coverImage?: SanityImage;
+  body?: PortableTextBlock[];
 };
 
 export type SpotlightData = {

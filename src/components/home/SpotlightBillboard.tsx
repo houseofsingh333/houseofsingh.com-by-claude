@@ -52,14 +52,16 @@ export default function SpotlightBillboard({ spotlight }: Props) {
     return () => observer.disconnect();
   }, [prefersReduced]);
 
+  if (!spotlight.image) return null;
+
   const isExternal =
-    spotlight.linkUrl.startsWith("http://") ||
-    spotlight.linkUrl.startsWith("https://");
+    spotlight.linkUrl?.startsWith("http://") ||
+    spotlight.linkUrl?.startsWith("https://");
 
   return (
     <section
       ref={sectionRef}
-      aria-labelledby={TITLE_ID}
+      aria-labelledby={spotlight.title ? TITLE_ID : undefined}
       className="spotlight-section"
     >
       {/* ── Background image with cinematic filter ── */}
@@ -84,59 +86,67 @@ export default function SpotlightBillboard({ spotlight }: Props) {
       <div className="spotlight-content">
         <div className="spotlight-content-inner">
           {/* Label with dash prefix */}
-          <p
-            className="spotlight-label"
-            style={revealStyle(revealed, 20, 600, 0, prefersReduced)}
-          >
-            <span className="spotlight-label-dash" aria-hidden="true" />
-            {spotlight.label}
-          </p>
+          {spotlight.label && (
+            <p
+              className="spotlight-label"
+              style={revealStyle(revealed, 20, 600, 0, prefersReduced)}
+            >
+              <span className="spotlight-label-dash" aria-hidden="true" />
+              {spotlight.label}
+            </p>
+          )}
 
           {/* Title */}
-          <h2
-            id={TITLE_ID}
-            className="spotlight-title-el"
-            style={revealStyle(revealed, 30, 700, 150, prefersReduced)}
-          >
-            {spotlight.title}
-          </h2>
+          {spotlight.title && (
+            <h2
+              id={TITLE_ID}
+              className="spotlight-title-el"
+              style={revealStyle(revealed, 30, 700, 150, prefersReduced)}
+            >
+              {spotlight.title}
+            </h2>
+          )}
 
           {/* Teaser */}
-          <p
-            className="spotlight-teaser"
-            style={revealStyle(revealed, 25, 600, 300, prefersReduced)}
-          >
-            {spotlight.teaser}
-          </p>
+          {spotlight.teaser && (
+            <p
+              className="spotlight-teaser"
+              style={revealStyle(revealed, 25, 600, 300, prefersReduced)}
+            >
+              {spotlight.teaser}
+            </p>
+          )}
 
           {/* CTA */}
-          <div style={revealStyle(revealed, 20, 500, 450, prefersReduced)}>
-            {isExternal ? (
-              <a
-                href={spotlight.linkUrl}
-                className="spotlight-cta"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${spotlight.linkText} (opens in new tab)`}
-              >
-                {spotlight.linkText}
-                <span className="spotlight-cta-arrow" aria-hidden="true">
-                  &rarr;
-                </span>
-              </a>
-            ) : (
-              <Link
-                href={spotlight.linkUrl}
-                className="spotlight-cta"
-                aria-label={spotlight.linkText}
-              >
-                {spotlight.linkText}
-                <span className="spotlight-cta-arrow" aria-hidden="true">
-                  &rarr;
-                </span>
-              </Link>
-            )}
-          </div>
+          {spotlight.linkText && spotlight.linkUrl && (
+            <div style={revealStyle(revealed, 20, 500, 450, prefersReduced)}>
+              {isExternal ? (
+                <a
+                  href={spotlight.linkUrl}
+                  className="spotlight-cta"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${spotlight.linkText} (opens in new tab)`}
+                >
+                  {spotlight.linkText}
+                  <span className="spotlight-cta-arrow" aria-hidden="true">
+                    &rarr;
+                  </span>
+                </a>
+              ) : (
+                <Link
+                  href={spotlight.linkUrl}
+                  className="spotlight-cta"
+                  aria-label={spotlight.linkText}
+                >
+                  {spotlight.linkText}
+                  <span className="spotlight-cta-arrow" aria-hidden="true">
+                    &rarr;
+                  </span>
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
