@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -46,17 +46,37 @@ export default function ProjectsFilteredGrid({
     return match ?? "All";
   });
 
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [fadingOut, setFadingOut] = useState(false);
+
   const handleFilter = useCallback((category: string) => {
-    setActive(category);
-    // Keep URL in sync so filter state is shareable and survives refresh
-    const url = new URL(window.location.href);
-    if (category === "All") {
-      url.searchParams.delete("filter");
-    } else {
-      url.searchParams.set("filter", slugify(category));
-    }
-    window.history.replaceState({}, "", url.toString());
-  }, []);
+    if (category === active) return;
+
+    // Step 1: fade out current cards
+    setFadingOut(true);
+
+    // Step 2: after fade-out, swap filter, scroll to grid, fade in
+    setTimeout(() => {
+      setActive(category);
+
+      // Keep URL in sync so filter state is shareable and survives refresh
+      const url = new URL(window.location.href);
+      if (category === "All") {
+        url.searchParams.delete("filter");
+      } else {
+        url.searchParams.set("filter", slugify(category));
+      }
+      window.history.replaceState({}, "", url.toString());
+
+      // Scroll to grid top
+      gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      // Allow a frame for DOM update, then fade in
+      requestAnimationFrame(() => {
+        setFadingOut(false);
+      });
+    }, 200);
+  }, [active]);
 
   const visibleIds = useMemo(() => {
     if (active === "All") return new Set(projects.map((p) => p._id));
@@ -80,10 +100,15 @@ export default function ProjectsFilteredGrid({
 
       {/* ——— Project grid ——— */}
       <div
-        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14 md:gap-y-16 lg:gap-y-20${hasInitialFilter ? " projects-grid-reveal" : ""}`}
+        ref={gridRef}
+        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14 md:gap-y-16 lg:gap-y-20${hasInitialFilter ? " projects-grid-reveal" : ""}${fadingOut ? " projects-grid-fade-out" : ""}`}
       >
         {projects.map((project, index) => {
           const show = visibleIds.has(project._id);
+          // Count visible index for stagger delay
+          const visibleIndex = show && !fadingOut
+            ? projects.slice(0, index).filter((p) => visibleIds.has(p._id)).length
+            : 0;
           return (
             <ScrollReveal
               key={project._id}
@@ -93,9 +118,11 @@ export default function ProjectsFilteredGrid({
               delay={show ? (index % 3) * 0.1 : 0}
               threshold={0.1}
               className={`
-                transition-[opacity,visibility] duration-300
+                transition-[opacity,transform,visibility] duration-300
                 ${show ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}
+                ${show && !fadingOut ? "projects-card-fade-in" : ""}
               `}
+              style={show && !fadingOut ? { animationDelay: `${visibleIndex * 50}ms` } as React.CSSProperties : undefined}
             >
               <Link
                 href={`/projects/${project.slug}`}
