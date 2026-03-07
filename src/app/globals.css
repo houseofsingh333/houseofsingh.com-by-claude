@@ -960,6 +960,7 @@ body {
 .rapidfire-question {
   flex: 1;
   margin-left: var(--rf-gap);
+  font-family: var(--font-editorial);
   font-size: 18px;
   font-weight: 500;
   color: var(--foreground);
