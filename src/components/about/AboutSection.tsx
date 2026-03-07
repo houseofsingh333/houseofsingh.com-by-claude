@@ -167,8 +167,8 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
                   Journey
                 </p>
                 <p className="text-xs tracking-[0.15em] uppercase text-muted-foreground flex items-center gap-1.5">
-                  Scroll
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  Drag
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8h10M5.5 5.5L3 8l2.5 2.5M10.5 5.5L13 8l-2.5 2.5"/></svg>
                 </p>
               </div>
               <div className="w-full h-px bg-border" />
