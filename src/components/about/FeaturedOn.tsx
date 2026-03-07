@@ -55,7 +55,7 @@ function FeaturedRow({
             context="thumbnail"
             alt={outlet.title || outlet.name}
             fill={false}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-[450ms] ease-in-out group-hover:scale-105"
           />
         </div>
       )}
@@ -80,8 +80,8 @@ function FeaturedRow({
 
         {/* Line 3: publication link with icon */}
         {outlet.url && (
-          <p className="mt-[15px] text-[11px] tracking-[0.18em] uppercase text-foreground/70 flex items-center gap-1.5 group-hover:text-foreground/90 transition-colors duration-300">
-            <span className="pb-[2px] border-b border-current/30 group-hover:border-current transition-[border-color] duration-300">VIEW ARTICLE</span>
+          <p className="mt-[15px] text-[12px] tracking-[0.18em] uppercase text-foreground/80 flex items-center gap-1.5 group-hover:text-foreground transition-colors duration-300">
+            <span className="pb-[3px] border-b border-current/35 group-hover:border-current transition-[border-color] duration-300">VIEW ARTICLE</span>
             <ExternalLinkIcon />
           </p>
         )}
