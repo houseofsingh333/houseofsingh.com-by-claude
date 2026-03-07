@@ -50,53 +50,6 @@ body {
   font-feature-settings: "kern" 1, "liga" 1;
 }
 
-/* ——— Timeline milestone interactions ——— */
-
-.timeline-milestone {
-  --dot-scale: 1;
-  --img-opacity: 0;
-  --img-scale: 0.92;
-  --content-x: 0px;
-  --year-opacity: 0.12;
-}
-
-.timeline-milestone:hover,
-.timeline-milestone:focus-within {
-  --dot-scale: 1.6;
-  --img-opacity: 1;
-  --img-scale: 1;
-  --content-x: 4px;
-  --year-opacity: 0.3;
-}
-
-.timeline-dot {
-  transform: scale(var(--dot-scale));
-  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-    background-color 0.4s ease;
-}
-
-.timeline-image {
-  opacity: var(--img-opacity);
-  transform: scale(var(--img-scale));
-  transition: opacity 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
-    transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.timeline-content {
-  transform: translateX(var(--content-x));
-  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.timeline-content-reverse {
-  transform: translateX(calc(var(--content-x) * -1));
-  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-.timeline-year {
-  opacity: var(--year-opacity);
-  transition: opacity 0.5s ease;
-}
-
 /* ——— Page top offset — clears the State 1 crest on subpages ——— */
 
 .page-top-offset {

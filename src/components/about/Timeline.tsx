@@ -89,17 +89,10 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
     if (!container) return;
 
     const updatePadding = () => {
-      const cat = deviceRef.current;
-      if (cat === "mobile") {
-        // Center-snap padding: first and last card can snap to center
-        const pad = Math.max(0, container.clientWidth / 2 - CARD_W / 2);
-        container.style.paddingLeft = `${pad}px`;
-        container.style.paddingRight = `${pad}px`;
-      } else {
-        const pad = Math.max(0, container.clientWidth / 2 - CARD_W / 2);
-        container.style.paddingLeft = `${pad}px`;
-        container.style.paddingRight = `${pad}px`;
-      }
+      // Center-snap padding: first and last card can snap/scroll to center
+      const pad = Math.max(0, container.clientWidth / 2 - CARD_W / 2);
+      container.style.paddingLeft = `${pad}px`;
+      container.style.paddingRight = `${pad}px`;
       applyFocus();
     };
 
@@ -253,7 +246,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
         /* ─── Mobile: scroll-snap + CSS scroll-driven animations ─── */
         @media (max-width: 767px) {
           .timeline-scroll--mobile {
-            scroll-snap-type: x proximity;
+            scroll-snap-type: x mandatory;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
           }
@@ -317,7 +310,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
           }
           .film-card--mobile {
             animation: none !important;
-            filter: grayscale(var(--grayscale, 0)) !important;
+            filter: grayscale(0) !important;
             opacity: 1 !important;
           }
         }
