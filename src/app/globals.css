@@ -456,37 +456,53 @@ body {
 /* ——— Footer Tablet (768px – 1023px) ——— */
 
 @media (min-width: 768px) and (max-width: 1023px) {
+  /* 5. Tighter spacing */
   .footer-main {
-    padding: 48px 48px;
+    padding: 40px 48px;
   }
 
-  /* 1. Two-column grid */
+  /* 3. Two-column grid: left = CTA, right = nav + Instagram stacked */
   .footer-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 48px;
+    gap: 32px;
     align-items: start;
   }
 
-  /* 3. Right column (center content) — left-align links */
+  .footer-col-left {
+    grid-column: 1;
+  }
+
+  /* Nav links in right column, row 1 */
   .footer-col-center {
+    grid-column: 2;
+    grid-row: 1;
     align-items: flex-start;
   }
 
-  /* 4. Instagram spans full width below the two columns */
+  /* 1. Hide newsletter on tablet */
+  .footer-newsletter {
+    display: none !important;
+  }
+
+  /* 2. Instagram in right column, row 2 */
   .footer-col-right {
-    grid-column: 1 / -1;
-    justify-self: center;
-    align-items: center;
-    padding-top: 32px;
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+    align-items: flex-start;
+    align-self: start;
   }
 
   .footer-ig-box {
     width: 100%;
-    max-width: 480px;
     aspect-ratio: 5 / 4;
   }
 
-  /* 5. Bottom bar tablet padding */
+  /* 4. Hide TOP button on tablet */
+  .footer-top-btn {
+    display: none !important;
+  }
+
   .footer-bottom {
     padding: 20px 48px;
   }
