@@ -78,11 +78,9 @@ export default function ProjectsFilteredGrid({
     }, 200);
   }, [active]);
 
-  const visibleIds = useMemo(() => {
-    if (active === "All") return new Set(projects.map((p) => p._id));
-    return new Set(
-      projects.filter((p) => p.category === active).map((p) => p._id),
-    );
+  const filteredProjects = useMemo(() => {
+    if (active === "All") return projects;
+    return projects.filter((p) => p.category === active);
   }, [active, projects]);
 
   const hasInitialFilter = !!initialFilter;
@@ -103,60 +101,50 @@ export default function ProjectsFilteredGrid({
         ref={gridRef}
         className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14 md:gap-y-16 lg:gap-y-20${hasInitialFilter ? " projects-grid-reveal" : ""}${fadingOut ? " projects-grid-fade-out" : ""}`}
       >
-        {projects.map((project, index) => {
-          const show = visibleIds.has(project._id);
-          // Count visible index for stagger delay
-          const visibleIndex = show && !fadingOut
-            ? projects.slice(0, index).filter((p) => visibleIds.has(p._id)).length
-            : 0;
-          return (
-            <ScrollReveal
-              key={project._id}
-              as="article"
-              offset={14}
-              duration={0.8}
-              delay={show ? (index % 3) * 0.1 : 0}
-              threshold={0.1}
-              className={`
-                transition-[opacity,transform,visibility] duration-300
-                ${show ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}
-                ${show && !fadingOut ? "projects-card-fade-in" : ""}
-              `}
-              style={show && !fadingOut ? { animationDelay: `${visibleIndex * 50}ms` } as React.CSSProperties : undefined}
+        {filteredProjects.map((project, index) => (
+          <ScrollReveal
+            key={project._id}
+            as="article"
+            offset={14}
+            duration={0.8}
+            delay={(index % 3) * 0.1}
+            threshold={0.1}
+            className={`
+              transition-[opacity,transform,visibility] duration-300
+              ${!fadingOut ? "projects-card-fade-in" : ""}
+            `}
+            style={!fadingOut ? { animationDelay: `${index * 50}ms` } as React.CSSProperties : undefined}
+          >
+            <Link
+              href={`/projects/${project.slug}`}
+              className="project-card group block"
             >
-              <Link
-                href={`/projects/${project.slug}`}
-                className="project-card group block"
-                aria-hidden={!show}
-                tabIndex={show ? undefined : -1}
-              >
-                {/* Cover image — 4:5 portrait ratio */}
-                <div className="relative aspect-[4/5] overflow-hidden bg-secondary mb-5">
-                  <Image
-                    src={project.thumbnailSrc}
-                    alt={project.thumbnailAlt}
-                    fill
-                    className="object-cover project-card-img"
-                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                  />
-                </div>
+              {/* Cover image — 4:5 portrait ratio */}
+              <div className="relative aspect-[4/5] overflow-hidden bg-secondary mb-5">
+                <Image
+                  src={project.thumbnailSrc}
+                  alt={project.thumbnailAlt}
+                  fill
+                  className="object-cover project-card-img"
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                />
+              </div>
 
-                {/* Card text */}
-                <p className="text-[9.5px] uppercase tracking-[0.18em] text-muted-foreground/50 mb-1.5">
-                  {project.category}
+              {/* Card text */}
+              <p className="text-[9.5px] uppercase tracking-[0.18em] text-muted-foreground/50 mb-1.5">
+                {project.category}
+              </p>
+              <h2 className="text-[11.5px] md:text-xs uppercase tracking-[0.14em] text-foreground font-normal leading-[1.6] mb-2 project-card-title">
+                {project.title}
+              </h2>
+              {project.excerpt && (
+                <p className="text-[11px] text-muted-foreground/60 leading-[1.65] line-clamp-2">
+                  {project.excerpt}
                 </p>
-                <h2 className="text-[11.5px] md:text-xs uppercase tracking-[0.14em] text-foreground font-normal leading-[1.6] mb-2 project-card-title">
-                  {project.title}
-                </h2>
-                {project.excerpt && (
-                  <p className="text-[11px] text-muted-foreground/60 leading-[1.65] line-clamp-2">
-                    {project.excerpt}
-                  </p>
-                )}
-              </Link>
-            </ScrollReveal>
-          );
-        })}
+              )}
+            </Link>
+          </ScrollReveal>
+        ))}
       </div>
     </div>
   );
