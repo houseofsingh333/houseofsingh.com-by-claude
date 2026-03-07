@@ -518,6 +518,7 @@ body {
   .footer-grid {
     display: flex !important;
     flex-direction: column !important;
+    align-items: stretch !important;
     grid-template-columns: none !important;
     padding: 0 !important;
     gap: 0 !important;
@@ -689,15 +690,6 @@ body {
   .footer-mobile-top-btn {
     display: none !important;
   }
-
-  /* === TEMPORARY DEBUG OUTLINES — REMOVE AFTER DEBUGGING === */
-  .footer-grid { outline: 2px solid red !important; }
-  .footer-col-left { outline: 2px solid blue !important; }
-  .footer-col-center { outline: 2px solid green !important; }
-  .footer-col-right { outline: 2px solid orange !important; }
-  .footer-nav { outline: 2px solid purple !important; }
-  .footer-newsletter { outline: 2px solid cyan !important; }
-  /* === END TEMPORARY DEBUG OUTLINES === */
 
   /* No hover effects on mobile */
   .footer-cta-link:hover,
