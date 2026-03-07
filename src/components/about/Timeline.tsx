@@ -28,9 +28,6 @@ const FOCUS_PARAMS = {
 export default function Timeline({ milestones }: { milestones: AboutMilestone[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
   const deviceRef = useRef<DeviceCategory>("desktop");
   const [device, setDevice] = useState<DeviceCategory>("desktop");
 
@@ -113,30 +110,6 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
     };
   }, [applyFocus]);
 
-  // Drag-to-scroll (desktop only)
-  const onPointerDown = (e: React.PointerEvent) => {
-    const container = scrollRef.current;
-    if (!container || e.pointerType === "touch") return;
-    isDragging.current = true;
-    startX.current = e.clientX;
-    scrollLeft.current = container.scrollLeft;
-    container.setPointerCapture(e.pointerId);
-    container.style.cursor = "grabbing";
-  };
-
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!isDragging.current || !scrollRef.current) return;
-    const dx = e.clientX - startX.current;
-    scrollRef.current.scrollLeft = scrollLeft.current - dx;
-  };
-
-  const onPointerUp = (e: React.PointerEvent) => {
-    if (!isDragging.current || !scrollRef.current) return;
-    isDragging.current = false;
-    scrollRef.current.releasePointerCapture(e.pointerId);
-    scrollRef.current.style.cursor = "grab";
-  };
-
   const isMobile = device === "mobile";
 
   return (
@@ -162,15 +135,10 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
       {/* Scroll container */}
       <div
         ref={scrollRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        className={`timeline-scroll flex select-none overflow-x-auto${isMobile ? " timeline-scroll--mobile" : ""}`}
+        className={`timeline-scroll flex overflow-x-auto${isMobile ? " timeline-scroll--mobile" : ""}`}
         style={{
           gap: isMobile ? GAP_MOBILE : GAP,
           scrollbarWidth: "none",
-          cursor: isMobile ? "default" : "grab",
           WebkitOverflowScrolling: "touch",
         }}
       >
