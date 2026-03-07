@@ -38,11 +38,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     query: projectBySlugQuery,
     params: { slug },
   });
-  if (project) return { title: project.title };
+  if (project)
+    return {
+      title: project.title,
+      description:
+        project.excerpt || "A project by Maninder Singh — House of Singh",
+    };
 
   const fallback = projects.find((p) => p.slug === slug);
   if (!fallback) return { title: "Not Found" };
-  return { title: fallback.title };
+  return {
+    title: fallback.title,
+    description:
+      fallback.excerpt || "A project by Maninder Singh — House of Singh",
+  };
 }
 
 export default async function ProjectDetailPage({ params }: Props) {

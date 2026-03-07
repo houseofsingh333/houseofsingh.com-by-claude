@@ -7,6 +7,8 @@ import ProjectsFilteredGrid from "@/components/projects/ProjectsFilteredGrid";
 
 export const metadata: Metadata = {
   title: "Projects",
+  description:
+    "Selected projects by Maninder Singh spanning design, photography, and creative direction.",
 };
 
 type SanityProject = {

@@ -31,12 +31,24 @@ const playfair = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://houseofsingh.com"),
   title: {
-    default: "House of Singh",
+    default: "House of Singh — Maninder Singh",
     template: "%s | House of Singh",
   },
   description:
-    "House of Singh is a multidisciplinary design studio focused on residential and commercial spaces.",
+    "The creative world of Maninder Singh. Design, photography, and intentional living. Based in Toronto.",
+  openGraph: {
+    type: "website",
+    locale: "en_CA",
+    siteName: "House of Singh",
+    title: "House of Singh — Maninder Singh",
+    description:
+      "The creative world of Maninder Singh. Design, photography, and intentional living. Based in Toronto.",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default async function RootLayout({

@@ -26,7 +26,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = entry?.title ?? fallback?.title;
 
   if (!title) return { title: "Not Found" };
-  return { title };
+
+  const description =
+    entry?.excerpt ??
+    fallback?.excerpt ??
+    "Reflections and observations from Maninder Singh — House of Singh";
+
+  return { title, description };
 }
 
 function formatDate(dateStr: string) {
