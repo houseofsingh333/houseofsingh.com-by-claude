@@ -533,43 +533,22 @@ body {
     gap: 0 !important;
   }
 
-  /* NAV + NEWSLETTER COLUMN — same 24px left edge as everything else */
+  /* NEWSLETTER COLUMN — nav hidden, newsletter only */
   .footer-col-center {
     order: 2;
-    padding: 0 24px 28px 24px !important;
+    padding: 24px 24px !important;
     margin: 0 !important;
     border-top: none !important;
     text-align: left !important;
   }
 
   .footer-nav {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 0 !important;
-    padding: 28px 0 0 0 !important;
-    margin: 0 !important;
+    display: none !important;
   }
 
-  .footer-nav-link {
-    font-size: 11px !important;
-    letter-spacing: 0.15em !important;
-    text-transform: uppercase !important;
-    font-weight: 400 !important;
-    color: rgba(0, 0, 0, 0.45) !important;
-    padding: 8px 0 !important;
-    padding-left: 0 !important;
-    margin-left: 0 !important;
-    min-height: 44px !important;
-    display: flex !important;
-    align-items: center !important;
-    text-align: left !important;
-    line-height: 1.2 !important;
-  }
-
-  /* Newsletter — inside .footer-col-center, zero out all extra spacing */
+  /* Newsletter — inside .footer-col-center, parent handles padding */
   .footer-newsletter {
-    padding: 20px 0 0 0 !important;
+    padding: 0 !important;
     margin: 0 !important;
     border-top: none !important;
   }
@@ -620,9 +599,14 @@ body {
     padding-left: 0 !important;
   }
 
-  /* Separator after center column — removed, visually redundant with input border */
+  /* Separator after newsletter section */
   .footer-col-center::after {
-    display: none !important;
+    content: "" !important;
+    display: block !important;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+    margin: 0 -24px;
+    margin-top: 24px;
   }
 
   /* RIGHT COLUMN — simplified on mobile */
@@ -640,9 +624,10 @@ body {
   .footer-col-right::after {
     content: "";
     display: block;
+    width: calc(100% + 48px);
     height: 1px;
     background: rgba(0, 0, 0, 0.08);
-    margin: 0;
+    margin: 20px -24px 0;
   }
 
   .footer-top-btn {
