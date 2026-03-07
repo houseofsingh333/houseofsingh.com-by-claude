@@ -14,8 +14,11 @@ export async function POST(request: Request) {
     }
 
     if (!writeClient) {
-      // Sanity not configured — accept silently so the UX isn't broken
-      return NextResponse.json({ success: true });
+      console.error("SANITY_API_TOKEN is not configured. Newsletter subscription was not saved.");
+      return NextResponse.json(
+        { error: "Unable to subscribe at this time. Please try again later." },
+        { status: 500 },
+      );
     }
 
     await writeClient.create({

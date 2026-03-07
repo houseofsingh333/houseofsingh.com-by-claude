@@ -69,18 +69,24 @@ export async function POST(request: Request) {
         ? body.referralSource.trim()
         : "";
 
-    if (writeClient) {
-      await writeClient.create({
-        _type: "contactSubmission",
-        intent,
-        name,
-        email,
-        phone: phone || undefined,
-        details: details || undefined,
-        referralSource: referralSource || undefined,
-        submittedAt: new Date().toISOString(),
-      });
+    if (!writeClient) {
+      console.error("SANITY_API_TOKEN is not configured. Contact submission was not saved.");
+      return NextResponse.json(
+        { error: "Unable to process your request at this time. Please try again later." },
+        { status: 500 },
+      );
     }
+
+    await writeClient.create({
+      _type: "contactSubmission",
+      intent,
+      name,
+      email,
+      phone: phone || undefined,
+      details: details || undefined,
+      referralSource: referralSource || undefined,
+      submittedAt: new Date().toISOString(),
+    });
 
     return NextResponse.json({ success: true });
   } catch {
