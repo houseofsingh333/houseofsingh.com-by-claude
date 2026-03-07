@@ -482,11 +482,11 @@ body {
     padding: 0 !important;
   }
 
-  /* TOP CTA AREA — centered with bottom separator */
+  /* TOP CTA AREA — centered */
   .footer-col-left {
     padding: 40px 24px 32px !important;
     text-align: center !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: none;
     margin: 0 !important;
   }
 
@@ -553,12 +553,7 @@ body {
   }
 
   .footer-col-right::after {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 1px;
-    background: rgba(0, 0, 0, 0.08);
-    margin: 0;
+    display: none;
   }
 
   .footer-top-btn {
@@ -569,7 +564,7 @@ body {
   .footer-ig-link {
     display: block !important;
     width: 100% !important;
-    aspect-ratio: 5/3 !important;
+    aspect-ratio: 5/4 !important;
     padding: 0 24px 24px 24px !important;
     overflow: hidden !important;
     height: auto !important;
