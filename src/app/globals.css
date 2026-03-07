@@ -460,15 +460,33 @@ body {
     padding: 48px 48px;
   }
 
+  /* 1. Two-column grid */
   .footer-grid {
-    gap: 40px;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  /* 3. Right column (center content) — left-align links */
+  .footer-col-center {
+    align-items: flex-start;
+  }
+
+  /* 4. Instagram spans full width below the two columns */
+  .footer-col-right {
+    grid-column: 1 / -1;
+    justify-self: center;
+    align-items: center;
+    padding-top: 32px;
   }
 
   .footer-ig-box {
-    width: 220px;
+    width: 100%;
+    max-width: 480px;
     aspect-ratio: 5 / 4;
   }
 
+  /* 5. Bottom bar tablet padding */
   .footer-bottom {
     padding: 20px 48px;
   }
