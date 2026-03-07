@@ -9,9 +9,9 @@ const CARD_W_MOBILE = 240;
 const GAP = 24;
 const GAP_MOBILE = 16;
 const MAX_BLUR = 4;
+const MAX_SEPIA = 0.6;
 const MIN_OPACITY = 0.4;
 const MIN_SCALE = 0.95;
-const FADE_W = 120;
 
 export default function Timeline({ milestones }: { milestones: AboutMilestone[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -33,10 +33,12 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
       const t = Math.min(dist / maxDist, 1); // 0 = center, 1 = edge
 
       const blur = t * MAX_BLUR;
+      const sepia = t * MAX_SEPIA;
       const opacity = 1 - t * (1 - MIN_OPACITY);
       const scale = 1 - t * (1 - MIN_SCALE);
 
-      card.style.filter = `blur(${blur}px) saturate(0.8)`;
+      card.style.setProperty("--sepia", String(sepia));
+      card.style.filter = `blur(${blur}px) sepia(${sepia}) saturate(0.8)`;
       card.style.opacity = String(opacity);
       card.style.transform = `scale(${scale})`;
     }
@@ -94,16 +96,14 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
     <div className="relative">
       {/* Edge fades */}
       <div
-        className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+        className="edge-fade absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
         style={{
-          width: FADE_W,
           background: "linear-gradient(to right, var(--background), transparent)",
         }}
       />
       <div
-        className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+        className="edge-fade absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
         style={{
-          width: FADE_W,
           background: "linear-gradient(to left, var(--background), transparent)",
         }}
       />
@@ -182,9 +182,20 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
         .film-card {
           width: ${CARD_W}px;
         }
+        .edge-fade {
+          width: 120px;
+        }
+        @media (max-width: 1023px) {
+          .edge-fade {
+            width: 60px;
+          }
+        }
         @media (max-width: 767px) {
           .film-card {
             width: ${CARD_W_MOBILE}px;
+          }
+          .edge-fade {
+            width: 32px;
           }
           div[style*="gap"] {
             gap: ${GAP_MOBILE}px;
@@ -193,7 +204,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
         @media (prefers-reduced-motion: reduce) {
           .film-card {
             transition: opacity 0.15s ease !important;
-            filter: saturate(0.8) !important;
+            filter: sepia(var(--sepia, 0)) saturate(0.8) !important;
             transform: none !important;
           }
         }
