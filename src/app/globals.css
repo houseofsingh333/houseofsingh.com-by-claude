@@ -537,7 +537,8 @@ body {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 0 !important;
-    padding-top: 28px !important;
+    padding: 28px 0 0 0 !important;
+    margin: 0 !important;
   }
 
   .footer-nav-link {
@@ -547,16 +548,19 @@ body {
     font-weight: 400 !important;
     color: rgba(0, 0, 0, 0.45) !important;
     padding: 8px 0 !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
     min-height: 44px !important;
     display: flex !important;
     align-items: center !important;
     text-align: left !important;
+    line-height: 1.2 !important;
   }
 
-  /* Newsletter — sits inside .footer-col-center, no extra horizontal padding */
+  /* Newsletter — inside .footer-col-center, zero out all extra spacing */
   .footer-newsletter {
     padding: 20px 0 0 0 !important;
-    margin-top: 0 !important;
+    margin: 0 !important;
     border-top: none !important;
   }
 
@@ -566,19 +570,27 @@ body {
     text-transform: uppercase !important;
     text-align: left !important;
     margin-bottom: 16px !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
     line-height: 1.2 !important;
   }
 
   .footer-nl-form {
     display: flex !important;
     width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   .footer-nl-input {
     flex: 1 !important;
+    width: auto !important;
     min-width: 0 !important;
     font-size: 12px !important;
     padding: 10px 0 !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    border: none !important;
     border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
     background: transparent !important;
   }
@@ -595,6 +607,7 @@ body {
     align-items: center !important;
     justify-content: center !important;
     padding: 0 !important;
+    padding-left: 0 !important;
   }
 
   /* Separator after newsletter / center column */
