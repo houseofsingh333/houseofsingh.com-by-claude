@@ -81,7 +81,7 @@ function FeaturedRow({
         {/* Line 3: publication link with icon */}
         {outlet.url && (
           <p className="mt-[15px] text-[12px] tracking-[0.18em] uppercase text-foreground/80 flex items-center gap-1.5 group-hover:text-foreground transition-colors duration-300">
-            <span className="pb-[3px] border-b border-current/35 group-hover:border-current transition-[border-color] duration-300">VIEW ARTICLE</span>
+            <span>VIEW ARTICLE</span>
             <ExternalLinkIcon />
           </p>
         )}
