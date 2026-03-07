@@ -14,13 +14,13 @@ function formatDate(dateStr?: string): string | null {
 function ExternalLinkIcon() {
   return (
     <svg
-      width="16"
-      height="16"
+      width="12"
+      height="12"
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      className="shrink-0 ml-4 text-muted-foreground/50 transition-colors duration-300 group-hover:text-muted-foreground"
+      className="shrink-0 text-muted-foreground/70 transition-colors duration-300 group-hover:text-muted-foreground"
     >
       <path
         d="M6 2.5H3.5a1 1 0 0 0-1 1V12.5a1 1 0 0 0 1 1H12.5a1 1 0 0 0 1-1V10M9.5 2.5H13.5V6.5M13.5 2.5L7 9"
@@ -77,10 +77,15 @@ function FeaturedRow({
         <h3 className="font-editorial text-[clamp(16px,2vw,22px)] font-normal leading-tight text-foreground">
           {outlet.title || outlet.name}
         </h3>
-      </div>
 
-      {/* External link icon */}
-      {outlet.url && <ExternalLinkIcon />}
+        {/* Line 3: publication link with icon */}
+        {outlet.url && (
+          <p className="mt-[15px] text-[10px] tracking-[0.18em] uppercase text-muted-foreground/70 flex items-center gap-1.5">
+            <span>{outlet.name}</span>
+            <ExternalLinkIcon />
+          </p>
+        )}
+      </div>
     </div>
   );
 
