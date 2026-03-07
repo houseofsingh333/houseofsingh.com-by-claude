@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { FeaturedOutlet } from "@/lib/types";
@@ -10,6 +9,28 @@ function formatDate(dateStr?: string): string | null {
   const d = new Date(dateStr + "T00:00:00");
   if (isNaN(d.getTime())) return null;
   return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+}
+
+function ExternalLinkIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      className="shrink-0 ml-4 text-muted-foreground/50 transition-colors duration-300 group-hover:text-muted-foreground"
+    >
+      <path
+        d="M6 2.5H3.5a1 1 0 0 0-1 1V12.5a1 1 0 0 0 1 1H12.5a1 1 0 0 0 1-1V10M9.5 2.5H13.5V6.5M13.5 2.5L7 9"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 }
 
 function FeaturedRow({
@@ -24,66 +45,42 @@ function FeaturedRow({
   const date = formatDate(outlet.date);
   const hasImage = !!outlet.image;
 
-  // Metadata line: combine publication name and date
-  const meta = date ? `${outlet.name}  ·  ${date}` : outlet.name;
-
   const rowContent = (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 lg:gap-16 py-12 md:py-16 lg:py-20">
-      {/* Image column */}
+    <div className="featured-row flex items-center gap-6 py-6 md:py-7">
+      {/* Thumbnail */}
       {hasImage && (
-        <div className="md:col-span-5 px-4 md:px-0">
-          <div className="relative w-full aspect-[3/2] overflow-hidden bg-secondary">
-            <SanityImage
-              image={outlet.image!}
-              context="thumbnail"
-              alt={outlet.title || outlet.name}
-              fill
-              className="object-cover"
-            />
-          </div>
+        <div className="featured-row-thumb hidden md:block shrink-0 w-[220px] h-[140px] overflow-hidden bg-secondary">
+          <SanityImage
+            image={outlet.image!}
+            context="thumbnail"
+            alt={outlet.title || outlet.name}
+            fill={false}
+            className="w-full h-full object-cover"
+          />
         </div>
       )}
 
-      {/* Text column */}
-      <div
-        className={
-          hasImage
-            ? "md:col-span-6 md:col-start-7 flex flex-col justify-center"
-            : "md:col-span-8 md:col-start-3 flex flex-col justify-center"
-        }
-      >
-        {/* Metadata: publication name + date */}
-        <p className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground/50 mb-4 md:mb-5">
-          {meta}
+      {/* Text zone */}
+      <div className="flex-1 min-w-0">
+        {/* Line 1: publication · date */}
+        <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50 mb-2">
+          {outlet.name}
+          {date && (
+            <>
+              <span className="mx-2">·</span>
+              {date}
+            </>
+          )}
         </p>
 
-        {/* Title — visual anchor of the row */}
-        <h3 className="font-editorial text-xl md:text-2xl lg:text-[1.75rem] font-light leading-[1.3] text-foreground group-hover:text-foreground/70 transition-colors duration-500 mb-4 md:mb-5 max-w-lg">
+        {/* Line 2: title */}
+        <h3 className="font-editorial text-[clamp(16px,2vw,22px)] font-normal leading-tight text-foreground">
           {outlet.title || outlet.name}
         </h3>
-
-        {/* Description */}
-        {outlet.description && (
-          <p className="text-sm md:text-[15px] text-muted-foreground/70 leading-[1.8] max-w-lg mb-6 md:mb-7">
-            {outlet.description}
-          </p>
-        )}
-
-        {/* Read More */}
-        {outlet.url && (
-          <span
-            className="inline-flex items-center gap-1.5 text-[11px] tracking-[0.14em] uppercase text-muted-foreground/60 group-hover:text-foreground transition-colors duration-500"
-            aria-hidden="true"
-          >
-            Read More
-            <ArrowRight
-              size={11}
-              strokeWidth={1.5}
-              className="transition-transform duration-500 group-hover:translate-x-0.5"
-            />
-          </span>
-        )}
       </div>
+
+      {/* External link icon */}
+      {outlet.url && <ExternalLinkIcon />}
     </div>
   );
 
@@ -94,14 +91,13 @@ function FeaturedRow({
           href={outlet.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block group focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+          className="block group hover:opacity-70 transition-opacity duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
         >
           {rowContent}
         </a>
       ) : (
         <div className="group">{rowContent}</div>
       )}
-      {/* Divider between rows — softer contrast, omit after last */}
       {!isLast && <div className="w-full h-px bg-border/70" />}
     </ScrollReveal>
   );
