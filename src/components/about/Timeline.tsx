@@ -20,8 +20,8 @@ function getDeviceCategory(): DeviceCategory {
 
 // Focus-effect parameters per device category
 const FOCUS_PARAMS = {
-  desktop: { maxBlur: 4, maxSepia: 1.0, minOpacity: 0.4, minScale: 0.95 },
-  tablet:  { maxBlur: 2, maxSepia: 0.6, minOpacity: 0.5, minScale: 0.95 },
+  desktop: { maxBlur: 4, maxGrayscale: 1.0, minOpacity: 0.4, minScale: 0.95 },
+  tablet:  { maxBlur: 2, maxGrayscale: 0.6, minOpacity: 0.5, minScale: 0.95 },
   mobile:  null, // no JS focus effect — handled by CSS scroll-driven animations
 } as const;
 
@@ -59,13 +59,12 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
         card.style.filter = "";
         card.style.opacity = "";
         card.style.transform = "";
-        card.style.removeProperty("--sepia");
       }
       return;
     }
 
     const centerX = container.scrollLeft + container.clientWidth / 2;
-    const { maxBlur, maxSepia, minOpacity, minScale } = params;
+    const { maxBlur, maxGrayscale, minOpacity, minScale } = params;
 
     for (const card of cardsRef.current) {
       if (!card) continue;
@@ -75,12 +74,11 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
       const t = Math.min(dist / maxDist, 1); // 0 = center, 1 = edge
 
       const blur = t * maxBlur;
-      const sepia = t * maxSepia;
+      const grayscale = t * maxGrayscale;
       const opacity = 1 - t * (1 - minOpacity);
       const scale = 1 - t * (1 - minScale);
 
-      card.style.setProperty("--sepia", String(sepia));
-      card.style.filter = `blur(${blur}px) sepia(${sepia}) saturate(0.8)`;
+      card.style.filter = `blur(${blur}px) grayscale(${grayscale})`;
       card.style.opacity = String(opacity);
       card.style.transform = `scale(${scale})`;
     }
@@ -254,15 +252,16 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
 
         /* ─── Mobile: scroll-snap + CSS scroll-driven animations ─── */
         @media (max-width: 767px) {
-          /* Scroll-snap on the container for frame-by-frame film feel */
           .timeline-scroll--mobile {
-            scroll-snap-type: x mandatory;
+            scroll-snap-type: x proximity;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
           }
 
-          /* Each card snaps to center */
           .film-card--mobile {
             scroll-snap-align: center;
+            transform-origin: center center;
+            will-change: transform, filter, opacity;
           }
         }
 
@@ -271,8 +270,8 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
          *
          * Uses animation-timeline: view(inline) to track each card's
          * horizontal position within the scroll container's viewport.
-         * As a card enters from either side, it starts sepia/faded/scaled-down
-         * and transitions to full color/opacity/scale at the center snap point,
+         * As a card enters from either side, it starts grayscale/faded/scaled-down
+         * and transitions to full color/opacity/scale at the center,
          * then fades back out as it exits the other side.
          *
          * Browser support: Chrome 115+, Edge 115+. For unsupported browsers
@@ -280,43 +279,35 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
          * all cards at full color/scale with no animation.
          */
         @media (max-width: 767px) {
-          /* Scroll-driven animation keyframes */
-          @keyframes sepia-to-color {
+          @keyframes grayscale-to-color {
             0% {
-              filter: sepia(0.8);
+              filter: grayscale(1);
               opacity: 0.6;
               transform: scale(0.88);
             }
             50% {
-              filter: sepia(0);
+              filter: grayscale(0);
               opacity: 1;
               transform: scale(1);
             }
             100% {
-              filter: sepia(0.8);
+              filter: grayscale(1);
               opacity: 0.6;
               transform: scale(0.88);
             }
           }
 
-          /* Apply scroll-driven animation when supported */
           @supports (animation-timeline: view()) {
             .film-card--mobile {
-              animation: sepia-to-color linear both;
+              animation: grayscale-to-color linear both;
               animation-timeline: view(inline);
-              /* Start the effect a bit before the card enters and end a bit after it exits */
-              animation-range: entry 0% exit 100%;
+              animation-range: contain 0% contain 100%;
             }
           }
 
-          /*
-           * Fallback: if scroll-driven animations are NOT supported,
-           * show all cards at full color, full opacity, full scale.
-           * Scroll-snap still works regardless.
-           */
           @supports not (animation-timeline: view()) {
             .film-card--mobile {
-              filter: none;
+              filter: grayscale(0);
               opacity: 1;
               transform: scale(1);
             }
@@ -326,13 +317,12 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
         @media (prefers-reduced-motion: reduce) {
           .film-card {
             transition: opacity 0.15s ease !important;
-            filter: sepia(var(--sepia, 0)) saturate(0.8) !important;
+            filter: none !important;
             transform: none !important;
           }
-          /* Disable scroll-driven animation for reduced motion */
           .film-card--mobile {
             animation: none !important;
-            filter: none !important;
+            filter: grayscale(var(--grayscale, 0)) !important;
             opacity: 1 !important;
             transform: scale(1) !important;
           }
