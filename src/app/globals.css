@@ -448,6 +448,11 @@ body {
   display: none;
 }
 
+/* Mobile Instagram text link — hidden on desktop */
+.footer-ig-mobile-link {
+  display: none;
+}
+
 /* ——— Footer Tablet (768px – 1023px) ——— */
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -486,7 +491,7 @@ body {
   }
 
   .footer-crest {
-    width: 80px !important;
+    width: 100px !important;
     display: block !important;
     margin: 0 auto !important;
     opacity: 0.4;
@@ -494,9 +499,13 @@ body {
 
   .footer-cta-link {
     justify-content: center;
+    text-decoration: none !important;
+    border-bottom: none !important;
   }
 
   .footer-cta-heading {
+    text-decoration: none !important;
+    border-bottom: none !important;
     font-size: 26px !important;
     margin-top: 24px;
   }
@@ -611,25 +620,21 @@ body {
     padding-left: 0 !important;
   }
 
-  /* Separator after newsletter / center column */
+  /* Separator after center column — removed, visually redundant with input border */
   .footer-col-center::after {
-    content: "";
-    display: block;
-    height: 1px;
-    background: rgba(0, 0, 0, 0.08);
-    margin: 0 0 0 0;
+    display: none !important;
   }
 
-  /* RIGHT COLUMN — Instagram (ensure visible on mobile) */
+  /* RIGHT COLUMN — simplified on mobile */
   .footer-col-right {
     order: 3;
     display: flex !important;
     flex-direction: column !important;
-    padding: 24px !important;
+    padding: 20px 24px !important;
     margin: 0 !important;
     border-top: none !important;
     justify-self: auto !important;
-    align-items: center !important;
+    align-items: flex-start !important;
   }
 
   .footer-col-right::after {
@@ -644,10 +649,21 @@ body {
     display: none !important;
   }
 
-  .footer-ig-box {
-    width: 100% !important;
-    max-width: 300px;
-    aspect-ratio: 5 / 3 !important;
+  /* Hide photo plate on mobile, show simple link instead */
+  .footer-ig-link {
+    display: none !important;
+  }
+
+  .footer-ig-mobile-link {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
+    text-decoration: none;
+    font-weight: 400;
   }
 
   /* BOTTOM BAR */

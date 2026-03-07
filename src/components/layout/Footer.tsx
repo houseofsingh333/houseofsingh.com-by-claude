@@ -143,6 +143,29 @@ export default function Footer({ instagramPhotos = [] }: Props) {
                 <FooterInstagram photos={instagramPhotos} />
               </a>
             )}
+            {/* Mobile-only: simple Instagram text link */}
+            <a
+              href="https://www.instagram.com/houseofsingh"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-ig-mobile-link"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="2" y="2" width="20" height="20" rx="5" />
+                <circle cx="12" cy="12" r="5" />
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+              </svg>
+              @houseofsingh
+            </a>
           </div>
         </div>
       </div>
