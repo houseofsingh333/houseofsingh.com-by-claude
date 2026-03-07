@@ -81,7 +81,7 @@ function FeaturedRow({
         {/* Line 3: publication link with icon */}
         {outlet.url && (
           <p className="mt-[15px] text-[10px] tracking-[0.18em] uppercase text-muted-foreground/70 flex items-center gap-1.5">
-            <span>{outlet.name}</span>
+            <span>VIEW ARTICLE</span>
             <ExternalLinkIcon />
           </p>
         )}
