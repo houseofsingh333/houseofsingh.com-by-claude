@@ -20,7 +20,7 @@ function ExternalLinkIcon() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      className="shrink-0 text-muted-foreground/70 transition-colors duration-300 group-hover:text-muted-foreground"
+      className="shrink-0 text-current transition-colors duration-300"
     >
       <path
         d="M6 2.5H3.5a1 1 0 0 0-1 1V12.5a1 1 0 0 0 1 1H12.5a1 1 0 0 0 1-1V10M9.5 2.5H13.5V6.5M13.5 2.5L7 9"
@@ -44,19 +44,9 @@ function FeaturedRow({
 }) {
   const date = formatDate(outlet.date);
   const hasImage = !!outlet.image;
-  const indexLabel = String(index + 1).padStart(2, "0");
 
   const rowContent = (
     <div className="featured-row flex items-center gap-6 py-6 md:py-7">
-      {/* Numbered index */}
-      <span
-        className="shrink-0 w-8 text-center text-xs font-normal text-foreground/20 select-none"
-        aria-hidden="true"
-        style={{ fontFamily: "var(--font-sans, system-ui, sans-serif)" }}
-      >
-        {indexLabel}
-      </span>
-
       {/* Thumbnail */}
       {hasImage && (
         <div className="featured-row-thumb hidden md:block shrink-0 w-[220px] h-[140px] overflow-hidden bg-secondary border border-black/[0.08]">
@@ -90,8 +80,8 @@ function FeaturedRow({
 
         {/* Line 3: publication link with icon */}
         {outlet.url && (
-          <p className="mt-[15px] text-[10px] tracking-[0.18em] uppercase text-muted-foreground/70 flex items-center gap-1.5">
-            <span>VIEW ARTICLE</span>
+          <p className="mt-[15px] text-[11px] tracking-[0.18em] uppercase text-foreground/70 flex items-center gap-1.5 group-hover:text-foreground/90 transition-colors duration-300">
+            <span className="pb-[2px] border-b border-current/30 group-hover:border-current transition-[border-color] duration-300">VIEW ARTICLE</span>
             <ExternalLinkIcon />
           </p>
         )}
