@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import SanityImage from "@/components/SanityImage";
@@ -15,7 +15,7 @@ const FALLBACK_ROLES = [
 ];
 
 const FALLBACK_BIO =
-  "Blending design and photography to craft stories that feel both visually refined and emotionally resonant.";
+  "Depth over noise. Craft over trend. Always evolving, never in a rush. A creative practice rooted in Toronto, built on intention and quiet consistency.";
 
 const FALLBACK_PORTRAIT = "/images/hero-placeholder-1.svg";
 
@@ -30,52 +30,49 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  // Desktop spotlight state
-  const containerRef = useRef<HTMLDivElement>(null);
+  // Desktop hover state for desaturation
+  const [isHovered, setIsHovered] = useState(false);
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (prefersReducedMotion || !isDesktop) return;
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
-      e.currentTarget.style.setProperty("--mouse-y", `${y}px`);
-      e.currentTarget.setAttribute("data-hovering", "true");
-    },
-    [prefersReducedMotion, isDesktop],
-  );
-
-  const handleMouseLeave = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.currentTarget.removeAttribute("data-hovering");
-    },
-    [],
-  );
-
-  // Mobile touch reveal state
-  const [isTouching, setIsTouching] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const hintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleTouchStart = useCallback(() => {
-    if (prefersReducedMotion) return;
-    setIsTouching(true);
-    if (!hasInteracted) {
-      setHasInteracted(true);
-    }
-  }, [prefersReducedMotion, hasInteracted]);
-
-  const handleTouchEnd = useCallback(() => {
-    if (prefersReducedMotion) return;
-    setIsTouching(false);
-  }, [prefersReducedMotion]);
+  // Mobile IntersectionObserver: one-shot color reveal
+  const imageRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
 
   useEffect(() => {
-    return () => {
-      if (hintTimeoutRef.current) clearTimeout(hintTimeoutRef.current);
-    };
-  }, []);
+    if (isDesktop || prefersReducedMotion) return;
+    const el = imageRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isDesktop, prefersReducedMotion]);
+
+  // Determine filter based on state
+  const getSaturated = () => {
+    if (prefersReducedMotion) return false; // stay desaturated
+    if (isDesktop) return isHovered;
+    return inView;
+  };
+
+  const saturated = getSaturated();
+
+  const imageFilter = saturated
+    ? "saturate(1) brightness(1)"
+    : "saturate(0.15) brightness(1.05)";
+
+  const imageTransition = prefersReducedMotion
+    ? "none"
+    : isDesktop
+      ? "filter 0.8s ease"
+      : "filter 1s ease";
 
   return (
     <section className="px-6 md:px-16 section-py">
@@ -95,39 +92,24 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
         <div className="md:col-span-5 md:col-start-1 relative">
           <ScrollReveal delay={0.15} offset={6} duration={0.6}>
             <div
-              ref={containerRef}
-              className="intro-portrait-container relative w-full aspect-square md:aspect-[4/5] max-h-[65vh] overflow-hidden bg-background"
-              onMouseMove={!prefersReducedMotion && isDesktop ? handleMouseMove : undefined}
-              onMouseLeave={!prefersReducedMotion && isDesktop ? handleMouseLeave : undefined}
-              onTouchStart={!prefersReducedMotion && !isDesktop ? handleTouchStart : undefined}
-              onTouchEnd={!prefersReducedMotion && !isDesktop ? handleTouchEnd : undefined}
-              onTouchCancel={!prefersReducedMotion && !isDesktop ? handleTouchEnd : undefined}
-              style={
-                !prefersReducedMotion && isDesktop
-                  ? { cursor: "crosshair" }
-                  : undefined
-              }
+              ref={imageRef}
+              className="relative w-full aspect-square md:aspect-[4/5] max-h-[65vh] overflow-hidden bg-background"
+              onMouseEnter={isDesktop && !prefersReducedMotion ? () => setIsHovered(true) : undefined}
+              onMouseLeave={isDesktop && !prefersReducedMotion ? () => setIsHovered(false) : undefined}
             >
-              {/* Clear image layer (bottom) */}
-              <SanityImage
-                image={portrait}
-                context="body"
-                alt={`${founderName} — ${roles.join(", ")}`}
-                fill
-                className="object-cover [object-position:35%_20%] grayscale"
-              />
-              {/* Blurred image layer (top) */}
               <div
-                className={`absolute inset-0 intro-blur-layer ${
-                  !isDesktop && isTouching ? "intro-blur-layer--revealed" : ""
-                }`}
+                className="absolute inset-0"
+                style={{
+                  filter: imageFilter,
+                  transition: imageTransition,
+                }}
               >
                 <SanityImage
                   image={portrait}
                   context="body"
-                  alt=""
+                  alt={`${founderName} — ${roles.join(", ")}`}
                   fill
-                  className="object-cover [object-position:35%_20%] grayscale blur-[8px]"
+                  className="object-cover [object-position:35%_20%]"
                 />
               </div>
               <div
@@ -146,21 +128,6 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
             >
               {founderName}
             </p>
-
-            {/* Mobile hint text */}
-            {!isDesktop && !prefersReducedMotion && (
-              <p
-                className={`mt-2 uppercase text-muted-foreground transition-opacity duration-500 ${
-                  hasInteracted ? "opacity-0" : "opacity-100"
-                }`}
-                style={{
-                  fontSize: "9px",
-                  letterSpacing: "0.15em",
-                }}
-              >
-                Hold to reveal
-              </p>
-            )}
           </ScrollReveal>
         </div>
 
@@ -180,22 +147,22 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
             </div>
           </ScrollReveal>
 
-          {/* Bio — pull-quote style */}
+          {/* Bio — sans-serif body style */}
           <ScrollReveal delay={0.6} offset={10}>
             {data.founderBio ? (
               <div
-                className="font-editorial italic text-muted-foreground max-w-[420px] leading-[1.5] [&>p]:mb-4 [&>p:last-child]:mb-0"
+                className="text-muted-foreground max-w-[440px] leading-[1.75] [&>p]:mb-4 [&>p:last-child]:mb-0"
                 style={{
-                  fontSize: "clamp(20px, 2.2vw, 28px)",
+                  fontSize: "clamp(15px, 1.5vw, 17px)",
                 }}
               >
                 <PortableText value={data.founderBio} />
               </div>
             ) : (
               <p
-                className="font-editorial italic text-muted-foreground max-w-[420px] leading-[1.5]"
+                className="text-muted-foreground max-w-[440px] leading-[1.75]"
                 style={{
-                  fontSize: "clamp(20px, 2.2vw, 28px)",
+                  fontSize: "clamp(15px, 1.5vw, 17px)",
                 }}
               >
                 {FALLBACK_BIO}
