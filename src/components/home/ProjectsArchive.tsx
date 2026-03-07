@@ -40,8 +40,8 @@ function ProjectCard({
       onFocus={onFocus}
       onBlur={onBlur}
     >
-      {/* Image — 4:5 portrait ratio */}
-      <div className="relative aspect-[4/5] overflow-hidden mb-4 md:mb-5">
+      {/* Image — 4:5 portrait ratio, capped so heading + image + text fit in viewport */}
+      <div className="relative aspect-[4/5] max-h-[60vh] overflow-hidden mb-4 md:mb-5">
         {/* Grain overlay */}
         <div
           className={`archive-grain absolute inset-0 z-10 pointer-events-none transition-opacity duration-300 ${
