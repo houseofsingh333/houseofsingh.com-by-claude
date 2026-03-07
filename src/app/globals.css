@@ -523,10 +523,10 @@ body {
     gap: 0 !important;
   }
 
-  /* LEFT COLUMN — Nav Links (left-aligned) */
+  /* NAV + NEWSLETTER COLUMN — same 24px left edge as everything else */
   .footer-col-center {
     order: 2;
-    padding: 28px 24px 0 24px !important;
+    padding: 0 24px 28px 24px !important;
     margin: 0 !important;
     border-top: none !important;
     text-align: left !important;
@@ -536,7 +536,8 @@ body {
     display: flex !important;
     flex-direction: column !important;
     align-items: flex-start !important;
-    gap: 4px !important;
+    gap: 0 !important;
+    padding-top: 28px !important;
   }
 
   .footer-nav-link {
@@ -552,9 +553,9 @@ body {
     text-align: left !important;
   }
 
-  /* CENTER COLUMN — Newsletter */
+  /* Newsletter — sits inside .footer-col-center, no extra horizontal padding */
   .footer-newsletter {
-    padding: 20px 24px 28px 24px !important;
+    padding: 20px 0 0 0 !important;
     margin-top: 0 !important;
     border-top: none !important;
   }
@@ -605,9 +606,11 @@ body {
     margin: 0 0 0 0;
   }
 
-  /* RIGHT COLUMN — Instagram */
+  /* RIGHT COLUMN — Instagram (ensure visible on mobile) */
   .footer-col-right {
     order: 3;
+    display: flex !important;
+    flex-direction: column !important;
     padding: 24px !important;
     margin: 0 !important;
     border-top: none !important;
