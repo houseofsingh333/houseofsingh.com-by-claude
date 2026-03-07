@@ -149,12 +149,8 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
               ref={logoRef}
               className="md:col-span-5 flex justify-center"
               style={{
-                clipPath: logoRevealed
-                  ? "circle(75% at 50% 50%)"
-                  : "circle(0% at 50% 50%)",
                 opacity: logoRevealed ? 0.6 : 0,
-                transition:
-                  "clip-path 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.8s ease",
+                transition: "opacity 1.2s ease",
               }}
             >
               <img
