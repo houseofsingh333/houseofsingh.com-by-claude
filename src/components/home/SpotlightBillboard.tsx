@@ -53,6 +53,12 @@ export default function SpotlightBillboard({ spotlight }: Props) {
   }, [prefersReduced]);
 
   if (!spotlight.image) return null;
+  if (
+    typeof spotlight.image === "object" &&
+    spotlight.image !== null &&
+    !("url" in spotlight.image && spotlight.image.url)
+  )
+    return null;
 
   const isExternal =
     spotlight.linkUrl?.startsWith("http://") ||

@@ -7,13 +7,6 @@ import ScrollReveal from "@/components/ScrollReveal";
 import ProjectsFiltersHorizontal from "./ProjectsFiltersHorizontal";
 import type { ProjectSummary } from "@/lib/placeholder-data";
 
-const DEFAULT_CATEGORIES = [
-  "Visual Identity",
-  "Editorial Storytelling",
-  "Art Direction",
-  "Photography",
-];
-
 /** Lowercase slug-like form for matching: "Visual Identity" → "visual-identity" */
 function slugify(str: string): string {
   return str.toLowerCase().replace(/\s+/g, "-");
@@ -30,10 +23,9 @@ export default function ProjectsFilteredGrid({
 }: Props) {
   // Derive unique categories from project data, fall back to defaults
   const categories = useMemo(() => {
-    const fromData = Array.from(
+    return Array.from(
       new Set(projects.map((p) => p.category).filter(Boolean)),
     );
-    return fromData.length > 0 ? fromData : DEFAULT_CATEGORIES;
   }, [projects]);
 
   // Resolve initialFilter (slug from URL) → matching category name

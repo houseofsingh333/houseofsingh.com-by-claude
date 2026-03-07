@@ -103,7 +103,7 @@ export default function JournalPreview({ entries }: Props) {
             href="/journal"
             className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
           >
-            Browse all
+            See all
           </Link>
         </div>
       </ScrollReveal>
@@ -118,7 +118,7 @@ export default function JournalPreview({ entries }: Props) {
             href="/journal"
             className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
           >
-            Browse all
+            See all
           </Link>
         </div>
       </div>
