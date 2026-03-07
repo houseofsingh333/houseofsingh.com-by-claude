@@ -108,7 +108,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— 3 · House of Singh ——— */}
       <section className="px-6 md:px-16 section-py-lg">
-        <SectionDivider label="The Moniker" />
+        <SectionDivider label="The Practice — House of Singh" />
 
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-center">
