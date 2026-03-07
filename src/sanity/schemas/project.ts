@@ -88,13 +88,6 @@ export const project = defineType({
       ],
     }),
     defineField({
-      name: "spotlight",
-      title: "Spotlight on Homepage",
-      type: "boolean",
-      description: "Feature this project as the spotlight on the homepage.",
-      initialValue: false,
-    }),
-    defineField({
       name: "featuredOnHomepage",
       title: "Show on Homepage",
       type: "boolean",

@@ -115,11 +115,14 @@ export type JournalEntry = {
   coverImage?: SanityImage;
 };
 
-export type SpotlightProject = {
-  _id: string;
-  slug: string;
+export type SpotlightData = {
+  enabled: boolean;
+  label: string;
   title: string;
-  description: string;
+  teaser: string;
+  linkText: string;
+  linkUrl: string;
+  category?: string;
   image: SanityImage;
 };
 

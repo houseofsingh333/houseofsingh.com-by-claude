@@ -1302,84 +1302,135 @@ body {
   }
 }
 
-/* ── Spotlight Billboard ── */
+/* ── Spotlight Billboard — Cinematic Takeover ── */
 
 .spotlight-section {
   position: relative;
   width: 100%;
-}
-
-/* Mobile: image block with 16:9 aspect ratio */
-.spotlight-img-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100vh;
   overflow: hidden;
 }
 
-/* Gradient overlay — lighter on mobile since text is below, not on top */
-.spotlight-img-wrap::after {
-  content: "";
+/* Background image with cinematic color grade */
+.spotlight-img-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.spotlight-img {
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.35) saturate(0.7);
+}
+
+/* Left-to-right gradient overlay */
+.spotlight-gradient {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.5) 0%,
-    rgba(0, 0, 0, 0.2) 50%,
-    rgba(0, 0, 0, 0.03) 100%
+    to right,
+    rgba(10, 10, 10, 0.85) 0%,
+    rgba(10, 10, 10, 0.5) 40%,
+    transparent 75%
   );
-  pointer-events: none;
   z-index: 1;
+  pointer-events: none;
 }
 
-/* Mobile: content block below the image, on site background */
+/* Film grain texture (CSS only) */
+.spotlight-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Content — left-aligned, vertically centered */
 .spotlight-content {
-  padding: 32px 1.5rem 40px;
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 1.5rem;
 }
 
 .spotlight-content-inner {
-  /* Mobile: no max-width constraint */
+  max-width: 600px;
 }
 
+/* Label with dash prefix */
 .spotlight-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--muted-foreground);
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.5);
   line-height: 1.4;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
+.spotlight-label-dash {
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+/* Title — editorial serif */
 .spotlight-title-el {
-  font-size: 28px;
+  font-family: var(--font-editorial);
+  font-size: clamp(42px, 6vw, 88px);
   font-weight: 300;
-  color: var(--foreground);
-  line-height: 1.15;
-  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.05;
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
 }
 
-.spotlight-desc {
-  font-size: 14px;
+/* Teaser text */
+.spotlight-teaser {
+  font-size: 15px;
   font-weight: 400;
-  color: var(--muted-foreground);
-  line-height: 1.6;
-  margin-bottom: 32px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
+  max-width: 520px;
+  margin-bottom: 36px;
 }
 
-/* CTA link with animated underline (clip-path technique) */
+/* CTA link with arrow and animated underline */
 .spotlight-cta {
   position: relative;
-  display: inline-block;
-  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   font-weight: 500;
-  color: var(--foreground);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   padding-bottom: 4px;
 }
 
-/* Underline: starts at 30% width, expands to 100% on hover */
+.spotlight-cta-arrow {
+  font-size: 16px;
+  transition: transform 300ms ease;
+}
+
+.spotlight-cta:hover .spotlight-cta-arrow {
+  transform: translateX(4px);
+}
+
+/* Underline: starts at 30%, expands to 100% on hover */
 .spotlight-cta::after {
   content: "";
   position: absolute;
@@ -1388,112 +1439,78 @@ body {
   width: 100%;
   height: 1px;
   background: currentColor;
-  /* clip-path: inset(0 70% 0 0) = show left 30%, clip right 70% */
   clip-path: inset(0 70% 0 0);
-  /* Leave: contract right-to-left in 500ms */
   transition: clip-path 500ms ease-out;
 }
 
-/* Hover: expand left-to-right to full width in 400ms */
 .spotlight-cta:hover::after {
   clip-path: inset(0 0% 0 0);
   transition: clip-path 400ms ease-out;
 }
 
 .spotlight-cta:focus-visible {
-  outline: 2px solid currentColor;
+  outline: 2px solid rgba(255, 255, 255, 0.7);
   outline-offset: 4px;
 }
 
-/* ── Tablet (768px+): overlaid layout ── */
-@media (min-width: 768px) {
-  .spotlight-section {
-    min-height: 70vh;
-  }
+/* Category — vertical text, bottom right */
+.spotlight-category {
+  position: absolute;
+  right: 24px;
+  bottom: 48px;
+  z-index: 3;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.15);
+}
 
-  /* Image fills the full section as absolute background */
-  .spotlight-img-wrap {
-    position: absolute;
-    inset: 0;
-    aspect-ratio: unset;
-    overflow: hidden;
-  }
-
-  /* Full-strength gradient on overlay layout */
-  .spotlight-img-wrap::after {
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.75) 0%,
-      rgba(0, 0, 0, 0.3) 50%,
-      rgba(0, 0, 0, 0.05) 100%
-    );
-  }
-
-  /* Content sits over the image, anchored to bottom-left */
+/* ── Mobile adjustments (below 768px) ── */
+@media (max-width: 767px) {
   .spotlight-content {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: flex-end;
-    padding: 0 4rem 48px;
-    z-index: 2;
+    padding: 0 1.25rem;
+  }
+
+  .spotlight-teaser {
+    font-size: 14px;
+  }
+
+  .spotlight-category {
+    right: 16px;
+    bottom: 32px;
+    font-size: 10px;
+  }
+}
+
+/* ── Tablet+ (768px+): more breathing room ── */
+@media (min-width: 768px) {
+  .spotlight-content {
+    padding: 0 4rem;
+  }
+}
+
+/* ── Desktop (1280px+): generous padding ── */
+@media (min-width: 1280px) {
+  .spotlight-content {
+    padding: 0 5rem;
   }
 
   .spotlight-content-inner {
-    max-width: 600px;
-  }
-
-  /* White text on dark gradient */
-  .spotlight-label {
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  .spotlight-title-el {
-    font-size: 36px;
-    color: #ffffff;
-    max-width: 600px;
-  }
-
-  .spotlight-desc {
-    font-size: 15px;
-    color: rgba(255, 255, 255, 0.8);
-    max-width: 480px;
-  }
-
-  .spotlight-cta {
-    color: #ffffff;
-  }
-
-  .spotlight-cta:focus-visible {
-    outline-color: white;
-  }
-}
-
-/* ── Desktop (1280px+): larger type and padding ── */
-@media (min-width: 1280px) {
-  .spotlight-section {
-    min-height: 80vh;
-  }
-
-  .spotlight-content {
-    padding: 0 5rem 64px;
-  }
-
-  .spotlight-title-el {
-    font-size: 48px;
     max-width: 700px;
   }
 
-  .spotlight-desc {
+  .spotlight-teaser {
     font-size: 16px;
-    max-width: 520px;
+    max-width: 560px;
   }
 }
 
-/* ── Ken Burns drift — Spotlight (desktop 1024px+ only) ── */
+/* ── Ken Burns drift — desktop 1024px+ only ── */
 @keyframes kbSpotlight {
   0%, 100% { transform: scale(1) translate(0, 0); }
-  50%       { transform: scale(1.02) translate(0.2%, 0.15%); }
+  50%       { transform: scale(1.03) translate(0.3%, 0.2%); }
 }
 
 @media (min-width: 1024px) {
@@ -1516,6 +1533,10 @@ body {
 
   .spotlight-cta::after,
   .spotlight-cta:hover::after {
+    transition: none !important;
+  }
+
+  .spotlight-cta-arrow {
     transition: none !important;
   }
 }

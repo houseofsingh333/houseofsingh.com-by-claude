@@ -20,7 +20,6 @@ export type {
   ContentSection,
   ProjectDetail,
   JournalEntry,
-  SpotlightProject,
   SiteSettings,
   AboutMilestone,
   FeaturedOutlet,
@@ -36,7 +35,6 @@ import type {
   ProjectSummary,
   HomepageProject,
   JournalEntry,
-  SpotlightProject,
   SiteSettings,
   AboutPageData,
   HomeIntroData,
@@ -219,17 +217,6 @@ export const fallbackJournalEntries: JournalEntry[] = [
     coverImage: "/images/project-placeholder-1.svg",
   },
 ];
-
-// --------------- Fallback Spotlight ---------------
-
-export const fallbackSpotlightProject: SpotlightProject = {
-  _id: "spotlight-1",
-  slug: "parkview-residence",
-  title: "The Parkview Residence",
-  description:
-    "A contemporary family home blending indoor and outdoor living, designed with intention and restraint.",
-  image: "/images/project-placeholder-1.svg",
-};
 
 // --------------- Fallback Site Settings ---------------
 

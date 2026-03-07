@@ -146,12 +146,11 @@ export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug
   }
 }`;
 
-// --------------- Spotlight Project ---------------
+// --------------- Spotlight ---------------
 
-export const spotlightProjectQuery = `*[_type == "project" && spotlight == true][0]{
-  _id, title, "slug": slug.current,
-  "description": excerpt,
-  "image": thumbnail ${_imageAsset}
+export const spotlightQuery = `*[_type == "spotlight"][0]{
+  enabled, label, title, teaser, linkText, linkUrl, category,
+  "image": spotlightImage ${_imageAsset}
 }`;
 
 // --------------- Contact Page ---------------

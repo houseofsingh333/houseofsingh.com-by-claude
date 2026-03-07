@@ -13,22 +13,21 @@ import {
   homepageFeaturedProjectsQuery,
   latestProjectsQuery,
   journalFeedQuery,
-  spotlightProjectQuery,
+  spotlightQuery,
 } from "@/sanity/queries";
 import {
   fallbackHeroSlides,
   fallbackHomepageProjects,
   fallbackJournalEntries,
-  fallbackSpotlightProject,
   fallbackSiteSettings,
   fallbackHomeIntro,
   type HeroSlide,
   type HomeIntroData,
   type HomepageProject,
   type JournalEntry,
-  type SpotlightProject,
   type SiteSettings,
 } from "@/lib/placeholder-data";
+import type { SpotlightData } from "@/lib/types";
 
 type SanityHomepageProject = {
   _id: string;
@@ -53,7 +52,7 @@ export default async function HomePage() {
         query: latestProjectsQuery,
       }),
       sanityFetch<JournalEntry[] | null>({ query: journalFeedQuery }),
-      sanityFetch<SpotlightProject | null>({ query: spotlightProjectQuery }),
+      sanityFetch<SpotlightData | null>({ query: spotlightQuery }),
     ]);
 
   const heroSlides = slides?.length
@@ -72,7 +71,6 @@ export default async function HomePage() {
         : fallbackHomepageProjects;
 
   const journalEntries = journal?.length ? journal : fallbackJournalEntries;
-  const spotlightProject = spotlight ?? fallbackSpotlightProject;
   const spotifyUrl =
     settings?.spotifyPlaylistUrl ?? fallbackSiteSettings.spotifyPlaylistUrl;
 
@@ -81,7 +79,7 @@ export default async function HomePage() {
       <CinematicHero slides={heroSlides} />
       <IntroSection data={homeIntro} />
       <ProjectsArchive projects={homepageProjects} />
-      <SpotlightBillboard project={spotlightProject} />
+      {spotlight?.enabled && <SpotlightBillboard spotlight={spotlight} />}
       <JournalPreview entries={journalEntries} />
       <SpotifyEmbed playlistUrl={spotifyUrl} />
       <StudioRedirect />

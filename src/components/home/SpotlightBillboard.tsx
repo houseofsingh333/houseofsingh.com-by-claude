@@ -4,10 +4,10 @@ import { useRef, useState, useEffect, type CSSProperties } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import { usePrefersReducedMotion, useMediaQuery } from "@/hooks/useMediaQuery";
-import type { SpotlightProject } from "@/lib/placeholder-data";
+import type { SpotlightData } from "@/lib/types";
 
 type Props = {
-  project: SpotlightProject;
+  spotlight: SpotlightData;
 };
 
 function revealStyle(
@@ -27,7 +27,7 @@ function revealStyle(
 
 const TITLE_ID = "spotlight-billboard-title";
 
-export default function SpotlightBillboard({ project }: Props) {
+export default function SpotlightBillboard({ spotlight }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const [revealed, setRevealed] = useState(false);
   const prefersReduced = usePrefersReducedMotion();
@@ -52,7 +52,9 @@ export default function SpotlightBillboard({ project }: Props) {
     return () => observer.disconnect();
   }, [prefersReduced]);
 
-  const ctaHref = `/projects/${project.slug}`;
+  const isExternal =
+    spotlight.linkUrl.startsWith("http://") ||
+    spotlight.linkUrl.startsWith("https://");
 
   return (
     <section
@@ -60,31 +62,34 @@ export default function SpotlightBillboard({ project }: Props) {
       aria-labelledby={TITLE_ID}
       className="spotlight-section"
     >
-      {/* ── Image layer ── */}
-      <div
-        className="spotlight-img-wrap"
-        role="img"
-        aria-label={project.title}
-      >
+      {/* ── Background image with cinematic filter ── */}
+      <div className="spotlight-img-wrap" aria-hidden="true">
         <SanityImage
-          image={project.image}
+          image={spotlight.image}
           context="hero"
-          alt={project.title}
+          alt=""
           priority={false}
           fill
-          className={`object-cover object-center${isDesktop && !prefersReduced ? " spotlight-kb" : ""}`}
+          className={`spotlight-img${isDesktop && !prefersReduced ? " spotlight-kb" : ""}`}
         />
       </div>
+
+      {/* ── Gradient overlay ── */}
+      <div className="spotlight-gradient" aria-hidden="true" />
+
+      {/* ── Film grain texture ── */}
+      <div className="spotlight-grain" aria-hidden="true" />
 
       {/* ── Content layer ── */}
       <div className="spotlight-content">
         <div className="spotlight-content-inner">
-          {/* Section label */}
+          {/* Label with dash prefix */}
           <p
             className="spotlight-label"
             style={revealStyle(revealed, 20, 600, 0, prefersReduced)}
           >
-            Spotlight
+            <span className="spotlight-label-dash" aria-hidden="true" />
+            {spotlight.label}
           </p>
 
           {/* Title */}
@@ -93,31 +98,58 @@ export default function SpotlightBillboard({ project }: Props) {
             className="spotlight-title-el"
             style={revealStyle(revealed, 30, 700, 150, prefersReduced)}
           >
-            {project.title}
+            {spotlight.title}
           </h2>
 
-          {/* Description */}
-          {project.description && (
-            <p
-              className="spotlight-desc"
-              style={revealStyle(revealed, 25, 600, 300, prefersReduced)}
-            >
-              {project.description}
-            </p>
-          )}
+          {/* Teaser */}
+          <p
+            className="spotlight-teaser"
+            style={revealStyle(revealed, 25, 600, 300, prefersReduced)}
+          >
+            {spotlight.teaser}
+          </p>
 
           {/* CTA */}
           <div style={revealStyle(revealed, 20, 500, 450, prefersReduced)}>
-            <Link
-              href={ctaHref}
-              className="spotlight-cta"
-              aria-label={`View project: ${project.title}`}
-            >
-              View project
-            </Link>
+            {isExternal ? (
+              <a
+                href={spotlight.linkUrl}
+                className="spotlight-cta"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${spotlight.linkText} (opens in new tab)`}
+              >
+                {spotlight.linkText}
+                <span className="spotlight-cta-arrow" aria-hidden="true">
+                  &rarr;
+                </span>
+              </a>
+            ) : (
+              <Link
+                href={spotlight.linkUrl}
+                className="spotlight-cta"
+                aria-label={spotlight.linkText}
+              >
+                {spotlight.linkText}
+                <span className="spotlight-cta-arrow" aria-hidden="true">
+                  &rarr;
+                </span>
+              </Link>
+            )}
           </div>
         </div>
       </div>
+
+      {/* ── Category tag (vertical, bottom right) ── */}
+      {spotlight.category && (
+        <div
+          className="spotlight-category"
+          style={revealStyle(revealed, 0, 800, 600, prefersReduced)}
+          aria-hidden="true"
+        >
+          {spotlight.category}
+        </div>
+      )}
     </section>
   );
 }

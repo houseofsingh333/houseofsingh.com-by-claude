@@ -15,6 +15,7 @@ import {
   stickyChapter,
 } from "./sections";
 import { siteSettings } from "./siteSettings";
+import { spotlight } from "./spotlight";
 
 export const schemaTypes = [
   // Document types
@@ -28,6 +29,7 @@ export const schemaTypes = [
   project,
   projectCategory,
   siteSettings,
+  spotlight,
   // Section block types (used inside project.contentSections)
   textSection,
   imageSingle,
