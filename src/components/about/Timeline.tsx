@@ -1,154 +1,203 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import SanityImage from "@/components/SanityImage";
 import type { AboutMilestone } from "@/lib/types";
 
-/* ── Repeated sub-elements ── */
-
-const GRAYSCALE_IMG_CLASS =
-  "object-cover grayscale scale-105 hover:grayscale-0 hover:scale-100 hover:brightness-110 transition-all duration-700 ease-out";
-
-function MilestoneContent({ m, compact }: { m: AboutMilestone; compact?: boolean }) {
-  return (
-    <>
-      <p className={`timeline-year font-editorial ${compact ? "text-4xl" : "text-5xl"} font-light text-foreground leading-none mb-2`}>
-        {m.year}
-      </p>
-      <p className="text-[11px] tracking-[0.15em] uppercase text-foreground mb-1">
-        {m.title}
-      </p>
-      <p className={`text-xs text-muted-foreground leading-[1.6]${compact ? " mb-3" : ""}`}>
-        {m.text}
-      </p>
-    </>
-  );
-}
-
-function MilestoneImage({ image, alt }: { image: AboutMilestone["image"]; alt: string }) {
-  return (
-    <SanityImage
-      image={image}
-      context="thumbnail"
-      alt={alt}
-      fill
-      className={GRAYSCALE_IMG_CLASS}
-    />
-  );
-}
-
-/* ── Single milestone row ── */
-
-function TimelineMilestone({ m, idx }: { m: AboutMilestone; idx: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  const isEven = idx % 2 === 0;
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.15 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const slideFrom = isEven ? "md:-translate-x-8" : "md:translate-x-8";
-  const fadeClass = (translate: string) =>
-    visible ? "opacity-100 translate-x-0" : `opacity-0 ${translate}`;
-
-  return (
-    <div
-      ref={ref}
-      className="timeline-milestone relative mb-14 last:mb-0 md:mb-0 md:min-h-[160px] group"
-      tabIndex={0}
-    >
-      {/* Dot */}
-      <div className="absolute left-6 md:left-1/2 top-3 -translate-x-1/2 z-10">
-        <div
-          className={`timeline-dot w-2 h-2 rounded-full transition-all duration-500 group-hover:bg-foreground/60 group-focus-within:bg-foreground/60 ${
-            visible ? "bg-foreground/25 scale-100" : "bg-foreground/0 scale-0"
-          }`}
-        />
-      </div>
-
-      {/* Desktop: two-column grid */}
-      <div className="hidden md:grid md:grid-cols-2 md:gap-0">
-        {/* Left column */}
-        <div
-          className={`flex ${isEven ? "justify-end pr-12" : "justify-start pl-12"} ${!isEven ? "order-2" : "order-1"}`}
-        >
-          {isEven ? (
-            <div
-              className={`timeline-content text-right max-w-[280px] py-4 transition-all duration-700 ease-out ${fadeClass(slideFrom)}`}
-              style={{ transitionDelay: `${idx * 100}ms` }}
-            >
-              <MilestoneContent m={m} />
-            </div>
-          ) : (
-            <div
-              className={`timeline-image relative w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4 transition-all duration-700 ease-out ${fadeClass("md:-translate-x-8")}`}
-              style={{ transitionDelay: `${idx * 100 + 150}ms` }}
-            >
-              <MilestoneImage image={m.image} alt={m.title} />
-            </div>
-          )}
-        </div>
-
-        {/* Right column */}
-        <div
-          className={`flex ${!isEven ? "justify-end pr-12" : "justify-start pl-12"} ${!isEven ? "order-1" : "order-2"}`}
-        >
-          {isEven ? (
-            <div
-              className={`timeline-image relative w-[220px] aspect-[4/3] overflow-hidden bg-secondary py-4 transition-all duration-700 ease-out ${fadeClass("md:translate-x-8")}`}
-              style={{ transitionDelay: `${idx * 100 + 150}ms` }}
-            >
-              <MilestoneImage image={m.image} alt={m.title} />
-            </div>
-          ) : (
-            <div
-              className={`timeline-content-reverse text-left max-w-[280px] py-4 transition-all duration-700 ease-out ${fadeClass(slideFrom)}`}
-              style={{ transitionDelay: `${idx * 100}ms` }}
-            >
-              <MilestoneContent m={m} />
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Mobile: single column */}
-      <div
-        className={`md:hidden pl-14 transition-all duration-700 ease-out ${
-          visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-        }`}
-        style={{ transitionDelay: `${idx * 100}ms` }}
-      >
-        <MilestoneContent m={m} compact />
-        <div className="relative w-[180px] aspect-[4/3] overflow-hidden bg-secondary">
-          <MilestoneImage image={m.image} alt={m.title} />
-        </div>
-      </div>
-    </div>
-  );
-}
+const CARD_W = 280;
+const CARD_W_MOBILE = 240;
+const GAP = 24;
+const GAP_MOBILE = 16;
+const MAX_BLUR = 4;
+const MIN_OPACITY = 0.4;
+const MIN_SCALE = 0.95;
+const FADE_W = 120;
 
 export default function Timeline({ milestones }: { milestones: AboutMilestone[] }) {
-  return (
-    <div className="relative max-w-4xl mx-auto">
-      {/* Center line */}
-      <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-border md:-translate-x-px" />
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
 
-      {milestones.map((m, idx) => (
-        <TimelineMilestone key={m.year} m={m} idx={idx} />
-      ))}
+  const applyFocus = useCallback(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const centerX = container.scrollLeft + container.clientWidth / 2;
+
+    for (const card of cardsRef.current) {
+      if (!card) continue;
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const dist = Math.abs(centerX - cardCenter);
+      const maxDist = container.clientWidth / 2;
+      const t = Math.min(dist / maxDist, 1); // 0 = center, 1 = edge
+
+      const blur = t * MAX_BLUR;
+      const opacity = 1 - t * (1 - MIN_OPACITY);
+      const scale = 1 - t * (1 - MIN_SCALE);
+
+      card.style.filter = `blur(${blur}px) saturate(0.8)`;
+      card.style.opacity = String(opacity);
+      card.style.transform = `scale(${scale})`;
+    }
+  }, []);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    // Set dynamic padding so first/last card can reach center
+    const updatePadding = () => {
+      const isMobile = window.innerWidth < 768;
+      const cardW = isMobile ? CARD_W_MOBILE : CARD_W;
+      const pad = Math.max(0, container.clientWidth / 2 - cardW / 2);
+      container.style.paddingLeft = `${pad}px`;
+      container.style.paddingRight = `${pad}px`;
+      applyFocus();
+    };
+
+    updatePadding();
+    window.addEventListener("resize", updatePadding);
+    container.addEventListener("scroll", applyFocus, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", updatePadding);
+      container.removeEventListener("scroll", applyFocus);
+    };
+  }, [applyFocus]);
+
+  // Drag-to-scroll (desktop)
+  const onPointerDown = (e: React.PointerEvent) => {
+    const container = scrollRef.current;
+    if (!container || e.pointerType === "touch") return;
+    isDragging.current = true;
+    startX.current = e.clientX;
+    scrollLeft.current = container.scrollLeft;
+    container.setPointerCapture(e.pointerId);
+    container.style.cursor = "grabbing";
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!isDragging.current || !scrollRef.current) return;
+    const dx = e.clientX - startX.current;
+    scrollRef.current.scrollLeft = scrollLeft.current - dx;
+  };
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (!isDragging.current || !scrollRef.current) return;
+    isDragging.current = false;
+    scrollRef.current.releasePointerCapture(e.pointerId);
+    scrollRef.current.style.cursor = "grab";
+  };
+
+  return (
+    <div className="relative">
+      {/* Edge fades */}
+      <div
+        className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+        style={{
+          width: FADE_W,
+          background: "linear-gradient(to right, var(--background), transparent)",
+        }}
+      />
+      <div
+        className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+        style={{
+          width: FADE_W,
+          background: "linear-gradient(to left, var(--background), transparent)",
+        }}
+      />
+
+      {/* Scroll container */}
+      <div
+        ref={scrollRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        className="flex select-none overflow-x-auto"
+        style={{
+          gap: GAP,
+          scrollbarWidth: "none",
+          cursor: "grab",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        {milestones.map((m, idx) => (
+          <div
+            key={m.year + idx}
+            ref={(el) => { cardsRef.current[idx] = el; }}
+            className="film-card flex-shrink-0"
+            style={{
+              width: CARD_W,
+              willChange: "filter, opacity, transform",
+              transition: "filter 0.15s ease, opacity 0.15s ease, transform 0.15s ease",
+            }}
+          >
+            {/* Image frame */}
+            <div
+              className="relative w-full overflow-hidden"
+              style={{
+                aspectRatio: "3 / 4",
+                border: "1px solid rgba(0,0,0,0.06)",
+              }}
+            >
+              <SanityImage
+                image={m.image}
+                context="thumbnail"
+                alt={m.title}
+                fill
+                className="object-cover"
+              />
+            </div>
+
+            {/* Text */}
+            <div className="mt-3 text-center">
+              <p
+                className="font-editorial font-light leading-none"
+                style={{
+                  fontSize: 36,
+                  color: "rgba(0,0,0,0.12)",
+                }}
+              >
+                {m.year}
+              </p>
+              <p
+                className="mt-1 uppercase"
+                style={{
+                  fontSize: 10,
+                  letterSpacing: "0.18em",
+                  color: "#777",
+                }}
+              >
+                {m.title}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Responsive & reduced-motion overrides */}
+      <style jsx>{`
+        .film-card {
+          width: ${CARD_W}px;
+        }
+        @media (max-width: 767px) {
+          .film-card {
+            width: ${CARD_W_MOBILE}px;
+          }
+          div[style*="gap"] {
+            gap: ${GAP_MOBILE}px;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .film-card {
+            transition: opacity 0.15s ease !important;
+            filter: saturate(0.8) !important;
+            transform: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

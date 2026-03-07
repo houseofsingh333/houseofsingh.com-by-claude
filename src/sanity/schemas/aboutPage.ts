@@ -218,6 +218,7 @@ export const aboutPage = defineType({
               type: "image",
               options: { hotspot: true },
               description: "JPEG preferred. Use PNG only if transparency is needed.",
+              validation: (rule) => rule.required(),
               fields: [
                 defineField({
                   name: "alt",

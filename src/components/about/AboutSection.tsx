@@ -157,10 +157,23 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         </section>
       )}
 
-      {/* ——— 5 · Timeline ——— */}
+      {/* ——— 5 · Journey Timeline ——— */}
       {milestones && milestones.length > 0 && (
-        <section className="px-6 md:px-16 section-py-lg">
-          <SectionDivider label="Ten Years On" />
+        <section className="section-py-lg">
+          <div className="px-6 md:px-16">
+            <div className="mb-16">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground">
+                  Journey
+                </p>
+                <p className="text-xs tracking-[0.15em] uppercase text-muted-foreground flex items-center gap-1.5">
+                  Scroll
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </p>
+              </div>
+              <div className="w-full h-px bg-border" />
+            </div>
+          </div>
           <Timeline milestones={milestones} />
         </section>
       )}
