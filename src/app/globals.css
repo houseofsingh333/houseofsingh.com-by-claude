@@ -1361,10 +1361,10 @@ body {
   }
 }
 
-/* Tablet: taller cards — 70vh instead of 60vh */
+/* Tablet: taller cards — 80vh instead of 60vh */
 @media (min-width: 768px) and (max-width: 1023px) {
   .archive-card .max-h-\[60vh\] {
-    max-height: 70vh !important;
+    max-height: 80vh !important;
   }
 }
 
