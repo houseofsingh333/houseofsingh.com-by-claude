@@ -27,5 +27,10 @@ export default async function AboutPage() {
 
   const about = data ?? fallbackAboutPage;
 
-  return <AboutSection data={about} />;
+  return (
+    <>
+      <h1 className="sr-only">About Maninder Singh — House of Singh</h1>
+      <AboutSection data={about} />
+    </>
+  );
 }

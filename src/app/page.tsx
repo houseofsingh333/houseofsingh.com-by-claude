@@ -76,6 +76,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <h1 className="sr-only">House of Singh — Maninder Singh, Creative Director, Designer, Photographer</h1>
       <CinematicHero slides={heroSlides} />
       <IntroSection data={homeIntro} />
       <ProjectsArchive projects={homepageProjects} />
