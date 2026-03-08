@@ -64,6 +64,14 @@ export const metadata: Metadata = {
     site: "@houseofsingh",
     images: ["/og-image.png"],
   },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
+  verification: {
+    google: "GOOGLE_VERIFICATION_CODE_HERE",
+  },
 };
 
 const jsonLd = [

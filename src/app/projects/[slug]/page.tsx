@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/fetch";
-import { projectBySlugQuery } from "@/sanity/queries";
+import { projectBySlugQuery, projectsListQuery } from "@/sanity/queries";
 import { fallbackProjects as projects } from "@/lib/placeholder-data";
 import type { ProjectDetail } from "@/lib/placeholder-data";
 import SanityImage from "@/components/SanityImage";
@@ -12,6 +12,18 @@ import ContentSections from "@/components/projects/ContentSections";
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
+export async function generateStaticParams() {
+  const sanityProjects = await sanityFetch<{ slug: string }[]>({
+    query: projectsListQuery,
+  });
+
+  if (sanityProjects && sanityProjects.length > 0) {
+    return sanityProjects.map((project) => ({ slug: project.slug }));
+  }
+
+  return projects.map((project) => ({ slug: project.slug }));
+}
 
 function ProjectHeader({ category, title, intro }: { category: string; title: string; intro?: string }) {
   return (
