@@ -456,12 +456,12 @@ body {
 /* ——— Footer Tablet (768px – 1023px) ——— */
 
 @media (min-width: 768px) and (max-width: 1023px) {
-  /* 5. Tighter spacing */
+  /* Tighter spacing */
   .footer-main {
     padding: 40px 48px;
   }
 
-  /* 3. Two-column grid: left = CTA, right = nav + Instagram stacked */
+  /* Two-column grid: left = CTA, right = nav + Instagram stacked */
   .footer-grid {
     grid-template-columns: 1fr 1fr;
     gap: 32px;
@@ -472,33 +472,59 @@ body {
     grid-column: 1;
   }
 
-  /* Nav links in right column, row 1 */
+  /* Remove underline on Start a Project link */
+  .footer-cta-link {
+    text-decoration: none !important;
+    border-bottom: none !important;
+  }
+
+  .footer-cta-heading {
+    text-decoration: none !important;
+    border-bottom: none !important;
+  }
+
+  /* Nav links in right column, row 1 — 2-column grid */
   .footer-col-center {
     grid-column: 2;
     grid-row: 1;
     align-items: flex-start;
   }
 
-  /* 1. Hide newsletter on tablet */
+  .footer-nav {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 32px;
+    align-items: start;
+    padding-top: 0;
+  }
+
+  /* Hide newsletter on tablet */
   .footer-newsletter {
     display: none !important;
   }
 
-  /* 2. Instagram in right column, row 2 */
+  /* Instagram in right column, row 2 */
   .footer-col-right {
     grid-column: 2;
     grid-row: 2;
     justify-self: start;
     align-items: flex-start;
     align-self: start;
+    padding-top: 32px;
   }
 
   .footer-ig-box {
     width: 100%;
+    max-width: none;
     aspect-ratio: 5 / 4;
   }
 
-  /* 4. Hide TOP button on tablet */
+  /* Logo size on tablet */
+  .footer-crest {
+    width: 120px;
+  }
+
+  /* Hide TOP button on tablet */
   .footer-top-btn {
     display: none !important;
   }
