@@ -55,6 +55,14 @@ export default function Footer({ instagramPhotos = [] }: Props) {
 
       {/* Main Content — Three Columns */}
       <div className="footer-main">
+        {/* TOP button — positioned absolutely on desktop */}
+        <button
+          onClick={scrollToTop}
+          className="footer-top-btn"
+          type="button"
+        >
+          TOP <span>↑</span>
+        </button>
         <div className="footer-grid">
           {/* Left Column: Crest + CTA */}
           <div className="footer-col-left">
@@ -124,15 +132,8 @@ export default function Footer({ instagramPhotos = [] }: Props) {
             </div>
           </div>
 
-          {/* Right Column: TOP ↑ + Instagram */}
+          {/* Right Column: Instagram (mobile only) */}
           <div className="footer-col-right">
-            <button
-              onClick={scrollToTop}
-              className="footer-top-btn"
-              type="button"
-            >
-              TOP <span>↑</span>
-            </button>
             {instagramPhotos.length > 0 && (
               <a
                 href="https://www.instagram.com/houseofsingh"
