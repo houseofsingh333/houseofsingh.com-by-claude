@@ -50,6 +50,7 @@ export default function JournalList({ entries }: Props) {
   const [activeMonth, setActiveMonth] = useState<number>(initial.month);
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   /* Sync initial selection when entries change (e.g. ISR revalidation) */
   useEffect(() => {
@@ -114,6 +115,63 @@ export default function JournalList({ entries }: Props) {
             d.getFullYear() === activeYear && d.getMonth() + 1 === activeMonth
           );
         });
+
+  /* Mobile: scroll-driven grayscale-to-color via IntersectionObserver */
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    if (mq.matches) return; // desktop — hover handles it
+
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    const cards = grid.querySelectorAll<HTMLElement>("[data-journal-card]");
+    if (cards.length === 0) return;
+
+    if (prefersReduced) {
+      // Reduced motion: show all cards in full color on mobile
+      cards.forEach((card) => {
+        const img = card.querySelector("img");
+        if (img) {
+          img.classList.remove("grayscale");
+          img.classList.add("grayscale-0");
+        }
+      });
+      return;
+    }
+
+    // Start all cards in grayscale on mobile
+    cards.forEach((card) => {
+      const img = card.querySelector("img");
+      if (img) {
+        img.classList.add("grayscale");
+        img.classList.remove("grayscale-0");
+      }
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const img = entry.target.querySelector("img");
+          if (!img) return;
+          if (entry.isIntersecting) {
+            img.classList.remove("grayscale");
+            img.classList.add("grayscale-0");
+          } else {
+            img.classList.add("grayscale");
+            img.classList.remove("grayscale-0");
+          }
+        });
+      },
+      { rootMargin: "-25% 0px -25% 0px", threshold: 0 },
+    );
+
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
+  }, [filtered]);
 
   return (
     <div className="overflow-hidden">
@@ -227,7 +285,7 @@ export default function JournalList({ entries }: Props) {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-14 animate-fade-in">
+          <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-14 animate-fade-in">
             {filtered.map((entry) => (
               <Link
                 key={entry._id}
@@ -235,13 +293,13 @@ export default function JournalList({ entries }: Props) {
                 className="block group transition-transform duration-300 hover:-translate-y-1"
               >
                 {/* Image */}
-                <div className="relative overflow-hidden bg-secondary mb-5 shadow-sm group-hover:shadow-md transition-shadow duration-300 aspect-[3/4]">
+                <div data-journal-card className="relative overflow-hidden bg-secondary mb-5 shadow-sm group-hover:shadow-md transition-shadow duration-300 aspect-[3/4]">
                   <SanityImage
                     image={entry.coverImage}
                     context="thumbnail"
                     alt={entry.title}
                     fill
-                    className="object-cover transition-all duration-700 group-hover:scale-[1.03] grayscale group-hover:grayscale-0"
+                    className="object-cover transition-all duration-700 group-hover:scale-[1.03] lg:grayscale lg:group-hover:grayscale-0"
                   />
                 </div>
 
