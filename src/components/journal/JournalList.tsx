@@ -28,11 +28,34 @@ function formatDate(dateStr: string) {
   });
 }
 
+/** Find the most recent entry's year and month to use as initial selection. */
+function getMostRecentYearMonth(entries: JournalEntry[]): {
+  year: number;
+  month: number;
+} {
+  if (entries.length === 0) {
+    return { year: new Date().getFullYear(), month: new Date().getMonth() + 1 };
+  }
+  const sorted = [...entries].sort(
+    (a, b) =>
+      parseSanityDate(b.date).getTime() - parseSanityDate(a.date).getTime(),
+  );
+  const d = parseSanityDate(sorted[0].date);
+  return { year: d.getFullYear(), month: d.getMonth() + 1 };
+}
+
 export default function JournalList({ entries }: Props) {
-  const [activeYear, setActiveYear] = useState<number>(currentYear);
-  const [activeMonth, setActiveMonth] = useState<number>(currentMonth);
+  const initial = useMemo(() => getMostRecentYearMonth(entries), [entries]);
+  const [activeYear, setActiveYear] = useState<number>(initial.year);
+  const [activeMonth, setActiveMonth] = useState<number>(initial.month);
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
+
+  /* Sync initial selection when entries change (e.g. ISR revalidation) */
+  useEffect(() => {
+    setActiveYear(initial.year);
+    setActiveMonth(initial.month);
+  }, [initial.year, initial.month]);
 
   /* Derive unique years from entries, sorted newest-first */
   const years = useMemo(() => {
@@ -73,10 +96,12 @@ export default function JournalList({ entries }: Props) {
       return;
     }
     setActiveYear(year);
-    if (year === currentYear) {
-      setActiveMonth(currentMonth);
+    // Select the latest month that has entries for this year
+    const months = monthsWithEntries[year];
+    if (months && months.size > 0) {
+      setActiveMonth(Math.max(...months));
     } else {
-      setActiveMonth(12);
+      setActiveMonth(1);
     }
   };
 
