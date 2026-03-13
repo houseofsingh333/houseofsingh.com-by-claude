@@ -5,6 +5,7 @@ import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { JournalEntry } from "@/lib/placeholder-data";
+import { parseSanityDate } from "@/lib/dates";
 
 type Props = {
   entries: JournalEntry[];
@@ -12,13 +13,13 @@ type Props = {
 
 /* ── Date formatters ── */
 
-const fmtDay = (d: string) => new Date(d).getDate().toString();
+const fmtDay = (d: string) => parseSanityDate(d).getDate().toString();
 
 const fmtMonthYear = (d: string) =>
-  new Date(d).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  parseSanityDate(d).toLocaleDateString("en-US", { month: "short", year: "numeric" });
 
 const fmtDate = (d: string) =>
-  new Date(d).toLocaleDateString("en-GB", {
+  parseSanityDate(d).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -44,7 +45,7 @@ export default function JournalPreview({ entries }: Props) {
   /* Sort newest-first and cap at 4 */
   const displayed = entries
     .slice()
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a, b) => parseSanityDate(b.date).getTime() - parseSanityDate(a.date).getTime())
     .slice(0, MAX_CARDS);
 
   /* ── Desktop: cursor-follow handler ── */

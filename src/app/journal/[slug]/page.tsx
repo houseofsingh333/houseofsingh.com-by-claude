@@ -10,6 +10,7 @@ import {
   fallbackJournalEntries,
   type JournalEntry,
 } from "@/lib/placeholder-data";
+import { parseSanityDate } from "@/lib/dates";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -49,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
+  const d = parseSanityDate(dateStr);
   return d.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
@@ -76,7 +77,7 @@ export default async function JournalDetailPage({ params }: Props) {
   });
   const all = allData?.length ? allData : fallbackJournalEntries;
   const sorted = [...all].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    (a, b) => parseSanityDate(b.date).getTime() - parseSanityDate(a.date).getTime(),
   );
   const currentIdx = sorted.findIndex((e) => e.slug === resolved.slug);
   const prevEntry = currentIdx > 0 ? sorted[currentIdx - 1] : null;

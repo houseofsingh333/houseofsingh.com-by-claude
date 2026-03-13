@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import type { JournalEntry } from "@/lib/placeholder-data";
+import { parseSanityDate } from "@/lib/dates";
 
 type Props = {
   entries: JournalEntry[];
@@ -20,7 +21,7 @@ const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth() + 1;
 
 function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
+  const d = parseSanityDate(dateStr);
   return d.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
@@ -49,7 +50,7 @@ export default function JournalList({ entries }: Props) {
   const monthsWithEntries = useMemo(() => {
     const map: Record<number, Set<number>> = {};
     entries.forEach((e) => {
-      const d = new Date(e.date);
+      const d = parseSanityDate(e.date);
       const y = d.getFullYear();
       const m = d.getMonth() + 1;
       if (!map[y]) map[y] = new Set();
@@ -73,7 +74,7 @@ export default function JournalList({ entries }: Props) {
 
   const mostRecentId = useMemo(() => {
     const sorted = [...entries].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      (a, b) => parseSanityDate(b.date).getTime() - parseSanityDate(a.date).getTime(),
     );
     return sorted[0]?._id;
   }, [entries]);
@@ -82,7 +83,7 @@ export default function JournalList({ entries }: Props) {
     activeYear === -1
       ? []
       : entries.filter((e) => {
-          const d = new Date(e.date);
+          const d = parseSanityDate(e.date);
           return (
             d.getFullYear() === activeYear && d.getMonth() + 1 === activeMonth
           );

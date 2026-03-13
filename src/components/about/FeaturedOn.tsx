@@ -3,10 +3,11 @@
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { FeaturedOutlet } from "@/lib/types";
+import { parseSanityDate } from "@/lib/dates";
 
 function formatDate(dateStr?: string): string | null {
   if (!dateStr) return null;
-  const d = new Date(dateStr + "T00:00:00");
+  const d = parseSanityDate(dateStr);
   if (isNaN(d.getTime())) return null;
   return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 }
