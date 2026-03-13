@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import JournalList from "@/components/journal/JournalList";
 import { sanityFetch } from "@/sanity/fetch";
@@ -20,5 +21,9 @@ export default async function JournalPage() {
 
   const entries = data?.length ? data : fallbackJournalEntries;
 
-  return <JournalList entries={entries} />;
+  return (
+    <Suspense>
+      <JournalList entries={entries} />
+    </Suspense>
+  );
 }

@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import SanityImage from "@/components/SanityImage";
 import type { JournalEntry } from "@/lib/placeholder-data";
 import { parseSanityDate } from "@/lib/dates";
@@ -45,18 +46,33 @@ function getMostRecentYearMonth(entries: JournalEntry[]): {
 }
 
 export default function JournalList({ entries }: Props) {
+  const searchParams = useSearchParams();
   const initial = useMemo(() => getMostRecentYearMonth(entries), [entries]);
-  const [activeYear, setActiveYear] = useState<number>(initial.year);
-  const [activeMonth, setActiveMonth] = useState<number>(initial.month);
+
+  /* Resolve initial year/month: URL params take priority over defaults */
+  const resolved = useMemo(() => {
+    const yearParam = searchParams.get("year");
+    const monthParam = searchParams.get("month");
+
+    if (yearParam && monthParam) {
+      // Both params present: navigate to exact year + month
+      return { year: Number(yearParam), month: Number(monthParam) };
+    }
+    // No params (or only partial): use existing default
+    return initial;
+  }, [searchParams, initial]);
+
+  const [activeYear, setActiveYear] = useState<number>(resolved.year);
+  const [activeMonth, setActiveMonth] = useState<number>(resolved.month);
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
   /* Sync initial selection when entries change (e.g. ISR revalidation) */
   useEffect(() => {
-    setActiveYear(initial.year);
-    setActiveMonth(initial.month);
-  }, [initial.year, initial.month]);
+    setActiveYear(resolved.year);
+    setActiveMonth(resolved.month);
+  }, [resolved.year, resolved.month]);
 
   /* Derive unique years from entries, sorted newest-first */
   const years = useMemo(() => {

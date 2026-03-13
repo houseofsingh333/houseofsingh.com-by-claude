@@ -75,6 +75,10 @@ export default async function JournalDetailPage({ params }: Props) {
 
   if (!resolved) notFound();
 
+  /* Build back-link with year/month so the journal page returns to the same position */
+  const entryDate = parseSanityDate(resolved.date);
+  const backHref = `/journal?year=${entryDate.getFullYear()}&month=${entryDate.getMonth() + 1}`;
+
   /* Fetch all entries for prev/next navigation */
   const allData = await sanityFetch<JournalEntry[] | null>({
     query: journalFeedQuery,
@@ -96,7 +100,7 @@ export default async function JournalDetailPage({ params }: Props) {
       <div className="px-6 md:px-16 page-top-offset section-pb-sm max-w-4xl mx-auto">
         {/* Back to journal */}
         <Link
-          href="/journal"
+          href={backHref}
           className="inline-block text-[11px] uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors mb-8"
         >
           &larr; Back to journal
