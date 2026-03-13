@@ -105,13 +105,6 @@ export default function JournalList({ entries }: Props) {
     }
   };
 
-  const mostRecentId = useMemo(() => {
-    const sorted = [...entries].sort(
-      (a, b) => parseSanityDate(b.date).getTime() - parseSanityDate(a.date).getTime(),
-    );
-    return sorted[0]?._id;
-  }, [entries]);
-
   const filtered =
     activeYear === -1
       ? []
@@ -248,9 +241,7 @@ export default function JournalList({ entries }: Props) {
                     context="thumbnail"
                     alt={entry.title}
                     fill
-                    className={`object-cover transition-all duration-700 group-hover:scale-[1.03] grayscale group-hover:grayscale-0 ${
-                      entry._id === mostRecentId ? "grayscale-0" : ""
-                    }`}
+                    className="object-cover transition-all duration-700 group-hover:scale-[1.03] grayscale group-hover:grayscale-0"
                   />
                 </div>
 
