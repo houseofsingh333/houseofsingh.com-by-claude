@@ -16,6 +16,8 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   const entries = await sanityFetch<{ slug: string }[]>({
     query: journalFeedQuery,
@@ -49,8 +51,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title, description };
 }
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string | undefined | null) {
+  if (!dateStr) return "";
   const d = parseSanityDate(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
   return d.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
@@ -124,7 +128,7 @@ export default async function JournalDetailPage({ params }: Props) {
 
         {/* Body */}
         <div className="text-muted-foreground leading-relaxed space-y-6 mb-16">
-          {resolved.body && resolved.body.length > 0 ? (
+          {Array.isArray(resolved.body) && resolved.body.length > 0 ? (
             <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] [&>p]:mb-6 last:[&>p]:mb-0">
               <PortableText
                 value={resolved.body}
@@ -149,9 +153,9 @@ export default async function JournalDetailPage({ params }: Props) {
                 }}
               />
             </div>
-          ) : (
+          ) : resolved.excerpt ? (
             <p>{resolved.excerpt}</p>
-          )}
+          ) : null}
         </div>
 
         {/* Prev / Next navigation */}
