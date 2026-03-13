@@ -142,7 +142,7 @@ export default function JournalList({ entries }: Props) {
       <section
         className={`px-6 md:px-16 pb-16 md:pb-28 transition-all duration-300 ${
           isSticky
-            ? "sticky top-0 z-30 bg-background/95 backdrop-blur-sm py-6 border-b border-border/50 shadow-sm"
+            ? "sticky top-0 z-30 bg-background/95 backdrop-blur-sm py-6"
             : ""
         }`}
       >
