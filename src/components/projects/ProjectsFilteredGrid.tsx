@@ -3,6 +3,7 @@
 import { useState, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { sanityLoader } from "@/lib/sanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import ProjectsFiltersHorizontal from "./ProjectsFiltersHorizontal";
 import type { ProjectSummary } from "@/lib/placeholder-data";
@@ -128,6 +129,7 @@ export default function ProjectsFilteredGrid({
                   fill
                   className="object-cover project-card-img"
                   sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                  loader={project.thumbnailSrc.startsWith("https://cdn.sanity.io/") ? sanityLoader : undefined}
                 />
               </div>
 

@@ -29,6 +29,7 @@ const nextConfig: NextConfig = {
     ],
     // Aligned with sanityImage.ts profiles:
     // thumbnail: 320, 480, 640  |  body: 640, 960, 1280  |  hero: 960, 1280, 1600, 1920
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 960, 1280, 1600, 1920],
     imageSizes: [320, 480],
   },

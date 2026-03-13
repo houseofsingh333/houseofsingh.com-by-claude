@@ -60,7 +60,8 @@ const profiles: Record<
 /**
  * Build a Sanity CDN URL for a given base URL, width, quality, and fit.
  * Works by appending query parameters to the existing CDN URL.
- * DPR is capped at 2 so we never serve 3× images on Retina.
+ * No DPR multiplier — the responsive srcSet already provides multiple
+ * widths so the browser picks the right one for its device pixel ratio.
  */
 function buildUrl(
   baseUrl: string,
@@ -73,7 +74,6 @@ function buildUrl(
   url.searchParams.set("q", String(quality));
   url.searchParams.set("auto", "format");
   url.searchParams.set("fit", fit);
-  url.searchParams.set("dpr", "2");
   return url.toString();
 }
 
