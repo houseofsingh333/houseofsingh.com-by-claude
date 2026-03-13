@@ -166,7 +166,7 @@ export default function JournalList({ entries }: Props) {
           }
         });
       },
-      { rootMargin: "-25% 0px -25% 0px", threshold: 0 },
+      { rootMargin: "-35% 0px -35% 0px", threshold: 0 },
     );
 
     cards.forEach((card) => observer.observe(card));
