@@ -10,7 +10,6 @@ type Props = {
   entries: JournalEntry[];
 };
 
-const YEARS = [2026, 2025, 2024, 2023, 2022, 2021];
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const MONTH_LABELS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -34,6 +33,15 @@ export default function JournalList({ entries }: Props) {
   const [activeMonth, setActiveMonth] = useState<number>(currentMonth);
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
+
+  /* Derive unique years from entries, sorted newest-first */
+  const years = useMemo(() => {
+    const uniqueYears = new Set<number>();
+    entries.forEach((e) => {
+      uniqueYears.add(parseSanityDate(e.date).getFullYear());
+    });
+    return [...uniqueYears].sort((a, b) => b - a);
+  }, [entries]);
 
   /* Sticky timeline observer */
   useEffect(() => {
@@ -121,7 +129,7 @@ export default function JournalList({ entries }: Props) {
 
             {/* Year markers — flex-1 for even distribution */}
             <div className="flex items-start">
-              {YEARS.map((year) => {
+              {years.map((year) => {
                 const isActive = activeYear === year;
                 return (
                   <button
