@@ -13,11 +13,10 @@ import RapidFire from "./RapidFire";
 import Timeline from "./Timeline";
 
 /**
- * Render each PortableText paragraph as a <p> with an explicit bottom margin,
- * so the gap between blocks is guaranteed regardless of how the surrounding
- * arbitrary [&>p] selector resolves. Last paragraph has no trailing margin.
+ * Shared PortableText renderer: each paragraph gets an explicit bottom margin
+ * so gaps are guaranteed regardless of arbitrary CSS selectors.
  */
-const bioComponents: PortableTextComponents = {
+const proseComponents: PortableTextComponents = {
   block: {
     normal: ({ children }) => <p className="mb-6 last:mb-0">{children}</p>,
   },
@@ -130,7 +129,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
               </div>
               <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.9]">
                 {founderBio ? (
-                  <PortableText value={founderBio} components={bioComponents} />
+                  <PortableText value={founderBio} components={proseComponents} />
                 ) : (
                   FALLBACK_BIO_PARAGRAPHS.map((p, i) => (
                     <p key={i} className="mb-6 last:mb-0">
@@ -148,55 +147,48 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       <section className="px-6 md:px-16 section-py-lg">
         <SectionDivider label="The Practice — House of Singh" />
 
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-center">
-            {/* Logo — left */}
-            <div
-              ref={logoRef}
-              className="md:col-span-5 flex justify-center"
-              style={{
-                opacity: logoRevealed ? 0.6 : 0,
-                transition: "opacity 1.2s ease",
-              }}
-            >
-              <img
-                src="/images/hos-logo.svg"
-                alt="House of Singh"
-                className="w-48 md:w-64"
-              />
-            </div>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">
+          {/* Logo */}
+          <div
+            ref={logoRef}
+            className="flex-shrink-0"
+            style={{
+              opacity: logoRevealed ? 0.6 : 0,
+              transition: "opacity 1.2s ease",
+            }}
+          >
+            <img
+              src="/images/hos-logo.svg"
+              alt="House of Singh"
+              className="w-48 md:w-56"
+            />
+          </div>
 
-            {/* Text — right */}
-            <div
-              className="md:col-span-7 space-y-6"
-              style={
-                reducedMotion
-                  ? {}
-                  : {
-                      opacity: logoRevealed ? 1 : 0,
-                      transform: logoRevealed
-                        ? "translateY(0)"
-                        : "translateY(16px)",
-                      transition:
-                        "opacity 0.8s ease 0.4s, transform 0.8s ease 0.4s",
-                    }
-              }
-            >
-              {monikerText ? (
-                <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-6 last:[&>p]:mb-0">
-                  <PortableText value={monikerText} />
-                </div>
-              ) : (
-                FALLBACK_MONIKER_PARAGRAPHS.map((p, i) => (
-                  <p
-                    key={i}
-                    className="text-sm md:text-[15px] text-muted-foreground leading-[1.8]"
-                  >
-                    {p}
-                  </p>
-                ))
-              )}
-            </div>
+          {/* Text */}
+          <div
+            className="max-w-[550px] text-sm md:text-[15px] text-muted-foreground leading-[1.9]"
+            style={
+              reducedMotion
+                ? {}
+                : {
+                    opacity: logoRevealed ? 1 : 0,
+                    transform: logoRevealed
+                      ? "translateY(0)"
+                      : "translateY(16px)",
+                    transition:
+                      "opacity 0.8s ease 0.4s, transform 0.8s ease 0.4s",
+                  }
+            }
+          >
+            {monikerText ? (
+              <PortableText value={monikerText} components={proseComponents} />
+            ) : (
+              FALLBACK_MONIKER_PARAGRAPHS.map((p, i) => (
+                <p key={i} className="mb-6 last:mb-0">
+                  {p}
+                </p>
+              ))
+            )}
           </div>
         </div>
       </section>
