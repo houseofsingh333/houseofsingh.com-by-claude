@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { PortableText } from "@portabletext/react";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import SanityImage from "@/components/SanityImage";
 import type { AboutPageData } from "@/lib/types";
 import {
@@ -11,6 +11,17 @@ import {
 import FeaturedOn from "./FeaturedOn";
 import RapidFire from "./RapidFire";
 import Timeline from "./Timeline";
+
+/**
+ * Render each PortableText paragraph as a <p> with an explicit bottom margin,
+ * so the gap between blocks is guaranteed regardless of how the surrounding
+ * arbitrary [&>p] selector resolves. Last paragraph has no trailing margin.
+ */
+const bioComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <p className="mb-6 last:mb-0">{children}</p>,
+  },
+};
 
 function SectionDivider({ label, gap = "mb-16" }: { label: string; gap?: string }) {
   return (
@@ -90,7 +101,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
           {/* Portrait — left */}
           <div className="md:col-span-5 order-1 group">
-            <div className="relative w-full aspect-[3/4] overflow-hidden bg-secondary">
+            <div className="relative w-full aspect-[7/8] overflow-hidden bg-secondary">
               <SanityImage
                 image={portrait}
                 context="body"
@@ -101,9 +112,9 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
             </div>
           </div>
 
-          {/* Text — right */}
+          {/* Text — right (contained block, centered in column, left-aligned) */}
           <div className="md:col-span-7 order-2">
-            <div className="max-w-[480px]">
+            <div className="max-w-[480px] mx-auto">
               <h2 className="text-xs tracking-[0.25em] uppercase text-foreground mb-4">
                 {founderName}
               </h2>
@@ -117,17 +128,12 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
                   </p>
                 ))}
               </div>
-              <div>
+              <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.9]">
                 {founderBio ? (
-                  <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] [&>p]:mb-6 last:[&>p]:mb-0">
-                    <PortableText value={founderBio} />
-                  </div>
+                  <PortableText value={founderBio} components={bioComponents} />
                 ) : (
                   FALLBACK_BIO_PARAGRAPHS.map((p, i) => (
-                    <p
-                      key={i}
-                      className="text-sm md:text-[15px] text-muted-foreground leading-[1.9]"
-                    >
+                    <p key={i} className="mb-6 last:mb-0">
                       {p}
                     </p>
                   ))
