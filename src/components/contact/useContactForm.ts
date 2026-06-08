@@ -7,6 +7,7 @@ import {
   buildSteps,
   STORAGE_KEY,
 } from "@/lib/contact-form-data";
+import { HONEYPOT_FIELD } from "@/lib/spam-protection";
 
 export type Phase = "form" | "review" | "done";
 
@@ -31,6 +32,8 @@ export function useContactForm() {
   const [hasDraft, setHasDraft] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  // Honeypot — kept out of formData so it is never persisted to localStorage.
+  const [honeypot, setHoneypot] = useState("");
 
   // Draft restored notice
   useEffect(() => {
@@ -109,7 +112,7 @@ export function useContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, [HONEYPOT_FIELD]: honeypot }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -124,7 +127,7 @@ export function useContactForm() {
     } finally {
       setSubmitting(false);
     }
-  }, [formData]);
+  }, [formData, honeypot]);
 
   const clearDraft = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
@@ -192,5 +195,7 @@ export function useContactForm() {
     handleSubmit,
     clearDraft,
     progressPercent,
+    honeypot,
+    setHoneypot,
   };
 }

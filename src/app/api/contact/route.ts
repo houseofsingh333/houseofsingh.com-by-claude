@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { writeClient } from "@/sanity/writeClient";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { isHoneypotFilled } from "@/lib/spam-protection";
 
 /**
  * Format the branching detail fields into a human-readable summary
@@ -42,7 +44,25 @@ function formatDetails(body: Record<string, unknown>): string {
 
 export async function POST(request: Request) {
   try {
+    // Rate limit by IP first — cheapest guard against flooding.
+    const limit = rateLimit(getClientIp(request));
+    if (!limit.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a few minutes and try again." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(limit.retryAfterSeconds) },
+        },
+      );
+    }
+
     const body = await request.json();
+
+    // Honeypot: a filled hidden field means a bot. Silently accept (200) so
+    // the bot can't tell it was rejected, and write nothing to Sanity.
+    if (isHoneypotFilled(body)) {
+      return NextResponse.json({ success: true });
+    }
 
     const name = typeof body.name === "string" ? body.name.trim() : "";
     const email = typeof body.email === "string" ? body.email.trim() : "";

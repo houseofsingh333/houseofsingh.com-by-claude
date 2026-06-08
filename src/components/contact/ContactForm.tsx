@@ -11,6 +11,7 @@ import { useContactForm } from "./useContactForm";
 import InstagramPhotoPlate, {
   type InstagramPhoto,
 } from "./InstagramPhotoPlate";
+import HoneypotField from "@/components/HoneypotField";
 
 type Props = {
   instagramPhotos?: InstagramPhoto[];
@@ -38,6 +39,8 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
     handleSubmit,
     clearDraft,
     progressPercent,
+    honeypot,
+    setHoneypot,
   } = useContactForm();
 
   const aside =
@@ -89,6 +92,7 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
     <>
       <ProgressBar percent={progressPercent} />
       <TwoColumnLayout aside={aside}>
+        <HoneypotField value={honeypot} onChange={setHoneypot} />
         <div className="min-h-[50vh] flex flex-col justify-center max-w-lg">
           <div key={currentStep} className="editorial-slide-up">
             {/* Question */}

@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import FooterInstagram from "./FooterInstagram";
+import HoneypotField from "@/components/HoneypotField";
+import { HONEYPOT_FIELD } from "@/lib/spam-protection";
 
 type Props = {
   instagramPhotos?: InstagramPhoto[];
@@ -19,6 +21,7 @@ const NAV_LINKS = [
 
 export default function Footer({ instagramPhotos = [] }: Props) {
   const [email, setEmail] = useState("");
+  const [company, setCompany] = useState(""); // honeypot
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -31,7 +34,7 @@ export default function Footer({ instagramPhotos = [] }: Props) {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), [HONEYPOT_FIELD]: company }),
       });
       if (!res.ok) {
         setStatus("error");
@@ -39,6 +42,7 @@ export default function Footer({ instagramPhotos = [] }: Props) {
       }
       setStatus("success");
       setEmail("");
+      setCompany("");
     } catch {
       setStatus("error");
     }
@@ -104,6 +108,7 @@ export default function Footer({ instagramPhotos = [] }: Props) {
                   onSubmit={handleSubscribe}
                   className="footer-nl-form"
                 >
+                  <HoneypotField value={company} onChange={setCompany} />
                   <input
                     type="email"
                     required

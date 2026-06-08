@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
+import HoneypotField from "@/components/HoneypotField";
+import { HONEYPOT_FIELD } from "@/lib/spam-protection";
 
 type Props = {
   isOpen: boolean;
@@ -10,6 +12,7 @@ type Props = {
 
 export default function NewsletterModal({ isOpen, onClose }: Props) {
   const [email, setEmail] = useState("");
+  const [company, setCompany] = useState(""); // honeypot
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -19,6 +22,7 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
   useEffect(() => {
     if (isOpen) {
       setEmail("");
+      setCompany("");
       setStatus("idle");
       setErrorMsg("");
       const timer = setTimeout(() => inputRef.current?.focus(), 300);
@@ -48,7 +52,7 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: email.trim(), [HONEYPOT_FIELD]: company }),
       });
       const data = await res.json();
 
@@ -117,6 +121,7 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                <HoneypotField value={company} onChange={setCompany} />
                 <div>
                   <label htmlFor="newsletter-email" className="block text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">
                     Email Address
