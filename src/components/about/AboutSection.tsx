@@ -87,14 +87,27 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— 2 · Founder Section ——— */}
       <section className="px-6 md:px-16 section-pb-lg">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-6 items-start">
-          {/* Text — left */}
-          <div className="md:col-span-7 flex flex-col gap-10 order-2 md:order-1">
-            <div>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+          {/* Portrait — left */}
+          <div className="md:col-span-5 order-1 group">
+            <div className="relative w-full aspect-[3/4] overflow-hidden bg-secondary">
+              <SanityImage
+                image={portrait}
+                context="body"
+                alt={`${founderName} — ${roles[0]}`}
+                fill
+                className="object-cover object-top grayscale scale-[1.03] group-hover:grayscale-0 group-hover:scale-100 transition-all duration-1000 ease-out"
+              />
+            </div>
+          </div>
+
+          {/* Text — right */}
+          <div className="md:col-span-7 order-2">
+            <div className="max-w-[480px]">
               <h2 className="text-xs tracking-[0.25em] uppercase text-foreground mb-4">
                 {founderName}
               </h2>
-              <div className="space-y-1 mb-8">
+              <div className="space-y-1 mb-10">
                 {roles.map((role) => (
                   <p
                     key={role}
@@ -106,33 +119,20 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
               </div>
               <div>
                 {founderBio ? (
-                  <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-8 last:[&>p]:mb-0">
+                  <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] [&>p]:mb-6 last:[&>p]:mb-0">
                     <PortableText value={founderBio} />
                   </div>
                 ) : (
                   FALLBACK_BIO_PARAGRAPHS.map((p, i) => (
                     <p
                       key={i}
-                      className="text-sm md:text-[15px] text-muted-foreground leading-[1.8]"
+                      className="text-sm md:text-[15px] text-muted-foreground leading-[1.9]"
                     >
                       {p}
                     </p>
                   ))
                 )}
               </div>
-            </div>
-          </div>
-
-          {/* Portrait — right */}
-          <div className="md:col-span-4 md:col-start-9 order-1 md:order-2 group">
-            <div className="relative w-full aspect-[3/4] overflow-hidden bg-secondary">
-              <SanityImage
-                image={portrait}
-                context="body"
-                alt={`${founderName} — ${roles[0]}`}
-                fill
-                className="object-cover object-top grayscale scale-[1.03] group-hover:grayscale-0 group-hover:scale-100 transition-all duration-1000 ease-out"
-              />
             </div>
           </div>
         </div>
