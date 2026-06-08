@@ -87,9 +87,9 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— 2 · Founder Section ——— */}
       <section className="px-6 md:px-16 section-pb-lg">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-6 items-start">
           {/* Text — left */}
-          <div className="md:col-span-6 flex flex-col gap-10 order-2 md:order-1">
+          <div className="md:col-span-7 flex flex-col gap-10 order-2 md:order-1">
             <div>
               <h2 className="text-xs tracking-[0.25em] uppercase text-foreground mb-4">
                 {founderName}
@@ -104,9 +104,9 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
                   </p>
                 ))}
               </div>
-              <div className="space-y-6 max-w-md">
+              <div>
                 {founderBio ? (
-                  <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-6 last:[&>p]:mb-0">
+                  <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.8] [&>p]:mb-8 last:[&>p]:mb-0">
                     <PortableText value={founderBio} />
                   </div>
                 ) : (
@@ -124,7 +124,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
           </div>
 
           {/* Portrait — right */}
-          <div className="md:col-span-5 md:col-start-8 order-1 md:order-2 group">
+          <div className="md:col-span-4 md:col-start-9 order-1 md:order-2 group">
             <div className="relative w-full aspect-[3/4] overflow-hidden bg-secondary">
               <SanityImage
                 image={portrait}
