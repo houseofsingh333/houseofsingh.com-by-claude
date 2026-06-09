@@ -1056,10 +1056,40 @@ body {
 .rapidfire-section {
   --rf-num-w: 34px;
   --rf-gap: 24px;
+  max-width: 80%;
 }
 
 .rapidfire-item {
+  position: relative;
   border-bottom: 1px solid hsl(30 10% 12% / 0.15);
+}
+
+/* Animated underline — overlays the subtle divider, left-to-right reveal */
+.rapidfire-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background-color: var(--foreground);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Desktop hover — line reveal matching contact-intent pattern */
+@media (hover: hover) {
+  .rapidfire-item:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Tablet — relax constraint to 90% */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .rapidfire-section {
+    max-width: 90%;
+  }
 }
 
 .rapidfire-btn {
@@ -1167,6 +1197,11 @@ body {
   .rapidfire-section {
     --rf-num-w: 28px;
     --rf-gap: 16px;
+    max-width: none;
+  }
+
+  .rapidfire-item::after {
+    display: none;
   }
 
   .rapidfire-btn {
