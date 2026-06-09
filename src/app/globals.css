@@ -1056,7 +1056,6 @@ body {
 .rapidfire-section {
   --rf-num-w: 34px;
   --rf-gap: 24px;
-  max-width: 80%;
 }
 
 .rapidfire-item {
@@ -1082,13 +1081,6 @@ body {
 @media (hover: hover) {
   .rapidfire-item:hover::after {
     transform: scaleX(1);
-  }
-}
-
-/* Tablet — relax constraint to 90% */
-@media (max-width: 1023px) and (min-width: 768px) {
-  .rapidfire-section {
-    max-width: 90%;
   }
 }
 
@@ -1197,7 +1189,6 @@ body {
   .rapidfire-section {
     --rf-num-w: 28px;
     --rf-gap: 16px;
-    max-width: none;
   }
 
   .rapidfire-item::after {
