@@ -1150,10 +1150,8 @@ body {
 }
 
 /* Answer text — indented to align with question, not number */
-/* Answer text — staggered right, creating editorial Q left / A right rhythm */
 .rapidfire-answer {
-  margin-left: auto;
-  max-width: 520px;
+  padding-left: calc(var(--rf-num-w) + var(--rf-gap));
   padding-top: 8px;
   padding-bottom: 24px;
   font-size: 16px;
@@ -1161,6 +1159,7 @@ body {
   line-height: 1.7;
   color: var(--foreground);
   opacity: 0.8;
+  max-width: 660px;
 }
 
 /* Mobile (< 768px) */
@@ -1193,18 +1192,9 @@ body {
   }
 
   .rapidfire-answer {
-    margin-left: 0;
-    padding-left: calc(var(--rf-num-w) + var(--rf-gap));
-    max-width: none;
     font-size: 15px;
     line-height: 1.6;
-  }
-}
-
-/* Tablet (768px – 1023px): reduce right-offset so the answer starts ~38% in */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .rapidfire-answer {
-    max-width: 60%;
+    max-width: none;
   }
 }
 
