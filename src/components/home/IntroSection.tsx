@@ -89,8 +89,12 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
       {/* Two-column layout */}
       <div className="relative grid grid-cols-1 md:grid-cols-12 gap-y-8 md:gap-x-8 md:gap-y-0 items-start">
         {/* Portrait + caption — left */}
-        <div className="md:col-span-5 md:col-start-1 relative">
-          <ScrollReveal delay={0.15} offset={6} duration={0.6}>
+        <div className="md:col-span-5 md:col-start-1 relative md:self-stretch">
+          {/* Sticky wrapper: pins the portrait while the taller text column
+              scrolls; releases automatically when the column bottom arrives.
+              Offset clears the fixed 68px scrolled header. Mobile: not sticky. */}
+          <div className="md:sticky md:top-24">
+            <ScrollReveal delay={0.15} offset={6} duration={0.6}>
             <div
               ref={imageRef}
               className="relative w-full aspect-square md:aspect-[4/5] max-h-[65vh] overflow-hidden bg-background"
@@ -128,7 +132,8 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
             >
               {founderName}
             </p>
-          </ScrollReveal>
+            </ScrollReveal>
+          </div>
         </div>
 
         {/* Text content — right */}

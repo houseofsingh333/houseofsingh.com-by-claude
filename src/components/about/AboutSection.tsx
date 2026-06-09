@@ -97,9 +97,11 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— 2 · Founder Section ——— */}
       <section className="px-6 md:px-16 section-pb-lg">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+        {/* Layout mirrors the homepage IntroSection: 5/5 columns starting at
+            col-1 and col-7, gap-x-8, items-start, 440px text measure. */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-y-8 md:gap-x-8 md:gap-y-0 items-start">
           {/* Portrait — left */}
-          <div className="md:col-span-5 order-1 group">
+          <div className="md:col-span-5 md:col-start-1 group">
             <div className="relative w-full aspect-[7/8] overflow-hidden bg-secondary">
               <SanityImage
                 image={portrait}
@@ -111,9 +113,9 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
             </div>
           </div>
 
-          {/* Text — right (contained block, centered in column, left-aligned) */}
-          <div className="md:col-span-7 order-2">
-            <div className="max-w-[480px] mx-auto">
+          {/* Text — right, left-aligned at the same column start as homepage intro */}
+          <div className="md:col-span-5 md:col-start-7 md:pt-8 lg:pt-14">
+            <div className="max-w-[440px]">
               <h2 className="text-xs tracking-[0.25em] uppercase text-foreground mb-4">
                 {founderName}
               </h2>
