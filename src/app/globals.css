@@ -1051,6 +1051,47 @@ body {
   transition: transform 0.1s linear;
 }
 
+/* ——— Homepage intro — tablet-only scroll-driven image collapse ———
+   Active only between 768px and 1023px. The track reserves the scroll
+   distance; the sticky child pins below the header while JS shrinks the
+   frame from 72vh to 38vh, then releases. Desktop (1024px+) keeps the
+   two-column sticky layout; mobile (<768px) keeps the plain stack. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .intro-collapse-track {
+    --intro-img-full: 72vh;
+    --intro-img-compact: 38vh;
+    /* shrink distance + compact frame + caption allowance */
+    height: calc(
+      (var(--intro-img-full) - var(--intro-img-compact)) +
+        var(--intro-img-compact) + 40px
+    );
+  }
+
+  .intro-collapse-sticky {
+    position: sticky;
+    top: 80px; /* clears the fixed 68px header */
+  }
+
+  .intro-collapse-frame {
+    height: var(--intro-img-h, var(--intro-img-full));
+  }
+}
+
+/* Reduced motion: no shrink — fixed-height image, normal flow */
+@media (min-width: 768px) and (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  .intro-collapse-track {
+    height: auto;
+  }
+
+  .intro-collapse-sticky {
+    position: static;
+  }
+
+  .intro-collapse-frame {
+    height: 52vh;
+  }
+}
+
 /* ——— Rapidfire accordion — editorial Q&A interaction ——— */
 
 .rapidfire-section {
