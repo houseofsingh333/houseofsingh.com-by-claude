@@ -37,6 +37,7 @@ export type ProjectSummary = {
   thumbnailSrc: string;
   thumbnailAlt: string;
   excerpt: string;
+  isUpcoming?: boolean;
 };
 
 export type HomepageProject = {
@@ -104,6 +105,8 @@ export type ProjectDetail = {
   shortIntro?: string;
   coverImage?: SanityImageAsset | null;
   contentSections?: ContentSection[];
+  isUpcoming?: boolean;
+  showInterestForm?: boolean;
 };
 
 export type JournalEntry = {

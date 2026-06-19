@@ -102,6 +102,22 @@ export const project = defineType({
       description:
         "Controls manual order of projects in the homepage section. Lower number appears first.",
     }),
+    defineField({
+      name: "isUpcoming",
+      title: "Upcoming Project",
+      type: "boolean",
+      description:
+        "Mark this project as upcoming — it will display an 'Upcoming' label on the card and detail page.",
+      initialValue: false,
+    }),
+    defineField({
+      name: "showInterestForm",
+      title: "Show Interest Form",
+      type: "boolean",
+      description:
+        "If enabled, an interest/nomination form appears at the bottom of the project detail page.",
+      initialValue: false,
+    }),
   ],
   preview: {
     select: { title: "title", subtitle: "category", media: "thumbnail" },

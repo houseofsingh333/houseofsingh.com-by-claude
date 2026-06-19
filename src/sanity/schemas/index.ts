@@ -7,6 +7,7 @@ import { navigation } from "./navigation";
 import { newsletterSubscriber } from "./newsletterSubscriber";
 import { project } from "./project";
 import { projectCategory } from "./projectCategory";
+import { projectInterest } from "./projectInterest";
 import {
   textSection,
   imageSingle,
@@ -28,6 +29,7 @@ export const schemaTypes = [
   newsletterSubscriber,
   project,
   projectCategory,
+  projectInterest,
   siteSettings,
   spotlight,
   // Section block types (used inside project.contentSections)

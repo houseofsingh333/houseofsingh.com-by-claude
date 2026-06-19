@@ -19,6 +19,7 @@ type SanityProject = {
   thumbnail: SanityImage | null;
   thumbnailAlt: string;
   excerpt: string;
+  isUpcoming?: boolean;
 };
 
 export default async function ProjectsPage({
@@ -45,6 +46,7 @@ export default async function ProjectsPage({
               : p.thumbnail?.url ?? "/images/project-placeholder-1.svg",
           thumbnailAlt: p.thumbnailAlt,
           excerpt: p.excerpt ?? "",
+          isUpcoming: p.isUpcoming ?? false,
         }))
       : fallbackProjects;
 

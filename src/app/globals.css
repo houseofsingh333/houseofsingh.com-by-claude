@@ -1281,6 +1281,35 @@ body {
   }
 }
 
+/* ——— Upcoming project — pulsing accent dot ——— */
+
+.upcoming-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--foreground);
+  animation: upcomingPulse 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upcoming-dot {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+@keyframes upcomingPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
 /* ——— Keyframes ——— */
 
 @keyframes fadeIn {

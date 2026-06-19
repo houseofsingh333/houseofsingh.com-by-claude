@@ -140,6 +140,12 @@ export default function ProjectsFilteredGrid({
               <h2 className="text-[11.5px] md:text-xs uppercase tracking-[0.14em] text-foreground font-normal leading-[1.6] mb-2 project-card-title">
                 {project.title}
               </h2>
+              {project.isUpcoming && (
+                <p className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">
+                  <span className="upcoming-dot" aria-hidden="true" />
+                  Upcoming
+                </p>
+              )}
               {project.excerpt && (
                 <p className="text-[11px] text-muted-foreground/60 leading-[1.65] line-clamp-2">
                   {project.excerpt}

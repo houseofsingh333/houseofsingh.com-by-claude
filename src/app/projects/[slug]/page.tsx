@@ -8,6 +8,7 @@ import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import ReadingProgress from "@/components/ReadingProgress";
 import ContentSections from "@/components/projects/ContentSections";
+import ProjectInterestForm from "@/components/projects/ProjectInterestForm";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -25,16 +26,23 @@ export async function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
 }
 
-function ProjectHeader({ category, title, intro }: { category: string; title: string; intro?: string }) {
+function ProjectHeader({ category, title, intro, isUpcoming }: { category: string; title: string; intro?: string; isUpcoming?: boolean }) {
   return (
     <ScrollReveal as="section" className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset mb-16 md:mb-20" offset={14} duration={0.8}>
       <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50 mb-4">
         {category}
       </p>
       <div className="w-full h-px bg-border mb-8 md:mb-10" />
-      <h1 className="font-editorial text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-[1.15] mb-8">
+      <h1 className="font-editorial text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-[1.15] mb-4">
         {title}
       </h1>
+      {isUpcoming && (
+        <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-8">
+          <span className="upcoming-dot" aria-hidden="true" />
+          Upcoming
+        </p>
+      )}
+      {!isUpcoming && <div className="mb-4" />}
       {intro && (
         <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] max-w-xl">
           {intro}
@@ -79,7 +87,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     return (
       <article className="section-pb-lg">
         <ReadingProgress />
-        <ProjectHeader category={project.category} title={project.title} intro={project.shortIntro} />
+        <ProjectHeader category={project.category} title={project.title} intro={project.shortIntro} isUpcoming={project.isUpcoming} />
 
         {/* Cover image — full bleed, generous bottom margin */}
         {project.coverImage && (
@@ -102,6 +110,11 @@ export default async function ProjectDetailPage({ params }: Props) {
         {/* Content sections */}
         {project.contentSections && project.contentSections.length > 0 && (
           <ContentSections sections={project.contentSections} />
+        )}
+
+        {/* Interest form — shown for upcoming projects with the flag enabled */}
+        {project.showInterestForm && (
+          <ProjectInterestForm projectTitle={project.title} />
         )}
       </article>
     );

@@ -105,13 +105,16 @@ export const latestProjectsQuery = `*[_type == "project"] | order(_createdAt des
 export const projectsListQuery = `*[_type == "project"] | order(title asc){
   _id, title, "slug": slug.current, category,
   "thumbnail": thumbnail ${_imageAsset},
-  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt
+  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt,
+  isUpcoming
 }`;
 
 export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug][0]{
   _id, title, "slug": slug.current, category,
   excerpt,
   shortIntro,
+  isUpcoming,
+  showInterestForm,
   "coverImage": coverImage ${_imageAsset},
   contentSections[]{
     _type,
