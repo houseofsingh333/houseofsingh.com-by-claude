@@ -61,9 +61,11 @@ function ProjectHeader({ category, title, intro, isUpcoming }: { category: strin
   );
 }
 
-const DEFAULT_OG_IMAGE = "/og-image.png";
 const DEFAULT_DESCRIPTION = "A project by Maninder Singh — House of Singh";
 
+// Open Graph / Twitter images are supplied per-route by the colocated
+// opengraph-image.tsx / twitter-image.tsx generators (Next.js convention),
+// so no `images` are set here.
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const project = await sanityFetch<ProjectDetail>({
@@ -86,9 +88,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? new Date(project.updatedAt).toISOString()
       : undefined;
 
-    // Stage 4 will swap this for a per-page auto-generated OG image.
-    const ogImage = DEFAULT_OG_IMAGE;
-
     return {
       title,
       description,
@@ -99,7 +98,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title,
         description,
         url: `/projects/${slug}`,
-        images: [ogImage],
         ...(publishedTime ? { publishedTime } : {}),
         ...(modifiedTime ? { modifiedTime } : {}),
         authors: [author],
@@ -108,7 +106,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         card: "summary_large_image",
         title,
         description,
-        images: [ogImage],
       },
     };
   }
@@ -124,13 +121,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: fallback.title,
       description: fallback.excerpt || DEFAULT_DESCRIPTION,
       url: `/projects/${slug}`,
-      images: [DEFAULT_OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title: fallback.title,
       description: fallback.excerpt || DEFAULT_DESCRIPTION,
-      images: [DEFAULT_OG_IMAGE],
     },
   };
 }

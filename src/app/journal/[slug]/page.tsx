@@ -40,8 +40,9 @@ export async function generateStaticParams() {
   return fallbackJournalEntries.map((entry) => ({ slug: entry.slug }));
 }
 
-const DEFAULT_OG_IMAGE = "/og-image.png";
-
+// Open Graph / Twitter images are supplied per-route by the colocated
+// opengraph-image.tsx / twitter-image.tsx generators (Next.js convention),
+// so no `images` are set here.
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
 
@@ -73,9 +74,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? parseSanityDate(entry.date).toISOString()
     : undefined;
 
-  // Stage 4 will swap this for a per-page auto-generated OG image.
-  const ogImage = DEFAULT_OG_IMAGE;
-
   return {
     title,
     description,
@@ -86,7 +84,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       url: `/journal/${slug}`,
-      images: [ogImage],
       ...(publishedTime ? { publishedTime } : {}),
       authors: [author],
     },
@@ -94,7 +91,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title,
       description,
-      images: [ogImage],
     },
   };
 }

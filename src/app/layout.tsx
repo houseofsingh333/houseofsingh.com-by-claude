@@ -79,26 +79,19 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical: "/",
     },
+    // OG/Twitter images come from the sitewide opengraph-image.tsx /
+    // twitter-image.tsx generators (Next.js convention).
     openGraph: {
       type: "website",
       locale: "en_CA",
       siteName,
       title: SEO_DEFAULTS.title,
       description,
-      images: [
-        {
-          url: SEO_DEFAULTS.ogImage,
-          width: 1200,
-          height: 630,
-          alt: SEO_DEFAULTS.title,
-        },
-      ],
     },
     twitter: {
       card: "summary_large_image",
       creator: "@houseofsingh",
       site: "@houseofsingh",
-      images: [SEO_DEFAULTS.ogImage],
     },
     icons: {
       icon: "/favicon.ico",
