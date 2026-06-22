@@ -39,11 +39,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 
   const fallback = fallbackJournalEntries.find((e) => e.slug === slug);
-  const title = entry?.title ?? fallback?.title;
+  const baseTitle = entry?.title ?? fallback?.title;
 
-  if (!title) return { title: "Not Found" };
+  if (!baseTitle) return { title: "Not Found" };
+
+  // SEO object wins, then legacy flat fields, then the content itself.
+  const title = entry?.seo?.metaTitle ?? entry?.seoTitle ?? baseTitle;
 
   const description =
+    entry?.seo?.metaDescription ??
+    entry?.seoDescription ??
     entry?.excerpt ??
     fallback?.excerpt ??
     "Reflections and observations from Maninder Singh — House of Singh";

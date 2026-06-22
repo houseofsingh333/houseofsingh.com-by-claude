@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { imageAltFields } from "./imageFields";
 
 export const aboutPage = defineType({
   name: "aboutPage",
@@ -41,16 +42,7 @@ export const aboutPage = defineType({
       options: { hotspot: true },
       description:
         "Founder portrait. Recommended: JPEG, minimum 2400 px long edge, portrait orientation (3:4).",
-      fields: [
-        defineField({
-          name: "alt",
-          title: "Alt Text",
-          type: "string",
-          description: "Describe the image for screen readers and SEO.",
-          validation: (rule) =>
-            rule.required().warning("Alt text is strongly recommended."),
-        }),
-      ],
+      fields: imageAltFields,
     }),
     defineField({
       name: "homePortrait",
@@ -59,16 +51,7 @@ export const aboutPage = defineType({
       options: { hotspot: true },
       description:
         "Optional separate image for the homepage About section. Falls back to Portrait if empty.",
-      fields: [
-        defineField({
-          name: "alt",
-          title: "Alt Text",
-          type: "string",
-          description: "Describe the image for screen readers and SEO.",
-          validation: (rule) =>
-            rule.required().warning("Alt text is strongly recommended."),
-        }),
-      ],
+      fields: imageAltFields,
     }),
 
     /* ——— 3 · The Moniker ——— */
@@ -139,14 +122,7 @@ export const aboutPage = defineType({
               type: "image",
               options: { hotspot: true },
               description: "Image representing the feature. Recommended: landscape, minimum 800px wide.",
-              fields: [
-                defineField({
-                  name: "alt",
-                  title: "Alt Text",
-                  type: "string",
-                  description: "Describe the image for screen readers.",
-                }),
-              ],
+              fields: imageAltFields,
             }),
           ],
           preview: {
@@ -219,16 +195,7 @@ export const aboutPage = defineType({
               options: { hotspot: true },
               description: "JPEG preferred. Use PNG only if transparency is needed.",
               validation: (rule) => rule.required(),
-              fields: [
-                defineField({
-                  name: "alt",
-                  title: "Alt Text",
-                  type: "string",
-                  description: "Describe the image for screen readers.",
-                  validation: (rule) =>
-                    rule.required().warning("Alt text is recommended."),
-                }),
-              ],
+              fields: imageAltFields,
             }),
           ],
           preview: {
@@ -240,16 +207,27 @@ export const aboutPage = defineType({
 
     /* ——— SEO ——— */
     defineField({
+      name: "seo",
+      title: "SEO",
+      type: "seo",
+    }),
+    // ——— Deprecated: superseded by the SEO object above. Kept for
+    // backward compatibility; code reads these as a fallback. ———
+    defineField({
       name: "seoTitle",
-      title: "SEO Title",
+      title: "SEO Title (legacy)",
       type: "string",
-      description: "Override the default page title for search engines.",
+      description: "Deprecated — use the SEO → Meta Title field instead.",
+      readOnly: true,
+      hidden: ({ value }) => !value,
     }),
     defineField({
       name: "seoDescription",
-      title: "SEO Description",
+      title: "SEO Description (legacy)",
       type: "string",
-      description: "Meta description for search engines.",
+      description: "Deprecated — use the SEO → Meta Description field instead.",
+      readOnly: true,
+      hidden: ({ value }) => !value,
     }),
   ],
   preview: {

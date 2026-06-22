@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { imageAltFields } from "./imageFields";
 
 export const contactPage = defineType({
   name: "contactPage",
@@ -41,13 +42,7 @@ export const contactPage = defineType({
               type: "image",
               options: { hotspot: true },
               validation: (rule) => rule.required(),
-              fields: [
-                defineField({
-                  name: "alt",
-                  title: "Alt Text",
-                  type: "string",
-                }),
-              ],
+              fields: imageAltFields,
             }),
             defineField({
               name: "permalink",
@@ -64,14 +59,27 @@ export const contactPage = defineType({
       ],
     }),
     defineField({
+      name: "seo",
+      title: "SEO",
+      type: "seo",
+    }),
+    // ——— Deprecated: superseded by the SEO object above. Kept for
+    // backward compatibility; code reads these as a fallback. ———
+    defineField({
       name: "seoTitle",
-      title: "SEO Title",
+      title: "SEO Title (legacy)",
       type: "string",
+      description: "Deprecated — use the SEO → Meta Title field instead.",
+      readOnly: true,
+      hidden: ({ value }) => !value,
     }),
     defineField({
       name: "seoDescription",
-      title: "SEO Description",
+      title: "SEO Description (legacy)",
       type: "string",
+      description: "Deprecated — use the SEO → Meta Description field instead.",
+      readOnly: true,
+      hidden: ({ value }) => !value,
     }),
   ],
   preview: {

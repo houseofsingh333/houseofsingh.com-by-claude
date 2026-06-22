@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { imageAltFields } from "./imageFields";
 
 export const project = defineType({
   name: "project",
@@ -31,16 +32,7 @@ export const project = defineType({
       options: { hotspot: true },
       description:
         "Hero image shown at the top of the project page. Recommended: JPEG, min 1920px wide.",
-      fields: [
-        defineField({
-          name: "alt",
-          title: "Alt Text",
-          type: "string",
-          description: "Describe the image for screen readers and SEO.",
-          validation: (rule) =>
-            rule.required().warning("Alt text is strongly recommended."),
-        }),
-      ],
+      fields: imageAltFields,
     }),
     defineField({
       name: "thumbnail",
@@ -48,16 +40,7 @@ export const project = defineType({
       type: "image",
       options: { hotspot: true },
       description: "Card image. Recommended: JPEG, min 1600px wide, 4:3 ratio.",
-      fields: [
-        defineField({
-          name: "alt",
-          title: "Alt Text",
-          type: "string",
-          description: "Describe the image for screen readers and SEO.",
-          validation: (rule) =>
-            rule.required().warning("Alt text is strongly recommended."),
-        }),
-      ],
+      fields: imageAltFields,
     }),
     defineField({
       name: "shortIntro",
@@ -117,6 +100,30 @@ export const project = defineType({
       description:
         "If enabled, an interest/nomination form appears at the bottom of the project detail page.",
       initialValue: false,
+    }),
+    defineField({
+      name: "author",
+      title: "Author",
+      type: "string",
+      description: "Credited author for structured data.",
+      initialValue: "Maninder Singh",
+    }),
+    defineField({
+      name: "publishedAt",
+      title: "Published Date",
+      type: "datetime",
+      description: "When this project was first published. Used for SEO and structured data.",
+    }),
+    defineField({
+      name: "updatedAt",
+      title: "Last Updated",
+      type: "datetime",
+      description: "When this project was last meaningfully updated. Used for SEO and structured data.",
+    }),
+    defineField({
+      name: "seo",
+      title: "SEO",
+      type: "seo",
     }),
   ],
   preview: {

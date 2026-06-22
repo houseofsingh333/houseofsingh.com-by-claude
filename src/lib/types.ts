@@ -9,6 +9,14 @@ import type { SanityImageAsset } from "@/lib/sanityImage";
 /** Image field from Sanity can be a full asset object or a plain URL string. */
 export type SanityImage = SanityImageAsset | string;
 
+/** Reusable SEO override object attached to indexable documents. */
+export type Seo = {
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  noIndex?: boolean | null;
+  canonicalUrl?: string | null;
+};
+
 // --------------- Types ---------------
 
 export type NavItem = {
@@ -107,6 +115,10 @@ export type ProjectDetail = {
   contentSections?: ContentSection[];
   isUpcoming?: boolean;
   showInterestForm?: boolean;
+  author?: string | null;
+  publishedAt?: string | null;
+  updatedAt?: string | null;
+  seo?: Seo | null;
 };
 
 export type JournalEntry = {
@@ -117,6 +129,12 @@ export type JournalEntry = {
   excerpt: string;
   coverImage?: SanityImage;
   body?: PortableTextBlock[];
+  author?: string | null;
+  seo?: Seo | null;
+  /** @deprecated superseded by `seo` — read as fallback only. */
+  seoTitle?: string | null;
+  /** @deprecated superseded by `seo` — read as fallback only. */
+  seoDescription?: string | null;
 };
 
 export type SpotlightData = {
@@ -135,6 +153,11 @@ export type SiteSettings = {
   tagline: string;
   footerText: string;
   spotifyPlaylistUrl?: string;
+  defaultMetaDescription?: string | null;
+  organizationName?: string | null;
+  founderName?: string | null;
+  sameAs?: string[] | null;
+  googleVerification?: string | null;
 };
 
 export type AboutMilestone = {
@@ -173,7 +196,10 @@ export type AboutPageData = {
   featuredOn: FeaturedOutlet[] | null;
   milestones: AboutMilestone[] | null;
   rapidFire: RapidFireItem[] | null;
+  seo?: Seo | null;
+  /** @deprecated superseded by `seo` — read as fallback only. */
   seoTitle: string | null;
+  /** @deprecated superseded by `seo` — read as fallback only. */
   seoDescription: string | null;
 };
 

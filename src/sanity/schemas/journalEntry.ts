@@ -1,14 +1,12 @@
 import { defineField, defineType } from "sanity";
+import { imageAltFields, captionField } from "./imageFields";
 
 const bodyMembers = [
   { type: "block" },
   {
     type: "image",
     options: { hotspot: true },
-    fields: [
-      defineField({ name: "alt", title: "Alt Text", type: "string" }),
-      defineField({ name: "caption", title: "Caption", type: "string" }),
-    ],
+    fields: [...imageAltFields, captionField],
   },
 ];
 
@@ -50,21 +48,7 @@ export const journalEntry = defineType({
       options: { hotspot: true },
       description:
         "Recommended: JPEG, minimum 2400 px on the long edge. Avoid uploading raw/uncompressed exports.",
-      fields: [
-        defineField({
-          name: "alt",
-          title: "Alt Text",
-          type: "string",
-          description: "Describe the image for screen readers and SEO.",
-          validation: (rule) =>
-            rule.required().warning("Alt text is strongly recommended for accessibility."),
-        }),
-        defineField({
-          name: "caption",
-          title: "Caption",
-          type: "string",
-        }),
-      ],
+      fields: [...imageAltFields, captionField],
     }),
     defineField({
       name: "body",
@@ -73,14 +57,34 @@ export const journalEntry = defineType({
       of: bodyMembers,
     }),
     defineField({
-      name: "seoTitle",
-      title: "SEO Title",
+      name: "author",
+      title: "Author",
       type: "string",
+      description: "Credited author for structured data.",
+      initialValue: "Maninder Singh",
+    }),
+    defineField({
+      name: "seo",
+      title: "SEO",
+      type: "seo",
+    }),
+    // ——— Deprecated: superseded by the SEO object above. Kept for
+    // backward compatibility; code reads these as a fallback. ———
+    defineField({
+      name: "seoTitle",
+      title: "SEO Title (legacy)",
+      type: "string",
+      description: "Deprecated — use the SEO → Meta Title field instead.",
+      readOnly: true,
+      hidden: ({ value }) => !value,
     }),
     defineField({
       name: "seoDescription",
-      title: "SEO Description",
+      title: "SEO Description (legacy)",
       type: "string",
+      description: "Deprecated — use the SEO → Meta Description field instead.",
+      readOnly: true,
+      hidden: ({ value }) => !value,
     }),
   ],
   orderings: [

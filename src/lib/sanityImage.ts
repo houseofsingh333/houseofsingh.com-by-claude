@@ -15,6 +15,8 @@ export type SanityImageAsset = {
   };
   alt?: string;
   caption?: string;
+  /** When true, the image is purely decorative — render an empty alt. */
+  isDecorative?: boolean;
 };
 
 export type ImageContext = "thumbnail" | "body" | "hero";
@@ -104,6 +106,31 @@ export type ImageProps = {
  * 2. Plain Sanity CDN URL string — responsive srcSet, no blur
  * 3. Local path string (e.g. /images/...) — no transforms, pass through
  */
+/**
+ * Resolve the alt attribute for an image, enforcing accessible alt text.
+ *
+ * Precedence: explicit override → decorative (empty) → CMS alt. A meaningful
+ * image with no alt is a content error: in development we surface a warning
+ * instead of silently shipping an empty alt. Alt enforcement is primarily
+ * guaranteed at the Sanity schema level (required unless marked decorative).
+ */
+function resolveAlt(
+  altOverride: string | undefined,
+  image?: SanityImageAsset,
+): string {
+  if (altOverride) return altOverride;
+  if (image?.isDecorative) return "";
+  const alt = image?.alt ?? "";
+  if (!alt && process.env.NODE_ENV !== "production") {
+    console.warn(
+      `[SanityImage] Missing alt text for a non-decorative image${
+        image?.url ? `: ${image.url}` : ""
+      }. Add alt text in Sanity or mark the image decorative.`,
+    );
+  }
+  return alt;
+}
+
 export function getImageProps(
   image: SanityImageAsset | string | null | undefined,
   context: ImageContext,
@@ -176,7 +203,7 @@ export function getImageProps(
     width,
     height,
     blurDataURL: image.lqip || undefined,
-    alt: altOverride || image.alt || "",
+    alt: resolveAlt(altOverride, image),
   };
 }
 

@@ -12,7 +12,16 @@ const _imageAsset = `{
   "width": asset->metadata.dimensions.width,
   "height": asset->metadata.dimensions.height,
   alt,
-  caption
+  caption,
+  isDecorative
+}`;
+
+// Shared projection for the reusable SEO object
+const _seo = `{
+  metaTitle,
+  metaDescription,
+  noIndex,
+  canonicalUrl
 }`;
 
 // --------------- Navigation ---------------
@@ -27,7 +36,12 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   siteTitle,
   tagline,
   footerText,
-  spotifyPlaylistUrl
+  spotifyPlaylistUrl,
+  defaultMetaDescription,
+  organizationName,
+  founderName,
+  sameAs,
+  googleVerification
 }`;
 
 // --------------- About Page ---------------
@@ -59,6 +73,7 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
     text,
     "image": image ${_imageAsset}
   },
+  "seo": seo ${_seo},
   seoTitle,
   seoDescription
 }`;
@@ -115,6 +130,10 @@ export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug
   shortIntro,
   isUpcoming,
   showInterestForm,
+  author,
+  publishedAt,
+  updatedAt,
+  "seo": seo ${_seo},
   "coverImage": coverImage ${_imageAsset},
   contentSections[]{
     _type,
@@ -164,7 +183,10 @@ export const contactPageQuery = `*[_type == "contactPage"][0]{
     "url": image.asset->url,
     "alt": image.alt,
     permalink
-  }
+  },
+  "seo": seo ${_seo},
+  seoTitle,
+  seoDescription
 }`;
 
 // --------------- Journal ---------------
@@ -179,5 +201,9 @@ export const journalBySlugQuery = `*[_type == "journalEntry" && slug.current == 
   _id, title, "slug": slug.current, date,
   excerpt,
   body,
-  "coverImage": coverImage ${_imageAsset}
+  author,
+  "coverImage": coverImage ${_imageAsset},
+  "seo": seo ${_seo},
+  seoTitle,
+  seoDescription
 }`;

@@ -15,6 +15,7 @@ import {
   imageGrid,
   stickyChapter,
 } from "./sections";
+import { seo } from "./seo";
 import { siteSettings } from "./siteSettings";
 import { spotlight } from "./spotlight";
 
@@ -38,4 +39,6 @@ export const schemaTypes = [
   imagePair,
   imageGrid,
   stickyChapter,
+  // Shared object types
+  seo,
 ];

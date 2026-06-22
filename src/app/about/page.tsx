@@ -13,8 +13,9 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 
   return {
-    title: data?.seoTitle ?? "About",
+    title: data?.seo?.metaTitle ?? data?.seoTitle ?? "About",
     description:
+      data?.seo?.metaDescription ??
       data?.seoDescription ??
       "Learn about the story, values, and vision behind House of Singh.",
   };
