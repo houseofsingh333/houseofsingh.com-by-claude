@@ -199,6 +199,7 @@ export const journalFeedQuery = `*[_type == "journalEntry"] | order(date desc){
 
 export const journalBySlugQuery = `*[_type == "journalEntry" && slug.current == $slug][0]{
   _id, title, "slug": slug.current, date,
+  "updatedAt": _updatedAt,
   excerpt,
   body,
   author,

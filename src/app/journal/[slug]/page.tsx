@@ -5,12 +5,22 @@ import { PortableText } from "@portabletext/react";
 import ReadingProgress from "@/components/ReadingProgress";
 import SanityImage from "@/components/SanityImage";
 import { sanityFetch } from "@/sanity/fetch";
-import { journalBySlugQuery, journalFeedQuery } from "@/sanity/queries";
+import {
+  journalBySlugQuery,
+  journalFeedQuery,
+  siteSettingsQuery,
+} from "@/sanity/queries";
 import {
   fallbackJournalEntries,
   type JournalEntry,
 } from "@/lib/placeholder-data";
+import type { SiteSettings } from "@/lib/types";
 import { parseSanityDate } from "@/lib/dates";
+import JsonLd from "@/components/JsonLd";
+import {
+  buildArticleJsonLd,
+  buildBreadcrumbJsonLd,
+} from "@/lib/structured-data";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -113,6 +123,17 @@ export default async function JournalDetailPage({ params }: Props) {
 
   if (!resolved) notFound();
 
+  const settings = await sanityFetch<SiteSettings | null>({
+    query: siteSettingsQuery,
+  });
+
+  const articleJsonLd = buildArticleJsonLd(resolved, settings);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Journal", path: "/journal" },
+    { name: resolved.title, path: `/journal/${resolved.slug}` },
+  ]);
+
   /* Build back-link with year/month so the journal page returns to the same position */
   const entryDate = parseSanityDate(resolved.date);
   const backHref = `/journal?year=${entryDate.getFullYear()}&month=${entryDate.getMonth() + 1}`;
@@ -132,6 +153,9 @@ export default async function JournalDetailPage({ params }: Props) {
 
   return (
     <>
+      <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
+
       {/* Reading progress bar */}
       <ReadingProgress />
 

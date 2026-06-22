@@ -18,6 +18,8 @@ import {
 } from "@/lib/placeholder-data";
 import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import type { SiteSettings } from "@/lib/types";
+import JsonLd from "@/components/JsonLd";
+import { buildSiteJsonLd } from "@/lib/structured-data";
 import "./globals.css";
 
 const SITE_URL = "https://houseofsingh.com";
@@ -108,52 +110,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/** Build Person + WebSite structured data from CMS settings with fallbacks. */
-function buildJsonLd(settings: SiteSettings | null) {
-  const founderName =
-    settings?.founderName?.trim() || SEO_DEFAULTS.founderName;
-  const orgName =
-    settings?.organizationName?.trim() || SEO_DEFAULTS.organizationName;
-  const description =
-    settings?.defaultMetaDescription?.trim() || SEO_DEFAULTS.description;
-  const sameAs =
-    settings?.sameAs && settings.sameAs.length > 0
-      ? settings.sameAs
-      : SEO_DEFAULTS.sameAs;
-
-  return [
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      name: founderName,
-      alternateName: orgName,
-      url: SITE_URL,
-      image: `${SITE_URL}${SEO_DEFAULTS.ogImage}`,
-      jobTitle: "Creative Director",
-      description:
-        "Multidisciplinary designer and photographer based in Toronto",
-      address: {
-        "@type": "PostalAddress",
-        addressLocality: "Toronto",
-        addressRegion: "Ontario",
-        addressCountry: "CA",
-      },
-      sameAs,
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      name: orgName,
-      url: SITE_URL,
-      description,
-      author: {
-        "@type": "Person",
-        name: founderName,
-      },
-    },
-  ];
-}
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -167,7 +123,7 @@ export default async function RootLayout({
     sanityFetch<SiteSettings | null>({ query: siteSettingsQuery }),
   ]);
 
-  const jsonLd = buildJsonLd(settings);
+  const jsonLd = buildSiteJsonLd(settings);
 
   const sanityItems = navData?.items;
   const navItems =
@@ -180,10 +136,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={playfair.variable}>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <JsonLd data={jsonLd} />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[100] focus:block focus:w-full focus:bg-background focus:px-6 focus:py-3 focus:text-sm focus:text-foreground focus:shadow-md"

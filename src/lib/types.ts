@@ -130,6 +130,7 @@ export type JournalEntry = {
   coverImage?: SanityImage;
   body?: PortableTextBlock[];
   author?: string | null;
+  updatedAt?: string | null;
   seo?: Seo | null;
   /** @deprecated superseded by `seo` — read as fallback only. */
   seoTitle?: string | null;

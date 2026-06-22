@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/fetch";
-import { projectBySlugQuery, projectsListQuery } from "@/sanity/queries";
+import {
+  projectBySlugQuery,
+  projectsListQuery,
+  siteSettingsQuery,
+} from "@/sanity/queries";
 import { fallbackProjects as projects } from "@/lib/placeholder-data";
-import type { ProjectDetail } from "@/lib/placeholder-data";
+import type { ProjectDetail, SiteSettings } from "@/lib/placeholder-data";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import ReadingProgress from "@/components/ReadingProgress";
 import ContentSections from "@/components/projects/ContentSections";
 import ProjectInterestForm from "@/components/projects/ProjectInterestForm";
+import JsonLd from "@/components/JsonLd";
+import {
+  buildCreativeWorkJsonLd,
+  buildBreadcrumbJsonLd,
+} from "@/lib/structured-data";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -134,10 +143,23 @@ export default async function ProjectDetailPage({ params }: Props) {
     params: { slug },
   });
 
+  const settings = await sanityFetch<SiteSettings | null>({
+    query: siteSettingsQuery,
+  });
+
   // Sanity data available — render full project
   if (project) {
+    const creativeWorkJsonLd = buildCreativeWorkJsonLd(project, settings);
+    const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Projects", path: "/projects" },
+      { name: project.title, path: `/projects/${project.slug}` },
+    ]);
+
     return (
       <article className="section-pb-lg">
+        <JsonLd data={creativeWorkJsonLd} />
+        <JsonLd data={breadcrumbJsonLd} />
         <ReadingProgress />
         <ProjectHeader category={project.category} title={project.title} intro={project.shortIntro} isUpcoming={project.isUpcoming} />
 
@@ -176,8 +198,17 @@ export default async function ProjectDetailPage({ params }: Props) {
   const fallback = projects.find((p) => p.slug === slug);
   if (!fallback) notFound();
 
+  const fallbackCreativeWorkJsonLd = buildCreativeWorkJsonLd(fallback, settings);
+  const fallbackBreadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Projects", path: "/projects" },
+    { name: fallback.title, path: `/projects/${fallback.slug}` },
+  ]);
+
   return (
     <article className="section-pb-lg">
+      <JsonLd data={fallbackCreativeWorkJsonLd} />
+      <JsonLd data={fallbackBreadcrumbJsonLd} />
       <ProjectHeader category={fallback.category} title={fallback.title} intro={fallback.excerpt} />
       <section className="mx-auto max-w-3xl px-6 md:px-16">
         <p className="text-xs text-muted-foreground/40">
