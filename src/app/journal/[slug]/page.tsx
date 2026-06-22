@@ -30,6 +30,8 @@ export async function generateStaticParams() {
   return fallbackJournalEntries.map((entry) => ({ slug: entry.slug }));
 }
 
+const DEFAULT_OG_IMAGE = "/og-image.png";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
 
@@ -43,7 +45,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!baseTitle) return { title: "Not Found" };
 
-  // SEO object wins, then legacy flat fields, then the content itself.
   const title = entry?.seo?.metaTitle ?? entry?.seoTitle ?? baseTitle;
 
   const description =
@@ -53,7 +54,39 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     fallback?.excerpt ??
     "Reflections and observations from Maninder Singh — House of Singh";
 
-  return { title, description };
+  const canonical =
+    entry?.seo?.canonicalUrl || `/journal/${slug}`;
+  const noIndex = entry?.seo?.noIndex === true;
+  const author = entry?.author || "Maninder Singh";
+
+  const publishedTime = entry?.date
+    ? parseSanityDate(entry.date).toISOString()
+    : undefined;
+
+  // Stage 4 will swap this for a per-page auto-generated OG image.
+  const ogImage = DEFAULT_OG_IMAGE;
+
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    ...(noIndex ? { robots: { index: false, follow: true } } : {}),
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      url: `/journal/${slug}`,
+      images: [ogImage],
+      ...(publishedTime ? { publishedTime } : {}),
+      authors: [author],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
+    },
+  };
 }
 
 function formatDate(dateStr: string | undefined | null) {

@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: "Journal",
   description:
     "Thoughts, process notes, and behind-the-scenes stories from House of Singh.",
+  alternates: {
+    canonical: "/journal",
+  },
 };
 
 export default async function JournalPage() {

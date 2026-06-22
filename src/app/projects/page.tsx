@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "Projects",
   description:
     "Selected projects by Maninder Singh spanning design, photography, and creative direction.",
+  alternates: {
+    canonical: "/projects",
+  },
 };
 
 type SanityProject = {

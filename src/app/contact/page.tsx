@@ -19,12 +19,18 @@ const DEFAULT_CONTACT_DESCRIPTION =
 export async function generateMetadata(): Promise<Metadata> {
   const data = await sanityFetch<ContactPageData>({ query: contactPageQuery });
 
+  const noIndex = data?.seo?.noIndex === true;
+
   return {
     title: data?.seo?.metaTitle ?? data?.seoTitle ?? "Contact",
     description:
       data?.seo?.metaDescription ??
       data?.seoDescription ??
       DEFAULT_CONTACT_DESCRIPTION,
+    alternates: {
+      canonical: data?.seo?.canonicalUrl || "/contact",
+    },
+    ...(noIndex ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

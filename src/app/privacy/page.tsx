@@ -4,6 +4,9 @@ export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
     "Privacy policy for House of Singh — how we collect, use, and protect your information.",
+  alternates: {
+    canonical: "/privacy",
+  },
 };
 
 function SectionDivider({ label }: { label: string }) {

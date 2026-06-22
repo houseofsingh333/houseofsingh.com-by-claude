@@ -74,6 +74,9 @@ export async function generateMetadata(): Promise<Metadata> {
       template: "%s | House of Singh",
     },
     description,
+    alternates: {
+      canonical: "/",
+    },
     openGraph: {
       type: "website",
       locale: "en_CA",

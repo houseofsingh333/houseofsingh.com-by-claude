@@ -4,6 +4,9 @@ export const metadata: Metadata = {
   title: "Terms of Use",
   description:
     "Terms of use for the House of Singh website — conditions for using this site and its content.",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 function SectionDivider({ label }: { label: string }) {

@@ -52,25 +52,77 @@ function ProjectHeader({ category, title, intro, isUpcoming }: { category: strin
   );
 }
 
+const DEFAULT_OG_IMAGE = "/og-image.png";
+const DEFAULT_DESCRIPTION = "A project by Maninder Singh — House of Singh";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const project = await sanityFetch<ProjectDetail>({
     query: projectBySlugQuery,
     params: { slug },
   });
-  if (project)
+
+  if (project) {
+    const title = project.seo?.metaTitle || project.title;
+    const description =
+      project.seo?.metaDescription || project.excerpt || DEFAULT_DESCRIPTION;
+    const canonical = project.seo?.canonicalUrl || `/projects/${slug}`;
+    const noIndex = project.seo?.noIndex === true;
+    const author = project.author || "Maninder Singh";
+
+    const publishedTime = project.publishedAt
+      ? new Date(project.publishedAt).toISOString()
+      : undefined;
+    const modifiedTime = project.updatedAt
+      ? new Date(project.updatedAt).toISOString()
+      : undefined;
+
+    // Stage 4 will swap this for a per-page auto-generated OG image.
+    const ogImage = DEFAULT_OG_IMAGE;
+
     return {
-      title: project.title,
-      description:
-        project.excerpt || "A project by Maninder Singh — House of Singh",
+      title,
+      description,
+      alternates: { canonical },
+      ...(noIndex ? { robots: { index: false, follow: true } } : {}),
+      openGraph: {
+        type: "article",
+        title,
+        description,
+        url: `/projects/${slug}`,
+        images: [ogImage],
+        ...(publishedTime ? { publishedTime } : {}),
+        ...(modifiedTime ? { modifiedTime } : {}),
+        authors: [author],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [ogImage],
+      },
     };
+  }
 
   const fallback = projects.find((p) => p.slug === slug);
   if (!fallback) return { title: "Not Found" };
   return {
     title: fallback.title,
-    description:
-      fallback.excerpt || "A project by Maninder Singh — House of Singh",
+    description: fallback.excerpt || DEFAULT_DESCRIPTION,
+    alternates: { canonical: `/projects/${slug}` },
+    openGraph: {
+      type: "article",
+      title: fallback.title,
+      description: fallback.excerpt || DEFAULT_DESCRIPTION,
+      url: `/projects/${slug}`,
+      images: [DEFAULT_OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: fallback.title,
+      description: fallback.excerpt || DEFAULT_DESCRIPTION,
+      images: [DEFAULT_OG_IMAGE],
+    },
   };
 }
 

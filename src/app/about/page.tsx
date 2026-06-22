@@ -12,12 +12,18 @@ export async function generateMetadata(): Promise<Metadata> {
     query: aboutPageQuery,
   });
 
+  const noIndex = data?.seo?.noIndex === true;
+
   return {
     title: data?.seo?.metaTitle ?? data?.seoTitle ?? "About",
     description:
       data?.seo?.metaDescription ??
       data?.seoDescription ??
       "Learn about the story, values, and vision behind House of Singh.",
+    alternates: {
+      canonical: data?.seo?.canonicalUrl || "/about",
+    },
+    ...(noIndex ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
