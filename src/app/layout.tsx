@@ -36,7 +36,6 @@ const SEO_DEFAULTS = {
   organizationName: "House of Singh",
   founderName: "Maninder Singh",
   sameAs: ["https://www.instagram.com/houseofsingh"],
-  ogImage: "/og-image.png",
 };
 
 const playfair = localFont({
@@ -93,10 +92,8 @@ export async function generateMetadata(): Promise<Metadata> {
       creator: "@houseofsingh",
       site: "@houseofsingh",
     },
-    icons: {
-      icon: "/favicon.ico",
-      apple: "/apple-touch-icon.png",
-    },
+    // Favicon is auto-detected from app/favicon.ico (Next.js convention).
+    // No apple-touch-icon asset exists, so none is referenced.
     manifest: "/site.webmanifest",
     // Only emit a verification tag when a real code is set in the CMS.
     ...(verification ? { verification: { google: verification } } : {}),

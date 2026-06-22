@@ -23,8 +23,12 @@ export const SITE_URL = "https://houseofsingh.com";
 const DEFAULTS = {
   organizationName: "House of Singh",
   founderName: "Maninder Singh",
+  // The House of Singh brand mark — a real, stable asset. Used as both the
+  // Organization logo and the Person image: it's the canonical identity image
+  // for the "House of Singh" persona (the Person node's alternateName), and is
+  // more semantically correct here than the wide 1200x630 social OG card.
   logo: "/images/hos-logo.svg",
-  personImage: "/og-image.png",
+  personImage: "/images/hos-logo.svg",
   description:
     "The creative world of Maninder Singh. Design, photography, and intentional living. Based in Toronto.",
   sameAs: ["https://www.instagram.com/houseofsingh"],

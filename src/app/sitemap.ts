@@ -57,24 +57,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (client) {
     try {
       const [projects, journalEntries] = await Promise.all([
-        client.fetch<Array<{ slug: string; updatedAt: string | null }>>(
-          `*[_type == "project"]{ "slug": slug.current, "updatedAt": _updatedAt }`
+        // Prefer the editable updatedAt/publishedAt fields, then fall back to
+        // the system _updatedAt timestamp.
+        client.fetch<Array<{ slug: string; lastmod: string | null }>>(
+          `*[_type == "project"]{ "slug": slug.current, "lastmod": coalesce(updatedAt, publishedAt, _updatedAt) }`
         ),
-        client.fetch<Array<{ slug: string; updatedAt: string | null }>>(
-          `*[_type == "journalEntry"]{ "slug": slug.current, "updatedAt": _updatedAt }`
+        client.fetch<Array<{ slug: string; lastmod: string | null }>>(
+          `*[_type == "journalEntry"]{ "slug": slug.current, "lastmod": coalesce(_updatedAt, date) }`
         ),
       ]);
 
       projectRoutes = (projects ?? []).map((project) => ({
         url: `${BASE_URL}/projects/${project.slug}`,
-        lastModified: project.updatedAt ?? now,
+        lastModified: project.lastmod ?? now,
         changeFrequency: "monthly" as const,
         priority: 0.7,
       }));
 
       journalRoutes = (journalEntries ?? []).map((entry) => ({
         url: `${BASE_URL}/journal/${entry.slug}`,
-        lastModified: entry.updatedAt ?? now,
+        lastModified: entry.lastmod ?? now,
         changeFrequency: "weekly" as const,
         priority: 0.8,
       }));

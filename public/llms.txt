@@ -1,0 +1,18 @@
+# House of Singh
+
+> House of Singh is the creative world of Maninder Singh — a multidisciplinary designer, photographer, and creative director based in Toronto, Canada. The work spans design, photography, and intentional living.
+
+Maninder Singh works under the moniker House of Singh, creating design and photography rooted in restraint, material honesty, and a sense of place. This site is his portfolio and journal.
+
+## Main pages
+
+- [About](https://houseofsingh.com/about): The story, values, and vision behind House of Singh, including Maninder Singh's background, milestones, and a personal rapid-fire Q&A.
+- [Projects](https://houseofsingh.com/projects): Selected work across design, photography, and creative direction, filterable by category.
+- [Journal](https://houseofsingh.com/journal): Thoughts, process notes, and behind-the-scenes stories.
+- [Contact](https://houseofsingh.com/contact): Inquiries for projects, collaborations, and media features.
+
+## Notes
+
+- Location: Toronto, Ontario, Canada.
+- Disciplines: design, photography, creative direction.
+- Instagram: https://www.instagram.com/houseofsingh
