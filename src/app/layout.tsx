@@ -20,6 +20,7 @@ import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import type { SiteSettings } from "@/lib/types";
 import JsonLd from "@/components/JsonLd";
 import { buildSiteJsonLd } from "@/lib/structured-data";
+import { IntroProvider } from "@/components/IntroContext";
 import "./globals.css";
 
 const SITE_URL = "https://houseofsingh.com";
@@ -133,11 +134,13 @@ export default async function RootLayout({
         >
           Skip to content
         </a>
-        <Header items={navItems} />
-        <main id="main-content" className="flex-1">
-          <PageTransition>{children}</PageTransition>
-        </main>
-        <Footer instagramPhotos={instagramPhotos} />
+        <IntroProvider>
+          <Header items={navItems} />
+          <main id="main-content" className="flex-1">
+            <PageTransition>{children}</PageTransition>
+          </main>
+          <Footer instagramPhotos={instagramPhotos} />
+        </IntroProvider>
         <SpeedInsights />
       </body>
     </html>

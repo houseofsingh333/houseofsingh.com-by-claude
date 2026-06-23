@@ -7,6 +7,7 @@ import {
   useReducedMotion,
 } from "motion/react";
 import SanityImage from "@/components/SanityImage";
+import { useIntro } from "@/components/IntroContext";
 import type { HeroSlide } from "@/lib/placeholder-data";
 import { EASE_SMOOTH, EASE_SLOW } from "@/lib/animation";
 
@@ -34,45 +35,19 @@ const CAPTION_IN_DURATION = 1.2;
 const CAPTION_OUT_DURATION = 0.6;
 const FIRST_SLIDE_FADE_DURATION = 1.8;
 
-const SESSION_KEY = "hos_intro_seen";
-
 type Props = {
   slides: HeroSlide[];
 };
 
 export default function CinematicHero({ slides }: Props) {
   const prefersReduced = useReducedMotion();
-  const [introComplete, setIntroComplete] = useState(false);
+  // Shared signal from the Header intro overlay — no polling.
+  const { introComplete } = useIntro();
   const [current, setCurrent] = useState(0);
   const [showCaption, setShowCaption] = useState(false);
   const [isFirstSlide, setIsFirstSlide] = useState(true);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const captionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // ——— Wait for Header intro to finish ———
-  useEffect(() => {
-    const check = () => {
-      try {
-        if (sessionStorage.getItem(SESSION_KEY)) {
-          setIntroComplete(true);
-          return true;
-        }
-      } catch {
-        setIntroComplete(true);
-        return true;
-      }
-      return false;
-    };
-
-    if (check()) return;
-
-    // Poll until intro finishes (Header sets sessionStorage on video end)
-    const interval = setInterval(() => {
-      if (check()) clearInterval(interval);
-    }, 200);
-
-    return () => clearInterval(interval);
-  }, []);
 
   // ——— Show caption after image settles ———
   const scheduleCaptionIn = useCallback(() => {
@@ -187,8 +162,10 @@ export default function CinematicHero({ slides }: Props) {
         <motion.div
           key={slide._id + "-" + current}
           className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: introComplete ? 1 : 0 }}
+          // First slide paints at full opacity from the first frame so it is
+          // the LCP element, independent of the intro. Later slides crossfade.
+          initial={{ opacity: isFirstSlide ? 1 : 0 }}
+          animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{
             opacity: {

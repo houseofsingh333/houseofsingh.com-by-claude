@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import NavOverlay from "./NavOverlay";
+import { useIntro } from "@/components/IntroContext";
 
 const NewsletterModal = dynamic(
   () => import("@/components/NewsletterModal"),
@@ -14,6 +15,10 @@ import type { NavItem } from "@/lib/placeholder-data";
 const SESSION_KEY = "hos_intro_seen";
 const SCROLL_SHOW = 60;
 const SCROLL_HIDE = 20;
+/** Hard cap so a slow or broken video never traps the user on the overlay.
+   Set above the real clip length (~5.06s) so a healthy intro plays in full;
+   onError/onStalled already handle broken playback immediately. */
+const INTRO_MAX_MS = 6500;
 
 type Props = {
   items: NavItem[];
@@ -27,6 +32,33 @@ export default function Header({ items }: Props) {
   const [introFading, setIntroFading] = useState(false);
   const [introDone, setIntroDone] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const introTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const introMaxTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const introDismissedRef = useRef(false);
+
+  /* Signals the hero (via context) that the intro is over — no polling. */
+  const { completeIntro } = useIntro();
+
+  /* Dismiss the intro overlay. Idempotent: whichever trigger fires first
+     (video ended, error, stalled, or the hard max-duration timer) wins. The
+     hero is already painted underneath, so this only fades the overlay away. */
+  const dismissIntro = useCallback(() => {
+    if (introDismissedRef.current) return;
+    introDismissedRef.current = true;
+    if (introMaxTimerRef.current) clearTimeout(introMaxTimerRef.current);
+    try {
+      sessionStorage.setItem(SESSION_KEY, "1");
+    } catch {}
+    // Tell the hero to begin right away (matches the old video-end timing).
+    completeIntro();
+    setIntroFading(true);
+    introTimerRef.current = setTimeout(() => {
+      setIntroVisible(false);
+      setIntroFading(false);
+      setIntroDone(true);
+      document.body.style.overflow = "";
+    }, 500);
+  }, [completeIntro]);
 
   /* ── State 0: decide whether to play intro ── */
   /* eslint-disable react-hooks/set-state-in-effect -- one-time init from browser APIs */
@@ -49,31 +81,20 @@ export default function Header({ items }: Props) {
 
     if (skip) {
       setIntroDone(true);
+      completeIntro();
     } else {
       document.body.style.overflow = "hidden";
       setIntroVisible(true);
+      // Hard safety net: dismiss even if the video never fires `ended`.
+      introMaxTimerRef.current = setTimeout(dismissIntro, INTRO_MAX_MS);
     }
-  }, []);
+  }, [completeIntro, dismissIntro]);
   /* eslint-enable react-hooks/set-state-in-effect */
-
-  /* Video ended → fade out overlay, reveal site */
-  const introTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const handleVideoEnded = useCallback(() => {
-    try {
-      sessionStorage.setItem(SESSION_KEY, "1");
-    } catch {}
-    setIntroFading(true);
-    introTimerRef.current = setTimeout(() => {
-      setIntroVisible(false);
-      setIntroFading(false);
-      setIntroDone(true);
-      document.body.style.overflow = "";
-    }, 500);
-  }, []);
 
   useEffect(() => {
     return () => {
       if (introTimerRef.current) clearTimeout(introTimerRef.current);
+      if (introMaxTimerRef.current) clearTimeout(introMaxTimerRef.current);
     };
   }, []);
 
@@ -126,7 +147,9 @@ export default function Header({ items }: Props) {
               muted
               playsInline
               preload="auto"
-              onEnded={handleVideoEnded}
+              onEnded={dismissIntro}
+              onError={dismissIntro}
+              onStalled={dismissIntro}
               className="w-full h-auto object-cover"
             >
               <source
