@@ -25,7 +25,7 @@ type Props = {
 
 /**
  * Optimized image component that uses:
- * - Sanity CDN transforms (auto format, responsive widths, DPR 2)
+ * - Sanity CDN transforms (auto format, responsive widths)
  * - next/image for lazy loading, layout stability, and blur placeholder
  * - Centralized profiles from lib/sanityImage.ts
  */

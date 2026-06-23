@@ -49,8 +49,8 @@ const profiles: Record<
     aspectRatio: 16 / 9,
   },
   hero: {
-    widths: [960, 1280, 1600, 1920],
-    quality: 80,
+    widths: [640, 960, 1280, 1600, 1920],
+    quality: 75,
     fit: "crop",
     sizes: "100vw",
     aspectRatio: 16 / 9,
