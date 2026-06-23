@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
+    <div className="min-h-[100svh] flex items-center justify-center bg-background">
       <img
         src="/images/hos-logo.svg"
         alt="Loading"
