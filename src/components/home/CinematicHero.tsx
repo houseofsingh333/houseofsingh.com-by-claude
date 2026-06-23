@@ -195,7 +195,7 @@ export default function CinematicHero({ slides }: Props) {
               image={slide.image}
               context="hero"
               alt={slide.imageAlt || slide.caption || "Hero"}
-              priority={current <= 1}
+              priority={current === 0}
               fill
               className="object-cover"
             />

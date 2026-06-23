@@ -52,6 +52,9 @@ const playfair = localFont({
   ],
   display: "swap",
   variable: "--font-playfair",
+  adjustFontFallback: "Times New Roman",
+  fallback: ["Times New Roman", "Times", "serif"],
+  preload: true,
 });
 
 export const viewport: Viewport = {

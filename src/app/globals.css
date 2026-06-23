@@ -1058,8 +1058,8 @@ body {
    two-column sticky layout; mobile (<768px) keeps the plain stack. */
 @media (min-width: 768px) and (max-width: 1023px) {
   .intro-collapse-track {
-    --intro-img-full: 72vh;
-    --intro-img-compact: 38vh;
+    --intro-img-full: 72svh;
+    --intro-img-compact: 38svh;
     /* shrink distance + compact frame + caption allowance */
     height: calc(
       (var(--intro-img-full) - var(--intro-img-compact)) +
@@ -1480,7 +1480,7 @@ body {
 .spotlight-section {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100svh;
   overflow: hidden;
 }
 
