@@ -15,8 +15,8 @@ export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = "image/png";
 
 const BG = "#F9F7F5";
-const FG = "#221F1C";
-const MUTED = "#868079";
+const FG = "#221F1C"; // mirrors --foreground, hsl(30 10% 12%)
+const MUTED = "#868079"; // mirrors --muted-foreground, hsl(30 5% 50%)
 const BRAND = "House of Singh";
 
 /** Pull a usable URL out of a Sanity image field (asset object or string). */
