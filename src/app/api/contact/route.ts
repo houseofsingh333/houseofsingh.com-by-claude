@@ -89,6 +89,20 @@ export async function POST(request: Request) {
         ? body.referralSource.trim()
         : "";
 
+    if (
+      name.length > 200 ||
+      email.length > 200 ||
+      intent.length > 200 ||
+      phone.length > 200 ||
+      referralSource.length > 200 ||
+      details.length > 5000
+    ) {
+      return NextResponse.json(
+        { error: "One or more fields exceed the allowed length." },
+        { status: 400 },
+      );
+    }
+
     if (!writeClient) {
       console.error("SANITY_API_TOKEN is not configured. Contact submission was not saved.");
       return NextResponse.json(

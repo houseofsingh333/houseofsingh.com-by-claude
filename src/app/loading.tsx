@@ -19,6 +19,9 @@ export default function Loading() {
           0%, 100% { opacity: 0.2; }
           50% { opacity: 0.4; }
         }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-pulse-subtle { animation: none !important; opacity: 0.3; }
+        }
       `}</style>
     </div>
   );

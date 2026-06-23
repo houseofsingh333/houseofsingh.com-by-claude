@@ -45,6 +45,20 @@ export async function POST(request: Request) {
       );
     }
 
+    if (
+      name.length > 200 ||
+      email.length > 200 ||
+      phone.length > 200 ||
+      instagram.length > 200 ||
+      projectTitle.length > 200 ||
+      story.length > 5000
+    ) {
+      return NextResponse.json(
+        { error: "One or more fields exceed the allowed length." },
+        { status: 400 },
+      );
+    }
+
     if (!writeClient) {
       console.error("SANITY_API_TOKEN is not configured. Project interest submission was not saved.");
       return NextResponse.json(
