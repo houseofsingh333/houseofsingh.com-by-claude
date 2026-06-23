@@ -146,7 +146,7 @@ export default function Header({ items }: Props) {
               autoPlay
               muted
               playsInline
-              preload="metadata"
+              preload="auto"
               onEnded={dismissIntro}
               onError={dismissIntro}
               onStalled={dismissIntro}

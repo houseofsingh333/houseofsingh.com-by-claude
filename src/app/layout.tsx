@@ -129,6 +129,14 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={playfair.variable}>
+      <head>
+        <link
+          rel="preload"
+          as="video"
+          href="/images/HOS_Logo_Animation.mp4"
+          type="video/mp4"
+        />
+      </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
         <JsonLd data={jsonLd} />
         <a
