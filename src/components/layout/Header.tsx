@@ -153,7 +153,7 @@ export default function Header({ items }: Props) {
               className="w-full h-auto object-cover"
             >
               <source
-                src="/images/HOS Logo Animation.mp4"
+                src="/images/HOS_Logo_Animation.mp4"
                 type="video/mp4"
               />
             </video>
