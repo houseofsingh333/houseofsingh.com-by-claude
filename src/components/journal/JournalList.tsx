@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import SanityImage from "@/components/SanityImage";
 import type { JournalEntry } from "@/lib/placeholder-data";
 import { parseSanityDate } from "@/lib/dates";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 type Props = {
   entries: JournalEntry[];
@@ -67,6 +68,7 @@ export default function JournalList({ entries }: Props) {
   const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = usePrefersReducedMotion();
 
   /* Sync initial selection when entries change (e.g. ISR revalidation) */
   useEffect(() => {
@@ -306,7 +308,11 @@ export default function JournalList({ entries }: Props) {
               <Link
                 key={entry._id}
                 href={`/journal/${entry.slug}`}
-                className="block group transition-transform duration-300 hover:-translate-y-1"
+                className={`block group ${
+                  reducedMotion
+                    ? ""
+                    : "transition-transform duration-300 hover:-translate-y-1"
+                }`}
               >
                 {/* Image */}
                 <div data-journal-card className="relative overflow-hidden bg-secondary mb-5 shadow-sm group-hover:shadow-md transition-shadow duration-300 aspect-[3/4]">
@@ -315,7 +321,11 @@ export default function JournalList({ entries }: Props) {
                     context="thumbnail"
                     alt={entry.title}
                     fill
-                    className="object-cover transition-all duration-700 group-hover:scale-[1.03] lg:grayscale lg:group-hover:grayscale-0"
+                    className={`object-cover lg:grayscale ${
+                      reducedMotion
+                        ? ""
+                        : "transition-all duration-700 group-hover:scale-[1.03] lg:group-hover:grayscale-0"
+                    }`}
                   />
                 </div>
 

@@ -4,6 +4,7 @@ import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { FeaturedOutlet } from "@/lib/types";
 import { parseSanityDate } from "@/lib/dates";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 function formatDate(dateStr?: string): string | null {
   if (!dateStr) return null;
@@ -45,6 +46,7 @@ function FeaturedRow({
 }) {
   const date = formatDate(outlet.date);
   const hasImage = !!outlet.image;
+  const reducedMotion = usePrefersReducedMotion();
 
   const rowContent = (
     <div className="featured-row flex items-center gap-6 py-6 md:py-7">
@@ -56,7 +58,11 @@ function FeaturedRow({
             context="thumbnail"
             alt={outlet.title || outlet.name}
             fill={false}
-            className="w-full h-full object-cover transition-transform duration-[450ms] ease-in-out group-hover:scale-105"
+            className={`w-full h-full object-cover ${
+              reducedMotion
+                ? ""
+                : "transition-transform duration-[450ms] ease-in-out group-hover:scale-105"
+            }`}
           />
         </div>
       )}

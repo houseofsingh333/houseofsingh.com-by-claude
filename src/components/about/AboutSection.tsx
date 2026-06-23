@@ -108,7 +108,11 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
                 context="body"
                 alt={`${founderName} — ${roles[0]}`}
                 fill
-                className="object-cover object-top grayscale scale-[1.03] group-hover:grayscale-0 group-hover:scale-100 transition-all duration-1000 ease-out"
+                className={`object-cover object-top grayscale scale-[1.03] ${
+                  reducedMotion
+                    ? ""
+                    : "group-hover:grayscale-0 group-hover:scale-100 transition-all duration-1000 ease-out"
+                }`}
               />
             </div>
           </div>
