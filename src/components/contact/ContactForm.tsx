@@ -6,7 +6,7 @@ import {
   ReviewScreen,
   ConfirmationScreen,
 } from "@/components/contact/ReviewConfirmation";
-import { TwoColumnLayout, ProgressBar } from "./ContactLayout";
+import { TwoColumnLayout } from "./ContactLayout";
 import { useContactForm } from "./useContactForm";
 import InstagramPhotoPlate, {
   type InstagramPhoto,
@@ -38,7 +38,6 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
     handleEditFromReview,
     handleSubmit,
     clearDraft,
-    progressPercent,
     honeypot,
     setHoneypot,
   } = useContactForm();
@@ -51,48 +50,40 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
   /* ── Confirmation ── */
   if (phase === "done") {
     return (
-      <>
-        <ProgressBar percent={progressPercent} />
-        <TwoColumnLayout aside={aside}>
-          <ConfirmationScreen />
-        </TwoColumnLayout>
-      </>
+      <TwoColumnLayout aside={aside}>
+        <ConfirmationScreen />
+      </TwoColumnLayout>
     );
   }
 
   /* ── Review ── */
   if (phase === "review") {
     return (
-      <>
-        <ProgressBar percent={progressPercent} />
-        <TwoColumnLayout aside={aside}>
-          {submitError && (
-            <p className="text-sm text-muted-foreground mb-6 border-l-2 border-foreground/20 pl-4">
-              {submitError}
-            </p>
-          )}
-          <ReviewScreen
-            steps={steps}
-            formData={formData}
-            onEdit={handleEditFromReview}
-            onSubmit={handleSubmit}
-            submitting={submitting}
-            onBack={() => {
-              setCurrentStep(steps.length - 1);
-              setPhase("form");
-            }}
-          />
-        </TwoColumnLayout>
-      </>
+      <TwoColumnLayout aside={aside}>
+        {submitError && (
+          <p className="text-sm text-muted-foreground mb-6 border-l-2 border-foreground/20 pl-4">
+            {submitError}
+          </p>
+        )}
+        <ReviewScreen
+          steps={steps}
+          formData={formData}
+          onEdit={handleEditFromReview}
+          onSubmit={handleSubmit}
+          submitting={submitting}
+          onBack={() => {
+            setCurrentStep(steps.length - 1);
+            setPhase("form");
+          }}
+        />
+      </TwoColumnLayout>
     );
   }
 
   /* ── Form steps ── */
   return (
-    <>
-      <ProgressBar percent={progressPercent} />
-      <TwoColumnLayout aside={aside}>
-        <HoneypotField value={honeypot} onChange={setHoneypot} />
+    <TwoColumnLayout aside={aside}>
+      <HoneypotField value={honeypot} onChange={setHoneypot} />
         <div className="min-h-[50vh] flex flex-col justify-center max-w-lg">
           <div key={currentStep} className="editorial-slide-up">
             {/* Question */}
@@ -172,6 +163,5 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
           </div>
         )}
       </TwoColumnLayout>
-    </>
   );
 }

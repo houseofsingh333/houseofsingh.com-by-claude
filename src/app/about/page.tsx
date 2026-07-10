@@ -7,6 +7,7 @@ import {
   type AboutPageData,
 } from "@/lib/placeholder-data";
 import JsonLd from "@/components/JsonLd";
+import ReadingProgress from "@/components/ReadingProgress";
 import { buildFaqJsonLd } from "@/lib/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -40,6 +41,7 @@ export default async function AboutPage() {
   return (
     <>
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
+      <ReadingProgress />
       <h1 className="sr-only">About Maninder Singh — House of Singh</h1>
       <AboutSection data={about} />
     </>

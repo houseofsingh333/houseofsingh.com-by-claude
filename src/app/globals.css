@@ -1050,9 +1050,15 @@ body {
 
 .reading-progress {
   height: 2px;
-  background: var(--foreground);
+  background: var(--muted-foreground);
   transform-origin: left;
   transition: transform 0.1s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reading-progress {
+    transition: none;
+  }
 }
 
 /* ——— Homepage intro — tablet-only scroll-driven image collapse ———

@@ -167,13 +167,6 @@ export function useContactForm() {
     return () => window.removeEventListener("keydown", handler);
   }, [phase, currentStepDef, isValid, isSkippable, handleNext]);
 
-  // Progress
-  const totalSteps = steps.length;
-  const progressPercent =
-    phase === "review" || phase === "done"
-      ? 100
-      : ((currentStep + 1) / (totalSteps + 1)) * 100;
-
   return {
     formData,
     currentStep,
@@ -194,7 +187,6 @@ export function useContactForm() {
     handleEditFromReview,
     handleSubmit,
     clearDraft,
-    progressPercent,
     honeypot,
     setHoneypot,
   };

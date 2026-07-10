@@ -1,4 +1,4 @@
-/* Contact page layout primitives — editorial copy, form grid, progress bar */
+/* Contact page layout primitives — editorial copy, form grid */
 
 import type { ReactNode } from "react";
 
@@ -51,21 +51,6 @@ export function TwoColumnLayout({ children, aside }: TwoColumnLayoutProps) {
           content
         )}
       </div>
-    </div>
-  );
-}
-
-/* ── Progress bar ──────────────────────────────────────── */
-export function ProgressBar({ percent }: { percent: number }) {
-  return (
-    <div className="fixed top-0 left-0 w-full z-50">
-      <div
-        className="h-[1.5px] bg-foreground/80"
-        style={{
-          width: `${percent}%`,
-          transition: "width 700ms cubic-bezier(0.22, 1, 0.36, 1)",
-        }}
-      />
     </div>
   );
 }
