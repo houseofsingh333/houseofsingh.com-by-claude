@@ -3,7 +3,7 @@
 import { PortableText } from "@portabletext/react";
 import AspectImage from "./AspectImage";
 import type { StickyChapterBlock } from "@/lib/placeholder-data";
-import type { SanityImageAsset } from "@/lib/sanityImage";
+import { hasImageAsset, type SanityImageAsset } from "@/lib/sanityImage";
 
 type Props = { section: StickyChapterBlock };
 
@@ -21,6 +21,8 @@ function ChapterImages({
   preset: StickyChapterBlock["layoutPreset"];
 }) {
   const captionCls = "mt-3 text-xs text-muted-foreground/50 tracking-wide";
+
+  if (images.length === 0) return null;
 
   if (preset === "allSingles") {
     return (
@@ -81,6 +83,8 @@ function ChapterImages({
 }
 
 export default function StickyChapterRenderer({ section }: Props) {
+  const images = (section.images ?? []).filter(hasImageAsset);
+
   return (
     <div className="project-section sticky-chapter mx-auto max-w-7xl px-6 md:px-16">
       {/* Mobile: single column sequence — text then images */}
@@ -88,7 +92,7 @@ export default function StickyChapterRenderer({ section }: Props) {
         <div className="text-sm text-muted-foreground leading-[1.9] [&>p]:mb-6 last:[&>p]:mb-0">
           <PortableText value={section.stickyText} />
         </div>
-        <ChapterImages images={section.images} preset={section.layoutPreset} />
+        <ChapterImages images={images} preset={section.layoutPreset} />
       </div>
 
       {/* Desktop: two-column sticky layout — text stays while images scroll */}
@@ -99,7 +103,7 @@ export default function StickyChapterRenderer({ section }: Props) {
           </div>
         </div>
         <div>
-          <ChapterImages images={section.images} preset={section.layoutPreset} />
+          <ChapterImages images={images} preset={section.layoutPreset} />
         </div>
       </div>
     </div>

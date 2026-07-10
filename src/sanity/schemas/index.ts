@@ -10,8 +10,15 @@ import { projectCategory } from "./projectCategory";
 import { projectInterest } from "./projectInterest";
 import {
   textSection,
-  imageSingle,
+  fullWidthImage,
+  fullBleedImage,
   imagePair,
+  imageRow3,
+  offsetImage,
+  textWithImage,
+  horizontalGallery,
+  pullQuote,
+  imageSingle,
   imageGrid,
   stickyChapter,
 } from "./sections";
@@ -35,8 +42,16 @@ export const schemaTypes = [
   spotlight,
   // Section block types (used inside project.contentSections)
   textSection,
-  imageSingle,
+  fullWidthImage,
+  fullBleedImage,
   imagePair,
+  imageRow3,
+  offsetImage,
+  textWithImage,
+  horizontalGallery,
+  pullQuote,
+  // Legacy section blocks — retained for existing published projects
+  imageSingle,
   imageGrid,
   stickyChapter,
   // Shared object types

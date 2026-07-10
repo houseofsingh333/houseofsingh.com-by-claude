@@ -1,4 +1,5 @@
 import { PortableText } from "@portabletext/react";
+import { proseComponents } from "@/components/proseComponents";
 import type { TextSectionBlock } from "@/lib/placeholder-data";
 
 type Props = { section: TextSectionBlock };
@@ -11,8 +12,8 @@ export default function TextSectionRenderer({ section }: Props) {
           {section.heading}
         </h2>
       )}
-      <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] [&>p]:mb-6 last:[&>p]:mb-0">
-        <PortableText value={section.body} />
+      <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.9]">
+        <PortableText value={section.body} components={proseComponents} />
       </div>
     </div>
   );

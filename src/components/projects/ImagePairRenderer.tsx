@@ -1,10 +1,13 @@
 import AspectImage from "./AspectImage";
+import { hasImageAsset } from "@/lib/sanityImage";
 import type { ImagePairBlock } from "@/lib/placeholder-data";
 
 type Props = { section: ImagePairBlock };
 
 export default function ImagePairRenderer({ section }: Props) {
   const isSideBySide = section.layout === "sideBySide";
+  const images = (section.images ?? []).filter(hasImageAsset);
+  if (images.length === 0) return null;
 
   return (
     <div
@@ -12,7 +15,7 @@ export default function ImagePairRenderer({ section }: Props) {
         isSideBySide ? "grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8" : "flex flex-col gap-5 md:gap-8"
       }`}
     >
-      {section.images.map((img, i) => (
+      {images.map((img, i) => (
         <figure key={img.url || i}>
           <AspectImage image={img} className="overflow-hidden" />
           {img.caption?.trim() && (

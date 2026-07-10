@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import { PortableText } from "@portabletext/react";
+import { proseComponents } from "@/components/proseComponents";
 import SanityImage from "@/components/SanityImage";
 import type { AboutPageData } from "@/lib/types";
 import {
@@ -11,16 +12,6 @@ import {
 import FeaturedOn from "./FeaturedOn";
 import RapidFire from "./RapidFire";
 import Timeline from "./Timeline";
-
-/**
- * Shared PortableText renderer: each paragraph gets an explicit bottom margin
- * so gaps are guaranteed regardless of arbitrary CSS selectors.
- */
-const proseComponents: PortableTextComponents = {
-  block: {
-    normal: ({ children }) => <p className="mb-6 last:mb-0">{children}</p>,
-  },
-};
 
 function SectionDivider({ label, gap = "mb-16" }: { label: string; gap?: string }) {
   return (

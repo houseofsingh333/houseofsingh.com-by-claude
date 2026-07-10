@@ -63,9 +63,18 @@ export const project = defineType({
       description:
         "Build the project page by adding sections in order. Each section controls its own text and images — reorder to change the narrative flow.",
       of: [
+        // Nine designed layout blocks
         { type: "textSection" },
-        { type: "imageSingle" },
+        { type: "fullWidthImage" },
+        { type: "fullBleedImage" },
         { type: "imagePair" },
+        { type: "imageRow3" },
+        { type: "offsetImage" },
+        { type: "textWithImage" },
+        { type: "horizontalGallery" },
+        { type: "pullQuote" },
+        // Legacy blocks — kept so existing projects keep working
+        { type: "imageSingle" },
         { type: "imageGrid" },
         { type: "stickyChapter" },
       ],

@@ -81,9 +81,27 @@ function buildUrl(
 
 /**
  * Returns true if the URL is a Sanity CDN URL that supports transforms.
+ * Guards against null/undefined so it never calls string methods on nothing.
  */
-function isSanityCdnUrl(url: string): boolean {
-  return url.startsWith("https://cdn.sanity.io/");
+function isSanityCdnUrl(url: string | null | undefined): boolean {
+  return typeof url === "string" && url.startsWith("https://cdn.sanity.io/");
+}
+
+/**
+ * True only when an image field actually has a usable asset to render.
+ *
+ * A Sanity image object can be present yet carry no asset at all — for
+ * example `{ _type: "image", alt: "…" }` with no `asset` key. GROQ then
+ * projects `url` as null, so the object is truthy but unrenderable. Callers
+ * must use this (not a bare truthiness check) before rendering an image or
+ * building a URL, otherwise a null url reaches string methods and crashes.
+ */
+export function hasImageAsset(
+  image: SanityImageAsset | string | null | undefined,
+): image is SanityImageAsset | string {
+  if (!image) return false;
+  if (typeof image === "string") return image.length > 0;
+  return typeof image.url === "string" && image.url.length > 0;
 }
 
 // --------------- Main API ---------------
@@ -138,15 +156,17 @@ export function getImageProps(
 ): ImageProps {
   const profile = profiles[context];
 
-  // ——— No image ———
+  const placeholder = (alt: string): ImageProps => ({
+    src: "/images/project-placeholder-1.svg",
+    sizes: profile.sizes,
+    width: 640,
+    height: Math.round(640 / profile.aspectRatio),
+    alt,
+  });
+
+  // ——— No image at all ———
   if (!image) {
-    return {
-      src: "/images/project-placeholder-1.svg",
-      sizes: profile.sizes,
-      width: 640,
-      height: Math.round(640 / profile.aspectRatio),
-      alt: altOverride || "",
-    };
+    return placeholder(altOverride || "");
   }
 
   // ——— Plain string URL ———
@@ -174,6 +194,13 @@ export function getImageProps(
       height: Math.round(640 / profile.aspectRatio),
       alt: altOverride || "",
     };
+  }
+
+  // ——— Image object with no asset (present but unrenderable) ———
+  // e.g. { _type: "image", alt: "…" } with no asset → url is null. Never
+  // build a URL from it; fall back to the placeholder, keeping any alt.
+  if (!image.url) {
+    return placeholder(altOverride || image.alt || "");
   }
 
   // ——— Full SanityImageAsset ———

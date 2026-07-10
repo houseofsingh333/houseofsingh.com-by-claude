@@ -67,6 +67,53 @@ export type TextSectionBlock = {
   body: PortableTextBlock[];
 };
 
+export type FullWidthImageBlock = {
+  _type: "fullWidthImage";
+  _key: string;
+  image: SanityImageAsset;
+};
+
+export type FullBleedImageBlock = {
+  _type: "fullBleedImage";
+  _key: string;
+  image: SanityImageAsset;
+};
+
+export type ImageRow3Block = {
+  _type: "imageRow3";
+  _key: string;
+  images: SanityImageAsset[];
+};
+
+export type OffsetImageBlock = {
+  _type: "offsetImage";
+  _key: string;
+  image: SanityImageAsset;
+  side: "left" | "right";
+  text?: string;
+};
+
+export type TextWithImageBlock = {
+  _type: "textWithImage";
+  _key: string;
+  body: PortableTextBlock[];
+  image: SanityImageAsset;
+  side: "imageLeft" | "imageRight";
+};
+
+export type HorizontalGalleryBlock = {
+  _type: "horizontalGallery";
+  _key: string;
+  images: SanityImageAsset[];
+};
+
+export type PullQuoteBlock = {
+  _type: "pullQuote";
+  _key: string;
+  quote: string;
+  attribution?: string;
+};
+
 export type ImageSingleBlock = {
   _type: "imageSingle";
   _key: string;
@@ -98,9 +145,18 @@ export type StickyChapterBlock = {
 };
 
 export type ContentSection =
+  // Nine designed layout blocks
   | TextSectionBlock
-  | ImageSingleBlock
+  | FullWidthImageBlock
+  | FullBleedImageBlock
   | ImagePairBlock
+  | ImageRow3Block
+  | OffsetImageBlock
+  | TextWithImageBlock
+  | HorizontalGalleryBlock
+  | PullQuoteBlock
+  // Legacy blocks — retained for existing published projects
+  | ImageSingleBlock
   | ImageGridBlock
   | StickyChapterBlock;
 

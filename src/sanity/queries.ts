@@ -143,16 +143,50 @@ export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug
       heading,
       body
     },
-    // imageSingle
-    _type == "imageSingle" => {
-      "image": image ${_imageAsset},
-      caption,
-      size
+    // fullWidthImage
+    _type == "fullWidthImage" => {
+      "image": image ${_imageAsset}
+    },
+    // fullBleedImage
+    _type == "fullBleedImage" => {
+      "image": image ${_imageAsset}
     },
     // imagePair
     _type == "imagePair" => {
       "images": images[] ${_imageAsset},
       layout
+    },
+    // imageRow3
+    _type == "imageRow3" => {
+      "images": images[] ${_imageAsset}
+    },
+    // offsetImage
+    _type == "offsetImage" => {
+      "image": image ${_imageAsset},
+      side,
+      text
+    },
+    // textWithImage
+    _type == "textWithImage" => {
+      body,
+      "image": image ${_imageAsset},
+      side
+    },
+    // horizontalGallery
+    _type == "horizontalGallery" => {
+      "images": images[] ${_imageAsset}
+    },
+    // pullQuote
+    _type == "pullQuote" => {
+      quote,
+      attribution
+    },
+    // ── Legacy blocks (retained for existing projects) ──
+    // imageSingle
+    _type == "imageSingle" => {
+      "image": image ${_imageAsset},
+      caption,
+      size
     },
     // imageGrid
     _type == "imageGrid" => {

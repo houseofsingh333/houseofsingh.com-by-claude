@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PortableText } from "@portabletext/react";
 import ReadingProgress from "@/components/ReadingProgress";
 import SanityImage from "@/components/SanityImage";
+import { hasImageAsset } from "@/lib/sanityImage";
 import { sanityFetch } from "@/sanity/fetch";
 import {
   journalBySlugQuery,
@@ -164,8 +165,8 @@ export default async function JournalDetailPage({ params }: Props) {
           &larr; Back to journal
         </Link>
 
-        {/* Cover image */}
-        {resolved.coverImage && (
+        {/* Cover image — only when a real asset exists */}
+        {hasImageAsset(resolved.coverImage) && (
           <div className="relative w-full h-[50vh] bg-secondary mb-8">
             <SanityImage
               image={resolved.coverImage}

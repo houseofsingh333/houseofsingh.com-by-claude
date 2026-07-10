@@ -9,6 +9,7 @@ import {
 import { fallbackProjects as projects } from "@/lib/placeholder-data";
 import type { ProjectDetail, SiteSettings } from "@/lib/placeholder-data";
 import SanityImage from "@/components/SanityImage";
+import { hasImageAsset } from "@/lib/sanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import ReadingProgress from "@/components/ReadingProgress";
 import ContentSections from "@/components/projects/ContentSections";
@@ -164,8 +165,9 @@ export default async function ProjectDetailPage({ params }: Props) {
         <ReadingProgress />
         <ProjectHeader category={project.category} title={project.title} intro={project.shortIntro} isUpcoming={project.isUpcoming} author={project.author} />
 
-        {/* Cover image — full bleed, generous bottom margin */}
-        {project.coverImage && (
+        {/* Cover image — only when a real asset exists (a coverImage object
+            can carry alt with no asset at all; that must render no hero). */}
+        {hasImageAsset(project.coverImage) && (
           <ScrollReveal offset={0} duration={1} threshold={0.05} className="mb-20 md:mb-32 lg:mb-40">
             <div
               className="w-full"

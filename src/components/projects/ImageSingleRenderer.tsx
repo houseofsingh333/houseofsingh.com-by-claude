@@ -1,4 +1,5 @@
 import AspectImage from "./AspectImage";
+import { hasImageAsset } from "@/lib/sanityImage";
 import type { ImageSingleBlock } from "@/lib/placeholder-data";
 
 type Props = { section: ImageSingleBlock };
@@ -10,6 +11,7 @@ const sizeClasses: Record<string, string> = {
 };
 
 export default function ImageSingleRenderer({ section }: Props) {
+  if (!hasImageAsset(section.image)) return null;
   return (
     <figure className={`project-section ${sizeClasses[section.size] || sizeClasses.large}`}>
       <AspectImage image={section.image} className="overflow-hidden" />

@@ -1,10 +1,12 @@
 import { defineField, defineType } from "sanity";
+import { imageAltFields, captionField } from "../imageFields";
 
 export const imagePair = defineType({
   name: "imagePair",
   title: "Image Pair",
   type: "object",
   icon: () => "⬜⬜",
+  description: "Exactly two images, side by side or stacked.",
   fields: [
     defineField({
       name: "images",
@@ -14,20 +16,7 @@ export const imagePair = defineType({
         {
           type: "image",
           options: { hotspot: true },
-          fields: [
-            defineField({
-              name: "alt",
-              title: "Alt Text",
-              type: "string",
-              validation: (rule) =>
-                rule.required().warning("Alt text is recommended."),
-            }),
-            defineField({
-              name: "caption",
-              title: "Caption",
-              type: "string",
-            }),
-          ],
+          fields: [...imageAltFields, captionField],
         },
       ],
       validation: (rule) =>
