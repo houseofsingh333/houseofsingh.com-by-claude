@@ -28,7 +28,7 @@ function ChapterImages({
         {images.map((img, i) => (
           <figure key={img.url || i}>
             <AspectImage image={img} priority={i === 0} className="overflow-hidden" />
-            {img.caption && <figcaption className={captionCls}>{img.caption}</figcaption>}
+            {img.caption?.trim() && <figcaption className={captionCls}>{img.caption}</figcaption>}
           </figure>
         ))}
       </div>
@@ -41,14 +41,14 @@ function ChapterImages({
       <div className="flex flex-col gap-8">
         <figure>
           <AspectImage image={hero} priority className="overflow-hidden" />
-          {hero.caption && <figcaption className={captionCls}>{hero.caption}</figcaption>}
+          {hero.caption?.trim() && <figcaption className={captionCls}>{hero.caption}</figcaption>}
         </figure>
         {rest.length > 0 && (
           <div className="grid grid-cols-2 gap-5">
             {rest.map((img, i) => (
               <figure key={img.url || i}>
                 <AspectImage image={img} className="overflow-hidden" />
-                {img.caption && <figcaption className={captionCls}>{img.caption}</figcaption>}
+                {img.caption?.trim() && <figcaption className={captionCls}>{img.caption}</figcaption>}
               </figure>
             ))}
           </div>
@@ -67,14 +67,14 @@ function ChapterImages({
           {gridImages.map((img, i) => (
             <figure key={img.url || i}>
               <AspectImage image={img} priority={i === 0} className="overflow-hidden" />
-              {img.caption && <figcaption className={captionCls}>{img.caption}</figcaption>}
+              {img.caption?.trim() && <figcaption className={captionCls}>{img.caption}</figcaption>}
             </figure>
           ))}
         </div>
       )}
       <figure>
         <AspectImage image={hero} className="overflow-hidden" />
-        {hero.caption && <figcaption className={captionCls}>{hero.caption}</figcaption>}
+        {hero.caption?.trim() && <figcaption className={captionCls}>{hero.caption}</figcaption>}
       </figure>
     </div>
   );

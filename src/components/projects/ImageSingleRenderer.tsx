@@ -13,7 +13,7 @@ export default function ImageSingleRenderer({ section }: Props) {
   return (
     <figure className={`project-section ${sizeClasses[section.size] || sizeClasses.large}`}>
       <AspectImage image={section.image} className="overflow-hidden" />
-      {section.caption && (
+      {section.caption?.trim() && (
         <figcaption className="mt-4 text-xs text-muted-foreground/50 text-center tracking-wide">
           {section.caption}
         </figcaption>

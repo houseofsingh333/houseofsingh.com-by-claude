@@ -35,7 +35,8 @@ export async function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
 }
 
-function ProjectHeader({ category, title, intro, isUpcoming }: { category: string; title: string; intro?: string; isUpcoming?: boolean }) {
+function ProjectHeader({ category, title, intro, isUpcoming, author }: { category: string; title: string; intro?: string; isUpcoming?: boolean; author?: string | null }) {
+  const authorText = author?.trim();
   return (
     <ScrollReveal as="section" className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset mb-16 md:mb-20" offset={14} duration={0.8}>
       <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50 mb-4">
@@ -45,13 +46,18 @@ function ProjectHeader({ category, title, intro, isUpcoming }: { category: strin
       <h1 className="font-editorial text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-[1.15] mb-4">
         {title}
       </h1>
+      {authorText && (
+        <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground/70 mb-6">
+          {authorText}
+        </p>
+      )}
       {isUpcoming && (
         <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-8">
           <span className="upcoming-dot" aria-hidden="true" />
           Upcoming
         </p>
       )}
-      {!isUpcoming && <div className="mb-4" />}
+      {!isUpcoming && !authorText && <div className="mb-4" />}
       {intro && (
         <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] max-w-xl">
           {intro}
@@ -156,7 +162,7 @@ export default async function ProjectDetailPage({ params }: Props) {
         <JsonLd data={creativeWorkJsonLd} />
         <JsonLd data={breadcrumbJsonLd} />
         <ReadingProgress />
-        <ProjectHeader category={project.category} title={project.title} intro={project.shortIntro} isUpcoming={project.isUpcoming} />
+        <ProjectHeader category={project.category} title={project.title} intro={project.shortIntro} isUpcoming={project.isUpcoming} author={project.author} />
 
         {/* Cover image — full bleed, generous bottom margin */}
         {project.coverImage && (
