@@ -4,18 +4,32 @@ import { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import HoneypotField from "@/components/HoneypotField";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
 };
 
+/** How long the confirmation holds before auto-dismissing, and the fade length. */
+const CONFIRM_HOLD_MS = 2500;
+const CONFIRM_FADE_MS = 500;
+
 export default function NewsletterModal({ isOpen, onClose }: Props) {
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState(""); // honeypot
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [closing, setClosing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const prefersReduced = usePrefersReducedMotion();
+
+  // Keep a stable handle to onClose so the auto-dismiss timers don't reset
+  // when the parent passes a fresh inline callback on re-render.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   // Reset form state when modal opens — intentional reset synced to isOpen prop
   /* eslint-disable react-hooks/set-state-in-effect */
@@ -25,11 +39,35 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
       setCompany("");
       setStatus("idle");
       setErrorMsg("");
+      setClosing(false);
       const timer = setTimeout(() => inputRef.current?.focus(), 300);
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  // Auto-dismiss the confirmation: hold ~2.5s, then fade out and close.
+  // Under reduced motion, close instantly after the same hold (no fade).
+  // Timers are cleared on manual close (isOpen → false) and on unmount, so
+  // there is no double close and no state update on an unmounted component.
+  useEffect(() => {
+    if (!isOpen || status !== "success") return;
+
+    let fadeTimer: ReturnType<typeof setTimeout> | null = null;
+    const holdTimer = setTimeout(() => {
+      if (prefersReduced) {
+        onCloseRef.current();
+      } else {
+        setClosing(true);
+        fadeTimer = setTimeout(() => onCloseRef.current(), CONFIRM_FADE_MS);
+      }
+    }, CONFIRM_HOLD_MS);
+
+    return () => {
+      clearTimeout(holdTimer);
+      if (fadeTimer) clearTimeout(fadeTimer);
+    };
+  }, [isOpen, status, prefersReduced]);
 
   // Lock body scroll when open
   useEffect(() => {
@@ -91,6 +129,15 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
           className={`bg-background border border-border w-full max-w-md p-8 md:p-10 relative transition-transform duration-300 ${
             isOpen ? "translate-y-0" : "translate-y-4"
           }`}
+          style={
+            closing
+              ? {
+                  opacity: 0,
+                  transition:
+                    "opacity 500ms cubic-bezier(0.22, 1, 0.36, 1)",
+                }
+              : undefined
+          }
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close */}
