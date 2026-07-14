@@ -175,8 +175,14 @@ export default function Header({ items }: Props) {
         }`}
         aria-hidden={!showState1}
       >
-        {/* Crest — center, CSS mask so it renders in currentColor */}
-        <div className="absolute top-[32px] left-1/2 -translate-x-1/2 pointer-events-none">
+        {/* Crest — center, links home. CSS mask so it renders in currentColor. */}
+        <Link
+          href="/"
+          tabIndex={showState1 ? 0 : -1}
+          aria-label="House of Singh, home"
+          className="absolute top-[32px] left-1/2 -translate-x-1/2"
+          style={{ pointerEvents: "auto" }}
+        >
           <div
             className="text-foreground w-[104px] h-[104px] md:w-[225px] md:h-[225px] -mt-6 md:-mt-[51px]"
             style={{
@@ -191,7 +197,7 @@ export default function Header({ items }: Props) {
             role="img"
             aria-label="House of Singh crest"
           />
-        </div>
+        </Link>
 
         {/* Dot menu — left, top edge at 32px rail.
             z-10 + pointer-events:auto — same fix as toggle (see comment there). */}
