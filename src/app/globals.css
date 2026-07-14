@@ -171,7 +171,7 @@ body {
   .project-card:hover .project-card-excerpt,
   .project-card:focus-visible .project-card-excerpt {
     opacity: 1;
-    transition: opacity 1000ms var(--editorial-ease) 100ms;
+    transition: opacity 1600ms var(--editorial-ease) 100ms;
   }
 }
 
