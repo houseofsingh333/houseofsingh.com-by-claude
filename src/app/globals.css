@@ -162,18 +162,24 @@ body {
     margin: 0;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 500ms var(--editorial-ease);
+    /* Fade OUT (cursor leaves): smooth and a touch quicker, no delay. */
+    transition: opacity 600ms var(--editorial-ease);
   }
-  /* Reveal on hover, and mirror for keyboard focus (accessibility). */
+  /* Reveal on hover, and mirror for keyboard focus (accessibility).
+     Fade IN: slow, unhurried, with a small settle delay so it feels
+     considered rather than instant. */
   .project-card:hover .project-card-excerpt,
   .project-card:focus-visible .project-card-excerpt {
     opacity: 1;
+    transition: opacity 1000ms var(--editorial-ease) 100ms;
   }
 }
 
 /* Reduced motion: reveal instantly, no animated fade. Show/hide rules stay. */
 @media (prefers-reduced-motion: reduce) {
-  .project-card-excerpt {
+  .project-card-excerpt,
+  .project-card:hover .project-card-excerpt,
+  .project-card:focus-visible .project-card-excerpt {
     transition: none;
   }
 }
