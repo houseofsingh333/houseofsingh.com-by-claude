@@ -61,11 +61,17 @@ export default function NavOverlay({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={onClose}
-                  className="flex items-center justify-between py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[48px]"
+                  aria-label="Studio, opens House of Singh Studios in a new tab"
+                  className="group flex items-center py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[48px]"
                 >
-                  {item.label}
-                  <span className="text-xs tracking-widest text-muted-foreground">
-                    ↗
+                  <span className="inline-flex items-center gap-1.5">
+                    {item.label}
+                    <span
+                      aria-hidden="true"
+                      className="text-xs tracking-widest text-muted-foreground transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:transform-none"
+                    >
+                      ↗
+                    </span>
                   </span>
                 </a>
               ) : (
