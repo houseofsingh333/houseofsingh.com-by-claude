@@ -140,6 +140,44 @@ body {
   }
 }
 
+/* ——— Project card excerpt — desktop hover reveal, hidden on mobile/tablet ——— */
+
+/* Mobile & tablet (<1024px): never show the excerpt — keep cards clean. */
+.project-card-excerpt-wrap {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  /* Desktop: the wrapper is a zero-height anchor; the excerpt overlays into
+     the grid gap below the title, so revealing it never shifts any card. */
+  .project-card-excerpt-wrap {
+    display: block;
+    position: relative;
+  }
+  .project-card-excerpt {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 2px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 500ms var(--editorial-ease);
+  }
+  /* Reveal on hover, and mirror for keyboard focus (accessibility). */
+  .project-card:hover .project-card-excerpt,
+  .project-card:focus-visible .project-card-excerpt {
+    opacity: 1;
+  }
+}
+
+/* Reduced motion: reveal instantly, no animated fade. Show/hide rules stay. */
+@media (prefers-reduced-motion: reduce) {
+  .project-card-excerpt {
+    transition: none;
+  }
+}
+
 /* ——— Instagram photo plate crossfade ——— */
 
 .instagram-plate-img {

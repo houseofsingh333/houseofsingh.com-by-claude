@@ -147,9 +147,14 @@ export default function ProjectsFilteredGrid({
                 </p>
               )}
               {project.excerpt && (
-                <p className="text-[11px] text-muted-foreground/60 leading-[1.65] line-clamp-2">
-                  {project.excerpt}
-                </p>
+                // Zero-height anchor: the excerpt is hidden on mobile/tablet and,
+                // on desktop, revealed on hover as an absolute overlay so it never
+                // reserves space or shifts neighbouring cards.
+                <div className="project-card-excerpt-wrap">
+                  <p className="project-card-excerpt text-[11px] text-muted-foreground/60 leading-[1.65] line-clamp-2">
+                    {project.excerpt}
+                  </p>
+                </div>
               )}
             </Link>
           </ScrollReveal>
