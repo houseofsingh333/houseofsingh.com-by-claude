@@ -151,7 +151,7 @@ export default function ProjectsFilteredGrid({
                 // on desktop, revealed on hover as an absolute overlay so it never
                 // reserves space or shifts neighbouring cards.
                 <div className="project-card-excerpt-wrap">
-                  <p className="project-card-excerpt text-[11px] text-muted-foreground/60 leading-[1.65] line-clamp-2">
+                  <p className="project-card-excerpt text-[13px] text-muted-foreground leading-[1.6] line-clamp-2">
                     {project.excerpt}
                   </p>
                 </div>
