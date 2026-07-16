@@ -17,9 +17,10 @@
  *
  * Safety
  * ──────
- *   - Documents are created as DRAFTS by default (id "drafts.import-journal-*")
+ *   - Documents are created as DRAFTS by default (id "drafts.journal-{slug}")
  *     so they stay off the live site and are easy to find and delete.
- *   - Deterministic ids + createOrReplace → re-running is idempotent.
+ *   - Deterministic slug-based ids + createOrReplace → re-running any subset
+ *     replaces exactly those entries by slug and is idempotent, order-independent.
  *   - Use --limit 5 to run the small test batch first.
  *
  * Usage (run locally, where the folder + token + Sanity access exist)
@@ -37,7 +38,7 @@
  *     --csv <path>      CSV path (default: <folder>/journal_import.csv)
  *     --limit <n>       import only the first n rows (omit for all)
  *     --publish         create as published docs instead of drafts
- *     --prefix <name>   id prefix (default: import-journal)
+ *     --prefix <name>   id prefix (default: journal)
  *     --dry-run         parse + report only; upload nothing, create nothing
  *
  * The token needs write access (Editor+). Create one at
@@ -67,7 +68,7 @@ const limitRaw = arg("limit");
 const limit = limitRaw ? parseInt(String(limitRaw), 10) : Infinity;
 const publish = !!arg("publish", false);
 const dryRun = !!arg("dry-run", false);
-const idPrefix = String(arg("prefix", "import-journal"));
+const idPrefix = String(arg("prefix", "journal"));
 
 if (!dryRun && !token) {
   console.error(
@@ -267,10 +268,10 @@ for (let i = 0; i < dataRows.length; i++) {
   if (clean(seo_title)) seo.metaTitle = clean(seo_title);
   if (clean(seo_description)) seo.metaDescription = clean(seo_description);
 
-  const _id = `${publish ? "" : "drafts."}${idPrefix}-${String(rowNum).padStart(
-    3,
-    "0",
-  )}-${slugCurrent}`.slice(0, 120);
+  // ID scheme: journal-{slug} (no row number) so re-running any subset
+  // replaces exactly those entries by slug and leaves all others untouched —
+  // idempotent and order-independent.
+  const _id = `${publish ? "" : "drafts."}${idPrefix}-${slugCurrent}`.slice(0, 120);
 
   const doc = {
     _id,

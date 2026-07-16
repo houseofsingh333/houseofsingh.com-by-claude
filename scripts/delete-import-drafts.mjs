@@ -3,10 +3,11 @@
  *
  * Delete the journalEntry draft documents created by the import test batch.
  *
- * It fetches every id matching the import test pattern and deletes each one.
- * It ONLY ever deletes ids matching `drafts.import-journal-*` — every id is
- * re-checked against that pattern immediately before deletion, so no other
- * journal entry (or any other document) can be touched.
+ * It fetches every id matching the import test patterns and deletes each one.
+ * It ONLY ever deletes ids matching `drafts.journal-*` or the legacy
+ * `drafts.import-journal-*` — every id is re-checked against those patterns
+ * immediately before deletion, so no other journal entry (or any other
+ * document) can be touched.
  *
  * Usage (run locally, with a write token)
  * ───────────────────────────────────────
@@ -35,10 +36,13 @@ const dataset = process.env.SANITY_DATASET ?? "production";
 const token = process.env.SANITY_AUTH_TOKEN ?? process.env.SANITY_API_TOKEN;
 const dryRun = !!arg("dry-run", false);
 
-// The one and only pattern this script is ever allowed to delete.
-const ID_PREFIX = "drafts.import-journal-";
-const GROQ = `*[_type=="journalEntry" && _id match "${ID_PREFIX}*"]._id`;
-const isSafeId = (id) => typeof id === "string" && id.startsWith(ID_PREFIX);
+// The only patterns this script is ever allowed to delete: the current
+// slug-based ids (drafts.journal-*) and the legacy row-numbered ids
+// (drafts.import-journal-*), so older test drafts can still be cleaned up.
+const ID_PREFIXES = ["drafts.journal-", "drafts.import-journal-"];
+const GROQ = `*[_type=="journalEntry" && (_id match "drafts.journal-*" || _id match "drafts.import-journal-*")]._id`;
+const isSafeId = (id) =>
+  typeof id === "string" && ID_PREFIXES.some((p) => id.startsWith(p));
 
 if (!token) {
   console.error(
@@ -60,7 +64,7 @@ const ids = await client.fetch(GROQ);
 
 if (!Array.isArray(ids) || ids.length === 0) {
   console.log(
-    `\nNothing to delete — no journalEntry documents match "${ID_PREFIX}*" in ${projectId}/${dataset}.\n`,
+    `\nNothing to delete — no journalEntry documents match ${ID_PREFIXES.map((p) => `"${p}*"`).join(" or ")} in ${projectId}/${dataset}.\n`,
   );
   process.exit(0);
 }
@@ -75,7 +79,7 @@ let skipped = 0;
 for (const id of ids) {
   // Defence in depth: never delete anything outside the import pattern.
   if (!isSafeId(id)) {
-    console.log(`  ⃠ SKIP (does not match ${ID_PREFIX}*): ${id}`);
+    console.log(`  ⃠ SKIP (matches no allowed prefix): ${id}`);
     skipped++;
     continue;
   }
