@@ -1,0 +1,99 @@
+/**
+ * scripts/delete-import-drafts.mjs
+ *
+ * Delete the journalEntry draft documents created by the import test batch.
+ *
+ * It fetches every id matching the import test pattern and deletes each one.
+ * It ONLY ever deletes ids matching `drafts.import-journal-*` — every id is
+ * re-checked against that pattern immediately before deletion, so no other
+ * journal entry (or any other document) can be touched.
+ *
+ * Usage (run locally, with a write token)
+ * ───────────────────────────────────────
+ *   SANITY_PROJECT_ID=31g7gu7n \
+ *   SANITY_DATASET=production \
+ *   SANITY_AUTH_TOKEN=sk...   \
+ *   node scripts/delete-import-drafts.mjs           # deletes them
+ *   node scripts/delete-import-drafts.mjs --dry-run # lists only, deletes nothing
+ *
+ * The token needs write access (Editor+). Create one at
+ * https://www.sanity.io/manage → project → API → Tokens.
+ */
+
+import { createClient } from "@sanity/client";
+
+// ─── config ──────────────────────────────────────────────────────
+function arg(name, def) {
+  const i = process.argv.indexOf(`--${name}`);
+  if (i === -1) return def;
+  const v = process.argv[i + 1];
+  return v && !v.startsWith("--") ? v : true;
+}
+
+const projectId = process.env.SANITY_PROJECT_ID ?? "31g7gu7n";
+const dataset = process.env.SANITY_DATASET ?? "production";
+const token = process.env.SANITY_AUTH_TOKEN ?? process.env.SANITY_API_TOKEN;
+const dryRun = !!arg("dry-run", false);
+
+// The one and only pattern this script is ever allowed to delete.
+const ID_PREFIX = "drafts.import-journal-";
+const GROQ = `*[_type=="journalEntry" && _id match "${ID_PREFIX}*"]._id`;
+const isSafeId = (id) => typeof id === "string" && id.startsWith(ID_PREFIX);
+
+if (!token) {
+  console.error(
+    "✗ Missing write token. Set SANITY_AUTH_TOKEN (or SANITY_API_TOKEN) to a token with Editor access.",
+  );
+  process.exit(1);
+}
+
+const client = createClient({
+  projectId,
+  dataset,
+  token,
+  apiVersion: "2024-10-01",
+  useCdn: false,
+});
+
+// ─── run ─────────────────────────────────────────────────────────
+const ids = await client.fetch(GROQ);
+
+if (!Array.isArray(ids) || ids.length === 0) {
+  console.log(
+    `\nNothing to delete — no journalEntry documents match "${ID_PREFIX}*" in ${projectId}/${dataset}.\n`,
+  );
+  process.exit(0);
+}
+
+console.log(
+  `\n${dryRun ? "DRY RUN — " : ""}Found ${ids.length} import draft(s) in ${projectId}/${dataset}:\n`,
+);
+
+let deleted = 0;
+let skipped = 0;
+
+for (const id of ids) {
+  // Defence in depth: never delete anything outside the import pattern.
+  if (!isSafeId(id)) {
+    console.log(`  ⃠ SKIP (does not match ${ID_PREFIX}*): ${id}`);
+    skipped++;
+    continue;
+  }
+
+  if (dryRun) {
+    console.log(`  • would delete: ${id}`);
+    deleted++;
+    continue;
+  }
+
+  await client.delete(id);
+  console.log(`  ✓ deleted: ${id}`);
+  deleted++;
+}
+
+console.log("\n===== SUMMARY =====");
+console.log(
+  `${dryRun ? "Would delete" : "Deleted"} ${deleted} import draft(s)${
+    skipped ? `; skipped ${skipped} non-matching id(s)` : ""
+  }.\n`,
+);
