@@ -259,11 +259,8 @@ export default async function JournalDetailPage({ params }: Props) {
                       >
                         &larr;
                       </span>
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 mb-1">
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 mb-2">
                         Previous
-                      </p>
-                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mb-2">
-                        Newer entry
                       </p>
                       <p className="text-xs md:text-sm uppercase tracking-[0.1em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
                         {prevEntry.title}
@@ -292,11 +289,8 @@ export default async function JournalDetailPage({ params }: Props) {
                       >
                         &rarr;
                       </span>
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 mb-1">
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 mb-2">
                         Next
-                      </p>
-                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mb-2">
-                        Older entry
                       </p>
                       <p className="text-xs md:text-sm uppercase tracking-[0.1em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
                         {nextEntry.title}
