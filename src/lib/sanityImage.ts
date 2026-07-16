@@ -70,12 +70,26 @@ function buildUrl(
   width: number,
   quality: number,
   fit: "crop" | "max",
+  hotspot?: { x: number; y: number },
 ): string {
   const url = new URL(baseUrl);
   url.searchParams.set("w", String(width));
   url.searchParams.set("q", String(quality));
   url.searchParams.set("auto", "format");
   url.searchParams.set("fit", fit);
+  // When cropping, honour the editor's focal point so crops don't cut through
+  // faces/subjects. Only applied when a hotspot exists — images without one are
+  // unchanged (default centre crop).
+  if (
+    fit === "crop" &&
+    hotspot &&
+    typeof hotspot.x === "number" &&
+    typeof hotspot.y === "number"
+  ) {
+    url.searchParams.set("crop", "focalpoint");
+    url.searchParams.set("fp-x", String(hotspot.x));
+    url.searchParams.set("fp-y", String(hotspot.y));
+  }
   return url.toString();
 }
 
@@ -208,14 +222,14 @@ export function getImageProps(
   const largest = profile.widths[profile.widths.length - 1];
 
   const src = isSanityCdnUrl(baseUrl)
-    ? buildUrl(baseUrl, largest, profile.quality, profile.fit)
+    ? buildUrl(baseUrl, largest, profile.quality, profile.fit, image.hotspot)
     : baseUrl;
 
   const srcSet = isSanityCdnUrl(baseUrl)
     ? profile.widths
         .map(
           (w) =>
-            `${buildUrl(baseUrl, w, profile.quality, profile.fit)} ${w}w`,
+            `${buildUrl(baseUrl, w, profile.quality, profile.fit, image.hotspot)} ${w}w`,
         )
         .join(", ")
     : undefined;

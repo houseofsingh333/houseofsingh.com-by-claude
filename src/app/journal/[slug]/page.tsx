@@ -175,17 +175,21 @@ export default async function JournalDetailPage({ params }: Props) {
             Columns top-align so the text always begins at the same position,
             independent of image height. */}
         <div className="lg:grid lg:grid-cols-[1.2fr_1fr] lg:gap-16 lg:items-start">
-          {/* Left column — cover image at natural aspect ratio, never cropped.
-              Capped at 85vh; when capped, width shrinks to preserve the ratio. */}
+          {/* Left column — cover image in a fixed 4:5 portrait box for a
+              consistent look across every entry. The crop respects the image's
+              hotspot (focal point) so it won't cut through faces/subjects. */}
           {hasImageAsset(resolved.coverImage) && (
             <figure className="mb-10 lg:mb-0">
-              <SanityImage
-                image={resolved.coverImage}
-                context="hero"
-                alt={resolved.title}
-                priority
-                className="w-full h-auto bg-secondary lg:w-auto lg:max-w-full lg:max-h-[85vh]"
-              />
+              <div className="relative aspect-[4/5] w-full overflow-hidden bg-secondary">
+                <SanityImage
+                  image={resolved.coverImage}
+                  context="hero"
+                  alt={resolved.title}
+                  priority
+                  fill
+                  className="object-cover"
+                />
+              </div>
               {coverCaption && (
                 <figcaption className="text-xs text-muted-foreground/60 mt-3">
                   {coverCaption}

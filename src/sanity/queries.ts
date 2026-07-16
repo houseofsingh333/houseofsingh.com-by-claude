@@ -11,6 +11,8 @@ const _imageAsset = `{
   "lqip": asset->metadata.lqip,
   "width": asset->metadata.dimensions.width,
   "height": asset->metadata.dimensions.height,
+  hotspot,
+  crop,
   alt,
   caption,
   isDecorative
