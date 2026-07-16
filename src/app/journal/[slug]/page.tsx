@@ -253,21 +253,27 @@ export default async function JournalDetailPage({ params }: Props) {
                       href={`/journal/${prevEntry.slug}`}
                       className="group block"
                     >
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50 mb-1">
+                      <span
+                        aria-hidden="true"
+                        className="block text-sm text-muted-foreground/50 mb-2 transition-[transform,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-muted-foreground/80 motion-safe:group-hover:-translate-x-0.5"
+                      >
+                        &larr;
+                      </span>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 mb-1">
                         Previous
                       </p>
-                      <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground/30 mb-2">
+                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mb-2">
                         Newer entry
                       </p>
-                      <p className="text-[11px] md:text-xs uppercase tracking-[0.12em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
+                      <p className="text-xs md:text-sm uppercase tracking-[0.1em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
                         {prevEntry.title}
                       </p>
-                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mt-1">
+                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mt-1">
                         {formatDate(prevEntry.date)}
                       </p>
                     </Link>
                   ) : (
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/20">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40">
                       No previous entry
                     </p>
                   )}
@@ -280,21 +286,27 @@ export default async function JournalDetailPage({ params }: Props) {
                       href={`/journal/${nextEntry.slug}`}
                       className="group block"
                     >
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50 mb-1">
+                      <span
+                        aria-hidden="true"
+                        className="block text-sm text-muted-foreground/50 mb-2 transition-[transform,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-muted-foreground/80 motion-safe:group-hover:translate-x-0.5"
+                      >
+                        &rarr;
+                      </span>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 mb-1">
                         Next
                       </p>
-                      <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground/30 mb-2">
+                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mb-2">
                         Older entry
                       </p>
-                      <p className="text-[11px] md:text-xs uppercase tracking-[0.12em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
+                      <p className="text-xs md:text-sm uppercase tracking-[0.1em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
                         {nextEntry.title}
                       </p>
-                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 mt-1">
+                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mt-1">
                         {formatDate(nextEntry.date)}
                       </p>
                     </Link>
                   ) : (
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/20">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40">
                       No next entry
                     </p>
                   )}
