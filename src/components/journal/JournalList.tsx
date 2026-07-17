@@ -262,7 +262,7 @@ export default function JournalList({ entries }: Props) {
               : "max-h-0 opacity-0 mt-0"
           }`}
         >
-          <div className="flex items-center gap-4 md:gap-6 flex-wrap">
+          <div className="grid grid-cols-6 sm:grid-cols-12 gap-x-4 md:gap-x-6 gap-y-3 justify-items-start">
             {MONTHS.map((month) => {
               const isActive = activeMonth === month;
               const isFuture =
