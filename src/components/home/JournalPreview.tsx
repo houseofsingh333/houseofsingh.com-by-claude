@@ -102,6 +102,7 @@ export default function JournalPreview({ entries }: Props) {
           </h2>
           <Link
             href="/journal"
+            aria-label="See all journal entries"
             className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
           >
             See all
@@ -117,6 +118,7 @@ export default function JournalPreview({ entries }: Props) {
           </h2>
           <Link
             href="/journal"
+            aria-label="See all journal entries"
             className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300"
           >
             See all

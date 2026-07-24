@@ -108,7 +108,7 @@ export default function Footer({ instagramPhotos = [] }: Props) {
                   onSubmit={handleSubscribe}
                   className="footer-nl-form"
                 >
-                  <HoneypotField value={company} onChange={setCompany} />
+                  <HoneypotField value={company} onChange={setCompany} idSuffix="footer" />
                   <input
                     type="email"
                     required

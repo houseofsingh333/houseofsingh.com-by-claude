@@ -6,7 +6,10 @@
   --background: #F9F7F5;
   --foreground: hsl(30 10% 12%);
   --secondary: hsl(40 10% 93%);
-  --muted-foreground: hsl(30 5% 50%);
+  /* Darkened from 50% to 44% lightness: 50% gave only 3.65:1 on --background,
+     below the WCAG AA 4.5:1 minimum for normal text. 44% gives ~4.57:1 while
+     staying clearly quieter than --foreground. */
+  --muted-foreground: hsl(30 5% 44%);
   --border: hsl(40 10% 88%);
 
   /* Editorial grid easing */
@@ -470,14 +473,14 @@ body {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #bbb;
+  color: var(--muted-foreground);
 }
 
 .footer-bottom-link {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #bbb;
+  color: var(--muted-foreground);
   text-decoration: none;
 }
 
@@ -494,7 +497,7 @@ body {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #bbb;
+  color: var(--muted-foreground);
 }
 
 /* Mobile TOP ↑ in bottom bar — hidden on desktop */

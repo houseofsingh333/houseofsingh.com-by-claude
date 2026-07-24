@@ -74,10 +74,14 @@ function ProjectCard({
 
       {/* Category */}
       <p
-        className="text-[10px] tracking-[0.2em] uppercase mb-2 transition-opacity duration-300"
+        // Was opacity 0.35 / 0.7 on --muted-foreground, which blended toward the
+        // background and failed WCAG AA. The focus shift is now a colour change
+        // at full opacity: both states pass, and focus still visibly lifts it.
+        className="text-[10px] tracking-[0.2em] uppercase mb-2 transition-colors duration-300"
         style={{
-          color: "var(--muted-foreground)",
-          opacity: isFocused ? 0.7 : 0.35,
+          color: isFocused
+            ? "var(--foreground)"
+            : "var(--muted-foreground)",
         }}
       >
         {project.category}
@@ -310,6 +314,7 @@ export default function ProjectsArchive({ projects }: Props) {
             </h2>
             <Link
               href="/projects"
+              aria-label="See all projects"
               className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 border-b border-foreground/30 pb-0.5"
             >
               See all

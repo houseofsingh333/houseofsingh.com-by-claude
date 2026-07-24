@@ -168,7 +168,7 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                <HoneypotField value={company} onChange={setCompany} />
+                <HoneypotField value={company} onChange={setCompany} idSuffix="newsletter" />
                 <div>
                   <label htmlFor="newsletter-email" className="block text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">
                     Email Address

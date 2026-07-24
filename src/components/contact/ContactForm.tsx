@@ -83,7 +83,7 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
   /* ── Form steps ── */
   return (
     <TwoColumnLayout aside={aside}>
-      <HoneypotField value={honeypot} onChange={setHoneypot} />
+      <HoneypotField value={honeypot} onChange={setHoneypot} idSuffix="contact" />
         <div className="min-h-[50vh] flex flex-col justify-center max-w-lg">
           <div key={currentStep} className="editorial-slide-up">
             {/* Question */}

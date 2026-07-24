@@ -214,7 +214,10 @@ export default function CinematicHero({ slides }: Props) {
                 key={i}
                 onClick={() => goToSlide(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`p-0 border-0 block w-1.5 h-1.5 rounded-full transition-all duration-500 cursor-pointer ${
+                // The visible dot stays 6px; the ::after pseudo-element adds a
+                // centred 24x24 invisible hit area so the touch target meets
+                // the 24px minimum without changing the design.
+                className={`p-0 border-0 block w-1.5 h-1.5 rounded-full transition-all duration-500 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-6 after:h-6 ${
                   i === current
                     ? "bg-white scale-150"
                     : "bg-white/25 hover:bg-white/50"

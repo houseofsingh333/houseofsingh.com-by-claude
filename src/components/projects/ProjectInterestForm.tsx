@@ -83,7 +83,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
       </p>
 
       <form onSubmit={handleSubmit} className="max-w-lg space-y-8">
-        <HoneypotField value={honeypot} onChange={setHoneypot} />
+        <HoneypotField value={honeypot} onChange={setHoneypot} idSuffix="project-interest" />
 
         <div>
           <label
