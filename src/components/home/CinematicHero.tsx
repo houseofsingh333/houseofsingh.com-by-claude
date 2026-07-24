@@ -72,10 +72,11 @@ export default function CinematicHero({ slides }: Props) {
   // ——— Start first slide when intro completes ———
   useEffect(() => {
     if (!introComplete || slides.length === 0) return;
-    // First slide: show caption after a slightly longer delay for the slower fade
-    captionTimerRef.current = setTimeout(() => {
-      setShowCaption(true);
-    }, (FIRST_SLIDE_FADE_DURATION + 0.3) * 1000);
+    // The first caption is the largest text block in the hero, so a long
+    // invisible delay before it fades in gets measured directly as LCP.
+    // Show it immediately on the first slide; later slides keep the
+    // sequenced delay via scheduleCaptionIn().
+    setShowCaption(true);
   }, [introComplete, slides.length]);
 
   // ——— Autoplay timer ———
@@ -232,11 +233,16 @@ export default function CinematicHero({ slides }: Props) {
             <motion.p
               key={"caption-" + current}
               className="text-[10px] md:text-xs tracking-[0.15em] uppercase text-white/70 max-w-[200px] md:max-w-md"
-              initial={{ opacity: 0, y: 12 }}
+              // The first caption paints at full opacity so it is never an
+              // invisible LCP element. Subsequent slides keep the calm
+              // fade-and-rise reveal.
+              initial={
+                isFirstSlide ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }
+              }
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 0 }}
               transition={{
-                duration: CAPTION_IN_DURATION,
+                duration: isFirstSlide ? 0 : CAPTION_IN_DURATION,
                 ease: EASE_SMOOTH,
               }}
             >

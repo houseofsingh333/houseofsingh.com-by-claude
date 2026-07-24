@@ -3,7 +3,7 @@
 import Image from "next/image";
 import {
   getImageProps,
-  sanityLoader,
+  makeSanityLoader,
   type SanityImageAsset,
   type ImageContext,
 } from "@/lib/sanityImage";
@@ -39,6 +39,15 @@ export default function SanityImage({
 }: Props) {
   const props = getImageProps(image, context, altOverride);
   const useSanityLoader = props.src.startsWith("https://cdn.sanity.io/");
+  // Loader bound to this context's profile so it reproduces the same
+  // quality / fit / focal point the profile intends.
+  const loader = useSanityLoader
+    ? makeSanityLoader({
+        quality: props.quality,
+        fit: props.fit,
+        hotspot: props.hotspot,
+      })
+    : undefined;
 
   if (fill) {
     return (
@@ -51,7 +60,7 @@ export default function SanityImage({
         className={className}
         placeholder={props.blurDataURL ? "blur" : "empty"}
         blurDataURL={props.blurDataURL}
-        loader={useSanityLoader ? sanityLoader : undefined}
+        loader={loader}
       />
     );
   }
@@ -67,7 +76,7 @@ export default function SanityImage({
       className={className}
       placeholder={props.blurDataURL ? "blur" : "empty"}
       blurDataURL={props.blurDataURL}
-      loader={useSanityLoader ? sanityLoader : undefined}
+      loader={loader}
     />
   );
 }

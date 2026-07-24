@@ -19,7 +19,7 @@ export type SanityImageAsset = {
   isDecorative?: boolean;
 };
 
-export type ImageContext = "thumbnail" | "body" | "hero";
+export type ImageContext = "thumbnail" | "body" | "hero" | "banner";
 
 // --------------- Profiles ---------------
 
@@ -54,6 +54,19 @@ const profiles: Record<
     fit: "crop",
     sizes: "100vw",
     aspectRatio: 16 / 9,
+  },
+  /**
+   * Full-bleed decorative background (e.g. the Spotlight billboard). Same
+   * full-width display as `hero`, but capped lower: these are portrait
+   * source images behind heavy gradient/grain overlays, so requesting
+   * 1600–1920px variants only wasted bandwidth.
+   */
+  banner: {
+    widths: [640, 960, 1280],
+    quality: 70,
+    fit: "crop",
+    sizes: "100vw",
+    aspectRatio: 4 / 5,
   },
 };
 
@@ -128,6 +141,10 @@ export type ImageProps = {
   height: number;
   blurDataURL?: string;
   alt: string;
+  /** Per-context loader settings so transforms match the display profile. */
+  quality?: number;
+  fit?: "crop" | "max";
+  hotspot?: { x: number; y: number };
 };
 
 /**
@@ -221,9 +238,12 @@ export function getImageProps(
   const baseUrl = image.url;
   const largest = profile.widths[profile.widths.length - 1];
 
-  const src = isSanityCdnUrl(baseUrl)
-    ? buildUrl(baseUrl, largest, profile.quality, profile.fit, image.hotspot)
-    : baseUrl;
+  // For Sanity CDN images the `sanityLoader` applies every transform (width,
+  // quality, format, focal point). Passing an already-transformed URL here
+  // made next/image request the bare asset as well as the loader's variants —
+  // the same image downloaded twice, once unoptimised. Hand the loader the
+  // clean base URL and let it own the transforms.
+  const src = baseUrl;
 
   const srcSet = isSanityCdnUrl(baseUrl)
     ? profile.widths
@@ -245,6 +265,30 @@ export function getImageProps(
     height,
     blurDataURL: image.lqip || undefined,
     alt: resolveAlt(altOverride, image),
+    quality: profile.quality,
+    fit: profile.fit,
+    hotspot: image.hotspot,
+  };
+}
+
+/**
+ * Build a next/image loader bound to a display profile, so the loader applies
+ * the same quality, fit, and focal point that the profile intends.
+ */
+export function makeSanityLoader(opts: {
+  quality?: number;
+  fit?: "crop" | "max";
+  hotspot?: { x: number; y: number };
+}) {
+  return ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
+    if (!isSanityCdnUrl(src)) return src;
+    return buildUrl(
+      src,
+      width,
+      quality ?? opts.quality ?? 75,
+      opts.fit ?? "crop",
+      opts.hotspot,
+    );
   };
 }
 

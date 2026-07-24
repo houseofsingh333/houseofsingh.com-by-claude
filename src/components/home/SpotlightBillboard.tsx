@@ -74,7 +74,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
       <div className="spotlight-img-wrap" aria-hidden="true">
         <SanityImage
           image={spotlight.image}
-          context="hero"
+          context="banner"
           alt=""
           priority={false}
           fill

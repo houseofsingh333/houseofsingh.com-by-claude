@@ -79,6 +79,16 @@ export default function Header({ items }: Props) {
       skip = true;
     }
 
+    // Mobile: skip the intro entirely so the hero paints immediately. The
+    // overlay delayed the hero caption long enough to be measured as LCP
+    // (~4s render delay). Desktop keeps the full intro sequence.
+    if (!skip && window.matchMedia("(max-width: 1023px)").matches) {
+      try {
+        sessionStorage.setItem(SESSION_KEY, "1");
+      } catch {}
+      skip = true;
+    }
+
     if (skip) {
       setIntroDone(true);
       completeIntro();
