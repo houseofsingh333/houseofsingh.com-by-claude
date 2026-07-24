@@ -143,6 +143,8 @@ export type ImageProps = {
   alt: string;
   /** Per-context loader settings so transforms match the display profile. */
   quality?: number;
+  /** True source width, so the loader never requests an upscaled variant. */
+  intrinsicWidth?: number;
   fit?: "crop" | "max";
   hotspot?: { x: number; y: number };
 };
@@ -268,6 +270,7 @@ export function getImageProps(
     quality: profile.quality,
     fit: profile.fit,
     hotspot: image.hotspot,
+    intrinsicWidth: image.width,
   };
 }
 
@@ -279,12 +282,18 @@ export function makeSanityLoader(opts: {
   quality?: number;
   fit?: "crop" | "max";
   hotspot?: { x: number; y: number };
+  /** Intrinsic width of the source asset, used to avoid upscaling. */
+  maxWidth?: number;
 }) {
   return ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
     if (!isSanityCdnUrl(src)) return src;
+    // next/image builds its srcSet from next.config deviceSizes (up to 3840),
+    // which for a 1080px-wide source meant requesting large upscaled variants
+    // — wasted bytes for no visual gain. Never ask for more than the asset has.
+    const capped = opts.maxWidth ? Math.min(width, opts.maxWidth) : width;
     return buildUrl(
       src,
-      width,
+      capped,
       quality ?? opts.quality ?? 75,
       opts.fit ?? "crop",
       opts.hotspot,

@@ -46,6 +46,7 @@ export default function SanityImage({
         quality: props.quality,
         fit: props.fit,
         hotspot: props.hotspot,
+        maxWidth: props.intrinsicWidth,
       })
     : undefined;
 

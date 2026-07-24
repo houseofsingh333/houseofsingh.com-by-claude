@@ -140,10 +140,9 @@ export default async function RootLayout({
           type="video/mp4"
           media="(min-width: 1024px)"
         />
-        {/* Spotify embed connects faster once it lazily mounts below the fold */}
-        <link rel="preconnect" href="https://encore.scdn.co" crossOrigin="" />
-        <link rel="preconnect" href="https://apresolve.spotify.com" />
-        <link rel="preconnect" href="https://guc3-spclient.spotify.com" />
+        {/* No Spotify preconnects here: the embed now mounts only when it
+            scrolls into view, so eager hints sat unused on every page load
+            and were flagged as wasted connections. */}
       </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
         <JsonLd data={jsonLd} />

@@ -160,17 +160,18 @@ export default function CinematicHero({ slides }: Props) {
         <motion.div
           key={slide._id + "-" + current}
           className="absolute inset-0"
-          // First slide paints at full opacity from the first frame so it is
-          // the LCP element, independent of the intro. Later slides crossfade.
-          initial={{ opacity: isFirstSlide ? 1 : 0 }}
+          // The first slide skips the enter animation entirely (initial={false}),
+          // so it renders at opacity 1 with no transition — a child at opacity 1
+          // inside an animating opacity-0 parent still cannot paint, which kept
+          // the caption out of LCP. Later slides keep the crossfade.
+          initial={isFirstSlide ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{
-            opacity: {
-              duration: fadeDuration,
-              ease: EASE_SLOW,
-            },
-          }}
+          transition={
+            isFirstSlide
+              ? { duration: 0 }
+              : { opacity: { duration: fadeDuration, ease: EASE_SLOW } }
+          }
         >
           <motion.div
             className="absolute inset-0"
