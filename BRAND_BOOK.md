@@ -41,10 +41,12 @@ The palette is deliberately tight. A warm neutral base, a soft charcoal for text
 |------|-----|-----------|-------|
 | Canvas | `#F9F7F5` | `--background` | The default page background. Warm off white. The brand lives on this. |
 | Charcoal | `#1A1A1A` | `--foreground` is `hsl(30 10% 12%)` | Primary text, headings. A soft near black, never pure `#000000`. |
-| Muted grey | `#6B6B6B` | `--muted-foreground` is `hsl(30 5% 50%)` | Captions, labels, secondary text, metadata. |
+| Muted grey | `#76706B` | `--muted-foreground` is `hsl(30 5% 44%)` | Captions, labels, secondary text, metadata. |
 | Border, hairline | `hsl(40 10% 88%)` | `--border` | Dividers, input underlines, thin rules. |
 | Antique brass | `#A8895C` | not yet a token | The single accent. Used rarely for emphasis. |
 | White | `#FFFFFF` | — | Rare. Contrast moments inside cards or over images only. |
+
+**Do not lighten the muted grey.** `--muted-foreground` was originally `hsl(30 5% 50%)` (`#868079`). Measured against the canvas it gives only **3.65:1**, below the WCAG AA minimum of 4.5:1 for normal text, so every caption, label, and piece of metadata on the site failed contrast. It was darkened to `hsl(30 5% 44%)`, which measures **4.57:1** and passes. It still sits far quieter than charcoal (15.34:1), so the hierarchy is unchanged. If this value is ever lightened again for aesthetic reasons, the whole secondary type layer silently fails accessibility — check the contrast ratio before changing it.
 
 **Implementation note on the accent.** Antique brass is currently used only as the pulsing upcoming-project dot and is not yet a named token in the CSS. To make it a true brand accent, it should be added as a variable (for example `--accent: #A8895C`) and used consistently for the few approved accent moments. Until then, the brand is effectively running on the neutral palette alone.
 
@@ -239,7 +241,7 @@ The voice is the same calm, grounded, reflective voice used across the brand. (D
 
 ## 6. Quick Reference
 
-**Palette:** Canvas `#F9F7F5` (`--background`) · Charcoal `#1A1A1A` (`--foreground`) · Muted grey `#6B6B6B` (`--muted-foreground`) · Border `hsl(40 10% 88%)` (`--border`) · Antique brass `#A8895C` (accent, to be tokenized) · White `#FFFFFF`
+**Palette:** Canvas `#F9F7F5` (`--background`) · Charcoal `#1A1A1A` (`--foreground`) · Muted grey `#76706B` (`--muted-foreground`, `hsl(30 5% 44%)` — meets WCAG AA, do not lighten) · Border `hsl(40 10% 88%)` (`--border`) · Antique brass `#A8895C` (accent, to be tokenized) · White `#FFFFFF`
 
 **Type:** Playfair Display via `--font-editorial` (display) · Instrument Sans (body and interface, to be wired in). Display hero `clamp(42px, 6vw, 88px)`, body 16px at 1.7 line height, labels 11px to 13px uppercase with 0.1em to 0.2em tracking.
 
