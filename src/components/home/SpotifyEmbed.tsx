@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import ScrollReveal from "@/components/ScrollReveal";
 
 type Props = {
@@ -32,7 +33,38 @@ function toEmbedUrl(raw: string): string {
   return raw;
 }
 
+/** Height of the Spotify player, matched by the placeholder so nothing shifts. */
+const EMBED_HEIGHT = 152;
+
 export default function SpotifyEmbed({ playlistUrl }: Props) {
+  const holderRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  // Mount the iframe only once the section approaches the viewport. The embed
+  // ships ~676 KiB of JS and held the main thread for ~918ms; loading="lazy"
+  // alone did not defer it because the element was already in the document.
+  useEffect(() => {
+    const el = holderRef.current;
+    if (!el || inView) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [inView]);
+
   if (!playlistUrl) return null;
 
   const embedSrc = toEmbedUrl(playlistUrl);
@@ -48,18 +80,33 @@ export default function SpotifyEmbed({ playlistUrl }: Props) {
 
       <ScrollReveal delay={0.15} duration={0.9}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-          {/* Spotify embed */}
-          <iframe
-            title="House of Singh Spotify Playlist"
-            src={embedSrc}
-            width="100%"
-            height="152"
-            allowFullScreen
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy"
-            style={{ border: 0, borderRadius: 12 }}
-            className="opacity-80 hover:opacity-100 transition-opacity duration-500"
-          />
+          {/* Spotify embed — mounted only when scrolled into view. The
+              placeholder reserves the exact height so there is no shift. */}
+          <div ref={holderRef} style={{ minHeight: EMBED_HEIGHT }}>
+            {inView ? (
+              <iframe
+                title="House of Singh Spotify Playlist"
+                src={embedSrc}
+                width="100%"
+                height={EMBED_HEIGHT}
+                allowFullScreen
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                style={{ border: 0, borderRadius: 12 }}
+                className="opacity-80 hover:opacity-100 transition-opacity duration-500"
+              />
+            ) : (
+              <div
+                aria-hidden="true"
+                style={{ height: EMBED_HEIGHT, borderRadius: 12 }}
+                className="w-full bg-secondary/60 border border-border/40 flex items-center px-5"
+              >
+                <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50">
+                  Playlist
+                </span>
+              </div>
+            )}
+          </div>
 
           {/* Text */}
           <div>

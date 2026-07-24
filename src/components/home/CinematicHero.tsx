@@ -44,7 +44,10 @@ export default function CinematicHero({ slides }: Props) {
   // Shared signal from the Header intro overlay — no polling.
   const { introComplete } = useIntro();
   const [current, setCurrent] = useState(0);
-  const [showCaption, setShowCaption] = useState(false);
+  // Starts true so the first caption is present in the server-rendered HTML
+  // and paints with the hero. Gating it behind the intro made it an invisible
+  // LCP element (4-5s render delay). Later slides re-sequence it normally.
+  const [showCaption, setShowCaption] = useState(true);
   const [isFirstSlide, setIsFirstSlide] = useState(true);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const captionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -69,15 +72,9 @@ export default function CinematicHero({ slides }: Props) {
     }, CAPTION_OUT_DURATION * 1000 + 50);
   }, [current, scheduleCaptionIn]);
 
-  // ——— Start first slide when intro completes ———
-  useEffect(() => {
-    if (!introComplete || slides.length === 0) return;
-    // The first caption is the largest text block in the hero, so a long
-    // invisible delay before it fades in gets measured directly as LCP.
-    // Show it immediately on the first slide; later slides keep the
-    // sequenced delay via scheduleCaptionIn().
-    setShowCaption(true);
-  }, [introComplete, slides.length]);
+  // The first caption is shown from the initial render (see useState above),
+  // so there is no intro-gated timer here. Later slides are sequenced by
+  // scheduleCaptionIn() from the autoplay/navigation handlers.
 
   // ——— Autoplay timer ———
   useEffect(() => {

@@ -130,12 +130,20 @@ export default async function RootLayout({
   return (
     <html lang="en" className={playfair.variable}>
       <head>
+        {/* Intro video preload — desktop only. The intro overlay is skipped
+            below 1024px, so without this media condition mobile downloaded
+            126 KiB it never plays. */}
         <link
           rel="preload"
           as="video"
           href="/images/HOS_Logo_Animation.mp4"
           type="video/mp4"
+          media="(min-width: 1024px)"
         />
+        {/* Spotify embed connects faster once it lazily mounts below the fold */}
+        <link rel="preconnect" href="https://encore.scdn.co" crossOrigin="" />
+        <link rel="preconnect" href="https://apresolve.spotify.com" />
+        <link rel="preconnect" href="https://guc3-spclient.spotify.com" />
       </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
         <JsonLd data={jsonLd} />
