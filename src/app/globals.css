@@ -1455,29 +1455,6 @@ body {
   }
 }
 
-/* ——— Journey timeline scroll cue — horizontal sibling of scrollPulse ——— */
-
-@keyframes scrollPulseX {
-  0%,
-  100% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(300%);
-  }
-}
-
-.timeline-scroll-cue-bar {
-  animation: scrollPulseX 2s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .timeline-scroll-cue-bar {
-    animation: none;
-    transform: none;
-  }
-}
-
 /* ——— Cinematic grain overlay (shared across sections) ——— */
 
 .archive-grain {

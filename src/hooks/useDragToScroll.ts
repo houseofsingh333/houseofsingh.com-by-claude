@@ -5,15 +5,23 @@ import { useEffect, type RefObject } from "react";
 /**
  * Desktop click-and-drag affordance for a horizontally scrollable container.
  *
- * Extracted verbatim from the original ProjectsArchive implementation so the
- * Journey timeline and the projects archive share one behaviour and cannot
- * drift apart. Touch devices already scroll natively via `overflow-x: auto`,
- * so this only adds the mouse path.
+ * Shared by the projects archive and the About Journey timeline so the two
+ * behave identically and cannot drift apart.
  *
- * Tracks `scrollLeft` against the pointer delta, swaps the cursor from
- * `grab` to `grabbing` while dragging, and suppresses the click that follows
- * a drag so cards inside the container do not navigate. All listeners are
- * removed and inline cursor styles cleared on unmount.
+ * Uses Pointer Events rather than mouse events. The original mouse-event
+ * version worked in Chrome but silently failed in Safari: the cards contain
+ * images, and WebKit starts its own native image-drag / text-selection on
+ * mousedown, which swallows the subsequent window mousemove events so
+ * scrollLeft never updated. Pointer Events fix that properly:
+ *
+ *   - `preventDefault()` on pointerdown suppresses the native image drag and
+ *     text selection that hijacked the gesture in Safari.
+ *   - `setPointerCapture()` routes every later move/up event back to this
+ *     element, so the drag survives the pointer leaving the container.
+ *   - One code path covers mouse, trackpad and stylus.
+ *
+ * Touch is deliberately excluded — `overflow-x: auto` already gives touch
+ * devices native momentum scrolling, and hijacking it would be worse.
  *
  * @param ref      the scroll container
  * @param enabled  set false to skip entirely (e.g. on touch layouts)
@@ -32,18 +40,36 @@ export function useDragToScroll(
     let dragged = false;
     const DRAG_THRESHOLD = 3;
 
-    const onMouseDown = (e: MouseEvent) => {
-      // Only primary button
+    const lockSelection = (lock: boolean) => {
+      // Safari needs the prefixed property; setProperty covers both without
+      // relying on vendor-specific keys existing on CSSStyleDeclaration.
+      el.style.setProperty("user-select", lock ? "none" : "");
+      el.style.setProperty("-webkit-user-select", lock ? "none" : "");
+    };
+
+    const onPointerDown = (e: PointerEvent) => {
+      // Let touch scroll natively; primary button only for mouse/pen.
+      if (e.pointerType === "touch") return;
       if (e.button !== 0) return;
+
       isDown = true;
       dragged = false;
       startX = e.clientX;
       scrollStart = el.scrollLeft;
+
+      // Stops WebKit's native image drag / text selection stealing the gesture.
+      e.preventDefault();
+      try {
+        el.setPointerCapture(e.pointerId);
+      } catch {
+        /* capture is best-effort; the drag still works without it */
+      }
+
       el.style.cursor = "grabbing";
-      el.style.userSelect = "none";
+      lockSelection(true);
     };
 
-    const onMouseMove = (e: MouseEvent) => {
+    const onPointerMove = (e: PointerEvent) => {
       if (!isDown) return;
       const dx = e.clientX - startX;
       if (Math.abs(dx) > DRAG_THRESHOLD) {
@@ -52,11 +78,18 @@ export function useDragToScroll(
       el.scrollLeft = scrollStart - dx;
     };
 
-    const onMouseUp = () => {
+    const endDrag = (e: PointerEvent) => {
       if (!isDown) return;
       isDown = false;
+      try {
+        if (el.hasPointerCapture(e.pointerId)) {
+          el.releasePointerCapture(e.pointerId);
+        }
+      } catch {
+        /* noop */
+      }
       el.style.cursor = "grab";
-      el.style.userSelect = "";
+      lockSelection(false);
     };
 
     // Prevent link clicks when dragging
@@ -68,17 +101,20 @@ export function useDragToScroll(
     };
 
     el.style.cursor = "grab";
-    el.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
+    el.addEventListener("pointerdown", onPointerDown);
+    el.addEventListener("pointermove", onPointerMove);
+    el.addEventListener("pointerup", endDrag);
+    el.addEventListener("pointercancel", endDrag);
     el.addEventListener("click", onClick, { capture: true });
 
     return () => {
-      el.removeEventListener("mousedown", onMouseDown);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
+      el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("pointermove", onPointerMove);
+      el.removeEventListener("pointerup", endDrag);
+      el.removeEventListener("pointercancel", endDrag);
       el.removeEventListener("click", onClick, { capture: true });
       el.style.cursor = "";
+      lockSelection(false);
     };
   }, [ref, enabled]);
 }
