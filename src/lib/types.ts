@@ -263,6 +263,7 @@ export type AboutPageData = {
 export type HomeIntroData = {
   founderName: string;
   founderRoles: string[] | null;
+  /** Resolved by homeIntroQuery as coalesce(homeBio, founderBio). */
   founderBio: PortableTextBlock[] | null;
   portrait: SanityImage | null;
   introQuote: string | null;

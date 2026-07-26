@@ -85,7 +85,8 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
 export const homeIntroQuery = `*[_type == "aboutPage"][0]{
   founderName,
   founderRoles,
-  founderBio,
+  // Short homepage bio, falling back to the full About-page bio when unset.
+  "founderBio": coalesce(homeBio, founderBio),
   "portrait": coalesce(homePortrait, portrait) ${_imageAsset},
   introQuote
 }`;

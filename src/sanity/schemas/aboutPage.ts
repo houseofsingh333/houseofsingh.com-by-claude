@@ -30,10 +30,19 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: "founderBio",
-      title: "Founder Bio",
+      title: "Founder Bio (full)",
       type: "array",
       of: [{ type: "block" }],
-      description: "Bio paragraphs beside the portrait.",
+      description:
+        "The full bio shown on the About page, beside the portrait. Also used on the homepage if Homepage Bio is left empty.",
+    }),
+    defineField({
+      name: "homeBio",
+      title: "Homepage Bio (short)",
+      type: "array",
+      of: [{ type: "block" }],
+      description:
+        "The shorter bio shown in the homepage intro section. Leave empty to fall back to the full Founder Bio above.",
     }),
     defineField({
       name: "portrait",

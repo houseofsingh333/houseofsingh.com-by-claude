@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
+import { proseComponents } from "@/components/proseComponents";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useMediaQuery, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
@@ -209,12 +210,15 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
           <ScrollReveal delay={0.6} offset={10}>
             {data.founderBio ? (
               <div
-                className="text-muted-foreground max-w-[440px] md:max-lg:max-w-[560px] leading-[1.75] [&>p]:mb-4 [&>p:last-child]:mb-0"
+                className="text-muted-foreground max-w-[440px] md:max-lg:max-w-[560px] leading-[1.75]"
                 style={{
                   fontSize: "clamp(15px, 1.5vw, 17px)",
                 }}
               >
-                <PortableText value={data.founderBio} />
+                <PortableText
+                  value={data.founderBio}
+                  components={proseComponents}
+                />
               </div>
             ) : (
               <p
