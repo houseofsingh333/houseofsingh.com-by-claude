@@ -42,11 +42,11 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
   const [logoRevealed, setLogoRevealed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
-  // Portrait colour reveal: hover on desktop, scroll-driven below 1024px
-  // (touch has no hover, so the portrait previously stayed grey forever).
-  // Shared with the homepage portrait so the two cannot drift.
+  // Portrait colour reveal — scroll-driven on every device (no hover path:
+  // an iPad in landscape is 1024px+ yet has no hover). Shared with the
+  // homepage portrait so the two cannot drift.
   const portraitRef = useRef<HTMLDivElement>(null);
-  const { saturated, hoverHandlers } = useColourReveal(portraitRef);
+  const { revealed: saturated } = useColourReveal(portraitRef);
 
   useEffect(() => {
     const el = logoRef.current;
@@ -105,12 +105,11 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
               1024px the section simply stacks. If the text column is shorter
               than the image the track never exceeds the sticky element, so
               sticky never engages — no jumping, no gaps. */}
-          <div className="md:col-span-5 md:col-start-1 group relative lg:self-stretch">
+          <div className="md:col-span-5 md:col-start-1 relative lg:self-stretch">
             <div className="about-portrait-sticky lg:sticky lg:top-24">
             <div
               ref={portraitRef}
               className="relative w-full aspect-[7/8] overflow-hidden bg-secondary"
-              {...hoverHandlers}
             >
               <SanityImage
                 image={portrait}

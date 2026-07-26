@@ -1,34 +1,35 @@
 "use client";
 
 import { useEffect, useState, type RefObject } from "react";
-import { useMediaQuery, usePrefersReducedMotion } from "./useMediaQuery";
+import { usePrefersReducedMotion } from "./useMediaQuery";
 
 /**
- * Shared grayscale-to-colour reveal policy for the founder portraits.
+ * Scroll-driven grayscale-to-colour reveal for the founder portraits.
  *
- * Extracted from the homepage IntroSection, which already implemented this,
- * so the homepage and About page portraits share one behaviour and cannot
- * drift apart.
+ * One code path for every device. There is deliberately no width breakpoint
+ * and no input-capability detection: an earlier version treated 1024px+ as
+ * "desktop" and used hover there, which left iPads in landscape (1024px wide,
+ * no hover) permanently grey.
  *
- *   - Desktop (1024px+): reveals on hover, as before.
- *   - Below 1024px: no hover exists on touch, so it reveals on scroll via
- *     IntersectionObserver at threshold 0.5 — full colour once the portrait
- *     sits around the middle of the viewport. Fires once, then disconnects.
- *   - Reduced motion: full colour immediately, with no transition. (Both
- *     components previously left the portrait permanently grey here, which
- *     was a bug: the image never reached its intended state.)
+ * Uses the same viewport-band trigger as the journal cards rather than a
+ * visibility ratio. `threshold: 0.5` requires half the element to be on
+ * screen, which an element taller than twice the viewport can never satisfy —
+ * it would silently never fire. A negative `rootMargin` shrinks the observer
+ * root to a band across the middle of the viewport and fires as soon as any
+ * part of the element enters it, so behaviour does not depend on the image's
+ * height at all.
+ *
+ * Fires once, then disconnects. Under reduced motion it reports revealed
+ * immediately so the portrait renders in full colour with no transition.
  *
  * @param ref the element to observe
  */
 export function useColourReveal(ref: RefObject<HTMLElement | null>) {
   const prefersReducedMotion = usePrefersReducedMotion();
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const [isHovered, setIsHovered] = useState(false);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
-    // Desktop uses hover; reduced motion is already fully coloured.
-    if (isDesktop || prefersReducedMotion) return;
+    if (prefersReducedMotion) return;
     const el = ref.current;
     if (!el) return;
 
@@ -39,26 +40,16 @@ export function useColourReveal(ref: RefObject<HTMLElement | null>) {
           observer.disconnect();
         }
       },
-      { threshold: 0.5 },
+      // Middle 30% band of the viewport — matches the journal cards.
+      { rootMargin: "-35% 0px -35% 0px", threshold: 0 },
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [ref, isDesktop, prefersReducedMotion]);
+  }, [ref, prefersReducedMotion]);
 
-  const saturated = prefersReducedMotion
-    ? true
-    : isDesktop
-      ? isHovered
-      : inView;
-
-  /** Spread onto the hover target. Desktop only — no-ops elsewhere. */
-  const hoverHandlers =
-    isDesktop && !prefersReducedMotion
-      ? {
-          onMouseEnter: () => setIsHovered(true),
-          onMouseLeave: () => setIsHovered(false),
-        }
-      : {};
-
-  return { saturated, isDesktop, prefersReducedMotion, hoverHandlers };
+  return {
+    /** True once the portrait should be shown in full colour. */
+    revealed: prefersReducedMotion ? true : inView,
+    prefersReducedMotion,
+  };
 }

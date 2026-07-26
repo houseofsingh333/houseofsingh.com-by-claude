@@ -29,14 +29,14 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
   const portrait = data.portrait ?? FALLBACK_PORTRAIT;
   const founderName = data.founderName ?? "Maninder Singh";
 
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  // Portrait colour reveal: hover on desktop, scroll-driven below 1024px.
-  // Shared with the About page portrait so the two cannot drift.
+  // Portrait colour reveal — scroll-driven on every device (no hover path:
+  // an iPad in landscape is 1024px+ yet has no hover). Shared with the About
+  // page portrait so the two cannot drift.
   const imageRef = useRef<HTMLDivElement>(null);
-  const { saturated, hoverHandlers } = useColourReveal(imageRef);
+  const { revealed: saturated } = useColourReveal(imageRef);
 
   // Tablet-only scroll-driven image collapse (768–1023px).
   // rAF-throttled: one rect read + one CSS-var write per frame, passive
@@ -89,11 +89,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
     ? "saturate(1) brightness(1)"
     : "saturate(0.15) brightness(1.05)";
 
-  const imageTransition = prefersReducedMotion
-    ? "none"
-    : isDesktop
-      ? "filter 0.8s ease"
-      : "filter 1s ease";
+  const imageTransition = prefersReducedMotion ? "none" : "filter 1s ease";
 
   return (
     <section className="px-6 md:px-16 section-py">
@@ -125,7 +121,6 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
             <div
               ref={imageRef}
               className="intro-collapse-frame relative w-full aspect-square lg:aspect-[4/5] max-h-[65vh] md:max-lg:max-h-none md:max-lg:aspect-auto overflow-hidden bg-background"
-              {...hoverHandlers}
             >
               <div
                 className="absolute inset-0"
