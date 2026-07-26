@@ -187,12 +187,17 @@ body {
   }
 }
 
-/* ——— About founder portrait — sticky opt-out under reduced motion ———
+/* ——— Sticky portraits — opt-out under reduced motion ———
    Sticky positioning is layout, not animation, but pinned elements can feel
-   disorienting for motion-sensitive users, so it releases to normal flow. */
+   disorienting for motion-sensitive users, so they release to normal flow.
+   Covers the About founder portrait and the homepage intro portrait, which
+   are both pinned on desktop via the Tailwind `lg:sticky` utility. (The
+   tablet-range pin on .intro-collapse-sticky already has its own opt-out
+   alongside the collapse rules further down.) */
 
 @media (prefers-reduced-motion: reduce) {
-  .about-portrait-sticky {
+  .about-portrait-sticky,
+  .intro-collapse-sticky {
     position: static;
   }
 }
