@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useCallback, useState } from "react";
 import SanityImage from "@/components/SanityImage";
+import { useDragToScroll } from "@/hooks/useDragToScroll";
 import type { AboutMilestone } from "@/lib/types";
 
 const CARD_W = 280;
@@ -112,8 +113,31 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
 
   const isMobile = device === "mobile";
 
+  // Desktop click-and-drag, shared with ProjectsArchive. Touch layouts already
+  // scroll natively, so the mouse path is skipped there.
+  useDragToScroll(scrollRef, !isMobile);
+
   return (
     <div className="relative">
+      {/* Scroll cue — desktop only. Mirrors the homepage hero's "Scroll"
+          indicator (same 10px wide-tracked uppercase label + thin pulsing
+          bar), rotated to the horizontal axis. Decorative: touch devices
+          already swipe, so it is hidden on mobile and hidden from screen
+          readers. */}
+      {!isMobile && (
+        <div
+          aria-hidden="true"
+          className="hidden md:flex items-center gap-2 justify-end mb-4 pr-1"
+        >
+          <span className="text-[10px] tracking-widest uppercase text-muted-foreground/50">
+            Scroll
+          </span>
+          <div className="h-px w-8 bg-border relative overflow-hidden">
+            <div className="timeline-scroll-cue-bar absolute top-0 left-0 h-full w-3 bg-muted-foreground/50" />
+          </div>
+        </div>
+      )}
+
       {/* Edge fades — hidden on mobile */}
       {!isMobile && (
         <>

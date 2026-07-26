@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
+import { useDragToScroll } from "@/hooks/useDragToScroll";
 import type { HomepageProject } from "@/lib/placeholder-data";
 
 type Props = {
@@ -242,66 +243,10 @@ export default function ProjectsArchive({ projects }: Props) {
     };
   }, [prefersReducedMotion]);
 
-  // Drag-to-scroll — desktop click-and-drag affordance
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    let isDown = false;
-    let startX = 0;
-    let scrollStart = 0;
-    let dragged = false;
-    const DRAG_THRESHOLD = 3;
-
-    const onMouseDown = (e: MouseEvent) => {
-      // Only primary button
-      if (e.button !== 0) return;
-      isDown = true;
-      dragged = false;
-      startX = e.clientX;
-      scrollStart = el.scrollLeft;
-      el.style.cursor = "grabbing";
-      el.style.userSelect = "none";
-    };
-
-    const onMouseMove = (e: MouseEvent) => {
-      if (!isDown) return;
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) > DRAG_THRESHOLD) {
-        dragged = true;
-      }
-      el.scrollLeft = scrollStart - dx;
-    };
-
-    const onMouseUp = () => {
-      if (!isDown) return;
-      isDown = false;
-      el.style.cursor = "grab";
-      el.style.userSelect = "";
-    };
-
-    // Prevent link clicks when dragging
-    const onClick = (e: MouseEvent) => {
-      if (dragged) {
-        e.preventDefault();
-        dragged = false;
-      }
-    };
-
-    el.style.cursor = "grab";
-    el.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-    el.addEventListener("click", onClick, { capture: true });
-
-    return () => {
-      el.removeEventListener("mousedown", onMouseDown);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-      el.removeEventListener("click", onClick, { capture: true });
-      el.style.cursor = "";
-    };
-  }, []);
+  // Drag-to-scroll — desktop click-and-drag affordance.
+  // Shared with the About Journey timeline via useDragToScroll so the two
+  // cannot drift apart.
+  useDragToScroll(scrollRef);
 
   return (
     <section className="section-py section-archive">
