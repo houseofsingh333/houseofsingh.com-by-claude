@@ -187,6 +187,16 @@ body {
   }
 }
 
+/* ——— About founder portrait — sticky opt-out under reduced motion ———
+   Sticky positioning is layout, not animation, but pinned elements can feel
+   disorienting for motion-sensitive users, so it releases to normal flow. */
+
+@media (prefers-reduced-motion: reduce) {
+  .about-portrait-sticky {
+    position: static;
+  }
+}
+
 /* ——— Instagram photo plate crossfade ——— */
 
 .instagram-plate-img {

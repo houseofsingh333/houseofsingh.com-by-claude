@@ -91,8 +91,15 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         {/* Layout mirrors the homepage IntroSection: 5/5 columns starting at
             col-1 and col-7, gap-x-8, items-start, 440px text measure. */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-y-8 md:gap-x-8 md:gap-y-0 items-start">
-          {/* Portrait — left */}
-          <div className="md:col-span-5 md:col-start-1 group">
+          {/* Portrait — left. Same sticky technique as the homepage
+              IntroSection: self-stretch gives the column full row height so
+              the sticky child has travel room, and the wrapper pins at
+              top-24 (clears the 68px fixed header). Desktop only; below
+              1024px the section simply stacks. If the text column is shorter
+              than the image the track never exceeds the sticky element, so
+              sticky never engages — no jumping, no gaps. */}
+          <div className="md:col-span-5 md:col-start-1 group relative lg:self-stretch">
+            <div className="about-portrait-sticky lg:sticky lg:top-24">
             <div className="relative w-full aspect-[7/8] overflow-hidden bg-secondary">
               <SanityImage
                 image={portrait}
@@ -105,6 +112,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
                     : "group-hover:grayscale-0 group-hover:scale-100 transition-all duration-1000 ease-out"
                 }`}
               />
+            </div>
             </div>
           </div>
 
