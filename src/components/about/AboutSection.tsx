@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { PortableText } from "@portabletext/react";
 import { proseComponents } from "@/components/proseComponents";
 import SanityImage from "@/components/SanityImage";
+import { useColourReveal } from "@/hooks/useColourReveal";
 import type { AboutPageData } from "@/lib/types";
 import {
   FALLBACK_BIO_PARAGRAPHS,
@@ -40,6 +41,12 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
   const logoRef = useRef<HTMLDivElement>(null);
   const [logoRevealed, setLogoRevealed] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+
+  // Portrait colour reveal: hover on desktop, scroll-driven below 1024px
+  // (touch has no hover, so the portrait previously stayed grey forever).
+  // Shared with the homepage portrait so the two cannot drift.
+  const portraitRef = useRef<HTMLDivElement>(null);
+  const { saturated, hoverHandlers } = useColourReveal(portraitRef);
 
   useEffect(() => {
     const el = logoRef.current;
@@ -100,16 +107,22 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
               sticky never engages — no jumping, no gaps. */}
           <div className="md:col-span-5 md:col-start-1 group relative lg:self-stretch">
             <div className="about-portrait-sticky lg:sticky lg:top-24">
-            <div className="relative w-full aspect-[7/8] overflow-hidden bg-secondary">
+            <div
+              ref={portraitRef}
+              className="relative w-full aspect-[7/8] overflow-hidden bg-secondary"
+              {...hoverHandlers}
+            >
               <SanityImage
                 image={portrait}
                 context="body"
                 alt={`${founderName} — ${roles[0]}`}
                 fill
-                className={`object-cover object-top grayscale scale-[1.03] ${
+                className={`object-cover object-top ${
+                  saturated ? "grayscale-0 scale-100" : "grayscale scale-[1.03]"
+                } ${
                   reducedMotion
                     ? ""
-                    : "group-hover:grayscale-0 group-hover:scale-100 transition-all duration-1000 ease-out"
+                    : "transition-all duration-1000 ease-out"
                 }`}
               />
             </div>

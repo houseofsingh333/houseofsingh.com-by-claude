@@ -7,6 +7,7 @@ import { proseComponents } from "@/components/proseComponents";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useMediaQuery, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
+import { useColourReveal } from "@/hooks/useColourReveal";
 import type { HomeIntroData } from "@/lib/placeholder-data";
 
 const FALLBACK_ROLES = [
@@ -32,12 +33,10 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
   const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  // Desktop hover state for desaturation
-  const [isHovered, setIsHovered] = useState(false);
-
-  // Mobile IntersectionObserver: one-shot color reveal
+  // Portrait colour reveal: hover on desktop, scroll-driven below 1024px.
+  // Shared with the About page portrait so the two cannot drift.
   const imageRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
+  const { saturated, hoverHandlers } = useColourReveal(imageRef);
 
   // Tablet-only scroll-driven image collapse (768–1023px).
   // rAF-throttled: one rect read + one CSS-var write per frame, passive
@@ -85,32 +84,6 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
     };
   }, [isTablet, prefersReducedMotion]);
 
-  useEffect(() => {
-    if (isDesktop || prefersReducedMotion) return;
-    const el = imageRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [isDesktop, prefersReducedMotion]);
-
-  // Determine filter based on state
-  const getSaturated = () => {
-    if (prefersReducedMotion) return false; // stay desaturated
-    if (isDesktop) return isHovered;
-    return inView;
-  };
-
-  const saturated = getSaturated();
 
   const imageFilter = saturated
     ? "saturate(1) brightness(1)"
@@ -152,8 +125,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
             <div
               ref={imageRef}
               className="intro-collapse-frame relative w-full aspect-square lg:aspect-[4/5] max-h-[65vh] md:max-lg:max-h-none md:max-lg:aspect-auto overflow-hidden bg-background"
-              onMouseEnter={isDesktop && !prefersReducedMotion ? () => setIsHovered(true) : undefined}
-              onMouseLeave={isDesktop && !prefersReducedMotion ? () => setIsHovered(false) : undefined}
+              {...hoverHandlers}
             >
               <div
                 className="absolute inset-0"
