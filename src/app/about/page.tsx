@@ -9,6 +9,7 @@ import {
 import JsonLd from "@/components/JsonLd";
 import ReadingProgress from "@/components/ReadingProgress";
 import { buildFaqJsonLd } from "@/lib/structured-data";
+import { pageTitle } from "@/lib/page-title";
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await sanityFetch<AboutPageData | null>({
@@ -18,7 +19,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const noIndex = data?.seo?.noIndex === true;
 
   return {
-    title: data?.seo?.metaTitle ?? data?.seoTitle ?? "About",
+    title: pageTitle(
+      data?.seo?.metaTitle ?? data?.seoTitle ?? "About Maninder Singh",
+    ),
     description:
       data?.seo?.metaDescription ??
       data?.seoDescription ??
@@ -42,7 +45,7 @@ export default async function AboutPage() {
     <>
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <ReadingProgress />
-      <h1 className="sr-only">About Maninder Singh — House of Singh</h1>
+      <h1 className="sr-only">About Maninder Singh</h1>
       <AboutSection data={about} />
     </>
   );

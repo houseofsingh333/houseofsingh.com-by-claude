@@ -31,7 +31,7 @@ const SITE_URL = "https://houseofsingh.com";
  * until the owner overrides them in the CMS.
  */
 const SEO_DEFAULTS = {
-  title: "House of Singh — Maninder Singh",
+  title: "House of Singh | Maninder Singh",
   description:
     "The creative world of Maninder Singh. Design, photography, and intentional living. Based in Toronto.",
   organizationName: "House of Singh",
