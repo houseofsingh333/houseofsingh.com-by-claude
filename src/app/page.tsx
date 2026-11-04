@@ -28,6 +28,8 @@ import {
   type SiteSettings,
 } from "@/lib/placeholder-data";
 import type { SpotlightData } from "@/lib/types";
+import JsonLd from "@/components/JsonLd";
+import { buildProfilePageJsonLd } from "@/lib/structured-data";
 
 type SanityHomepageProject = {
   _id: string;
@@ -76,7 +78,8 @@ export default async function HomePage() {
 
   return (
     <>
-      <h1 className="sr-only">House of Singh — Maninder Singh, Creative Director, Designer, Photographer</h1>
+      <JsonLd data={buildProfilePageJsonLd()} />
+      <h1 className="sr-only">House of Singh, Maninder Singh: creative director, photographer and multidisciplinary designer</h1>
       <CinematicHero slides={heroSlides} />
       <IntroSection data={homeIntro} />
       <ProjectsArchive projects={homepageProjects} />

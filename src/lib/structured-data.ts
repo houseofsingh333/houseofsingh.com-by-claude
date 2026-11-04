@@ -202,7 +202,7 @@ export function buildSiteJsonLd(settings?: SiteSettings | null): Json {
     url: SITE_URL,
     jobTitle: "Founder and Creative Director",
     description:
-      "Toronto based creative director, photographer and multidisciplinary designer, working under the name House of Singh since 2014.",
+      "Creative director, photographer and multidisciplinary designer based in Toronto, Canada.",
     image: PERSON_IMAGE,
     address: {
       "@type": "PostalAddress",
@@ -212,7 +212,7 @@ export function buildSiteJsonLd(settings?: SiteSettings | null): Json {
     },
     memberOf: {
       "@type": "Organization",
-      name: "RGD (Registered Graphic Designers)",
+      name: "RGD (Registered Graphic Designers of Canada)",
       url: "https://rgd.ca",
     },
     knowsAbout: [
@@ -242,10 +242,10 @@ export function buildSiteJsonLd(settings?: SiteSettings | null): Json {
   };
 }
 
-// ——— ProfilePage (/about only) ———
+// ——— ProfilePage (home page only) ———
 
 /**
- * Marks /about as the authoritative profile page for the Person.
+ * Marks the home page as the authoritative profile page for the Person.
  *
  * mainEntity is an @id reference: the Person itself is defined once, in the
  * sitewide @graph, which is present on this same page.
