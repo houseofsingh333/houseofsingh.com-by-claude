@@ -1,5 +1,7 @@
 import { Suspense } from "react";
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
+import { fullTitle } from "@/lib/page-title";
+import { shareCard } from "@/lib/share-metadata";
 import JournalList from "@/components/journal/JournalList";
 import { sanityFetch } from "@/sanity/fetch";
 import { journalFeedQuery } from "@/sanity/queries";
@@ -8,14 +10,23 @@ import {
   type JournalEntry,
 } from "@/lib/placeholder-data";
 
-export const metadata: Metadata = {
-  title: "Journal",
-  description:
-    "Thoughts, process notes, and behind-the-scenes stories from House of Singh.",
-  alternates: {
-    canonical: "/journal",
-  },
-};
+const TITLE = "Journal";
+const DESCRIPTION =
+  "Thoughts, process notes, and behind-the-scenes stories from House of Singh.";
+
+export async function generateMetadata(
+  _props: unknown,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  return {
+    title: TITLE,
+    description: DESCRIPTION,
+    alternates: {
+      canonical: "/journal",
+    },
+    ...(await shareCard(parent, fullTitle(TITLE), DESCRIPTION)),
+  };
+}
 
 export default async function JournalPage() {
   const data = await sanityFetch<JournalEntry[] | null>({

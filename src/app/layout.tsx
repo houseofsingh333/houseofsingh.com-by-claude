@@ -20,6 +20,7 @@ import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import type { SiteSettings } from "@/lib/types";
 import JsonLd from "@/components/JsonLd";
 import { buildSiteJsonLd } from "@/lib/structured-data";
+import { TITLE_TEMPLATE } from "@/lib/page-title";
 import { IntroProvider } from "@/components/IntroContext";
 import "./globals.css";
 
@@ -76,7 +77,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(SITE_URL),
     title: {
       default: SEO_DEFAULTS.title,
-      template: "%s | House of Singh",
+      template: TITLE_TEMPLATE,
     },
     description,
     alternates: {

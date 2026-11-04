@@ -1,13 +1,24 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
+import { fullTitle } from "@/lib/page-title";
+import { shareCard } from "@/lib/share-metadata";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description:
-    "Privacy policy for House of Singh — how we collect, use, and protect your information.",
-  alternates: {
-    canonical: "/privacy",
-  },
-};
+const TITLE = "Privacy Policy";
+const DESCRIPTION =
+  "Privacy policy for House of Singh — how we collect, use, and protect your information.";
+
+export async function generateMetadata(
+  _props: unknown,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  return {
+    title: TITLE,
+    description: DESCRIPTION,
+    alternates: {
+      canonical: "/privacy",
+    },
+    ...(await shareCard(parent, fullTitle(TITLE), DESCRIPTION)),
+  };
+}
 
 function SectionDivider({ label }: { label: string }) {
   return (
