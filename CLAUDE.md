@@ -32,6 +32,7 @@ Maninder is the founder and creative director. He is not a developer. This means
 - **Styling:** Tailwind CSS v4. Configuration lives in the `@theme` block in `globals.css`. There is no `tailwind.config` file. Do not add one. Do not introduce a different styling system.
 - **Hosting:** Vercel. Production deploys from `main`. All work happens on `feature/next-work`, is pushed there (creating a Vercel preview), and reaches production only through a pull request into `main` that Maninder merges after checking the preview. Never push directly to `main`. Old branches were deleted on 4 Nov 2026; only main and feature/next-work exist.
 - **Dependencies:** Use npm ci, never npm install.
+- **CI:** Every pull request must show the ci check green before merging.
 - **Language:** TypeScript throughout.
 
 **Architecture rules:**

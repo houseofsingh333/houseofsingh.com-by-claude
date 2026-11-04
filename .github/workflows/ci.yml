@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    env:
+      # Public Sanity identifiers, the same values the browser already sees.
+      # No tokens or secrets are needed to type check and build.
+      NEXT_PUBLIC_SANITY_PROJECT_ID: 31g7gu7n
+      NEXT_PUBLIC_SANITY_DATASET: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx tsc --noEmit
+
+      # Lint is not run yet: main has existing lint errors. Add an
+      # `npm run lint` step here once those errors are fixed.
+
+      - run: npm run build
