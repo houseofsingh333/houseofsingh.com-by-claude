@@ -8,10 +8,7 @@ import {
 } from "@/lib/placeholder-data";
 import JsonLd from "@/components/JsonLd";
 import ReadingProgress from "@/components/ReadingProgress";
-import {
-  buildFaqJsonLd,
-  buildProfilePageJsonLd,
-} from "@/lib/structured-data";
+import { buildFaqJsonLd } from "@/lib/structured-data";
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await sanityFetch<AboutPageData | null>({
@@ -43,7 +40,6 @@ export default async function AboutPage() {
 
   return (
     <>
-      <JsonLd data={buildProfilePageJsonLd()} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <ReadingProgress />
       <h1 className="sr-only">About Maninder Singh — House of Singh</h1>
