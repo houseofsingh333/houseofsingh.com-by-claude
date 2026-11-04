@@ -11,7 +11,7 @@ import {
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
-export const alt = "House of Singh — project";
+export const alt = "House of Singh | project";
 
 type Props = { params: Promise<{ slug: string }> };
 
