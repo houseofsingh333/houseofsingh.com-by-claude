@@ -141,7 +141,7 @@ function organizationNode(settings?: SiteSettings | null): Json {
     foundingDate: "2014",
     founder: { "@id": PERSON_ID },
     description:
-      "The creative practice and parent brand of Maninder Singh. HOUSE OF SINGH is a registered Canadian trademark (TMA1179828).",
+      "The creative practice and parent brand of Maninder Singh. HOUSE OF SINGH is a registered Canadian trademark.",
     sameAs: orgSameAs(settings),
     subOrganization: [
       {
@@ -202,7 +202,7 @@ export function buildSiteJsonLd(settings?: SiteSettings | null): Json {
     url: SITE_URL,
     jobTitle: "Founder and Creative Director",
     description:
-      "Toronto based designer, photographer and creative director, working under the name House of Singh since 2014.",
+      "Toronto based creative director, photographer and multidisciplinary designer, working under the name House of Singh since 2014.",
     image: PERSON_IMAGE,
     address: {
       "@type": "PostalAddress",

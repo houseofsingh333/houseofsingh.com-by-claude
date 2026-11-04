@@ -154,7 +154,9 @@ Three entities are shared across this site and the studio site. Their `@id` valu
 - **Person facts must stay identical to the studio site:** `jobTitle`, `image`, `memberOf`, `knowsAbout`, and the core `sameAs` profiles. Change them on both sites together, never on one alone.
 - The Person `image` deliberately points at the studio's Sanity CDN (project `00iree4d`) so both sites publish the same portrait URL. This is not this repo's Sanity project and must not change this repo's Sanity config.
 - **Naming rule:** House of Singh Studios is a **venture** of House of Singh. Never call it a division or a subsidiary.
-- **Dates:** House of Singh has been active since 2014. House of Singh Studios was founded in Canada on `2023-09-08` (8 September 2023).
+- **Dates:** House of Singh has been active since 2014. House of Singh Studios was founded in Canada in 2023.
+- **Never published on this site:** the trademark registration number and the studio's exact founding day. Write "registered Canadian trademark" and "founded in 2023", nothing more specific. This repo is public, so that includes code, docs and commit messages.
+- **Title order, everywhere:** "creative director, photographer and multidisciplinary designer". Do not reorder it.
 - The JSON-LD lives in `src/lib/structured-data.ts` and renders as one `@graph` sitewide, plus a `ProfilePage` on `/about`. The plain language version for language models is `public/llms.txt`. Keep the two consistent.
 
 ---
