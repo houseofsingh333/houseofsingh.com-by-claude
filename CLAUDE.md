@@ -140,4 +140,25 @@ The test for anything you build or suggest: does it feel calm, considered, and c
 
 ---
 
+## 9. Entities (structured data and naming)
+
+Three entities are shared across this site and the studio site. Their `@id` values are join keys: never rename or reformat them, or search engines and language models will treat one entity as two.
+
+| Entity | `@id` | Owned by |
+|---|---|---|
+| Maninder Singh (Person) | `https://houseofsingh.com/#maninder-singh` | This site |
+| House of Singh (Organization, parent brand) | `https://houseofsingh.com/#organization` | This site |
+| House of Singh Studios (Organization) | `https://studios.houseofsingh.com/#organization` | The studio site |
+
+- **This site owns the Person and the parent brand.** It is the only place they are fully defined. The studio Organization is referenced by `@id` only and is never redefined here.
+- **Person facts must stay identical to the studio site:** `jobTitle`, `image`, `memberOf`, `knowsAbout`, and the core `sameAs` profiles. Change them on both sites together, never on one alone.
+- The Person `image` deliberately points at the studio's Sanity CDN (project `00iree4d`) so both sites publish the same portrait URL. This is not this repo's Sanity project and must not change this repo's Sanity config.
+- **Naming rule:** House of Singh Studios is a **venture** of House of Singh. Never call it a division or a subsidiary.
+- **Dates:** House of Singh has been active since 2014. House of Singh Studios was founded in Canada in 2023.
+- **Never published on this site:** the trademark registration number and the studio's exact founding day. Write "registered Canadian trademark" and "founded in 2023", nothing more specific. This repo is public, so that includes code, docs and commit messages.
+- **Title order, everywhere:** "creative director, photographer and multidisciplinary designer". Do not reorder it.
+- The JSON-LD lives in `src/lib/structured-data.ts` and renders as one `@graph` sitewide, plus a `ProfilePage` on `/about`. The plain language version for language models is `public/llms.txt`. Keep the two consistent.
+
+---
+
 *Keep this file current. When the stack, brand, or workflow changes, update CLAUDE.md and BRAND_BOOK.md together so they never drift from the real site.*

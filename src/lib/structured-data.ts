@@ -19,16 +19,53 @@ import type {
 } from "@/lib/types";
 
 export const SITE_URL = "https://houseofsingh.com";
+export const STUDIO_URL = "https://studios.houseofsingh.com";
+
+/**
+ * Stable entity @ids, shared with studios.houseofsingh.com.
+ *
+ * This site OWNS the Person and the parent-brand Organization: it is the only
+ * place they are defined. The studio Organization is owned by the studio site
+ * and is only ever REFERENCED here by @id, never redefined.
+ *
+ * Do not change these strings. They are the join keys that let search engines
+ * and language models treat both sites as one entity graph. Renaming an @id
+ * silently splits the entity in two.
+ */
+export const PERSON_ID = `${SITE_URL}/#maninder-singh`;
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+export const STUDIO_ORGANIZATION_ID = `${STUDIO_URL}/#organization`;
+
+/**
+ * Canonical portrait, served from the STUDIO's Sanity CDN (project 00iree4d)
+ * on purpose, so both sites publish a byte-identical image URL for the Person.
+ *
+ * This is deliberately not this repo's Sanity project (31g7gu7n) and is not
+ * CMS-managed. If the asset is removed from the studio project this URL breaks,
+ * so it must be changed on both sites together.
+ */
+const PERSON_IMAGE =
+  "https://cdn.sanity.io/images/00iree4d/production/99da20aab16b0adf357312fc3440c03ebd3dc6bf-1868x2336.jpg";
+
+/**
+ * Person sameAs is pinned here rather than read from Sanity: these profiles
+ * must stay identical to the studio site's Person node. The Organization's
+ * sameAs stays CMS-driven.
+ */
+const PERSON_SAME_AS = [
+  "https://rgd.ca/members/profile/manindersingh",
+  "https://www.linkedin.com/in/manindersingh333",
+  "https://www.instagram.com/houseofsingh/",
+  "https://x.com/houseofsingh",
+  "https://ca.pinterest.com/houseofsingh",
+];
 
 const DEFAULTS = {
   organizationName: "House of Singh",
   founderName: "Maninder Singh",
-  // The House of Singh brand mark — a real, stable asset. Used as both the
-  // Organization logo and the Person image: it's the canonical identity image
-  // for the "House of Singh" persona (the Person node's alternateName), and is
-  // more semantically correct here than the wide 1200x630 social OG card.
+  // The House of Singh brand mark, a real and stable asset, used as the
+  // Organization logo. The Person image is PERSON_IMAGE above.
   logo: "/images/hos-logo.svg",
-  personImage: "/images/hos-logo.svg",
   description:
     "The creative world of Maninder Singh. Design, photography, and intentional living. Based in Toronto.",
   sameAs: ["https://www.instagram.com/houseofsingh"],
@@ -69,26 +106,70 @@ function toIso(date?: string | null): string | undefined {
   return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
 }
 
-// ——— Shared organization node (used standalone + as publisher) ———
+// ——— Organization nodes ———
 
+function orgName(settings?: SiteSettings | null): string {
+  return settings?.organizationName?.trim() || DEFAULTS.organizationName;
+}
+
+function orgSameAs(settings?: SiteSettings | null): string[] {
+  return settings?.sameAs && settings.sameAs.length > 0
+    ? settings.sameAs
+    : DEFAULTS.sameAs;
+}
+
+function orgLogo(): Json {
+  return compact({
+    "@type": "ImageObject",
+    url: absoluteUrl(DEFAULTS.logo),
+  });
+}
+
+/**
+ * The full parent-brand Organization, defined once in the sitewide @graph.
+ *
+ * subOrganization references the studio by @id only. The studio site owns that
+ * node and defines its own name, founding date and description there.
+ */
 function organizationNode(settings?: SiteSettings | null): Json {
-  const name =
-    settings?.organizationName?.trim() || DEFAULTS.organizationName;
-  const sameAs =
-    settings?.sameAs && settings.sameAs.length > 0
-      ? settings.sameAs
-      : DEFAULTS.sameAs;
-
   return compact({
     "@type": "Organization",
-    "@id": `${SITE_URL}/#organization`,
-    name,
+    "@id": ORGANIZATION_ID,
+    name: orgName(settings),
     url: SITE_URL,
-    logo: compact({
-      "@type": "ImageObject",
-      url: absoluteUrl(DEFAULTS.logo),
-    }),
-    sameAs,
+    logo: orgLogo(),
+    foundingDate: "2014",
+    founder: { "@id": PERSON_ID },
+    description:
+      "The creative practice and parent brand of Maninder Singh. HOUSE OF SINGH is a registered Canadian trademark.",
+    sameAs: orgSameAs(settings),
+    subOrganization: [
+      {
+        "@type": "Organization",
+        "@id": STUDIO_ORGANIZATION_ID,
+        name: "House of Singh Studios",
+        url: STUDIO_URL,
+      },
+    ],
+  });
+}
+
+/**
+ * Lean publisher node for Article and CreativeWork.
+ *
+ * Shares the Organization's @id, so consumers merge it with the full node in
+ * the sitewide @graph on the same page. Kept deliberately minimal: repeating
+ * founder and subOrganization in every article's publisher adds bytes without
+ * adding meaning.
+ */
+function publisherNode(settings?: SiteSettings | null): Json {
+  return compact({
+    "@type": "Organization",
+    "@id": ORGANIZATION_ID,
+    name: orgName(settings),
+    url: SITE_URL,
+    logo: orgLogo(),
+    sameAs: orgSameAs(settings),
   });
 }
 
@@ -97,55 +178,84 @@ function organizationNode(settings?: SiteSettings | null): Json {
 /**
  * Sitewide structured data rendered once in the root layout.
  *
+ * Emitted as a single @graph with one shared @context, so the three nodes are
+ * explicitly connected instead of sitting in the page as unrelated items.
+ * Cross-references use @id only, which is what lets the studio site's Person
+ * and this site's Person resolve to the same entity.
+ *
  * No SearchAction is included: the site has no search endpoint. Add one here
  * (WebSite → potentialAction → SearchAction) if/when site search ships.
  */
-export function buildSiteJsonLd(settings?: SiteSettings | null): Json[] {
+export function buildSiteJsonLd(settings?: SiteSettings | null): Json {
   const founderName =
     settings?.founderName?.trim() || DEFAULTS.founderName;
-  const orgName =
-    settings?.organizationName?.trim() || DEFAULTS.organizationName;
+  const name = orgName(settings);
   const description =
     settings?.defaultMetaDescription?.trim() || DEFAULTS.description;
-  const sameAs =
-    settings?.sameAs && settings.sameAs.length > 0
-      ? settings.sameAs
-      : DEFAULTS.sameAs;
 
   const person = compact({
-    "@context": "https://schema.org",
     "@type": "Person",
+    "@id": PERSON_ID,
     name: founderName,
-    alternateName: orgName,
+    alternateName: name,
+    honorificSuffix: "RGD",
     url: SITE_URL,
-    image: absoluteUrl(DEFAULTS.personImage),
-    jobTitle: "Creative Director",
+    jobTitle: "Founder and Creative Director",
     description:
-      "Multidisciplinary designer and photographer based in Toronto",
+      "Toronto based creative director, photographer and multidisciplinary designer, working under the name House of Singh since 2014.",
+    image: PERSON_IMAGE,
     address: {
       "@type": "PostalAddress",
       addressLocality: "Toronto",
       addressRegion: "Ontario",
       addressCountry: "CA",
     },
-    sameAs,
+    memberOf: {
+      "@type": "Organization",
+      name: "RGD (Registered Graphic Designers)",
+      url: "https://rgd.ca",
+    },
+    knowsAbout: [
+      "Brand identity",
+      "Creative direction",
+      "Art direction",
+      "Photography",
+      "Packaging design",
+      "Web design",
+    ],
+    worksFor: { "@id": STUDIO_ORGANIZATION_ID },
+    sameAs: PERSON_SAME_AS,
   });
-
-  const organization = {
-    "@context": "https://schema.org",
-    ...organizationNode(settings),
-  };
 
   const website = compact({
-    "@context": "https://schema.org",
     "@type": "WebSite",
-    name: orgName,
+    name,
     url: SITE_URL,
     description,
-    author: { "@type": "Person", name: founderName },
+    author: { "@id": PERSON_ID },
+    publisher: { "@id": ORGANIZATION_ID },
   });
 
-  return [person, organization, website];
+  return {
+    "@context": "https://schema.org",
+    "@graph": [person, organizationNode(settings), website],
+  };
+}
+
+// ——— ProfilePage (/about only) ———
+
+/**
+ * Marks /about as the authoritative profile page for the Person.
+ *
+ * mainEntity is an @id reference: the Person itself is defined once, in the
+ * sitewide @graph, which is present on this same page.
+ */
+export function buildProfilePageJsonLd(): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    mainEntity: { "@id": PERSON_ID },
+  };
 }
 
 // ——— Journal entry: BlogPosting (Article subtype) ———
@@ -168,7 +278,7 @@ export function buildArticleJsonLd(
       datePublished,
       dateModified,
       author: compact({ "@type": "Person", name: author }),
-      publisher: organizationNode(settings),
+      publisher: publisherNode(settings),
       mainEntityOfPage: `${SITE_URL}/journal/${entry.slug}`,
     }),
   };
@@ -193,7 +303,7 @@ export function buildCreativeWorkJsonLd(
       dateCreated: toIso(project.publishedAt),
       dateModified: toIso(project.updatedAt),
       author: compact({ "@type": "Person", name: author }),
-      publisher: organizationNode(settings),
+      publisher: publisherNode(settings),
       url: `${SITE_URL}/projects/${project.slug}`,
     }),
   };
