@@ -6,7 +6,7 @@ import {
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
-export const alt = "House of Singh — Maninder Singh";
+export const alt = "House of Singh | Maninder Singh";
 
 // Sitewide default OG image — branded, text-only on the warm background.
 // Used by the home page, listing pages, and utility pages that don't have

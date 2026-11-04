@@ -1,0 +1,37 @@
+version: 2
+updates:
+  # npm packages: one grouped pull request per week for minor and patch
+  # updates. Major updates of the core framework packages are ignored and
+  # handled deliberately by hand.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "sanity"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "next-sanity"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@sanity/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions used by workflows in .github/workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
