@@ -67,7 +67,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     entry?.seoDescription ??
     entry?.excerpt ??
     fallback?.excerpt ??
-    "Reflections and observations from Maninder Singh — House of Singh";
+    "Reflections and observations by Maninder Singh.";
 
   const canonical =
     entry?.seo?.canonicalUrl || `/journal/${slug}`;

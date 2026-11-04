@@ -1,18 +1,29 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
+import { fullTitle } from "@/lib/page-title";
+import { shareCard } from "@/lib/share-metadata";
 import { sanityFetch } from "@/sanity/fetch";
 import { projectsListQuery } from "@/sanity/queries";
 import { fallbackProjects } from "@/lib/placeholder-data";
 import type { ProjectSummary, SanityImage } from "@/lib/placeholder-data";
 import ProjectsFilteredGrid from "@/components/projects/ProjectsFilteredGrid";
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description:
-    "Selected projects by Maninder Singh spanning design, photography, and creative direction.",
-  alternates: {
-    canonical: "/projects",
-  },
-};
+const TITLE = "Projects";
+const DESCRIPTION =
+  "Selected projects by Maninder Singh spanning design, photography, and creative direction.";
+
+export async function generateMetadata(
+  _props: unknown,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  return {
+    title: TITLE,
+    description: DESCRIPTION,
+    alternates: {
+      canonical: "/projects",
+    },
+    ...(await shareCard(parent, fullTitle(TITLE), DESCRIPTION)),
+  };
+}
 
 type SanityProject = {
   _id: string;

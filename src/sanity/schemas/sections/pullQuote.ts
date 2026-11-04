@@ -18,7 +18,7 @@ export const pullQuote = defineType({
       name: "attribution",
       title: "Attribution",
       type: "string",
-      description: "Optional — who said it.",
+      description: "Optional. Who said it.",
     }),
   ],
   preview: {

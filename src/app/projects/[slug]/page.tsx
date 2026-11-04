@@ -69,7 +69,7 @@ function ProjectHeader({ category, title, intro, isUpcoming, author }: { categor
   );
 }
 
-const DEFAULT_DESCRIPTION = "A project by Maninder Singh — House of Singh";
+const DEFAULT_DESCRIPTION = "A project by Maninder Singh.";
 
 // Open Graph / Twitter images are supplied per-route by the colocated
 // opengraph-image.tsx / twitter-image.tsx generators (Next.js convention),

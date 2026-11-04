@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import AboutSection from "@/components/about/AboutSection";
 import { sanityFetch } from "@/sanity/fetch";
 import { aboutPageQuery } from "@/sanity/queries";
@@ -9,27 +9,33 @@ import {
 import JsonLd from "@/components/JsonLd";
 import ReadingProgress from "@/components/ReadingProgress";
 import { buildFaqJsonLd } from "@/lib/structured-data";
-import { pageTitle } from "@/lib/page-title";
+import { fullTitle, pageTitle } from "@/lib/page-title";
+import { shareCard } from "@/lib/share-metadata";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata(
+  _props: unknown,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const data = await sanityFetch<AboutPageData | null>({
     query: aboutPageQuery,
   });
 
   const noIndex = data?.seo?.noIndex === true;
+  const rawTitle =
+    data?.seo?.metaTitle ?? data?.seoTitle ?? "About Maninder Singh";
+  const description =
+    data?.seo?.metaDescription ??
+    data?.seoDescription ??
+    "Learn about the story, values, and vision behind House of Singh.";
 
   return {
-    title: pageTitle(
-      data?.seo?.metaTitle ?? data?.seoTitle ?? "About Maninder Singh",
-    ),
-    description:
-      data?.seo?.metaDescription ??
-      data?.seoDescription ??
-      "Learn about the story, values, and vision behind House of Singh.",
+    title: pageTitle(rawTitle),
+    description,
     alternates: {
       canonical: data?.seo?.canonicalUrl || "/about",
     },
     ...(noIndex ? { robots: { index: false, follow: true } } : {}),
+    ...(await shareCard(parent, fullTitle(rawTitle), description)),
   };
 }
 
