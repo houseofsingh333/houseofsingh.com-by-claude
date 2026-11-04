@@ -30,7 +30,7 @@ Maninder is the founder and creative director. He is not a developer. This means
 - **Framework:** Next.js, App Router. Server components by default. Use client components only when interactivity genuinely requires it, and keep them small and leaf level.
 - **CMS:** Sanity. Project ID `31g7gu7n`, dataset `production`.
 - **Styling:** Tailwind CSS v4. Configuration lives in the `@theme` block in `globals.css`. There is no `tailwind.config` file. Do not add one. Do not introduce a different styling system.
-- **Hosting:** Vercel. The `main` branch deploys to production.
+- **Hosting:** Vercel. Production deploys from `main`. All work happens on `feature/next-work`, is pushed there (creating a Vercel preview), and reaches production only through a pull request into `main` that Maninder merges after checking the preview. Never push directly to `main`. The old branch `claude/production-readiness-standards-Jivri` is archived and must not be used.
 - **Language:** TypeScript throughout.
 
 **Architecture rules:**
