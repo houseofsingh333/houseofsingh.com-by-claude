@@ -146,7 +146,7 @@ export const aboutPage = defineType({
       name: "rapidFire",
       title: "Rapid Fire",
       type: "array",
-      description: "Quick Q&A pairs — fun, personal, and revealing.",
+      description: "Quick Q&A pairs: fun, personal, and revealing.",
       of: [
         {
           type: "object",
@@ -226,7 +226,7 @@ export const aboutPage = defineType({
       name: "seoTitle",
       title: "SEO Title (legacy)",
       type: "string",
-      description: "Deprecated — use the SEO → Meta Title field instead.",
+      description: "Deprecated. Use the SEO → Meta Title field instead.",
       readOnly: true,
       hidden: ({ value }) => !value,
     }),
@@ -234,7 +234,7 @@ export const aboutPage = defineType({
       name: "seoDescription",
       title: "SEO Description (legacy)",
       type: "string",
-      description: "Deprecated — use the SEO → Meta Description field instead.",
+      description: "Deprecated. Use the SEO → Meta Description field instead.",
       readOnly: true,
       hidden: ({ value }) => !value,
     }),

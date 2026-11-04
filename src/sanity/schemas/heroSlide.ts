@@ -38,14 +38,14 @@ export const heroSlide = defineType({
       name: "imageAlt",
       title: "Image Alt Text (legacy)",
       type: "string",
-      description: "Deprecated — use the alt field on the image above instead.",
+      description: "Deprecated. Use the alt field on the image above instead.",
       hidden: true,
     }),
     defineField({
       name: "caption",
       title: "Caption",
       type: "string",
-      description: 'Overlay text shown on the slide, e.g. "House of Singh — Design Studio"',
+      description: 'Overlay text shown on the slide, e.g. "House of Singh | Design Studio"',
     }),
     defineField({
       name: "internalLink",

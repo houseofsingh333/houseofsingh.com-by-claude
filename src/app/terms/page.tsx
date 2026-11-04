@@ -4,7 +4,7 @@ import { shareCard } from "@/lib/share-metadata";
 
 const TITLE = "Terms of Use";
 const DESCRIPTION =
-  "Terms of use for the House of Singh website — conditions for using this site and its content.";
+  "The conditions for using the House of Singh website and its content.";
 
 export async function generateMetadata(
   _props: unknown,

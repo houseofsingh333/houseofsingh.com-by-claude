@@ -61,7 +61,7 @@ export const project = defineType({
       title: "Content Sections",
       type: "array",
       description:
-        "Build the project page by adding sections in order. Each section controls its own text and images — reorder to change the narrative flow.",
+        "Build the project page by adding sections in order. Each section controls its own text and images. Reorder sections to change the narrative flow.",
       of: [
         // Nine designed layout blocks
         { type: "textSection" },
@@ -99,7 +99,7 @@ export const project = defineType({
       title: "Upcoming Project",
       type: "boolean",
       description:
-        "Mark this project as upcoming — it will display an 'Upcoming' label on the card and detail page.",
+        "Mark this project as upcoming. It will display an 'Upcoming' label on the card and detail page.",
       initialValue: false,
     }),
     defineField({

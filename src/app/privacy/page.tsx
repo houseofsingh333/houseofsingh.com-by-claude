@@ -4,7 +4,7 @@ import { shareCard } from "@/lib/share-metadata";
 
 const TITLE = "Privacy Policy";
 const DESCRIPTION =
-  "Privacy policy for House of Singh — how we collect, use, and protect your information.";
+  "How House of Singh collects, uses, and protects your information.";
 
 export async function generateMetadata(
   _props: unknown,
