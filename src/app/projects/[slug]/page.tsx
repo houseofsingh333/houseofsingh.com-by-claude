@@ -15,6 +15,7 @@ import ReadingProgress from "@/components/ReadingProgress";
 import ContentSections from "@/components/projects/ContentSections";
 import ProjectInterestForm from "@/components/projects/ProjectInterestForm";
 import JsonLd from "@/components/JsonLd";
+import { normalizeTitle, pageTitle } from "@/lib/page-title";
 import {
   buildCreativeWorkJsonLd,
   buildBreadcrumbJsonLd,
@@ -81,7 +82,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 
   if (project) {
-    const title = project.seo?.metaTitle || project.title;
+    const title = normalizeTitle(project.seo?.metaTitle || project.title);
     const description =
       project.seo?.metaDescription || project.excerpt || DEFAULT_DESCRIPTION;
     const canonical = project.seo?.canonicalUrl || `/projects/${slug}`;
@@ -96,7 +97,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : undefined;
 
     return {
-      title,
+      title: pageTitle(title),
       description,
       alternates: { canonical },
       ...(noIndex ? { robots: { index: false, follow: true } } : {}),

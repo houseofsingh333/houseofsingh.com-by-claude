@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Sanity Studio | House of Singh",
+  title: "Sanity Studio",
 };
 
 /**

@@ -5,6 +5,7 @@ import { contactPageQuery } from "@/sanity/queries";
 import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import { fallbackInstagramPhotos } from "@/lib/placeholder-data";
 import type { Seo } from "@/lib/types";
+import { pageTitle } from "@/lib/page-title";
 
 type ContactPageData = {
   instagramPhotos?: InstagramPhoto[] | null;
@@ -22,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const noIndex = data?.seo?.noIndex === true;
 
   return {
-    title: data?.seo?.metaTitle ?? data?.seoTitle ?? "Contact",
+    title: pageTitle(data?.seo?.metaTitle ?? data?.seoTitle ?? "Contact"),
     description:
       data?.seo?.metaDescription ??
       data?.seoDescription ??

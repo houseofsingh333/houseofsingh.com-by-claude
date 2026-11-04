@@ -18,6 +18,7 @@ import {
 import type { SiteSettings } from "@/lib/types";
 import { parseSanityDate } from "@/lib/dates";
 import JsonLd from "@/components/JsonLd";
+import { normalizeTitle, pageTitle } from "@/lib/page-title";
 import {
   buildArticleJsonLd,
   buildBreadcrumbJsonLd,
@@ -57,7 +58,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!baseTitle) return { title: "Not Found" };
 
-  const title = entry?.seo?.metaTitle ?? entry?.seoTitle ?? baseTitle;
+  const title = normalizeTitle(
+    entry?.seo?.metaTitle ?? entry?.seoTitle ?? baseTitle,
+  );
 
   const description =
     entry?.seo?.metaDescription ??
@@ -76,7 +79,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : undefined;
 
   return {
-    title,
+    title: pageTitle(title),
     description,
     alternates: { canonical },
     ...(noIndex ? { robots: { index: false, follow: true } } : {}),
