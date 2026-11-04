@@ -79,7 +79,7 @@ export default async function HomePage() {
   return (
     <>
       <JsonLd data={buildProfilePageJsonLd()} />
-      <h1 className="sr-only">House of Singh — Maninder Singh, Creative Director, Designer, Photographer</h1>
+      <h1 className="sr-only">House of Singh, Maninder Singh: creative director, photographer and multidisciplinary designer</h1>
       <CinematicHero slides={heroSlides} />
       <IntroSection data={homeIntro} />
       <ProjectsArchive projects={homepageProjects} />
