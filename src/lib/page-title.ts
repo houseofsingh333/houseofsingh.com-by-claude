@@ -11,12 +11,16 @@ import type { Metadata } from "next";
 
 export const SITE_NAME = "House of Singh";
 
-/** Replace a spaced dash used as a separator (" — ", " – ", " - ") with " | ". */
+/**
+ * Clean a title: trim leading and trailing whitespace first, collapse runs of
+ * spaces to one, then replace a spaced dash used as a separator
+ * (" — ", " – ", " - ") with " | ".
+ */
 export function normalizeTitle(raw: string): string {
   return raw
-    .replace(/\s+[—–-]\s+/g, " | ")
+    .trim()
     .replace(/\s{2,}/g, " ")
-    .trim();
+    .replace(/\s+[—–-]\s+/g, " | ");
 }
 
 /**
