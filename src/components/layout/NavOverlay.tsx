@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { X } from "lucide-react";
 import Link from "next/link";
 import type { NavItem } from "@/lib/placeholder-data";
@@ -15,9 +16,6 @@ type Props = {
   items: NavItem[];
 };
 
-const FOCUSABLE =
-  'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
 export default function NavOverlay({
   isOpen,
   onClose,
@@ -28,69 +26,17 @@ export default function NavOverlay({
   const panelRef = useRef<HTMLElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
-  // Latest onClose without re-running the effect: the parent passes a new
-  // function on every render (for example while the header reacts to scroll).
-  const onCloseRef = useRef(onClose);
-  useEffect(() => {
-    onCloseRef.current = onClose;
-  }, [onClose]);
-
   // While open: the rest of the page is inert, focus moves to the first menu
   // link, Escape closes, and Tab loops inside the menu. Keyboard and screen
-  // reader behaviour only; nothing here changes how the menu looks.
-  useEffect(() => {
-    if (!isOpen) return;
-    const panel = panelRef.current;
-    const backdrop = backdropRef.current;
-
-    // Make everything outside the menu inert: walk up from the panel and mark
-    // every sibling at each level, so this works however deeply it is nested.
-    const madeInert: Element[] = [];
-    let node: Element | null = panel;
-    while (node && node !== document.body && node.parentElement) {
-      for (const el of Array.from(node.parentElement.children)) {
-        if (el === node || el === backdrop || el.tagName === "SCRIPT") continue;
-        if (el.hasAttribute("inert")) continue;
-        el.setAttribute("inert", "");
-        madeInert.push(el);
-      }
-      node = node.parentElement;
-    }
-
-    const frame = requestAnimationFrame(() =>
-      firstLinkRef.current?.focus({ preventScroll: true }),
-    );
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        onCloseRef.current();
-        return;
-      }
-      if (e.key !== "Tab" || !panel) return;
-      const focusable = Array.from(
-        panel.querySelectorAll<HTMLElement>(FOCUSABLE),
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const active = document.activeElement;
-      if (e.shiftKey && (active === first || !panel.contains(active))) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && (active === last || !panel.contains(active))) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      document.removeEventListener("keydown", onKeyDown);
-      for (const el of madeInert) el.removeAttribute("inert");
-    };
-  }, [isOpen]);
+  // reader behaviour only; nothing here changes how the menu looks. Focus
+  // returns to the visible menu button from Header, so restoreFocus is off.
+  useFocusTrap({
+    active: isOpen,
+    containerRef: panelRef,
+    keepRefs: [backdropRef],
+    onEscape: onClose,
+    initialFocusRef: firstLinkRef,
+  });
 
   return (
     <>
