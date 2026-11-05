@@ -29,6 +29,15 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "motion"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "lucide-react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@vercel/speed-insights"
+        update-types: ["version-update:semver-major"]
+      # Node types must not run ahead of the Node 24 runtime.
+      - dependency-name: "@types/node"
+        versions: [">=25"]
 
   # GitHub Actions used by workflows in .github/workflows.
   - package-ecosystem: "github-actions"
