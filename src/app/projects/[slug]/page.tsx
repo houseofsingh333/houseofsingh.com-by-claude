@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/fetch";
+import { devPlaceholder } from "@/lib/placeholders";
 import {
   projectBySlugQuery,
   projectsListQuery,
@@ -34,7 +35,7 @@ export async function generateStaticParams() {
     return sanityProjects.map((project) => ({ slug: project.slug }));
   }
 
-  return projects.map((project) => ({ slug: project.slug }));
+  return devPlaceholder(projects, []).map((project) => ({ slug: project.slug }));
 }
 
 function ProjectHeader({ category, title, intro, isUpcoming, author }: { category: string; title: string; intro?: string; isUpcoming?: boolean; author?: string | null }) {
@@ -118,7 +119,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const fallback = projects.find((p) => p.slug === slug);
+  const fallback = devPlaceholder(projects, []).find((p) => p.slug === slug);
   if (!fallback) return { title: "Not Found" };
   return {
     title: fallback.title,
@@ -198,8 +199,10 @@ export default async function ProjectDetailPage({ params }: Props) {
     );
   }
 
-  // Fallback to placeholder data
-  const fallback = projects.find((p) => p.slug === slug);
+  // Placeholder data is local development only. A Sanity failure has already
+  // thrown above (ISR keeps the last good page), so reaching notFound() means
+  // Sanity answered and the slug does not exist.
+  const fallback = devPlaceholder(projects, []).find((p) => p.slug === slug);
   if (!fallback) notFound();
 
   const fallbackCreativeWorkJsonLd = buildCreativeWorkJsonLd(fallback, settings);

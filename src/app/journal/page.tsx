@@ -5,6 +5,7 @@ import { shareCard } from "@/lib/share-metadata";
 import JournalList from "@/components/journal/JournalList";
 import { sanityFetch } from "@/sanity/fetch";
 import { journalFeedQuery } from "@/sanity/queries";
+import { devPlaceholder } from "@/lib/placeholders";
 import {
   fallbackJournalEntries,
   type JournalEntry,
@@ -33,7 +34,9 @@ export default async function JournalPage() {
     query: journalFeedQuery,
   });
 
-  const entries = data?.length ? data : fallbackJournalEntries;
+  const entries = data?.length
+    ? data
+    : devPlaceholder(fallbackJournalEntries, []);
 
   return (
     <Suspense>
