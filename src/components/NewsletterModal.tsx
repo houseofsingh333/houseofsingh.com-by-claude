@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import HoneypotField from "@/components/HoneypotField";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 type Props = {
   isOpen: boolean;
@@ -22,7 +23,20 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
   const [errorMsg, setErrorMsg] = useState("");
   const [closing, setClosing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
   const prefersReduced = usePrefersReducedMotion();
+
+  // While open: the rest of the page is inert, Tab stays inside, Escape
+  // closes, and on close focus returns to where it was before opening.
+  // Initial focus moves to the email field (the existing timer below).
+  useFocusTrap({
+    active: isOpen,
+    containerRef: dialogRef,
+    keepRefs: [backdropRef],
+    onEscape: onClose,
+    restoreFocus: true,
+  });
 
   // Keep a stable handle to onClose so the auto-dismiss timers don't reset
   // when the parent passes a fresh inline callback on re-render.
@@ -111,14 +125,21 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
     <>
       {/* Backdrop */}
       <div
+        ref={backdropRef}
         className={`fixed inset-0 z-[60] bg-foreground/30 backdrop-blur-sm transition-opacity duration-300 ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
       />
 
-      {/* Modal */}
+      {/* Modal. Inert while hidden, so its controls are out of the Tab order
+          and hidden from screen readers; the fade is unchanged. */}
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="newsletter-title"
+        inert={!isOpen}
         className={`fixed inset-0 z-[61] flex items-center justify-center px-6 transition-all duration-300 ${
           isOpen
             ? "opacity-100 pointer-events-auto"
@@ -151,7 +172,7 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
 
           {status === "success" ? (
             <div className="text-center py-4">
-              <h3 className="font-editorial text-2xl md:text-3xl font-light text-foreground mb-3">
+              <h3 id="newsletter-title" className="font-editorial text-2xl md:text-3xl font-light text-foreground mb-3">
                 Thank you
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -160,7 +181,7 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
             </div>
           ) : (
             <>
-              <h3 className="font-editorial text-2xl md:text-3xl font-light text-foreground mb-2">
+              <h3 id="newsletter-title" className="font-editorial text-2xl md:text-3xl font-light text-foreground mb-2">
                 Stay in touch
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed mb-8">
@@ -186,7 +207,7 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
                 </div>
 
                 {status === "error" && (
-                  <p className="text-sm text-red-500">{errorMsg}</p>
+                  <p className="text-sm text-red-500" role="alert">{errorMsg}</p>
                 )}
 
                 <button

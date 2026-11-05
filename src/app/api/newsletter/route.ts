@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { writeClient } from "@/sanity/writeClient";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { isHoneypotFilled } from "@/lib/spam-protection";
+import { readJsonBody } from "@/lib/read-json-body";
 
 export async function POST(request: Request) {
   try {
@@ -17,7 +18,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    // Size limit (413) and JSON validity (400) are checked before any parsing.
+    const parsed = await readJsonBody(request);
+    if (!parsed.ok) return parsed.response;
+    const body = parsed.body;
 
     // Honeypot: a filled hidden field means a bot. Silently accept (200) so
     // the bot can't tell it was rejected, and write nothing to Sanity.
@@ -27,7 +31,8 @@ export async function POST(request: Request) {
 
     const email = typeof body.email === "string" ? body.email.trim() : "";
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    // 254 characters is the longest valid email address.
+    if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
         { error: "Please provide a valid email address." },
         { status: 400 },

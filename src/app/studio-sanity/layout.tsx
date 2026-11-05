@@ -1,5 +1,11 @@
-export const metadata = {
+import type { Metadata } from "next";
+
+// Keep the Studio out of search results. robots.txt also disallows the path;
+// this tag covers links to it found elsewhere (the same as next-sanity's own
+// studio metadata, which sets robots noindex).
+export const metadata: Metadata = {
   title: "Sanity Studio",
+  robots: { index: false, follow: false },
 };
 
 /**

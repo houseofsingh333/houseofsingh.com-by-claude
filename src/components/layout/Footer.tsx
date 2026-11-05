@@ -27,6 +27,7 @@ export default function Footer({ instagramPhotos = [] }: Props) {
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +40,9 @@ export default function Footer({ instagramPhotos = [] }: Props) {
         body: JSON.stringify({ email: email.trim(), [HONEYPOT_FIELD]: company }),
       });
       if (!res.ok) {
+        // Show the server's own wording (for example the rate limit message).
+        const data = await res.json().catch(() => ({}));
+        setErrorMsg(typeof data.error === "string" ? data.error : "");
         setStatus("error");
         return;
       }
@@ -46,6 +50,7 @@ export default function Footer({ instagramPhotos = [] }: Props) {
       setEmail("");
       setCompany("");
     } catch {
+      setErrorMsg("");
       setStatus("error");
     }
   };
@@ -132,8 +137,8 @@ export default function Footer({ instagramPhotos = [] }: Props) {
                 </form>
               )}
               {status === "error" && (
-                <p className="footer-nl-error">
-                  Something went wrong. Try again.
+                <p className="footer-nl-error" role="alert">
+                  {errorMsg || "Something went wrong. Try again."}
                 </p>
               )}
             </div>
