@@ -6,6 +6,9 @@ import { useDragToScroll } from "@/hooks/useDragToScroll";
 import type { AboutMilestone } from "@/lib/types";
 
 const CARD_W = 280;
+// Height of the 3:4 image frame. The edge fades stop here so they only ever
+// soften photographs, never the year and title underneath.
+const FRAME_H = Math.round((CARD_W * 4) / 3);
 const GAP = 24;
 const GAP_MOBILE = 16;
 
@@ -29,6 +32,9 @@ const FOCUS_PARAMS = {
 export default function Timeline({ milestones }: { milestones: AboutMilestone[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  // The focus effect (blur, grayscale, fade) is applied to the image frames
+  // only, so the milestone text stays readable at every scroll position.
+  const framesRef = useRef<(HTMLDivElement | null)[]>([]);
   const deviceRef = useRef<DeviceCategory>("desktop");
   const [device, setDevice] = useState<DeviceCategory>("desktop");
 
@@ -48,24 +54,47 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
     const container = scrollRef.current;
     if (!container) return;
 
+    const centerX = container.scrollLeft + container.clientWidth / 2;
+
+    // The milestone closest to the centre is the active one: its text is
+    // charcoal, every other milestone's text is muted grey. This runs on all
+    // devices, including mobile where the image effect is pure CSS.
+    let activeIdx = -1;
+    let bestDist = Infinity;
+    cardsRef.current.forEach((card, idx) => {
+      if (!card) return;
+      const d = Math.abs(centerX - (card.offsetLeft + card.offsetWidth / 2));
+      if (d < bestDist) {
+        bestDist = d;
+        activeIdx = idx;
+      }
+    });
+    cardsRef.current.forEach((card, idx) => {
+      if (!card) return;
+      if (idx === activeIdx) card.dataset.active = "";
+      else delete card.dataset.active;
+    });
+
     const params = FOCUS_PARAMS[deviceRef.current];
 
     // On mobile, clear any leftover inline styles and skip
     if (!params) {
-      for (const card of cardsRef.current) {
-        if (!card) continue;
-        card.style.filter = "";
-        card.style.opacity = "";
-        card.style.transform = "";
-      }
+      cardsRef.current.forEach((card, idx) => {
+        if (card) card.style.transform = "";
+        const frame = framesRef.current[idx];
+        if (frame) {
+          frame.style.filter = "";
+          frame.style.opacity = "";
+        }
+      });
       return;
     }
 
-    const centerX = container.scrollLeft + container.clientWidth / 2;
     const { maxBlur, maxGrayscale, minOpacity, minScale } = params;
 
-    for (const card of cardsRef.current) {
-      if (!card) continue;
+    cardsRef.current.forEach((card, idx) => {
+      const frame = framesRef.current[idx];
+      if (!card || !frame) return;
       const cardCenter = card.offsetLeft + card.offsetWidth / 2;
       const dist = Math.abs(centerX - cardCenter);
       const maxDist = container.clientWidth / 2;
@@ -76,10 +105,10 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
       const opacity = 1 - t * (1 - minOpacity);
       const scale = 1 - t * (1 - minScale);
 
-      card.style.filter = `blur(${blur}px) grayscale(${grayscale})`;
-      card.style.opacity = String(opacity);
+      frame.style.filter = `blur(${blur}px) grayscale(${grayscale})`;
+      frame.style.opacity = String(opacity);
       card.style.transform = `scale(${scale})`;
-    }
+    });
   }, []);
 
   useEffect(() => {
@@ -97,12 +126,9 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
     updatePadding();
     window.addEventListener("resize", updatePadding);
 
-    // Only attach scroll listener for focus calculation on non-mobile
-    const onScroll = () => {
-      if (deviceRef.current !== "mobile") {
-        applyFocus();
-      }
-    };
+    // On mobile this only moves the active marker; the image effect there
+    // is CSS driven.
+    const onScroll = () => applyFocus();
     container.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
@@ -110,6 +136,12 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
       container.removeEventListener("scroll", onScroll);
     };
   }, [applyFocus]);
+
+  // Re-run when the layout switches device category, so the active marker
+  // and inline image styles match the new mode.
+  useEffect(() => {
+    applyFocus();
+  }, [device, applyFocus]);
 
   const isMobile = device === "mobile";
 
@@ -123,14 +155,16 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
       {!isMobile && (
         <>
           <div
-            className="edge-fade absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+            className="edge-fade absolute left-0 top-0 z-10 pointer-events-none"
             style={{
+              height: FRAME_H,
               background: "linear-gradient(to right, var(--background) 0%, color-mix(in srgb, var(--background) 70%, transparent) 30%, color-mix(in srgb, var(--background) 30%, transparent) 60%, transparent 100%)",
             }}
           />
           <div
-            className="edge-fade absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+            className="edge-fade absolute right-0 top-0 z-10 pointer-events-none"
             style={{
+              height: FRAME_H,
               background: "linear-gradient(to left, var(--background) 0%, color-mix(in srgb, var(--background) 70%, transparent) 30%, color-mix(in srgb, var(--background) 30%, transparent) 60%, transparent 100%)",
             }}
           />
@@ -157,17 +191,24 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
               ...(isMobile
                 ? {}
                 : {
-                    willChange: "filter, opacity, transform",
-                    transition: "filter 0.15s ease, opacity 0.15s ease, transform 0.15s ease",
+                    willChange: "transform",
+                    transition: "transform 0.15s ease",
                   }),
             }}
           >
-            {/* Image frame */}
+            {/* Image frame: carries the focus fade */}
             <div
-              className="relative w-full overflow-hidden"
+              ref={(el) => { framesRef.current[idx] = el; }}
+              className="film-frame relative w-full overflow-hidden"
               style={{
                 aspectRatio: "3 / 4",
                 border: "1px solid rgba(0,0,0,0.06)",
+                ...(isMobile
+                  ? {}
+                  : {
+                      willChange: "filter, opacity",
+                      transition: "filter 0.15s ease, opacity 0.15s ease",
+                    }),
               }}
             >
               <SanityImage
@@ -182,20 +223,16 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
             {/* Text */}
             <div className="mt-3 text-center">
               <p
-                className="font-editorial font-light leading-none"
-                style={{
-                  fontSize: 36,
-                  color: "var(--muted-foreground)",
-                }}
+                className="film-text font-editorial font-light leading-none"
+                style={{ fontSize: 36 }}
               >
                 {m.year}
               </p>
               <p
-                className="mt-1 uppercase"
+                className="film-text mt-1 uppercase"
                 style={{
                   fontSize: 10,
                   letterSpacing: "0.18em",
-                  color: "var(--muted-foreground)",
                 }}
               >
                 {m.title}
@@ -209,6 +246,16 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
       <style jsx>{`
         .edge-fade {
           width: 120px;
+        }
+
+        /* Milestone text never fades: muted grey (4.57:1) when inactive,
+           charcoal on the milestone in focus. */
+        .film-text {
+          color: var(--muted-foreground);
+          transition: color 0.3s ease;
+        }
+        .film-card[data-active] .film-text {
+          color: var(--foreground);
         }
         @media (max-width: 1023px) {
           .edge-fade {
@@ -226,6 +273,8 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
 
           .film-card--mobile {
             scroll-snap-align: center;
+          }
+          .film-card--mobile .film-frame {
             will-change: filter, opacity;
           }
         }
@@ -260,7 +309,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
           }
 
           @supports (animation-timeline: view()) {
-            .film-card--mobile {
+            .film-card--mobile .film-frame {
               animation: grayscale-to-color linear both;
               animation-timeline: view(inline);
               animation-range: contain 0% contain 100%;
@@ -268,7 +317,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
           }
 
           @supports not (animation-timeline: view()) {
-            .film-card--mobile {
+            .film-card--mobile .film-frame {
               filter: grayscale(0);
               opacity: 1;
             }
@@ -277,11 +326,17 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
 
         @media (prefers-reduced-motion: reduce) {
           .film-card {
+            transform: none !important;
+            transition: none !important;
+          }
+          .film-frame {
             transition: opacity 0.15s ease !important;
             filter: none !important;
-            transform: none !important;
           }
-          .film-card--mobile {
+          .film-text {
+            transition: none;
+          }
+          .film-card--mobile .film-frame {
             animation: none !important;
             filter: grayscale(0) !important;
             opacity: 1 !important;
