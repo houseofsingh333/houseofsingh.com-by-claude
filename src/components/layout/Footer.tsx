@@ -6,6 +6,7 @@ import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import FooterInstagram from "./FooterInstagram";
 import HoneypotField from "@/components/HoneypotField";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 type Props = {
   instagramPhotos?: InstagramPhoto[];
@@ -22,6 +23,7 @@ const NAV_LINKS = [
 export default function Footer({ instagramPhotos = [] }: Props) {
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState(""); // honeypot
+  const prefersReducedMotion = usePrefersReducedMotion();
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -49,7 +51,7 @@ export default function Footer({ instagramPhotos = [] }: Props) {
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "instant" : "smooth" });
   };
 
   return (
