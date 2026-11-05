@@ -61,7 +61,7 @@ function FeaturedRow({
             className={`w-full h-full object-cover ${
               reducedMotion
                 ? ""
-                : "transition-transform duration-[450ms] ease-in-out group-hover:scale-105"
+                : "transition-transform duration-[450ms] ease-in-out group-hover:scale-105 group-focus-visible:scale-105"
             }`}
           />
         </div>
@@ -87,7 +87,7 @@ function FeaturedRow({
 
         {/* Line 3: publication link with icon */}
         {outlet.url && (
-          <p className="mt-[15px] text-[12px] tracking-[0.18em] uppercase text-foreground/80 flex items-center gap-1.5 group-hover:text-foreground transition-colors duration-300">
+          <p className="mt-[15px] text-[12px] tracking-[0.18em] uppercase text-foreground/80 inline-flex items-center gap-1.5 pb-1 border-b border-foreground/20 group-hover:text-foreground group-hover:border-foreground group-focus-visible:text-foreground group-focus-visible:border-foreground transition-colors duration-300 motion-reduce:transition-none">
             <span>VIEW ARTICLE</span>
             <ExternalLinkIcon />
           </p>
@@ -103,7 +103,7 @@ function FeaturedRow({
           href={outlet.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block group hover:opacity-70 transition-opacity duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+          className="block group focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--featured-panel)]"
         >
           {rowContent}
         </a>
