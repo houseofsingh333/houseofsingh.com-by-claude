@@ -70,11 +70,18 @@ export default function JournalList({ entries }: Props) {
   const gridRef = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
 
-  /* Sync initial selection when entries change (e.g. ISR revalidation) */
-  useEffect(() => {
+  /* Sync initial selection when entries or the URL change (e.g. ISR
+     revalidation). Adjusted during render, React's recommended pattern for
+     state that follows a prop, instead of setting state in an effect. */
+  const [syncedFrom, setSyncedFrom] = useState(resolved);
+  if (
+    syncedFrom.year !== resolved.year ||
+    syncedFrom.month !== resolved.month
+  ) {
+    setSyncedFrom(resolved);
     setActiveYear(resolved.year);
     setActiveMonth(resolved.month);
-  }, [resolved.year, resolved.month]);
+  }
 
   /* Derive unique years from entries, sorted newest-first */
   const years = useMemo(() => {

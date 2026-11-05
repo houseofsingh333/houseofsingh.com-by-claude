@@ -76,6 +76,11 @@ export default function GlobalError({
             >
               Try again
             </button>
+            {/* A plain link on purpose. This screen appears only when the root
+                layout itself has crashed, so a full page reload is the
+                recovery; next/link would try a client side navigation inside
+                the broken app instead. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
               href="/"
               style={{

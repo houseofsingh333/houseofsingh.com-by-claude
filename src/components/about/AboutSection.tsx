@@ -5,6 +5,7 @@ import { PortableText } from "@portabletext/react";
 import { proseComponents } from "@/components/proseComponents";
 import SanityImage from "@/components/SanityImage";
 import { useColourReveal } from "@/hooks/useColourReveal";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import type { AboutPageData } from "@/lib/types";
 import {
   FALLBACK_BIO_PARAGRAPHS,
@@ -39,8 +40,11 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
   } = data;
 
   const logoRef = useRef<HTMLDivElement>(null);
-  const [logoRevealed, setLogoRevealed] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [logoInView, setLogoInView] = useState(false);
+  const reducedMotion = usePrefersReducedMotion();
+  // Under reduced motion the logo and text are shown at once, without the
+  // scroll reveal. Derived rather than stored, so no state is set in an effect.
+  const logoRevealed = reducedMotion || logoInView;
 
   // Portrait colour reveal — scroll-driven on every device (no hover path:
   // an iPad in landscape is 1024px+ yet has no hover). Shared with the
@@ -50,22 +54,13 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
   useEffect(() => {
     const el = logoRef.current;
-    if (!el) return;
-
-    // Skip animation for users who prefer reduced motion
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-    if (prefersReducedMotion) {
-      setReducedMotion(true);
-      setLogoRevealed(true);
-      return;
-    }
+    // Reduced motion needs no observer: logoRevealed is already true.
+    if (!el || reducedMotion) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setLogoRevealed(true);
+          setLogoInView(true);
           observer.disconnect();
         }
       },
@@ -73,7 +68,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [reducedMotion]);
 
   const roles = founderRoles ?? [
     "Creative Director",
