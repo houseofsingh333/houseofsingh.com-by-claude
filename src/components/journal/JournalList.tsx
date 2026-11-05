@@ -342,7 +342,7 @@ export default function JournalList({ entries }: Props) {
                 </p>
 
                 {/* Title */}
-                <h2 className="text-[11px] md:text-xs uppercase tracking-[0.15em] text-foreground font-normal leading-[1.6] mb-3 line-clamp-2">
+                <h2 className="font-editorial text-base md:text-lg font-light text-foreground leading-snug mb-3 line-clamp-2">
                   {entry.title}
                 </h2>
 

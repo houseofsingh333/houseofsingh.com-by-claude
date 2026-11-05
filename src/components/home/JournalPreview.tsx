@@ -145,7 +145,7 @@ export default function JournalPreview({ entries }: Props) {
 
               {/* Title / excerpt */}
               <div className="flex-1 min-w-0">
-                <h3 className="text-lg md:text-3xl lg:text-4xl font-normal text-foreground leading-tight">
+                <h3 className="font-editorial text-lg md:text-3xl lg:text-4xl font-normal text-foreground leading-tight">
                   {entry.title || entry.excerpt}
                 </h3>
               </div>
@@ -236,7 +236,7 @@ export default function JournalPreview({ entries }: Props) {
               <div className="journal-card-text absolute inset-x-0 bottom-0 p-6 z-10 flex items-end justify-between gap-4">
                 {/* Left: title + read more */}
                 <div className="flex flex-col items-start min-w-0">
-                  <h3 className="text-[15px] font-light text-white leading-snug line-clamp-2">
+                  <h3 className="font-editorial text-[15px] font-light text-white leading-snug line-clamp-2">
                     {entry.title}
                   </h3>
                   <span className="mt-2 text-[10px] tracking-[0.2em] uppercase text-white/70 underline underline-offset-4 decoration-white/40">
