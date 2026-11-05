@@ -30,7 +30,6 @@ jobs:
 
       - run: npx tsc --noEmit
 
-      # Lint is not run yet: main has existing lint errors. Add an
-      # `npm run lint` step here once those errors are fixed.
+      - run: npm run lint
 
       - run: npm run build
