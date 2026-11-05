@@ -6,6 +6,7 @@ import Image from "next/image";
 import { sanityLoader } from "@/lib/sanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import ProjectsFiltersHorizontal from "./ProjectsFiltersHorizontal";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import type { ProjectSummary } from "@/lib/placeholder-data";
 
 /** Lowercase slug-like form for matching: "Visual Identity" → "visual-identity" */
@@ -22,6 +23,7 @@ export default function ProjectsFilteredGrid({
   projects,
   initialFilter,
 }: Props) {
+  const prefersReducedMotion = usePrefersReducedMotion();
   // Derive unique categories from project data, fall back to defaults
   const categories = useMemo(() => {
     return Array.from(
@@ -70,7 +72,10 @@ export default function ProjectsFilteredGrid({
           filterRowRef.current.getBoundingClientRect().top +
           window.scrollY -
           headerOffset;
-        window.scrollTo({ top, behavior: "smooth" });
+        window.scrollTo({
+          top,
+          behavior: prefersReducedMotion ? "instant" : "smooth",
+        });
       }
 
       // Allow a frame for DOM update, then fade in
@@ -78,7 +83,7 @@ export default function ProjectsFilteredGrid({
         setFadingOut(false);
       });
     }, 200);
-  }, [active]);
+  }, [active, prefersReducedMotion]);
 
   const filteredProjects = useMemo(() => {
     if (active === "All") return projects;

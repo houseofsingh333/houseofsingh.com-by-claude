@@ -42,8 +42,15 @@
 }
 
 html {
-  scroll-behavior: smooth;
   scrollbar-gutter: stable;
+}
+
+/* Smooth scrolling (anchor jumps, the skip link) only when the visitor
+   allows motion; otherwise the browser default of an instant jump. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -85,7 +92,12 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .editorial-fade-in,
-  .editorial-slide-up {
+  .editorial-slide-up,
+  /* Tailwind utilities built from the --animate-* tokens above: the About
+     quote (animate-editorial-fade-in), the journal grid and the journal
+     hover preview (animate-fade-in). Content simply appears. */
+  .animate-editorial-fade-in,
+  .animate-fade-in {
     animation: none;
     opacity: 1;
     transform: none;

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import NavOverlay from "./NavOverlay";
+import NavOverlay, { SITE_MENU_ID } from "./NavOverlay";
 import { useIntro } from "@/components/IntroContext";
 
 const NewsletterModal = dynamic(
@@ -35,6 +35,9 @@ export default function Header({ items }: Props) {
   const introTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const introMaxTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const introDismissedRef = useRef(false);
+  const menuButton1Ref = useRef<HTMLButtonElement>(null);
+  const menuButton2Ref = useRef<HTMLButtonElement>(null);
+  const menuWasOpenRef = useRef(false);
 
   /* Signals the hero (via context) that the intro is over — no polling. */
   const { completeIntro } = useIntro();
@@ -128,6 +131,22 @@ export default function Header({ items }: Props) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  /* Closing the menu by any means (Close, backdrop, Escape, a link) returns
+     focus to whichever menu button is currently visible. Skipped on first
+     render so the page never steals focus on load. */
+  useEffect(() => {
+    if (menuOpen) {
+      menuWasOpenRef.current = true;
+      return;
+    }
+    if (!menuWasOpenRef.current) return;
+    menuWasOpenRef.current = false;
+    const button = scrolled ? menuButton2Ref.current : menuButton1Ref.current;
+    button?.focus({ preventScroll: true });
+  }, [menuOpen, scrolled]);
+
   const handleNewsletterOpen = useCallback(() => {
     setMenuOpen(false);
     setTimeout(() => setNewsletterOpen(true), 200);
@@ -212,8 +231,11 @@ export default function Header({ items }: Props) {
         {/* Dot menu — left, top edge at 32px rail.
             z-10 + pointer-events:auto — same fix as toggle (see comment there). */}
         <button
+          ref={menuButton1Ref}
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
+          aria-expanded={menuOpen}
+          aria-controls={SITE_MENU_ID}
           tabIndex={showState1 ? 0 : -1}
           className="absolute top-[32px] left-5 md:left-8 z-10 min-h-[44px] min-w-[44px] p-0 flex items-center gap-2 group"
           style={{ pointerEvents: "auto" }}
@@ -235,8 +257,11 @@ export default function Header({ items }: Props) {
       >
         {/* Left: dot icon (opens NavOverlay) */}
         <button
+          ref={menuButton2Ref}
           onClick={() => setMenuOpen(true)}
           aria-label="Open menu"
+          aria-expanded={menuOpen}
+          aria-controls={SITE_MENU_ID}
           tabIndex={showState2 ? 0 : -1}
           className="flex items-center gap-2 group min-h-[44px] min-w-[44px]"
         >
@@ -262,7 +287,7 @@ export default function Header({ items }: Props) {
 
       <NavOverlay
         isOpen={menuOpen}
-        onClose={() => setMenuOpen(false)}
+        onClose={closeMenu}
         onNewsletterOpen={handleNewsletterOpen}
         items={items}
       />

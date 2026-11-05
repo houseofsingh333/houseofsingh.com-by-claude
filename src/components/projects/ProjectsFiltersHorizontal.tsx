@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 type Props = {
   categories: string[];
@@ -34,6 +35,7 @@ export default function ProjectsFiltersHorizontal({
   const railRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const mobileRailRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   // ——— Overflow detection (desktop) ———
   useEffect(() => {
@@ -85,11 +87,11 @@ export default function ProjectsFiltersHorizontal({
     if (activeBtn) {
       activeBtn.scrollIntoView({
         inline: "center",
-        behavior: "smooth",
+        behavior: prefersReducedMotion ? "instant" : "smooth",
         block: "nearest",
       });
     }
-  }, [active]);
+  }, [active, prefersReducedMotion]);
 
   const select = useCallback(
     (cat: string) => {
