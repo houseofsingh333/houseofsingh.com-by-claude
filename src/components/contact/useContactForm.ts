@@ -29,26 +29,25 @@ export function useContactForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [phase, setPhase] = useState<Phase>("form");
   const [returnToReview, setReturnToReview] = useState(false);
-  const [hasDraft, setHasDraft] = useState(false);
+  // Whether a saved draft existed when the form mounted. Read once on mount,
+  // like formData above, rather than set from an effect. Safe to differ
+  // between server and browser: it only affects the "Clear saved progress"
+  // button, which renders after the visitor moves past step 0.
+  const [hasDraft, setHasDraft] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return false;
+      const parsed = JSON.parse(saved);
+      return Boolean(parsed.intent || parsed.name || parsed.email);
+    } catch {
+      return false;
+    }
+  });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   // Honeypot — kept out of formData so it is never persisted to localStorage.
   const [honeypot, setHoneypot] = useState("");
-
-  // Draft restored notice
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.intent || parsed.name || parsed.email) {
-          setHasDraft(true);
-        }
-      }
-    } catch {
-      /* ignore */
-    }
-  }, []);
 
   // Autosave to localStorage
   useEffect(() => {
