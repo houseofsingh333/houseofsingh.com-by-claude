@@ -98,7 +98,7 @@ export default function SpotifyEmbed({ playlistUrl }: Props) {
                 style={{ height: EMBED_HEIGHT, borderRadius: 12 }}
                 className="w-full bg-secondary/60 border border-border/40 flex items-center px-5"
               >
-                <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/50">
+                <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
                   Playlist
                 </span>
               </div>

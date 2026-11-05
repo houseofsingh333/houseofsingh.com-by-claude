@@ -185,7 +185,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
                 className="font-editorial font-light leading-none"
                 style={{
                   fontSize: 36,
-                  color: "rgba(0,0,0,0.12)",
+                  color: "var(--muted-foreground)",
                 }}
               >
                 {m.year}
@@ -195,7 +195,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
                 style={{
                   fontSize: 10,
                   letterSpacing: "0.18em",
-                  color: "#777",
+                  color: "var(--muted-foreground)",
                 }}
               >
                 {m.title}

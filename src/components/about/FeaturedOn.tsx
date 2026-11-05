@@ -70,7 +70,7 @@ function FeaturedRow({
       {/* Text zone */}
       <div className="flex-1 min-w-0">
         {/* Line 1: publication · date */}
-        <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50 mb-2">
+        <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-2">
           {outlet.name}
           {date && (
             <>

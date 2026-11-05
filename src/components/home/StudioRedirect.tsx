@@ -8,7 +8,7 @@ export default function StudioRedirect() {
     <section className="bg-foreground text-background px-6 md:px-16 py-14 md:py-24">
       <ScrollReveal offset={24} duration={0.9}>
         <div className="max-w-5xl mx-auto flex flex-col items-center text-center gap-6">
-          <p className="text-[10px] tracking-[0.3em] uppercase text-background/40">
+          <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground-inverse">
             A different practice
           </p>
 
@@ -16,7 +16,7 @@ export default function StudioRedirect() {
             House of Singh Studios
           </h3>
 
-          <p className="text-sm md:text-[15px] text-background/60 leading-[1.8] max-w-md">
+          <p className="text-sm md:text-[15px] text-muted-foreground-inverse leading-[1.8] max-w-md">
             A design studio specializing in brand identities, graphic design, and
             creative direction for SMEs.
           </p>

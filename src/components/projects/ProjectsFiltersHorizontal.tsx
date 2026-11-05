@@ -14,7 +14,7 @@ const BTN_BASE =
 
 const BTN_ACTIVE = "text-foreground border-b border-foreground";
 const BTN_INACTIVE =
-  "text-muted-foreground/40 hover:text-muted-foreground border-b border-transparent";
+  "text-muted-foreground hover:text-foreground border-b border-transparent";
 
 /**
  * Horizontal editorial filter rail.
@@ -134,7 +134,7 @@ export default function ProjectsFiltersHorizontal({
           {overflowing && (
             <button
               onClick={() => setPanelOpen((v) => !v)}
-              className={`${BTN_BASE} text-muted-foreground/40 hover:text-muted-foreground border-b border-transparent`}
+              className={`${BTN_BASE} text-muted-foreground hover:text-foreground border-b border-transparent`}
               aria-expanded={panelOpen}
             >
               {panelOpen ? "Less" : "More"}
@@ -177,7 +177,7 @@ export default function ProjectsFiltersHorizontal({
                 key={cat}
                 onClick={() => select(cat)}
                 tabIndex={panelOpen ? 0 : -1}
-                className={`text-left text-xs tracking-[0.15em] uppercase py-1 cursor-pointer select-none transition-[color,opacity] duration-200 outline-none focus-visible:underline focus-visible:underline-offset-4 ${isActive ? "text-foreground" : "text-muted-foreground/40 hover:text-muted-foreground"}`}
+                className={`text-left text-xs tracking-[0.15em] uppercase py-1 cursor-pointer select-none transition-[color,opacity] duration-200 outline-none focus-visible:underline focus-visible:underline-offset-4 ${isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
                 aria-current={isActive ? "true" : undefined}
               >
                 <span className="inline-flex items-center gap-2">

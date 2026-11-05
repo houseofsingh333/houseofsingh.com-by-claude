@@ -10,11 +10,11 @@ export function EditorialSidebar() {
         Say hello.
       </h1>
       <div className="max-w-md">
-        <p className="text-muted-foreground/80 text-[0.9375rem] md:text-base leading-[1.7] mb-3">
+        <p className="text-muted-foreground text-[0.9375rem] md:text-base leading-[1.7] mb-3">
           Whether it&apos;s a project, a collaboration, or simply a conversation,
           I&apos;m always open to hearing from thoughtful people.
         </p>
-        <p className="text-muted-foreground/80 text-[0.9375rem] md:text-base leading-[1.7]">
+        <p className="text-muted-foreground text-[0.9375rem] md:text-base leading-[1.7]">
           If you&apos;d like to catch up over coffee, go for a walk, or explore an
           idea together, feel free to reach out.
         </p>

@@ -205,7 +205,7 @@ export default async function JournalDetailPage({ params }: Props) {
                 />
               </div>
               {coverCaption && (
-                <figcaption className="text-xs text-muted-foreground/60 mt-3">
+                <figcaption className="text-xs text-muted-foreground mt-3">
                   {coverCaption}
                 </figcaption>
               )}
@@ -241,7 +241,7 @@ export default async function JournalDetailPage({ params }: Props) {
                               className="w-full"
                             />
                             {typeof value.caption === "string" && (
-                              <figcaption className="text-xs text-muted-foreground/60 mt-2">
+                              <figcaption className="text-xs text-muted-foreground mt-2">
                                 {value.caption}
                               </figcaption>
                             )}
@@ -269,22 +269,22 @@ export default async function JournalDetailPage({ params }: Props) {
                     >
                       <span
                         aria-hidden="true"
-                        className="block text-sm text-muted-foreground/50 mb-2 transition-[transform,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-muted-foreground/80 motion-safe:group-hover:-translate-x-0.5"
+                        className="block text-sm text-muted-foreground mb-2 transition-[transform,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-foreground motion-safe:group-hover:-translate-x-0.5"
                       >
                         &larr;
                       </span>
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 mb-2">
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
                         Previous
                       </p>
                       <p className="text-xs md:text-sm uppercase tracking-[0.1em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
                         {prevEntry.title}
                       </p>
-                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mt-1">
+                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">
                         {formatDate(prevEntry.date)}
                       </p>
                     </Link>
                   ) : (
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                       No previous entry
                     </p>
                   )}
@@ -299,22 +299,22 @@ export default async function JournalDetailPage({ params }: Props) {
                     >
                       <span
                         aria-hidden="true"
-                        className="block text-sm text-muted-foreground/50 mb-2 transition-[transform,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-muted-foreground/80 motion-safe:group-hover:translate-x-0.5"
+                        className="block text-sm text-muted-foreground mb-2 transition-[transform,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-foreground motion-safe:group-hover:translate-x-0.5"
                       >
                         &rarr;
                       </span>
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70 mb-2">
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
                         Next
                       </p>
                       <p className="text-xs md:text-sm uppercase tracking-[0.1em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
                         {nextEntry.title}
                       </p>
-                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mt-1">
+                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">
                         {formatDate(nextEntry.date)}
                       </p>
                     </Link>
                   ) : (
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                       No next entry
                     </p>
                   )}

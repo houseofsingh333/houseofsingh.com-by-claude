@@ -42,7 +42,7 @@ function ProjectHeader({ category, title, intro, isUpcoming, author }: { categor
   const authorText = author?.trim();
   return (
     <ScrollReveal as="section" className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset mb-16 md:mb-20" offset={14} duration={0.8}>
-      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/50 mb-4">
+      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
         {category}
       </p>
       <div className="w-full h-px bg-border mb-8 md:mb-10" />
@@ -50,12 +50,12 @@ function ProjectHeader({ category, title, intro, isUpcoming, author }: { categor
         {title}
       </h1>
       {authorText && (
-        <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground/70 mb-6">
+        <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-6">
           {authorText}
         </p>
       )}
       {isUpcoming && (
-        <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 mb-8">
+        <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-8">
           <span className="upcoming-dot" aria-hidden="true" />
           Upcoming
         </p>
@@ -218,7 +218,7 @@ export default async function ProjectDetailPage({ params }: Props) {
       <JsonLd data={fallbackBreadcrumbJsonLd} />
       <ProjectHeader category={fallback.category} title={fallback.title} intro={fallback.excerpt} />
       <section className="mx-auto max-w-3xl px-6 md:px-16">
-        <p className="text-xs text-muted-foreground/40">
+        <p className="text-xs text-muted-foreground">
           Full project detail with content sections will render here once Sanity
           is connected.
         </p>

@@ -9,7 +9,7 @@ export default function PullQuoteRenderer({ section }: Props) {
         {section.quote}
       </blockquote>
       {section.attribution?.trim() && (
-        <figcaption className="mt-6 text-[11px] uppercase tracking-[0.15em] text-muted-foreground/60">
+        <figcaption className="mt-6 text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
           {section.attribution}
         </figcaption>
       )}

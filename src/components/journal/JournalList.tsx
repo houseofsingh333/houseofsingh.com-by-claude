@@ -249,7 +249,7 @@ export default function JournalList({ entries }: Props) {
                       className={`font-editorial text-sm md:text-base mt-3 transition-all duration-300 ${
                         isActive
                           ? "text-foreground font-medium"
-                          : "text-muted-foreground/50 group-hover:text-muted-foreground"
+                          : "text-muted-foreground group-hover:text-foreground"
                       }`}
                     >
                       {year}
@@ -287,8 +287,8 @@ export default function JournalList({ entries }: Props) {
                       : isFuture
                         ? "text-muted-foreground/30 cursor-not-allowed"
                         : hasEntries
-                          ? "text-muted-foreground/70 hover:text-foreground border-b border-transparent hover:border-foreground"
-                          : "text-muted-foreground/40 hover:text-muted-foreground/60 border-b border-transparent"
+                          ? "text-muted-foreground hover:text-foreground border-b border-transparent hover:border-foreground"
+                          : "text-muted-foreground hover:text-foreground border-b border-transparent"
                   }`}
                 >
                   {MONTH_LABELS[month - 1]}
@@ -303,7 +303,7 @@ export default function JournalList({ entries }: Props) {
       <section className="px-6 md:px-16 section-pb-lg">
         {filtered.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="text-sm text-muted-foreground/60 uppercase tracking-[0.2em]">
+            <p className="text-sm text-muted-foreground uppercase tracking-[0.2em]">
               {activeYear === -1
                 ? "Select a year to browse entries"
                 : `No entries for ${MONTH_LABELS[activeMonth - 1]} ${activeYear}`}
@@ -337,7 +337,7 @@ export default function JournalList({ entries }: Props) {
                 </div>
 
                 {/* Date */}
-                <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
+                <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-2">
                   {formatDate(entry.date)}
                 </p>
 
