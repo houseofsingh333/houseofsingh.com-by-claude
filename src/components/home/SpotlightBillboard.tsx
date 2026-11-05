@@ -29,19 +29,19 @@ const TITLE_ID = "spotlight-billboard-title";
 
 export default function SpotlightBillboard({ spotlight }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
-  const [revealed, setRevealed] = useState(false);
+  const [inView, setInView] = useState(false);
   const prefersReduced = usePrefersReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  // Under reduced motion the section is shown at once. Derived rather than
+  // stored, so no state is set synchronously in the effect below.
+  const revealed = prefersReduced || inView;
 
   useEffect(() => {
-    if (prefersReduced) {
-      setRevealed(true);
-      return;
-    }
+    if (prefersReduced) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setRevealed(true);
+          setInView(true);
           observer.disconnect();
         }
       },

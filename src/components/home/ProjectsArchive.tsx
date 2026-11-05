@@ -5,6 +5,7 @@ import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useDragToScroll } from "@/hooks/useDragToScroll";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import type { HomepageProject } from "@/lib/placeholder-data";
 
 type Props = {
@@ -109,20 +110,12 @@ function ProjectCard({
 export default function ProjectsArchive({ projects }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLDivElement>(null);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  // Shared hook: reads the setting and follows live changes, like the old
+  // listener did, without setting state inside an effect.
+  const prefersReducedMotion = usePrefersReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const focusedIndex = hoveredIndex ?? activeIndex;
-
-  // Detect reduced motion preference
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mq.matches);
-    const handler = (e: MediaQueryListEvent) =>
-      setPrefersReducedMotion(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
 
   // Center-card detection + scrollbar thumb
   useEffect(() => {

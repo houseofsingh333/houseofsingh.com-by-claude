@@ -45,12 +45,9 @@ export default function SpotifyEmbed({ playlistUrl }: Props) {
   // alone did not defer it because the element was already in the document.
   useEffect(() => {
     const el = holderRef.current;
+    // No fallback for browsers without IntersectionObserver: every browser
+    // Next.js 16 and React 19 support has it, so that branch could never run.
     if (!el || inView) return;
-
-    if (typeof IntersectionObserver === "undefined") {
-      setInView(true);
-      return;
-    }
 
     const observer = new IntersectionObserver(
       (entries) => {
