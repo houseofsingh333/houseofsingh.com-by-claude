@@ -61,7 +61,10 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
     return (
       <TwoColumnLayout aside={aside}>
         {submitError && (
-          <p className="text-sm text-muted-foreground mb-6 border-l-2 border-foreground/20 pl-4">
+          <p
+            role="alert"
+            className="text-sm text-muted-foreground mb-6 border-l-2 border-foreground/20 pl-4"
+          >
             {submitError}
           </p>
         )}

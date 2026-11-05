@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { writeClient } from "@/sanity/writeClient";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { isHoneypotFilled } from "@/lib/spam-protection";
+import { readJsonBody } from "@/lib/read-json-body";
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +17,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    // Size limit (413) and JSON validity (400) are checked before any parsing.
+    const parsed = await readJsonBody(request);
+    if (!parsed.ok) return parsed.response;
+    const body = parsed.body;
 
     if (isHoneypotFilled(body)) {
       return NextResponse.json({ success: true });

@@ -174,7 +174,10 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         </div>
 
         {error && (
-          <p className="text-sm text-muted-foreground border-l-2 border-foreground/20 pl-4">
+          <p
+            role="alert"
+            className="text-sm text-muted-foreground border-l-2 border-foreground/20 pl-4"
+          >
             {error}
           </p>
         )}
