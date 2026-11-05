@@ -6,6 +6,7 @@ import ReadingProgress from "@/components/ReadingProgress";
 import SanityImage from "@/components/SanityImage";
 import { hasImageAsset } from "@/lib/sanityImage";
 import { sanityFetch } from "@/sanity/fetch";
+import { devPlaceholder } from "@/lib/placeholders";
 import {
   journalBySlugQuery,
   journalFeedQuery,
@@ -39,7 +40,9 @@ export async function generateStaticParams() {
     return entries.map((entry) => ({ slug: entry.slug }));
   }
 
-  return fallbackJournalEntries.map((entry) => ({ slug: entry.slug }));
+  return devPlaceholder(fallbackJournalEntries, []).map((entry) => ({
+    slug: entry.slug,
+  }));
 }
 
 // Open Graph / Twitter images are supplied per-route by the colocated
@@ -53,7 +56,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     params: { slug },
   });
 
-  const fallback = fallbackJournalEntries.find((e) => e.slug === slug);
+  const fallback = devPlaceholder(fallbackJournalEntries, []).find(
+    (e) => e.slug === slug,
+  );
   const baseTitle = entry?.title ?? fallback?.title;
 
   if (!baseTitle) return { title: "Not Found" };
@@ -118,9 +123,13 @@ export default async function JournalDetailPage({ params }: Props) {
     params: { slug },
   });
 
-  const fallback = fallbackJournalEntries.find((e) => e.slug === slug);
+  const fallback = devPlaceholder(fallbackJournalEntries, []).find(
+    (e) => e.slug === slug,
+  );
   const resolved = entry ?? fallback;
 
+  // A Sanity failure has already thrown above (ISR keeps the last good page),
+  // so reaching this point means Sanity answered and the slug does not exist.
   if (!resolved) notFound();
 
   const settings = await sanityFetch<SiteSettings | null>({
@@ -142,7 +151,9 @@ export default async function JournalDetailPage({ params }: Props) {
   const allData = await sanityFetch<JournalEntry[] | null>({
     query: journalFeedQuery,
   });
-  const all = allData?.length ? allData : fallbackJournalEntries;
+  const all = allData?.length
+    ? allData
+    : devPlaceholder(fallbackJournalEntries, []);
   const sorted = [...all].sort(
     (a, b) => parseSanityDate(b.date).getTime() - parseSanityDate(a.date).getTime(),
   );

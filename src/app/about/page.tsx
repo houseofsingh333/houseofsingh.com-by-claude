@@ -1,5 +1,7 @@
 import type { Metadata, ResolvingMetadata } from "next";
+import { notFound } from "next/navigation";
 import AboutSection from "@/components/about/AboutSection";
+import { devPlaceholder } from "@/lib/placeholders";
 import { sanityFetch } from "@/sanity/fetch";
 import { aboutPageQuery } from "@/sanity/queries";
 import {
@@ -44,7 +46,9 @@ export default async function AboutPage() {
     query: aboutPageQuery,
   });
 
-  const about = data ?? fallbackAboutPage;
+  // Sanity answered with no About document: honest 404 rather than demo text.
+  const about = data ?? devPlaceholder<AboutPageData | null>(fallbackAboutPage, null);
+  if (!about) notFound();
   const faqJsonLd = buildFaqJsonLd(about.rapidFire);
 
   return (

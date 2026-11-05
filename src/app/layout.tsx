@@ -22,6 +22,7 @@ import JsonLd from "@/components/JsonLd";
 import { buildSiteJsonLd } from "@/lib/structured-data";
 import { TITLE_TEMPLATE } from "@/lib/page-title";
 import { IntroProvider } from "@/components/IntroContext";
+import { devPlaceholder } from "@/lib/placeholders";
 import "./globals.css";
 
 const SITE_URL = "https://houseofsingh.com";
@@ -124,9 +125,11 @@ export default async function RootLayout({
   const navItems =
     sanityItems && sanityItems.length >= 4 ? sanityItems : fallbackNavItems;
 
+  // The fallback nav lists the site's real routes, so it stays as a default.
+  // The Instagram fallback is placeholder artwork: local placeholders only.
   const instagramPhotos = contactData?.instagramPhotos?.length
     ? contactData.instagramPhotos
-    : fallbackInstagramPhotos;
+    : devPlaceholder(fallbackInstagramPhotos, []);
 
   return (
     <html lang="en" className={playfair.variable}>

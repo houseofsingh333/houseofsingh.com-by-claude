@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { client } from "@/sanity/client";
+import { placeholdersEnabled } from "@/lib/placeholders";
 
 const BASE_URL = "https://houseofsingh.com";
 
@@ -54,6 +55,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let projectRoutes: MetadataRoute.Sitemap = [];
   let journalRoutes: MetadataRoute.Sitemap = [];
 
+  // No silent fallback: if Sanity fails, throw so the build fails (or the
+  // last good sitemap keeps being served) instead of publishing a sitemap
+  // that is missing every project and article. Static routes only when local
+  // placeholders are explicitly enabled.
+  if (!client && !placeholdersEnabled) {
+    throw new Error(
+      "[sanity] Sanity is not configured: NEXT_PUBLIC_SANITY_PROJECT_ID is missing.",
+    );
+  }
+
   if (client) {
     try {
       const [projects, journalEntries] = await Promise.all([
@@ -80,8 +91,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "weekly" as const,
         priority: 0.8,
       }));
-    } catch {
-      // Sanity unreachable — return static routes only
+    } catch (error) {
+      if (!placeholdersEnabled) {
+        console.error("[sanity] Sitemap request failed.", error);
+        throw new Error("[sanity] Sitemap request failed.", { cause: error });
+      }
+      // Local placeholders: static routes only.
     }
   }
 

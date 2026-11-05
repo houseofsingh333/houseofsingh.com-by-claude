@@ -4,6 +4,7 @@ import { sanityFetch } from "@/sanity/fetch";
 import { contactPageQuery } from "@/sanity/queries";
 import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import { fallbackInstagramPhotos } from "@/lib/placeholder-data";
+import { devPlaceholder } from "@/lib/placeholders";
 import type { Seo } from "@/lib/types";
 import { fullTitle, pageTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
@@ -47,7 +48,7 @@ export default async function ContactPage() {
 
   const photos = data?.instagramPhotos?.length
     ? data.instagramPhotos
-    : fallbackInstagramPhotos;
+    : devPlaceholder(fallbackInstagramPhotos, []);
 
   return (
     <ContactForm instagramPhotos={photos} />

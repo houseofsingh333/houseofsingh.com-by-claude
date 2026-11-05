@@ -28,6 +28,7 @@ import {
   type SiteSettings,
 } from "@/lib/placeholder-data";
 import type { SpotlightData } from "@/lib/types";
+import { devPlaceholder } from "@/lib/placeholders";
 import JsonLd from "@/components/JsonLd";
 import { buildProfilePageJsonLd } from "@/lib/structured-data";
 
@@ -57,22 +58,31 @@ export default async function HomePage() {
       sanityFetch<SpotlightData | null>({ query: spotlightQuery }),
     ]);
 
-  const heroSlides = slides?.length
-    ? slides.length >= 3
-      ? slides
-      : [...slides, ...fallbackHeroSlides.slice(slides.length)]
-    : fallbackHeroSlides;
-  const homeIntro = intro ?? fallbackHomeIntro;
+  // Placeholder content (demo slides, intro, projects, journal) is used only
+  // when NEXT_PUBLIC_USE_PLACEHOLDERS=1 locally. In production an empty
+  // Sanity answer renders nothing for that section rather than fake content.
+  const realSlides = slides ?? [];
+  const heroSlides =
+    realSlides.length >= 3
+      ? realSlides
+      : [
+          ...realSlides,
+          ...devPlaceholder(fallbackHeroSlides, []).slice(realSlides.length),
+        ];
+  const homeIntro =
+    intro ?? devPlaceholder<HomeIntroData | null>(fallbackHomeIntro, null);
 
-  // Featured projects: use manually curated list, else latest 6, else fallback
+  // Featured projects: use manually curated list, else latest 6
   const homepageProjects: HomepageProject[] =
     featured && featured.length > 0
       ? featured
       : latest && latest.length > 0
         ? latest
-        : fallbackHomepageProjects;
+        : devPlaceholder(fallbackHomepageProjects, []);
 
-  const journalEntries = journal?.length ? journal : fallbackJournalEntries;
+  const journalEntries = journal?.length
+    ? journal
+    : devPlaceholder(fallbackJournalEntries, []);
   const spotifyUrl =
     settings?.spotifyPlaylistUrl ?? fallbackSiteSettings.spotifyPlaylistUrl;
 
@@ -81,10 +91,12 @@ export default async function HomePage() {
       <JsonLd data={buildProfilePageJsonLd()} />
       <h1 className="sr-only">House of Singh, Maninder Singh: creative director, photographer and multidisciplinary designer</h1>
       <CinematicHero slides={heroSlides} />
-      <IntroSection data={homeIntro} />
-      <ProjectsArchive projects={homepageProjects} />
+      {homeIntro && <IntroSection data={homeIntro} />}
+      {homepageProjects.length > 0 && (
+        <ProjectsArchive projects={homepageProjects} />
+      )}
       {spotlight?.enabled && <SpotlightBillboard spotlight={spotlight} />}
-      <JournalPreview entries={journalEntries} />
+      {journalEntries.length > 0 && <JournalPreview entries={journalEntries} />}
       <SpotifyEmbed playlistUrl={spotifyUrl} />
       <StudioRedirect />
     </>
