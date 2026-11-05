@@ -13,6 +13,11 @@
   /* Quiet text on the dark charcoal band (--foreground as background):
      #A8A39F, 6.56:1 on it. The same warm grey family as --muted-foreground. */
   --muted-foreground-inverse: hsl(30 5% 64%);
+  /* The About page "Featured On" panel sits on a darker warm tint (#EDE9E4),
+     where --muted-foreground only reaches 4.04:1. This one step darker grey,
+     #6B6661, gives 4.70:1 there. Used on that panel only (.featured-panel). */
+  --featured-panel: #ede9e4;
+  --muted-foreground-panel: hsl(30 5% 40%);
   --border: hsl(40 10% 88%);
 
   /* Editorial grid easing */
@@ -1819,3 +1824,11 @@ body {
 }
 
 
+
+/* ——— About: Featured On panel ———
+   Muted text inside the panel switches to the darker panel grey so labels
+   and dates keep 4.5:1 on the tinted background. */
+.featured-panel {
+  background-color: var(--featured-panel);
+  --muted-foreground: var(--muted-foreground-panel);
+}
