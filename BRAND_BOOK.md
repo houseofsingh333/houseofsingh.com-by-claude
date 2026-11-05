@@ -44,12 +44,13 @@ The palette is deliberately tight. A warm neutral base, a soft charcoal for text
 | Muted grey | `#76706B` | `--muted-foreground` is `hsl(30 5% 44%)` | Captions, labels, secondary text, metadata. The quietest readable grey on the canvas: do not fade it further with opacity. |
 | Muted grey, inverse | `#A8A39F` | `--muted-foreground-inverse` is `hsl(30 5% 64%)` | Secondary text on the dark charcoal band. 6.56:1 on charcoal. |
 | Border, hairline | `hsl(40 10% 88%)` | `--border` | Dividers, input underlines, thin rules. |
-| Antique brass | `#A8895C` | not yet a token | The single accent. Used rarely for emphasis. |
+| Antique brass | `#A8895C` | `--accent` | The single accent. Used rarely for emphasis. 3.07:1 on the canvas: for small graphics and hairlines, never for text. |
+| Error, brick | `#9B4B3B` | `--error` is `hsl(10 45% 42%)` | Error messages and the hairline under an invalid field. Warm and muted, never a bright alarm red. 5.67:1 on the canvas, 5.02:1 on the Featured On panel. Functional only, never decorative. |
 | White | `#FFFFFF` | — | Rare. Contrast moments inside cards or over images only. |
 
 **Do not lighten the muted grey.** `--muted-foreground` was originally `hsl(30 5% 50%)` (`#868079`). Measured against the canvas it gives only **3.65:1**, below the WCAG AA minimum of 4.5:1 for normal text, so every caption, label, and piece of metadata on the site failed contrast. It was darkened to `hsl(30 5% 44%)`, which measures **4.57:1** and passes. It still sits far quieter than charcoal (15.34:1), so the hierarchy is unchanged. If this value is ever lightened again for aesthetic reasons, the whole secondary type layer silently fails accessibility — check the contrast ratio before changing it.
 
-**Implementation note on the accent.** Antique brass is currently used only as the pulsing upcoming-project dot and is not yet a named token in the CSS. To make it a true brand accent, it should be added as a variable (for example `--accent: #A8895C`) and used consistently for the few approved accent moments. Until then, the brand is effectively running on the neutral palette alone.
+**Implementation note on the accent.** Antique brass is the `--accent` token (`#A8895C`), available in Tailwind as `bg-accent`, `text-accent` and `border-accent`. Today it is used only for the breathing upcoming project dot. Any new accent moment uses the token, never the raw hex.
 
 **The accent discipline rule.** Antique brass is the one warm note in the system. It appears rarely and intentionally: a small pulsing dot on an upcoming project, a thin hairline, a hover state, a single point of emphasis. If brass appears in more than a few small places on a screen, it is overused and the screen should be reviewed. Scarcity is what gives the accent its power.
 
@@ -242,7 +243,7 @@ The voice is the same calm, grounded, reflective voice used across the brand. (D
 
 ## 6. Quick Reference
 
-**Palette:** Canvas `#F9F7F5` (`--background`) · Charcoal `#1A1A1A` (`--foreground`) · Muted grey `#76706B` (`--muted-foreground`, `hsl(30 5% 44%)` — meets WCAG AA, do not lighten) · Border `hsl(40 10% 88%)` (`--border`) · Antique brass `#A8895C` (accent, to be tokenized) · White `#FFFFFF`
+**Palette:** Canvas `#F9F7F5` (`--background`) · Charcoal `#1A1A1A` (`--foreground`) · Muted grey `#76706B` (`--muted-foreground`, `hsl(30 5% 44%)` — meets WCAG AA, do not lighten) · Border `hsl(40 10% 88%)` (`--border`) · Antique brass `#A8895C` (`--accent`) · Error brick `#9B4B3B` (`--error`, `hsl(10 45% 42%)`, error text only) · White `#FFFFFF`
 
 **Type:** Playfair Display via `--font-editorial` (display) · Instrument Sans (body and interface, to be wired in). Display hero `clamp(42px, 6vw, 88px)`, body 16px at 1.7 line height, labels 11px to 13px uppercase with 0.1em to 0.2em tracking.
 
