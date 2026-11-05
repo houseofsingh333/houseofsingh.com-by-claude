@@ -4,7 +4,7 @@ import { shareCard } from "@/lib/share-metadata";
 
 const TITLE = "Privacy Policy";
 const DESCRIPTION =
-  "How House of Singh collects, uses, and protects your information.";
+  "What House of Singh collects through this website, where it is kept, and how it is used.";
 
 export async function generateMetadata(
   _props: unknown,
@@ -40,42 +40,94 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p className="text-sm text-muted-foreground mb-16">
-            Last updated: March 2026
+            Last updated: 5 November 2026
           </p>
 
           <SectionDivider label="Overview" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
-              House of Singh is a personal brand and creative studio operated by
-              Maninder Singh, based in Toronto, Canada. This policy explains how
-              we handle information collected through this website.
-            </p>
-            <p>
-              We respect your privacy and collect only what is necessary to
-              provide a good experience.
+              House of Singh is the personal brand and creative platform of
+              Maninder Singh, a creative director, photographer and
+              multidisciplinary designer based in Toronto, Canada. This policy
+              explains what information this website collects, where it is
+              kept, and how it is used.
             </p>
           </div>
 
           <SectionDivider label="Information We Collect" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
-              <strong className="text-foreground">Contact form submissions.</strong>{" "}
-              When you use the contact form, we collect your name, email
-              address, and message content. This information is used solely to
-              respond to your inquiry.
+              <strong className="text-foreground">Contact form.</strong>{" "}
+              The contact form asks what brings you here (a commercial
+              project, a collaboration, a media or feature request, or
+              something else), your name, your email address and, if you
+              choose, a phone number. It then asks a few questions that depend
+              on your choice:
+            </p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>
+                Commercial project: the project name, a short description, a
+                rough budget, a timeline, and how you found this site.
+              </li>
+              <li>
+                Collaboration: the kind of collaboration, a link to your work
+                and where to find you online (both optional), your idea, a
+                timeline, and how you found this site.
+              </li>
+              <li>
+                Media or feature: the outlet or organization, the type of
+                inquiry, any deadline or event date, your request, and how you
+                found this site.
+              </li>
+              <li>Something else: your message.</li>
+            </ul>
+            <p>
+              When you submit, your answers are saved in Sanity together with
+              the time of submission.
             </p>
             <p>
-              <strong className="text-foreground">Newsletter signups.</strong>{" "}
-              If you subscribe to our newsletter, we collect your email address
-              to send periodic updates about projects, journal posts, and studio
-              news. You can unsubscribe at any time.
+              <strong className="text-foreground">Project interest form.</strong>{" "}
+              Some upcoming project pages include a short form. It collects
+              your name, your email address, a phone number and an Instagram
+              handle (both optional), and your story or nomination. The title
+              of the project page and the time of submission are saved with
+              it in Sanity.
             </p>
             <p>
-              <strong className="text-foreground">Analytics data.</strong>{" "}
-              We use Vercel Analytics and Speed Insights to understand how
-              visitors use this site. These tools collect anonymous,
-              privacy-friendly usage data such as page views and performance
-              metrics. No personally identifiable information is tracked.
+              <strong className="text-foreground">Newsletter.</strong>{" "}
+              The newsletter signup in the footer and in the newsletter window
+              collects your email address only. It is saved in Sanity together
+              with the time you signed up.
+            </p>
+            <p>
+              <strong className="text-foreground">Protection against abuse.</strong>{" "}
+              To stop repeated automated submissions, the server counts how
+              many times each IP address has sent one of these forms in the
+              last ten minutes. This count is held only in the server&apos;s
+              memory and is not saved.
+            </p>
+            <p>
+              <strong className="text-foreground">Page performance.</strong>{" "}
+              This site uses Vercel Speed Insights to measure how quickly
+              pages load. It does not use cookies and does not build a profile
+              of you.
+            </p>
+          </div>
+
+          <SectionDivider label="Saved Progress on the Contact Form" />
+          <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
+            <p>
+              While you fill in the contact form, your answers are saved in
+              your own browser so you can pick up where you left off. This
+              draft stays on your device and is not sent to anyone until you
+              submit the form.
+            </p>
+            <p>
+              The draft is deleted from your browser when your message is sent.
+              If you come back to an unfinished draft, a Clear saved progress
+              button appears once you move past the first question and deletes
+              it. Clearing this site&apos;s data in your
+              browser removes it too.
             </p>
           </div>
 
@@ -83,9 +135,10 @@ export default function PrivacyPage() {
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>We use the information we collect to:</p>
             <ul className="list-disc pl-5 space-y-2">
-              <li>Respond to inquiries submitted through the contact form</li>
-              <li>Send newsletter updates to subscribers who have opted in</li>
-              <li>Understand site usage and improve the experience</li>
+              <li>Reply to messages sent through the contact form</li>
+              <li>Reply to project interest submissions</li>
+              <li>Send newsletter updates to people who have signed up</li>
+              <li>See how quickly pages load and improve them</li>
             </ul>
             <p>
               We do not sell, rent, or share your personal information with
@@ -93,32 +146,67 @@ export default function PrivacyPage() {
             </p>
           </div>
 
-          <SectionDivider label="Cookies" />
+          <SectionDivider label="Leaving the Newsletter" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
-              This website uses minimal cookies necessary for site
-              functionality. Vercel Analytics is privacy-focused and does not
-              use cookies for tracking. We do not use advertising cookies or
-              third-party tracking scripts.
+              To be removed from the newsletter, send a message through the{" "}
+              <a href="/contact" className="text-foreground underline underline-offset-4">
+                contact page
+              </a>{" "}
+              at houseofsingh.com/contact asking to unsubscribe, and you will
+              be removed.
             </p>
           </div>
 
-          <SectionDivider label="Third-Party Services" />
+          <SectionDivider label="Cookies and Browser Storage" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
-            <p>This website relies on the following third-party services:</p>
+            <p>
+              This website sets no cookies of its own and uses no advertising
+              or tracking scripts. Besides the contact form draft described
+              above, it keeps two small notes in your browser&apos;s session
+              storage, which is cleared when you close the tab: one so the
+              opening animation plays only once per visit, and one so a scroll
+              hint on the home page appears only once.
+            </p>
+            <p>
+              The Spotify player on the home page may set its own cookies, as
+              described below.
+            </p>
+          </div>
+
+          <SectionDivider label="Third Party Services" />
+          <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
+            <p>This website relies on the following services:</p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
-                <strong className="text-foreground">Vercel</strong> — hosting
-                and analytics
+                <strong className="text-foreground">Vercel</strong>: hosts the website and
+                serves every page, and provides Speed Insights.
               </li>
               <li>
-                <strong className="text-foreground">Sanity</strong> — content
-                management system
+                <strong className="text-foreground">Sanity</strong>: stores the site&apos;s
+                content and images, and receives contact form, project interest
+                and newsletter submissions.
+              </li>
+              <li>
+                <strong className="text-foreground">Spotify</strong>: the playlist player on
+                the home page. It loads from Spotify when you scroll to it, and
+                Spotify may set its own cookies once it loads or when you use
+                it. See the{" "}
+                <a
+                  href="https://www.spotify.com/legal/privacy-policy/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground underline underline-offset-4"
+                >
+                  Spotify privacy policy
+                </a>
+                .
               </li>
             </ul>
             <p>
               Each of these services has its own privacy policy governing how
-              they handle data.
+              it handles data. Links to social profiles such as Instagram take
+              you to those sites, which have their own policies.
             </p>
           </div>
 
