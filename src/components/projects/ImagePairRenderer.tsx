@@ -19,7 +19,7 @@ export default function ImagePairRenderer({ section }: Props) {
         <figure key={img.url || i}>
           <AspectImage image={img} className="overflow-hidden" />
           {img.caption?.trim() && (
-            <figcaption className="mt-3 text-xs text-muted-foreground/50 tracking-wide">
+            <figcaption className="mt-3 text-xs text-muted-foreground tracking-wide">
               {img.caption}
             </figcaption>
           )}

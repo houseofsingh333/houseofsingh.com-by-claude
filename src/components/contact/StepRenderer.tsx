@@ -113,13 +113,13 @@ export default function StepRenderer({
     return (
       <div className="relative w-full">
         <div className="contact-input flex items-center gap-3 py-3">
-          <CalendarIcon className="w-5 h-5 text-muted-foreground/60 flex-shrink-0" />
+          <CalendarIcon className="w-5 h-5 text-muted-foreground flex-shrink-0" />
           {value ? (
             <span className="text-xl md:text-2xl font-light text-foreground">
               {formatDate(value)}
             </span>
           ) : (
-            <span className="text-xl md:text-2xl font-light text-muted-foreground/35">
+            <span className="text-xl md:text-2xl font-light text-muted-foreground">
               Pick a date…
             </span>
           )}

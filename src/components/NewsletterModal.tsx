@@ -202,7 +202,7 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full bg-transparent border-0 border-b border-border px-0 py-3 text-lg font-light text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-foreground transition-colors duration-300"
+                    className="w-full bg-transparent border-0 border-b border-border px-0 py-3 text-lg font-light text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors duration-300"
                   />
                 </div>
 

@@ -41,7 +41,8 @@ The palette is deliberately tight. A warm neutral base, a soft charcoal for text
 |------|-----|-----------|-------|
 | Canvas | `#F9F7F5` | `--background` | The default page background. Warm off white. The brand lives on this. |
 | Charcoal | `#1A1A1A` | `--foreground` is `hsl(30 10% 12%)` | Primary text, headings. A soft near black, never pure `#000000`. |
-| Muted grey | `#76706B` | `--muted-foreground` is `hsl(30 5% 44%)` | Captions, labels, secondary text, metadata. |
+| Muted grey | `#76706B` | `--muted-foreground` is `hsl(30 5% 44%)` | Captions, labels, secondary text, metadata. The quietest readable grey on the canvas: do not fade it further with opacity. |
+| Muted grey, inverse | `#A8A39F` | `--muted-foreground-inverse` is `hsl(30 5% 64%)` | Secondary text on the dark charcoal band. 6.56:1 on charcoal. |
 | Border, hairline | `hsl(40 10% 88%)` | `--border` | Dividers, input underlines, thin rules. |
 | Antique brass | `#A8895C` | not yet a token | The single accent. Used rarely for emphasis. |
 | White | `#FFFFFF` | — | Rare. Contrast moments inside cards or over images only. |

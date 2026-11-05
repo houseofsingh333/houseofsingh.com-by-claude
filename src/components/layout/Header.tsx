@@ -250,7 +250,7 @@ export default function Header({ items }: Props) {
 
       {/* ═══ STATE 2 : Scrolled white bar header ═══ */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-[68px] flex items-center justify-between px-5 md:px-8 bg-white border-b border-border/40 transition-opacity duration-[250ms] ease-in-out ${
+        className={`fixed top-0 left-0 right-0 z-50 h-[68px] flex items-center justify-between px-5 md:px-8 bg-background border-b border-border/40 transition-opacity duration-[250ms] ease-in-out ${
           showState2 ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         aria-hidden={!showState2}

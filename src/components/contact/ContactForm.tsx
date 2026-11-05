@@ -96,7 +96,7 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
 
             {/* Helper text — stronger pause before input */}
             {currentStepDef?.helperText && (
-              <p className="text-sm text-muted-foreground/60 leading-relaxed mb-10">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-10">
                 {currentStepDef.helperText}
               </p>
             )}
@@ -116,7 +116,7 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
             {currentStep > 0 && hasDraft && (
               <button
                 onClick={clearDraft}
-                className="contact-btn mt-8 text-xs tracking-[0.08em] text-muted-foreground/50 hover:text-muted-foreground"
+                className="contact-btn mt-8 text-xs tracking-[0.08em] text-muted-foreground hover:text-foreground"
               >
                 Clear saved progress
               </button>

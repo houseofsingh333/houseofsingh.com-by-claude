@@ -66,7 +66,8 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 ### Palette
 - Canvas `#F9F7F5` (`--background`), the warm off white everything sits on.
 - Charcoal `#1A1A1A` (`--foreground`), primary text. Never pure black.
-- Muted grey `#76706B` (`--muted-foreground` is `hsl(30 5% 44%)`), captions, labels, secondary text. This value meets WCAG AA (4.57:1) on the canvas; the earlier `hsl(30 5% 50%)` failed at 3.65:1. Do not lighten it without re-checking contrast.
+- Muted grey `#76706B` (`--muted-foreground` is `hsl(30 5% 44%)`), captions, labels, secondary text. This value meets WCAG AA (4.57:1) on the canvas; the earlier `hsl(30 5% 50%)` failed at 3.65:1. Do not lighten it without re-checking contrast, and do not fade it with opacity variants (`/40`, `/60` and so on) for readable text; hierarchy comes from size, letter spacing and uppercase labels.
+- Muted grey, inverse `#A8A39F` (`--muted-foreground-inverse` is `hsl(30 5% 64%)`), secondary text on the dark charcoal band. 6.56:1 on charcoal.
 - Border hairline `hsl(40 10% 88%)` (`--border`).
 - Antique brass `#A8895C`, the single accent, used rarely (the pulsing upcoming dot, a hairline, a hover, one point of emphasis). It is not yet a CSS token; if accent use grows, propose adding `--accent` rather than scattering the hex.
 - Do not introduce colors outside this palette without updating `BRAND_BOOK.md` first.
