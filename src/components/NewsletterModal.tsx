@@ -207,7 +207,7 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
                 </div>
 
                 {status === "error" && (
-                  <p className="text-sm text-red-500" role="alert">{errorMsg}</p>
+                  <p className="text-sm text-error" role="alert">{errorMsg}</p>
                 )}
 
                 <button

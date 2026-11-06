@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { CalendarIcon } from "lucide-react";
+import { formatDateOnly, toDateOnly } from "@/lib/dates";
 import type { StepDefinition, ContactFormData } from "@/lib/contact-form-data";
 
 interface StepRendererProps {
@@ -10,17 +11,6 @@ interface StepRendererProps {
   onChange: (field: keyof ContactFormData, value: string) => void;
 }
 
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  } catch {
-    return iso;
-  }
-}
 
 export default function StepRenderer({
   step,
@@ -116,7 +106,7 @@ export default function StepRenderer({
           <CalendarIcon className="w-5 h-5 text-muted-foreground flex-shrink-0" />
           {value ? (
             <span className="text-xl md:text-2xl font-light text-foreground">
-              {formatDate(value)}
+              {formatDateOnly(value)}
             </span>
           ) : (
             <span className="text-xl md:text-2xl font-light text-muted-foreground">
@@ -126,12 +116,10 @@ export default function StepRenderer({
         </div>
         <input
           type="date"
-          value={value ? value.split("T")[0] : ""}
-          onChange={(e) =>
-            handleChange(
-              e.target.value ? new Date(e.target.value).toISOString() : "",
-            )
-          }
+          value={toDateOnly(value)}
+          // Stored as the picker gives it, "YYYY-MM-DD": a calendar day,
+          // never converted to a UTC timestamp.
+          onChange={(e) => handleChange(e.target.value)}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
         />
       </div>

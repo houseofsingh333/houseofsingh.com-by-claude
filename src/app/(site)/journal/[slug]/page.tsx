@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { routeShareImages } from "@/lib/share-metadata";
+import { alt as journalShareAlt } from "@/app/journal/[slug]/opengraph-image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PortableText } from "@portabletext/react";
@@ -45,11 +47,13 @@ export async function generateStaticParams() {
   }));
 }
 
-// Open Graph / Twitter images are supplied per-route by the colocated
-// opengraph-image.tsx / twitter-image.tsx generators (Next.js convention),
-// so no `images` are set here.
+// Share images come from the opengraph-image and twitter-image routes in
+// src/app/journal/[slug]/, kept outside the (site) route group so their URLs
+// carry no hash suffix. They are not colocated with this page, so
+// routeShareImages links them explicitly.
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const share = routeShareImages(`/journal/${slug}`, journalShareAlt);
 
   const entry = await sanityFetch<JournalEntry | null>({
     query: journalBySlugQuery,
@@ -93,11 +97,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       url: `/journal/${slug}`,
+        images: share.openGraph,
       ...(publishedTime ? { publishedTime } : {}),
       authors: [author],
     },
     twitter: {
       card: "summary_large_image",
+        images: share.twitter,
       title,
       description,
     },

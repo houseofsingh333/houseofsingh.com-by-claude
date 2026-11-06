@@ -20,11 +20,6 @@ export default function PageTransition({
   const pathname = usePathname();
   const prefersReduced = useReducedMotion();
 
-  // Studio routes — skip wrapper entirely
-  if (pathname.startsWith("/studio")) {
-    return <>{children}</>;
-  }
-
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div

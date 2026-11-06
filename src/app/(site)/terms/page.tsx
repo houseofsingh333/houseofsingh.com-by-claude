@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
@@ -70,9 +71,9 @@ export default function TermsPage() {
               site for commercial purposes without prior written consent. If
               you would like to use or license any work, please get in touch
               through the{" "}
-              <a href="/contact" className="text-foreground underline underline-offset-4">
+              <Link href="/contact" className="text-foreground underline underline-offset-4">
                 contact page
-              </a>
+              </Link>
               .
             </p>
           </div>

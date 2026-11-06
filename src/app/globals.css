@@ -18,6 +18,13 @@
      #6B6661, gives 4.70:1 there. Used on that panel only (.featured-panel). */
   --featured-panel: #ede9e4;
   --muted-foreground-panel: hsl(30 5% 40%);
+  /* Antique brass #A8895C: the single accent, used rarely (the breathing
+     upcoming dot). 3.07:1 on the canvas, so for small graphics and hairlines
+     only, never for text. */
+  --accent: #a8895c;
+  /* Error messages and invalid field hairlines: a warm, muted brick red.
+     #9B4B3B, 5.67:1 on the canvas and 5.02:1 on the Featured On panel. */
+  --error: hsl(10 45% 42%);
   --border: hsl(40 10% 88%);
 
   /* Editorial grid easing */
@@ -44,6 +51,8 @@
   --color-secondary: var(--secondary);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted-foreground-inverse: var(--muted-foreground-inverse);
+  --color-accent: var(--accent);
+  --color-error: var(--error);
   --color-border: var(--border);
   --font-editorial: var(--font-playfair), Georgia, serif;
   --animate-fade-in: fadeIn 0.3s ease-out;
@@ -435,7 +444,7 @@ body {
 
 .footer-nl-error {
   font-size: 11px;
-  color: hsl(10 50% 45%);
+  color: var(--error);
   margin-top: 4px;
 }
 
@@ -817,7 +826,7 @@ body {
 }
 
 .contact-input[aria-invalid="true"] {
-  border-bottom-color: hsl(10 40% 55%);
+  border-bottom-color: var(--error);
 }
 
 /* ——— Contact buttons — standardised site-wide tokens ——— */
@@ -1397,7 +1406,7 @@ body {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--foreground);
+  background: var(--accent);
   animation: upcomingPulse 2.8s ease-in-out infinite;
 }
 
