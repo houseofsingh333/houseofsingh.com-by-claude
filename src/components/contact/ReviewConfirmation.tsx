@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft, Pencil } from "lucide-react";
+import { formatDateOnly } from "@/lib/dates";
 import type {
   ContactFormData,
   StepDefinition,
@@ -68,11 +69,7 @@ export function ReviewScreen({
                       </span>
                       <span className="text-base md:text-lg font-light text-foreground break-words">
                         {step.type === "date" && val
-                          ? new Date(val).toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })
+                          ? formatDateOnly(val)
                           : val}
                       </span>
                     </div>

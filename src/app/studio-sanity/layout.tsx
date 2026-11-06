@@ -9,8 +9,12 @@ export const metadata: Metadata = {
 };
 
 /**
- * Studio layout — full-screen, no site Header/Footer.
- * The root layout still wraps this, so we override with a clean shell.
+ * Studio layout: a bare, full screen shell for the Sanity Studio.
+ *
+ * The Studio sits outside the (site) route group, so it gets only the root
+ * document shell (html, body, fonts and global CSS). The site header, footer,
+ * page transition, intro video, newsletter popup, structured data and Speed
+ * Insights all live in src/app/(site)/layout.tsx and never render here.
  */
 export default function StudioLayout({
   children,

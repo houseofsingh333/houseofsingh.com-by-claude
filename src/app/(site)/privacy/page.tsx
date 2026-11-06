@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
@@ -150,9 +151,9 @@ export default function PrivacyPage() {
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               To be removed from the newsletter, send a message through the{" "}
-              <a href="/contact" className="text-foreground underline underline-offset-4">
+              <Link href="/contact" className="text-foreground underline underline-offset-4">
                 contact page
-              </a>{" "}
+              </Link>{" "}
               at houseofsingh.com/contact asking to unsubscribe, and you will
               be removed.
             </p>
@@ -215,9 +216,9 @@ export default function PrivacyPage() {
             <p>
               If you have questions about this privacy policy or how your data
               is handled, please reach out through the{" "}
-              <a href="/contact" className="text-foreground underline underline-offset-4">
+              <Link href="/contact" className="text-foreground underline underline-offset-4">
                 contact page
-              </a>
+              </Link>
               .
             </p>
           </div>
