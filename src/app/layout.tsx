@@ -89,11 +89,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Root layout: the document shell only (html, body, fonts, global CSS and
- * sitewide metadata). Everything a visitor sees around a page (header,
- * footer, page transition, intro, newsletter popup, structured data, Speed
- * Insights) lives in the public site's layout, src/app/(site)/layout.tsx,
- * so routes outside that group, such as the Sanity Studio, get none of it.
+ * Root layout: the document shell only (html, body, fonts, global CSS,
+ * sitewide metadata and the one line pre paint "js" flag). Everything a
+ * visitor sees around a page (header, footer, page transition, intro,
+ * newsletter popup, structured data, Speed Insights) lives in the public
+ * site's layout, src/app/(site)/layout.tsx, so routes outside that group,
+ * such as the Sanity Studio, get none of it.
  */
 export default function RootLayout({
   children,
@@ -101,7 +102,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={playfair.variable}>
+    // suppressHydrationWarning: the script below adds the "js" class to
+    // <html> before React hydrates, which is intended.
+    <html lang="en" className={playfair.variable} suppressHydrationWarning>
+      <head>
+        {/* Marks that JavaScript is running, before the first paint. Scroll
+            reveals start hidden only under this class (and only when the
+            visitor allows motion), so without JavaScript every reveal is
+            simply visible. See "Scroll reveal" in globals.css. Harmless on
+            routes outside the site, such as the Studio. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: 'document.documentElement.classList.add("js")',
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
         {children}
       </body>

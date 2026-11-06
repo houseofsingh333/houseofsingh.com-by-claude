@@ -168,6 +168,9 @@ export default function ProjectsFiltersHorizontal({
         className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-out hidden md:block ${panelOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"}`}
         role="region"
         aria-label="All category filters"
+        // Collapsed, the panel is invisible, so its buttons must not take
+        // keyboard focus either: inert while closed, like the menu and popup.
+        inert={!panelOpen}
       >
         <div className="pt-6 pb-2 grid grid-cols-4 gap-x-8 gap-y-3">
           {allCategories.map((cat) => {

@@ -1841,3 +1841,25 @@ body {
   background-color: var(--featured-panel);
   --muted-foreground: var(--muted-foreground-panel);
 }
+
+/* ——— Scroll reveal ———
+   Content that fades in on scroll (ScrollReveal, revealProps) is visible by
+   default: in the server HTML, with JavaScript off, and with reduced motion.
+   The hidden start state applies only when the pre paint script in the root
+   layout has marked <html class="js"> and the visitor allows motion. The
+   element then fades and rises into place once data-revealed is set.
+   In the components layer, so Tailwind utilities on the same element (for
+   example a card's own transition) still take precedence as before. */
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    html.js [data-reveal] {
+      transition:
+        opacity var(--reveal-duration, 700ms) var(--reveal-ease, ease) var(--reveal-delay, 0ms),
+        transform var(--reveal-duration, 700ms) var(--reveal-ease, ease) var(--reveal-delay, 0ms);
+    }
+    html.js [data-reveal]:not([data-revealed]) {
+      opacity: 0;
+      transform: translateY(var(--reveal-offset, 20px));
+    }
+  }
+}

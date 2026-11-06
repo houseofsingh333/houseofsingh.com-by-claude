@@ -1,56 +1,26 @@
 "use client";
 
-import { useRef, useState, useEffect, type CSSProperties } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import { usePrefersReducedMotion, useMediaQuery } from "@/hooks/useMediaQuery";
+import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { revealProps } from "@/lib/reveal";
 import type { SpotlightData } from "@/lib/types";
 
 type Props = {
   spotlight: SpotlightData;
 };
 
-function revealStyle(
-  revealed: boolean,
-  translateY: number,
-  duration: number,
-  delay: number,
-  prefersReduced: boolean,
-): CSSProperties {
-  if (prefersReduced) return {};
-  return {
-    opacity: revealed ? 1 : 0,
-    transform: revealed ? "translateY(0px)" : `translateY(${translateY}px)`,
-    transition: `opacity ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) ${delay}ms, transform ${duration}ms cubic-bezier(0.25, 0.1, 0.25, 1) ${delay}ms`,
-  };
-}
-
 const TITLE_ID = "spotlight-billboard-title";
 
 export default function SpotlightBillboard({ spotlight }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
-  const [inView, setInView] = useState(false);
   const prefersReduced = usePrefersReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  // Under reduced motion the section is shown at once. Derived rather than
-  // stored, so no state is set synchronously in the effect below.
-  const revealed = prefersReduced || inView;
-
-  useEffect(() => {
-    if (prefersReduced) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 },
-    );
-    const el = sectionRef.current;
-    if (el) observer.observe(el);
-    return () => observer.disconnect();
-  }, [prefersReduced]);
+  // The text fades in, staggered, once the section is in view. CSS shows it
+  // immediately under reduced motion or without JavaScript (revealProps).
+  const revealed = useRevealOnScroll(sectionRef, 0.15);
 
   if (!spotlight.image) return null;
   if (
@@ -95,7 +65,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
           {spotlight.label && (
             <p
               className="spotlight-label"
-              style={revealStyle(revealed, 20, 600, 0, prefersReduced)}
+              {...revealProps({ revealed, offset: 20, duration: 600, delay: 0 })}
             >
               <span className="spotlight-label-dash" aria-hidden="true" />
               {spotlight.label}
@@ -107,7 +77,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
             <h2
               id={TITLE_ID}
               className="spotlight-title-el"
-              style={revealStyle(revealed, 30, 700, 150, prefersReduced)}
+              {...revealProps({ revealed, offset: 30, duration: 700, delay: 150 })}
             >
               {spotlight.title}
             </h2>
@@ -117,7 +87,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
           {spotlight.teaser && (
             <p
               className="spotlight-teaser"
-              style={revealStyle(revealed, 25, 600, 300, prefersReduced)}
+              {...revealProps({ revealed, offset: 25, duration: 600, delay: 300 })}
             >
               {spotlight.teaser}
             </p>
@@ -125,7 +95,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
 
           {/* CTA */}
           {spotlight.linkText && spotlight.linkUrl && (
-            <div style={revealStyle(revealed, 20, 500, 450, prefersReduced)}>
+            <div {...revealProps({ revealed, offset: 20, duration: 500, delay: 450 })}>
               {isExternal ? (
                 <a
                   href={spotlight.linkUrl}
@@ -160,7 +130,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
       {spotlight.category && (
         <div
           className="spotlight-category"
-          style={revealStyle(revealed, 0, 800, 600, prefersReduced)}
+          {...revealProps({ revealed, offset: 0, duration: 800, delay: 600 })}
           aria-hidden="true"
         >
           {spotlight.category}
