@@ -21,6 +21,12 @@ type Props = {
   className?: string;
   /** Use `fill` mode (parent must be relative/absolute). */
   fill?: boolean;
+  /**
+   * The displayed width, when it is fixed or narrower than the context's
+   * default (for example the 280px Timeline cards). Without it the
+   * profile's sizes apply.
+   */
+  sizes?: string;
 };
 
 /**
@@ -36,6 +42,7 @@ export default function SanityImage({
   priority = false,
   className,
   fill = false,
+  sizes,
 }: Props) {
   const props = getImageProps(image, context, altOverride);
   const useSanityLoader = props.src.startsWith("https://cdn.sanity.io/");
@@ -56,7 +63,7 @@ export default function SanityImage({
         src={props.src}
         alt={props.alt}
         fill
-        sizes={props.sizes}
+        sizes={sizes ?? props.sizes}
         priority={priority}
         className={className}
         placeholder={props.blurDataURL ? "blur" : "empty"}
@@ -72,7 +79,7 @@ export default function SanityImage({
       alt={props.alt}
       width={props.width}
       height={props.height}
-      sizes={props.sizes}
+      sizes={sizes ?? props.sizes}
       priority={priority}
       className={className}
       placeholder={props.blurDataURL ? "blur" : "empty"}

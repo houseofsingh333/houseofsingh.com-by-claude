@@ -216,6 +216,8 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
                 context="thumbnail"
                 alt={m.title}
                 fill
+                // Cards are a fixed CARD_W (280px) wide at every screen size.
+                sizes={`${CARD_W}px`}
                 className="object-cover"
               />
             </div>
