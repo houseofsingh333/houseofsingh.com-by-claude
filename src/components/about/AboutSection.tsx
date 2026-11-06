@@ -1,19 +1,13 @@
-"use client";
-
-import { useRef } from "react";
 import { PortableText } from "@portabletext/react";
 import { proseComponents } from "@/components/proseComponents";
-import SanityImage from "@/components/SanityImage";
-import { useColourReveal } from "@/hooks/useColourReveal";
-import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
-import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
-import { revealProps } from "@/lib/reveal";
 import type { AboutPageData } from "@/lib/types";
 import {
   FALLBACK_BIO_PARAGRAPHS,
   FALLBACK_MONIKER_PARAGRAPHS,
 } from "./about-constants";
+import AboutPortrait from "./AboutPortrait";
 import FeaturedOn from "./FeaturedOn";
+import PracticeReveal from "./PracticeReveal";
 import RapidFire from "./RapidFire";
 import Timeline from "./Timeline";
 
@@ -40,19 +34,6 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
     milestones,
     rapidFire,
   } = data;
-
-  const logoRef = useRef<HTMLDivElement>(null);
-  const reducedMotion = usePrefersReducedMotion();
-  // The logo and its text fade in once the logo is in view. CSS shows them
-  // immediately under reduced motion or without JavaScript (revealProps).
-  const logoRevealed = useRevealOnScroll(logoRef, 0.25);
-
-  // Portrait colour reveal — scroll-driven on every device (no hover path:
-  // an iPad in landscape is 1024px+ yet has no hover). Shared with the
-  // homepage portrait so the two cannot drift.
-  const portraitRef = useRef<HTMLDivElement>(null);
-  const { revealed: saturated } = useColourReveal(portraitRef);
-
 
   const roles = founderRoles ?? [
     "Creative Director",
@@ -86,24 +67,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
               sticky never engages — no jumping, no gaps. */}
           <div className="md:col-span-5 md:col-start-1 relative lg:self-stretch">
             <div className="about-portrait-sticky lg:sticky lg:top-24">
-            <div
-              ref={portraitRef}
-              className="relative w-full aspect-[7/8] overflow-hidden bg-secondary"
-            >
-              <SanityImage
-                image={portrait}
-                context="body"
-                alt={`${founderName} — ${roles[0]}`}
-                fill
-                className={`object-cover object-top ${
-                  saturated ? "grayscale-0 scale-100" : "grayscale scale-[1.03]"
-                } ${
-                  reducedMotion
-                    ? ""
-                    : "transition-all duration-1000 ease-out"
-                }`}
-              />
-            </div>
+              <AboutPortrait image={portrait} alt={`${founderName} — ${roles[0]}`} />
             </div>
           </div>
 
@@ -143,49 +107,19 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       <section className="px-6 md:px-16 section-py-lg">
         <SectionDivider label="The Practice — House of Singh" />
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">
-          {/* Logo */}
-          <div
-            ref={logoRef}
-            className="flex-shrink-0"
-            {...revealProps({
-              revealed: logoRevealed,
-              offset: 0,
-              duration: 1200,
-              ease: "ease",
-            })}
-          >
-            {/* The logo rests at 60% opacity; the wrapper above fades in. */}
-            {/* eslint-disable-next-line @next/next/no-img-element -- SVG logo: next/image adds nothing for vector files (no resizing or format conversion), so a plain img is right. */}
-            <img
-              src="/images/hos-logo.svg"
-              alt="House of Singh"
-              className="w-48 md:w-56 opacity-60"
-            />
-          </div>
-
-          {/* Text */}
-          <div
-            className="max-w-[550px] text-sm md:text-[15px] text-muted-foreground leading-[1.9]"
-            {...revealProps({
-              revealed: logoRevealed,
-              offset: 16,
-              duration: 800,
-              delay: 400,
-              ease: "ease",
-            })}
-          >
-            {monikerText ? (
-              <PortableText value={monikerText} components={proseComponents} />
-            ) : (
-              FALLBACK_MONIKER_PARAGRAPHS.map((p, i) => (
-                <p key={i} className="mb-6 last:mb-0">
-                  {p}
-                </p>
-              ))
-            )}
-          </div>
-        </div>
+        {/* The logo and text reveal is the only client part; the text itself
+            is rendered here, on the server. */}
+        <PracticeReveal>
+          {monikerText ? (
+            <PortableText value={monikerText} components={proseComponents} />
+          ) : (
+            FALLBACK_MONIKER_PARAGRAPHS.map((p, i) => (
+              <p key={i} className="mb-6 last:mb-0">
+                {p}
+              </p>
+            ))
+          )}
+        </PracticeReveal>
       </section>
 
       {/* ——— 4 · Featured On ——— */}

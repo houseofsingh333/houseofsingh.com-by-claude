@@ -1,10 +1,7 @@
-"use client";
-
 import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { FeaturedOutlet } from "@/lib/types";
 import { parseSanityDate } from "@/lib/dates";
-import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 function formatDate(dateStr?: string): string | null {
   if (!dateStr) return null;
@@ -46,7 +43,6 @@ function FeaturedRow({
 }) {
   const date = formatDate(outlet.date);
   const hasImage = !!outlet.image;
-  const reducedMotion = usePrefersReducedMotion();
 
   const rowContent = (
     <div className="featured-row flex items-center gap-6 py-6 md:py-7">
@@ -58,11 +54,9 @@ function FeaturedRow({
             context="thumbnail"
             alt={outlet.title || outlet.name}
             fill={false}
-            className={`w-full h-full object-cover ${
-              reducedMotion
-                ? ""
-                : "transition-transform duration-[450ms] ease-in-out group-hover:scale-105 group-focus-visible:scale-105"
-            }`}
+            // The gentle zoom on hover and keyboard focus runs only when the
+            // visitor allows motion (motion-safe), set in CSS, not JavaScript.
+            className="w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-[450ms] motion-safe:ease-in-out motion-safe:group-hover:scale-105 motion-safe:group-focus-visible:scale-105"
           />
         </div>
       )}
