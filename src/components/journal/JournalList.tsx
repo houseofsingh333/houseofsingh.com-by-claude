@@ -131,15 +131,20 @@ export default function JournalList({ entries }: Props) {
     }
   };
 
-  const filtered =
-    activeYear === -1
-      ? []
-      : entries.filter((e) => {
-          const d = parseSanityDate(e.date);
-          return (
-            d.getFullYear() === activeYear && d.getMonth() + 1 === activeMonth
-          );
-        });
+  // Memoised so the colour reveal observer below re-runs only when the
+  // visible entries change, not on every render.
+  const filtered = useMemo(
+    () =>
+      activeYear === -1
+        ? []
+        : entries.filter((e) => {
+            const d = parseSanityDate(e.date);
+            return (
+              d.getFullYear() === activeYear && d.getMonth() + 1 === activeMonth
+            );
+          }),
+    [entries, activeYear, activeMonth],
+  );
 
   /* Mobile: scroll-driven grayscale-to-color via IntersectionObserver */
   useEffect(() => {

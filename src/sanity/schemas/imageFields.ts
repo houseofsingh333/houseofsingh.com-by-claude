@@ -11,7 +11,7 @@ import { defineField } from "sanity";
  * `captionField` where a visible caption is also wanted.
  */
 
-export const altField = defineField({
+const altField = defineField({
   name: "alt",
   title: "Alt Text",
   type: "string",
@@ -28,7 +28,7 @@ export const altField = defineField({
     }),
 });
 
-export const decorativeField = defineField({
+const decorativeField = defineField({
   name: "isDecorative",
   title: "Decorative image",
   type: "boolean",

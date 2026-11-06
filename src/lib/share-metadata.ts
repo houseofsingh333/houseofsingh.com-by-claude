@@ -77,7 +77,7 @@ const SHARE_PHOTO = { width: 1200, height: 630 };
  * because some social platforms still reject the newer formats.
  * Null when the page has no cover on the Sanity CDN.
  */
-export function coverShareImage(
+function coverShareImage(
   cover: SanityImage | null | undefined,
   alt: string,
 ) {

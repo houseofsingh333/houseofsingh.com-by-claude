@@ -18,8 +18,8 @@ import type {
   SanityImage,
 } from "@/lib/types";
 
-export const SITE_URL = "https://houseofsingh.com";
-export const STUDIO_URL = "https://studios.houseofsingh.com";
+const SITE_URL = "https://houseofsingh.com";
+const STUDIO_URL = "https://studios.houseofsingh.com";
 
 /**
  * Stable entity @ids, shared with studios.houseofsingh.com.
@@ -32,9 +32,9 @@ export const STUDIO_URL = "https://studios.houseofsingh.com";
  * and language models treat both sites as one entity graph. Renaming an @id
  * silently splits the entity in two.
  */
-export const PERSON_ID = `${SITE_URL}/#maninder-singh`;
-export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
-export const STUDIO_ORGANIZATION_ID = `${STUDIO_URL}/#organization`;
+const PERSON_ID = `${SITE_URL}/#maninder-singh`;
+const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+const STUDIO_ORGANIZATION_ID = `${STUDIO_URL}/#organization`;
 
 /**
  * Canonical portrait, served from the STUDIO's Sanity CDN (project 00iree4d)

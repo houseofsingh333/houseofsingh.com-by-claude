@@ -9,7 +9,7 @@ import type { Metadata } from "next";
  * a separator; these helpers make sure neither reaches the rendered title.
  */
 
-export const SITE_NAME = "House of Singh";
+const SITE_NAME = "House of Singh";
 
 /** The root layout's title template. Kept here so fullTitle() matches it. */
 export const TITLE_TEMPLATE = `%s | ${SITE_NAME}`;

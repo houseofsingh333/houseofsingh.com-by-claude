@@ -23,7 +23,7 @@ function sweep(now: number) {
   }
 }
 
-export interface RateLimitResult {
+interface RateLimitResult {
   success: boolean;
   limit: number;
   remaining: number;
