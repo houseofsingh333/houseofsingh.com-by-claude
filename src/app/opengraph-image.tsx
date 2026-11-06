@@ -14,6 +14,5 @@ export const alt = "House of Singh | Maninder Singh";
 export default async function Image() {
   return renderOgImage({
     title: "Design, photography, and intentional living.",
-    coverUrl: null,
   });
 }

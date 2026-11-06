@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { routeShareImages } from "@/lib/share-metadata";
+import { pageShareImages, routeShareImages } from "@/lib/share-metadata";
 import { alt as projectShareAlt } from "@/app/projects/[slug]/opengraph-image";
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/fetch";
@@ -74,13 +74,13 @@ function ProjectHeader({ category, title, intro, isUpcoming, author }: { categor
 
 const DEFAULT_DESCRIPTION = "A project by Maninder Singh.";
 
-// Share images come from the opengraph-image and twitter-image routes in
-// src/app/projects/[slug]/, kept outside the (site) route group so their URLs
-// carry no hash suffix. They are not colocated with this page, so
-// routeShareImages links them explicitly.
+// Share images: the cover photo from the Sanity CDN (1200x630 JPEG) when
+// there is one, otherwise the generated branded card from the
+// opengraph-image and twitter-image routes in src/app/projects/[slug]/. Those
+// routes sit outside the (site) route group so their URLs carry no hash
+// suffix, and pageShareImages links them explicitly.
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const share = routeShareImages(`/projects/${slug}`, projectShareAlt);
   const project = await sanityFetch<ProjectDetail>({
     query: projectBySlugQuery,
     params: { slug },
@@ -88,6 +88,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (project) {
     const title = normalizeTitle(project.seo?.metaTitle || project.title);
+    const share = pageShareImages({
+      path: `/projects/${slug}`,
+      cover: project.coverImage,
+      pageTitle: title,
+      cardAlt: projectShareAlt,
+    });
     const description =
       project.seo?.metaDescription || project.excerpt || DEFAULT_DESCRIPTION;
     const canonical = project.seo?.canonicalUrl || `/projects/${slug}`;
@@ -127,6 +133,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const fallback = devPlaceholder(projects, []).find((p) => p.slug === slug);
   if (!fallback) return { title: "Not Found" };
+  // Placeholder projects have no cover on the Sanity CDN: generated card.
+  const share = routeShareImages(`/projects/${slug}`, projectShareAlt);
   return {
     title: fallback.title,
     description: fallback.excerpt || DEFAULT_DESCRIPTION,

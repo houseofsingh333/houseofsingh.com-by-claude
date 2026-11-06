@@ -20,6 +20,7 @@ import JsonLd from "@/components/JsonLd";
 import { buildSiteJsonLd } from "@/lib/structured-data";
 import { IntroProvider } from "@/components/IntroContext";
 import { devPlaceholder } from "@/lib/placeholders";
+import { reportInstagramAltGaps } from "@/lib/instagram-alt";
 
 /**
  * Layout for the public website: every page a visitor sees. The (site) route
@@ -54,6 +55,7 @@ export default async function SiteLayout({
   const instagramPhotos = contactData?.instagramPhotos?.length
     ? contactData.instagramPhotos
     : devPlaceholder(fallbackInstagramPhotos, []);
+  reportInstagramAltGaps(instagramPhotos);
 
   return (
     <>

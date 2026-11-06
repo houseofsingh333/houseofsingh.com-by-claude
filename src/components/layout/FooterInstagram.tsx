@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Instagram } from "lucide-react";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
+import InstagramPhotoStack from "@/components/contact/InstagramPhotoStack";
 
 type Props = {
   photos: InstagramPhoto[];
@@ -43,21 +44,16 @@ export default function FooterInstagram({ photos }: Props) {
   return (
     <div className="footer-ig-box">
       <div style={{ position: "relative", width: "100%", height: "100%" }}>
-        {photos.map((photo, i) => (
-          <img
-            key={photo.id}
-            src={photo.url}
-            alt={photo.alt || "Instagram photo"}
-            loading={i === 0 ? "eager" : "lazy"}
-            className="instagram-plate-img"
-            style={{
-              opacity: i === activeIndex ? 1 : 0,
-              transition: prefersReduced
-                ? "none"
-                : "opacity 1.4s ease-in-out",
-            }}
-          />
-        ))}
+        {/* The footer is far down every page, so every photo loads lazily. */}
+        <InstagramPhotoStack
+          photos={photos}
+          activeIndex={activeIndex}
+          sizes="280px"
+          styleFor={(_, active) => ({
+            opacity: active ? 1 : 0,
+            transition: prefersReduced ? "none" : "opacity 1.4s ease-in-out",
+          })}
+        />
       </div>
       {/* Instagram icon — top-right, matching Contact page pattern */}
       <div className="absolute top-4 right-4 z-10">

@@ -139,7 +139,7 @@ export default function JournalPreview({ entries }: Props) {
           >
             <div className="flex items-baseline justify-between gap-4 md:gap-8">
               {/* Index number */}
-              <span className="hidden md:block text-xs tracking-widest text-muted-foreground w-12 shrink-0 transition-colors duration-300 group-hover:text-foreground">
+              <span className="hidden md:block text-xs tracking-widest text-muted-foreground w-12 shrink-0 transition-colors duration-300 group-hover:text-foreground group-focus-visible:text-foreground">
                 {String(index + 1).padStart(2, "0")}
               </span>
 
@@ -152,17 +152,17 @@ export default function JournalPreview({ entries }: Props) {
 
               {/* Date + arrow */}
               <div className="hidden md:flex items-center gap-6 shrink-0">
-                <time className="text-xs tracking-widest text-muted-foreground transition-colors duration-300 group-hover:text-foreground">
+                <time className="text-xs tracking-widest text-muted-foreground transition-colors duration-300 group-hover:text-foreground group-focus-visible:text-foreground">
                   {fmtDate(entry.date)}
                 </time>
-                <span className="text-foreground/0 group-hover:text-foreground transition-[color,transform] duration-500 translate-x-[-8px] group-hover:translate-x-0">
+                <span className="text-foreground/0 group-hover:text-foreground group-focus-visible:text-foreground transition-[color,transform] duration-500 translate-x-[-8px] group-hover:translate-x-0 group-focus-visible:translate-x-0">
                   →
                 </span>
               </div>
             </div>
 
-            {/* Excerpt — hover reveal on desktop */}
-            <div className="hidden md:block transition-[opacity,transform] duration-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0">
+            {/* Excerpt: revealed on hover, and on keyboard focus of the row */}
+            <div className="hidden md:block transition-[opacity,transform] duration-500 opacity-0 translate-y-2 group-hover:opacity-100 group-focus-visible:opacity-100 group-hover:translate-y-0 group-focus-visible:translate-y-0">
               <p className="text-sm text-muted-foreground mt-3 ml-12 max-w-lg leading-relaxed">
                 {entry.excerpt}
               </p>

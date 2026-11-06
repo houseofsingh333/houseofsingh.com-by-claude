@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { routeShareImages } from "@/lib/share-metadata";
+import { pageShareImages } from "@/lib/share-metadata";
 import { alt as journalShareAlt } from "@/app/journal/[slug]/opengraph-image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -47,13 +47,13 @@ export async function generateStaticParams() {
   }));
 }
 
-// Share images come from the opengraph-image and twitter-image routes in
-// src/app/journal/[slug]/, kept outside the (site) route group so their URLs
-// carry no hash suffix. They are not colocated with this page, so
-// routeShareImages links them explicitly.
+// Share images: the cover photo from the Sanity CDN (1200x630 JPEG) when
+// there is one, otherwise the generated branded card from the
+// opengraph-image and twitter-image routes in src/app/journal/[slug]/. Those
+// routes sit outside the (site) route group so their URLs carry no hash
+// suffix, and pageShareImages links them explicitly.
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const share = routeShareImages(`/journal/${slug}`, journalShareAlt);
 
   const entry = await sanityFetch<JournalEntry | null>({
     query: journalBySlugQuery,
@@ -70,6 +70,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = normalizeTitle(
     entry?.seo?.metaTitle ?? entry?.seoTitle ?? baseTitle,
   );
+
+  const share = pageShareImages({
+    path: `/journal/${slug}`,
+    cover: entry?.coverImage ?? fallback?.coverImage,
+    pageTitle: title,
+    cardAlt: journalShareAlt,
+  });
 
   const description =
     entry?.seo?.metaDescription ??

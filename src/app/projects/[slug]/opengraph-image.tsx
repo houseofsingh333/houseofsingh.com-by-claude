@@ -5,7 +5,6 @@ import { fallbackProjects } from "@/lib/placeholder-data";
 import type { ProjectDetail } from "@/lib/placeholder-data";
 import {
   renderOgImage,
-  coverUrlFromImage,
   OG_SIZE,
   OG_CONTENT_TYPE,
 } from "@/lib/og";
@@ -26,8 +25,7 @@ export default async function Image({ params }: Props) {
     params: { slug },
   }).catch(() => null);
 
-  // fallbackProjects are ProjectSummary (thumbnailSrc, no cover) — handle
-  // each shape on its own so types stay precise. Local placeholders only.
+  // Local placeholders only.
   const fallback = devPlaceholder(fallbackProjects, []).find(
     (p) => p.slug === slug,
   );
@@ -37,9 +35,5 @@ export default async function Image({ params }: Props) {
     project?.title ||
     fallback?.title ||
     "House of Singh";
-  const coverUrl = project
-    ? coverUrlFromImage(project.coverImage)
-    : fallback?.thumbnailSrc ?? null;
-
-  return renderOgImage({ title, coverUrl });
+  return renderOgImage({ title });
 }

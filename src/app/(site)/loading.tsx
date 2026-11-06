@@ -1,6 +1,7 @@
 export default function Loading() {
   return (
     <div className="min-h-[100svh] flex items-center justify-center bg-background">
+      {/* eslint-disable-next-line @next/next/no-img-element -- SVG logo: next/image adds nothing for vector files (no resizing or format conversion), so a plain img is right. */}
       <img
         src="/images/hos-logo.svg"
         alt="Loading"
