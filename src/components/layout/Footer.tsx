@@ -2,15 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
-import FooterInstagram from "./FooterInstagram";
 import HoneypotField from "@/components/HoneypotField";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
-
-type Props = {
-  instagramPhotos?: InstagramPhoto[];
-};
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -20,7 +14,7 @@ const NAV_LINKS = [
   { label: "Contact", href: "/contact" },
 ];
 
-export default function Footer({ instagramPhotos = [] }: Props) {
+export default function Footer() {
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState(""); // honeypot
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -145,42 +139,6 @@ export default function Footer({ instagramPhotos = [] }: Props) {
             </div>
           </div>
 
-          {/* Right Column: Instagram (mobile only) */}
-          <div className="footer-col-right">
-            {instagramPhotos.length > 0 && (
-              <a
-                href="https://www.instagram.com/houseofsingh"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="footer-ig-link group"
-              >
-                <FooterInstagram photos={instagramPhotos} />
-              </a>
-            )}
-            {/* Mobile-only: simple Instagram text link */}
-            <a
-              href="https://www.instagram.com/houseofsingh"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="footer-ig-mobile-link"
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="2" y="2" width="20" height="20" rx="5" />
-                <circle cx="12" cy="12" r="5" />
-                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-              </svg>
-              @houseofsingh
-            </a>
-          </div>
         </div>
       </div>
 

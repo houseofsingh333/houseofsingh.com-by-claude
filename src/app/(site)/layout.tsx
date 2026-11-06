@@ -6,21 +6,16 @@ import PageTransition from "@/components/PageTransition";
 import { sanityFetch } from "@/sanity/fetch";
 import {
   navigationQuery,
-  contactPageQuery,
   siteSettingsQuery,
 } from "@/sanity/queries";
 import {
   fallbackNavItems,
-  fallbackInstagramPhotos,
   type NavItem,
 } from "@/lib/placeholder-data";
-import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import type { SiteSettings } from "@/lib/types";
 import JsonLd from "@/components/JsonLd";
 import { buildSiteJsonLd } from "@/lib/structured-data";
 import { IntroProvider } from "@/components/IntroContext";
-import { devPlaceholder } from "@/lib/placeholders";
-import { reportInstagramAltGaps } from "@/lib/instagram-alt";
 
 /**
  * Layout for the public website: every page a visitor sees. The (site) route
@@ -36,11 +31,8 @@ export default async function SiteLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [navData, contactData, settings] = await Promise.all([
+  const [navData, settings] = await Promise.all([
     sanityFetch<{ items: NavItem[] } | null>({ query: navigationQuery }),
-    sanityFetch<{ instagramPhotos?: InstagramPhoto[] | null } | null>({
-      query: contactPageQuery,
-    }),
     sanityFetch<SiteSettings | null>({ query: siteSettingsQuery }),
   ]);
 
@@ -51,11 +43,6 @@ export default async function SiteLayout({
     sanityItems && sanityItems.length >= 4 ? sanityItems : fallbackNavItems;
 
   // The fallback nav lists the site's real routes, so it stays as a default.
-  // The Instagram fallback is placeholder artwork: local placeholders only.
-  const instagramPhotos = contactData?.instagramPhotos?.length
-    ? contactData.instagramPhotos
-    : devPlaceholder(fallbackInstagramPhotos, []);
-  reportInstagramAltGaps(instagramPhotos);
 
   return (
     <>
@@ -84,7 +71,7 @@ export default async function SiteLayout({
         <main id="main-content" className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>
-        <Footer instagramPhotos={instagramPhotos} />
+        <Footer />
       </IntroProvider>
       <SpeedInsights />
     </>
