@@ -1,5 +1,5 @@
 /**
- * scripts/migrate-flatten-bilingual.mjs
+ * scripts/archive/migrate-flatten-bilingual.mjs
  *
  * Sanity migration: flatten { en, pa } bilingual objects → single string.
  *
@@ -31,7 +31,7 @@
  *   SANITY_PROJECT_ID=xxx \
  *   SANITY_DATASET=production \
  *   SANITY_AUTH_TOKEN=skXXX \
- *   node scripts/migrate-flatten-bilingual.mjs
+ *   node scripts/archive/migrate-flatten-bilingual.mjs
  *
  * The token must have write access (Editor or above).
  * Create one at https://www.sanity.io/manage → project → API → Tokens.
