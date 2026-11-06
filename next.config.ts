@@ -12,7 +12,7 @@ const securityHeaders = [
   {
     key: "Content-Security-Policy",
     value:
-      "default-src 'self'; script-src 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://core.sanity-cdn.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io https://*.instagram.com; font-src 'self'; connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://va.vercel-scripts.com; frame-src https://open.spotify.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://core.sanity-cdn.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://va.vercel-scripts.com; frame-src https://open.spotify.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'",
   },
 ];
 
