@@ -5,7 +5,6 @@ import { fallbackJournalEntries } from "@/lib/placeholder-data";
 import type { JournalEntry } from "@/lib/placeholder-data";
 import {
   renderOgImage,
-  coverUrlFromImage,
   OG_SIZE,
   OG_CONTENT_TYPE,
 } from "@/lib/og";
@@ -36,7 +35,5 @@ export default async function Image({ params }: Props) {
     resolved?.seoTitle ||
     resolved?.title ||
     "House of Singh";
-  const coverUrl = coverUrlFromImage(resolved?.coverImage);
-
-  return renderOgImage({ title, coverUrl });
+  return renderOgImage({ title });
 }
