@@ -1,8 +1,10 @@
 /**
  * Shared animation easing curves and timing constants.
  *
- * Used by CinematicHero, PageTransition, ScrollReveal.
- * Keep all motion easing presets here to avoid duplication.
+ * EASE_SLOW and EASE_SMOOTH drive the home hero (CinematicHero, the only
+ * component that still uses the motion library) and the page transition
+ * (PageTransition, Web Animations API). The scroll reveal CSS uses the same
+ * curve as EASE_SMOOTH (src/lib/reveal.ts). Keep easing presets here.
  */
 
 /** Smooth general-purpose easing — subtle deceleration. */
