@@ -3,12 +3,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { Instagram } from "lucide-react";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
+import InstagramPhotoStack from "./InstagramPhotoStack";
 
 export type InstagramPhoto = {
   id: string;
   url: string;
   permalink: string;
-  alt: string;
+  alt?: string | null;
+  isDecorative?: boolean | null;
 };
 
 type Props = {
@@ -76,16 +78,15 @@ export default function InstagramPhotoPlate({
           }
           className="absolute inset-0"
         >
-          {photos.map((photo, i) => (
-            <img
-              key={photo.id}
-              src={photo.url}
-              alt={photo.alt || "Instagram photo"}
-              loading={i === 0 ? "eager" : "lazy"}
-              className="instagram-plate-img"
-              style={{ opacity: i === activeIndex ? 1 : 0 }}
-            />
-          ))}
+          <InstagramPhotoStack
+            photos={photos}
+            activeIndex={activeIndex}
+            // About 460px wide on desktop, a third of the screen on tablets,
+            // the screen less its margins on phones.
+            sizes="(min-width: 1280px) 460px, (min-width: 768px) 36vw, calc(100vw - 80px)"
+            eagerFirst
+            styleFor={(_, active) => ({ opacity: active ? 1 : 0 })}
+          />
         </div>
 
         {/* Subtle grain overlay — matches archive-grain pattern */}

@@ -219,6 +219,7 @@ export const contactPageQuery = `*[_type == "contactPage"][0]{
     "id": _key,
     "url": image.asset->url,
     "alt": image.alt,
+    "isDecorative": image.isDecorative,
     permalink
   },
   "seo": seo ${_seo},
