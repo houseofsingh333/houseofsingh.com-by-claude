@@ -9,7 +9,7 @@ import {
 import SanityImage from "@/components/SanityImage";
 import { useIntro } from "@/components/IntroContext";
 import type { HeroSlide } from "@/lib/placeholder-data";
-import { EASE_SMOOTH, EASE_SLOW } from "@/lib/animation";
+import { EASE_SLOW } from "@/lib/animation";
 
 // ——— Ken Burns presets ———
 
@@ -244,7 +244,7 @@ export default function CinematicHero({ slides }: Props) {
               exit={{ opacity: 0, y: 0 }}
               transition={{
                 duration: isFirstSlide ? 0 : CAPTION_IN_DURATION,
-                ease: EASE_SMOOTH,
+                ease: EASE_SLOW,
               }}
             >
               {slide.caption}

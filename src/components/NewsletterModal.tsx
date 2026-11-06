@@ -213,7 +213,7 @@ export default function NewsletterModal({ isOpen, onClose }: Props) {
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="w-full bg-foreground text-background py-3 text-sm tracking-widest uppercase hover:bg-foreground/90 transition-colors duration-300 disabled:opacity-50"
+                  className="w-full bg-foreground text-background py-3 text-sm tracking-widest uppercase hover:bg-foreground/90 transition-colors duration-(--dur-hover) ease-(--ease-soft-out) disabled:opacity-50"
                 >
                   {status === "loading" ? "Subscribing..." : "Subscribe"}
                 </button>

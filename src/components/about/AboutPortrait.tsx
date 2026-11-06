@@ -33,7 +33,7 @@ export default function AboutPortrait({
         fill
         className={`object-cover object-top ${
           saturated ? "grayscale-0 scale-100" : "grayscale scale-[1.03]"
-        } ${prefersReducedMotion ? "" : "transition-all duration-1000 ease-out"}`}
+        } ${prefersReducedMotion ? "" : "transition-all duration-(--dur-image) ease-(--ease-slow)"}`}
       />
     </div>
   );

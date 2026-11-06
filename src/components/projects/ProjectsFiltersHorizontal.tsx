@@ -10,7 +10,7 @@ type Props = {
 };
 
 const BTN_BASE =
-  "whitespace-nowrap text-xs tracking-[0.15em] uppercase pb-1 cursor-pointer select-none shrink-0 transition-[color,opacity] duration-200 outline-none focus-visible:underline focus-visible:underline-offset-4";
+  "whitespace-nowrap text-xs tracking-[0.15em] uppercase pb-1 cursor-pointer select-none shrink-0 transition-[color,opacity] duration-(--dur-hover) ease-(--ease-soft-out) outline-none focus-visible:underline focus-visible:underline-offset-4";
 
 const BTN_ACTIVE = "text-foreground border-b border-foreground";
 const BTN_INACTIVE =
@@ -180,7 +180,7 @@ export default function ProjectsFiltersHorizontal({
                 key={cat}
                 onClick={() => select(cat)}
                 tabIndex={panelOpen ? 0 : -1}
-                className={`text-left text-xs tracking-[0.15em] uppercase py-1 cursor-pointer select-none transition-[color,opacity] duration-200 outline-none focus-visible:underline focus-visible:underline-offset-4 ${isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                className={`text-left text-xs tracking-[0.15em] uppercase py-1 cursor-pointer select-none transition-[color,opacity] duration-(--dur-hover) ease-(--ease-soft-out) outline-none focus-visible:underline focus-visible:underline-offset-4 ${isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
                 aria-current={isActive ? "true" : undefined}
               >
                 <span className="inline-flex items-center gap-2">

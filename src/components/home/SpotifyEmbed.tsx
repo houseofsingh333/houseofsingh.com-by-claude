@@ -75,7 +75,7 @@ export default function SpotifyEmbed({ playlistUrl }: Props) {
         <div className="w-full h-px bg-border mb-12" />
       </ScrollReveal>
 
-      <ScrollReveal delay={0.15} duration={0.9}>
+      <ScrollReveal delay={0.15}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
           {/* Spotify embed — mounted only when scrolled into view. The
               placeholder reserves the exact height so there is no shift. */}
@@ -90,7 +90,7 @@ export default function SpotifyEmbed({ playlistUrl }: Props) {
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
                 style={{ border: 0, borderRadius: 12 }}
-                className="opacity-80 hover:opacity-100 transition-opacity duration-500"
+                className="opacity-80 hover:opacity-100 transition-opacity duration-(--dur-hover) ease-(--ease-soft-out)"
               />
             ) : (
               <div

@@ -112,8 +112,6 @@ export default function ProjectsFilteredGrid({
           <ScrollReveal
             key={project._id}
             as="article"
-            offset={14}
-            duration={0.8}
             delay={(index % 3) * 0.1}
             threshold={0.1}
             className={`

@@ -183,10 +183,19 @@ Motion is calm and minimal. It supports the content, never performs for its own 
 - The pulsing brass dot on upcoming projects is the reference for brand motion: slow, breathing, about a two and a half to three second cycle, never a fast blink.
 - Always respect the user's reduced motion preference. When reduced motion is on, animations resolve to a calm static state.
 
-**The real motion tokens (from the live site).**
-- Signature editorial easing: `cubic-bezier(0.22, 1, 0.36, 1)`, stored as `--editorial-ease`. This is the brand's primary curve. Use it for the considered moments.
-- Editorial duration token: `--editorial-duration` is 1200ms, for full editorial reveals.
-- Everyday interaction timings sit in the 200ms to 400ms range (hovers, inputs, buttons). Larger reveals run 550ms to 1200ms.
+**The motion tokens (in `globals.css`; always use these, never hard coded values).**
+
+| Token | Value | Use |
+|---|---|---|
+| `--ease-slow` | `cubic-bezier(0.37, 0, 0.63, 1)`, a soft sine | The default curve: scroll reveals, fades, crossfades, image fade ins and the page fade in. Tailwind: `ease-(--ease-slow)`. |
+| `--ease-soft-out` | `cubic-bezier(0.33, 1, 0.68, 1)` | Hover and focus changes. Tailwind: `ease-(--ease-soft-out)`. |
+| `--dur-reveal` | 1400ms, with `--rise-reveal` 12px | Scroll reveals: a slow fade with a gentle 12px rise. Pure fades (photos, the logo) do not rise. Staggered siblings keep their delays. |
+| `--dur-image` | 1000ms | Image fade ins and grey to colour reveals. Crossfades between photos may run longer. |
+| `--dur-hover` | 500ms | Hover and focus changes: colour, underline, a small nudge or zoom. Tailwind: `duration-(--dur-hover)`. |
+| `--dur-page` | 600ms | The page fade in on navigation, and content swapped by a click (form steps, filters). |
+
+- Kept quick on purpose, for usability: focus rings appear at once, form error messages appear at once, and the menu and popup open in at most 500ms. Tap feedback on touch screens and anything that follows the scroll position stay immediate.
+- The earlier fast curve, `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`), is no longer the default. It remains only for the menu and popup opening.
 - The upcoming dot pulse runs at 2.8s, infinite, the slow breathing reference.
 - Every animation has a `prefers-reduced-motion` fallback that resolves to a static state. This is mandatory for anything new.
 
@@ -253,7 +262,7 @@ The voice is the same calm, grounded, reflective voice used across the brand. (D
 
 **Feel:** Calm, editorial, crafted, grounded, timeless.
 
-**Motion:** Signature easing `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`), editorial duration 1200ms, everyday 200 to 400ms. Slow, gentle, minimal. Respect reduced motion. The 2.8s breathing brass dot is the reference.
+**Motion:** Tokens in `globals.css`: `--ease-slow` `cubic-bezier(0.37, 0, 0.63, 1)` for reveals, fades and the page fade in; `--ease-soft-out` `cubic-bezier(0.33, 1, 0.68, 1)` for hover and focus; `--dur-reveal` 1400ms with a 12px rise, `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-page` 600ms. Focus rings, form errors and the menu and popup opening stay quick. Slow, gentle, minimal. Respect reduced motion. The 2.8s breathing brass dot is the reference.
 
 **The test:** Calm, considered, crafted, or loud, rushed, generic? Ship only the former.
 

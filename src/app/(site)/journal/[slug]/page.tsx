@@ -282,7 +282,7 @@ export default async function JournalDetailPage({ params }: Props) {
                     >
                       <span
                         aria-hidden="true"
-                        className="block text-sm text-muted-foreground mb-2 transition-[transform,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-foreground motion-safe:group-hover:-translate-x-0.5"
+                        className="block text-sm text-muted-foreground mb-2 transition-[transform,color] duration-(--dur-hover) ease-(--ease-soft-out) group-hover:text-foreground motion-safe:group-hover:-translate-x-0.5"
                       >
                         &larr;
                       </span>
@@ -312,7 +312,7 @@ export default async function JournalDetailPage({ params }: Props) {
                     >
                       <span
                         aria-hidden="true"
-                        className="block text-sm text-muted-foreground mb-2 transition-[transform,color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-foreground motion-safe:group-hover:translate-x-0.5"
+                        className="block text-sm text-muted-foreground mb-2 transition-[transform,color] duration-(--dur-hover) ease-(--ease-soft-out) group-hover:text-foreground motion-safe:group-hover:translate-x-0.5"
                       >
                         &rarr;
                       </span>

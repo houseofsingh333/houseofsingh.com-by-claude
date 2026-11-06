@@ -19,7 +19,7 @@ function ExternalLinkIcon() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      className="shrink-0 text-current transition-colors duration-300"
+      className="shrink-0 text-current transition-colors duration-(--dur-hover) ease-(--ease-soft-out)"
     >
       <path
         d="M6 2.5H3.5a1 1 0 0 0-1 1V12.5a1 1 0 0 0 1 1H12.5a1 1 0 0 0 1-1V10M9.5 2.5H13.5V6.5M13.5 2.5L7 9"
@@ -56,7 +56,7 @@ function FeaturedRow({
             fill={false}
             // The gentle zoom on hover and keyboard focus runs only when the
             // visitor allows motion (motion-safe), set in CSS, not JavaScript.
-            className="w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-[450ms] motion-safe:ease-in-out motion-safe:group-hover:scale-105 motion-safe:group-focus-visible:scale-105"
+            className="w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-(--dur-hover) motion-safe:ease-(--ease-soft-out) motion-safe:group-hover:scale-105 motion-safe:group-focus-visible:scale-105"
           />
         </div>
       )}
@@ -81,7 +81,7 @@ function FeaturedRow({
 
         {/* Line 3: publication link with icon */}
         {outlet.url && (
-          <p className="mt-[15px] text-[12px] tracking-[0.18em] uppercase text-foreground/80 inline-flex items-center gap-1.5 pb-1 border-b border-foreground/20 group-hover:text-foreground group-hover:border-foreground group-focus-visible:text-foreground group-focus-visible:border-foreground transition-colors duration-300 motion-reduce:transition-none">
+          <p className="mt-[15px] text-[12px] tracking-[0.18em] uppercase text-foreground/80 inline-flex items-center gap-1.5 pb-1 border-b border-foreground/20 group-hover:text-foreground group-hover:border-foreground group-focus-visible:text-foreground group-focus-visible:border-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) motion-reduce:transition-none">
             <span>VIEW ARTICLE</span>
             <ExternalLinkIcon />
           </p>

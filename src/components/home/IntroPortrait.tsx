@@ -82,7 +82,9 @@ export default function IntroPortrait({
     ? "saturate(1) brightness(1)"
     : "saturate(0.15) brightness(1.05)";
 
-  const imageTransition = prefersReducedMotion ? "none" : "filter 1s ease";
+  const imageTransition = prefersReducedMotion
+    ? "none"
+    : "filter var(--dur-image) var(--ease-slow)";
 
   return (
     <>
@@ -96,7 +98,7 @@ export default function IntroPortrait({
           pins at the top of the collapse track while the frame shrinks.
           Offset clears the fixed 68px scrolled header. Mobile: not sticky. */}
       <div className="intro-collapse-sticky lg:sticky lg:top-24">
-        <ScrollReveal delay={0.15} offset={6} duration={0.6}>
+        <ScrollReveal delay={0.15}>
         <div
           ref={imageRef}
           className="intro-collapse-frame relative w-full aspect-square lg:aspect-[4/5] max-h-[65vh] md:max-lg:max-h-none md:max-lg:aspect-auto overflow-hidden bg-background"

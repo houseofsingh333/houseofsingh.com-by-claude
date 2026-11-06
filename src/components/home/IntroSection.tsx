@@ -48,7 +48,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
         {/* Text content — right on desktop, below the image on tablet/mobile */}
         <div className="lg:col-span-5 lg:col-start-7 flex flex-col gap-8 lg:gap-10 lg:pt-14">
           {/* Roles — calm, restrained */}
-          <ScrollReveal delay={0.5} offset={10}>
+          <ScrollReveal delay={0.5}>
             <div className="space-y-1">
               {roles.map((role) => (
                 <p
@@ -62,7 +62,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
           </ScrollReveal>
 
           {/* Bio — sans-serif body style */}
-          <ScrollReveal delay={0.6} offset={10}>
+          <ScrollReveal delay={0.6}>
             {data.founderBio ? (
               <div
                 className="text-muted-foreground max-w-[440px] md:max-lg:max-w-[560px] leading-[1.75]"
@@ -88,7 +88,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
           </ScrollReveal>
 
           {/* About link */}
-          <ScrollReveal delay={0.7} offset={10}>
+          <ScrollReveal delay={0.7}>
             <Link
               href="/about"
               className="inline-flex items-center gap-3 uppercase text-foreground group w-fit"
@@ -98,7 +98,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
               }}
             >
               <span
-                className="group-hover:border-foreground/40 transition-colors duration-300"
+                className="group-hover:border-foreground/40 transition-colors duration-(--dur-hover) ease-(--ease-soft-out)"
                 style={{
                   borderBottom: "1px solid rgba(0, 0, 0, 0.2)",
                   paddingBottom: "4px",
@@ -106,7 +106,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
               >
                 More about him
               </span>
-              <span className="transition-transform duration-300 group-hover:translate-x-1">
+              <span className="transition-transform duration-(--dur-hover) ease-(--ease-soft-out) group-hover:translate-x-1">
                 →
               </span>
             </Link>

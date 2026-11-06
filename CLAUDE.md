@@ -88,7 +88,8 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 
 ### Motion
 - Calm and minimal. Soft fades and quiet reveals, never fast or springy.
-- Signature easing `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`); editorial duration token 1200ms; everyday interactions 200ms to 400ms.
+- Use the motion tokens in `globals.css`, never hard coded values: `--ease-slow` (`cubic-bezier(0.37, 0, 0.63, 1)`, a soft sine) for scroll reveals, fades, crossfades, image fade ins and the page fade in; `--ease-soft-out` (`cubic-bezier(0.33, 1, 0.68, 1)`) for hover and focus. Durations: `--dur-reveal` 1400ms with a 12px rise (`--rise-reveal`), `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-page` 600ms. Tailwind: `ease-(--ease-slow)`, `ease-(--ease-soft-out)`, `duration-(--dur-hover)`.
+- Keep quick on purpose: focus rings and form error messages appear at once; the menu and popup open in at most 500ms. The old fast curve `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`) is no longer the default; it remains only for the menu and popup opening.
 - The 2.8s breathing brass dot is the reference for brand motion.
 - One well orchestrated reveal beats many scattered micro animations.
 

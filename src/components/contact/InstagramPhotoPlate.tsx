@@ -105,7 +105,7 @@ export default function InstagramPhotoPlate({
         <div className="absolute top-4 right-4 z-10">
           <Instagram
             className="w-7 h-7 text-white/25 group-hover:text-white/45 drop-shadow-sm"
-            style={{ transition: "color 400ms cubic-bezier(0.22, 1, 0.36, 1)" }}
+            style={{ transition: "color var(--dur-hover) var(--ease-soft-out)" }}
             strokeWidth={1.4}
           />
         </div>

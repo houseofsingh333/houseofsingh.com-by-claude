@@ -88,13 +88,13 @@ export default function NavOverlay({
                   rel="noopener noreferrer"
                   onClick={onClose}
                   aria-label="Studio, opens House of Singh Studios in a new tab"
-                  className="group flex items-center py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[48px]"
+                  className="group flex items-center py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) min-h-[48px]"
                 >
                   <span className="inline-flex items-center gap-1.5">
                     {item.label}
                     <span
                       aria-hidden="true"
-                      className="text-xs tracking-widest text-muted-foreground transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:transform-none"
+                      className="text-xs tracking-widest text-muted-foreground transition-transform duration-(--dur-hover) ease-(--ease-soft-out) group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:transform-none"
                     >
                       ↗
                     </span>
@@ -105,7 +105,7 @@ export default function NavOverlay({
                   ref={i === 0 ? firstLinkRef : undefined}
                   href={item.href}
                   onClick={onClose}
-                  className="block py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-300 min-h-[48px]"
+                  className="block py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) min-h-[48px]"
                 >
                   {item.label}
                 </Link>
@@ -120,14 +120,14 @@ export default function NavOverlay({
             href="https://www.instagram.com/houseofsingh"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-2"
+            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) py-2"
           >
             Instagram
           </a>
           <span className="text-border">&middot;</span>
           <button
             onClick={onNewsletterOpen}
-            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 py-2"
+            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) py-2"
           >
             Newsletter
           </button>

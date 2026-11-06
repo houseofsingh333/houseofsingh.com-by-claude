@@ -70,8 +70,6 @@ export default function ContentSections({ sections }: Props) {
         return (
           <ScrollReveal
             key={section._key}
-            offset={16}
-            duration={0.9}
             delay={index === 0 ? 0 : 0.05}
             threshold={0.08}
           >

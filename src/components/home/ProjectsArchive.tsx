@@ -46,7 +46,7 @@ function ProjectCard({
       <div className="relative aspect-[3/4] max-h-[60vh] overflow-hidden mb-4 md:mb-5">
         {/* Grain overlay */}
         <div
-          className={`archive-grain absolute inset-0 z-10 pointer-events-none transition-opacity duration-300 ${
+          className={`archive-grain absolute inset-0 z-10 pointer-events-none transition-opacity duration-(--dur-hover) ease-(--ease-soft-out) ${
             isFocused ? "opacity-0" : "opacity-100"
           }`}
         />
@@ -60,7 +60,7 @@ function ProjectCard({
                   filter: isFocused
                     ? "brightness(1)"
                     : "brightness(0.95)",
-                  transition: "filter 300ms ease-in-out",
+                  transition: "filter var(--dur-image) var(--ease-soft-out)",
                 }
           }
         >
@@ -79,7 +79,7 @@ function ProjectCard({
         // Was opacity 0.35 / 0.7 on --muted-foreground, which blended toward the
         // background and failed WCAG AA. The focus shift is now a colour change
         // at full opacity: both states pass, and focus still visibly lifts it.
-        className="text-[10px] tracking-[0.2em] uppercase mb-2 transition-colors duration-300"
+        className="text-[10px] tracking-[0.2em] uppercase mb-2 transition-colors duration-(--dur-hover) ease-(--ease-soft-out)"
         style={{
           color: isFocused
             ? "var(--foreground)"
@@ -94,7 +94,7 @@ function ProjectCard({
         <span className="archive-title-text relative inline">
           {project.title}
           <span
-            className="absolute left-0 right-0 bottom-[-3px] h-px bg-foreground/30 origin-left transition-transform duration-500 ease-out"
+            className="absolute left-0 right-0 bottom-[-3px] h-px bg-foreground/30 origin-left transition-transform duration-(--dur-hover) ease-(--ease-soft-out)"
             style={{
               transform: isFocused ? "scaleX(1)" : "scaleX(0)",
             }}
@@ -253,7 +253,7 @@ export default function ProjectsArchive({ projects }: Props) {
             <Link
               href="/projects"
               aria-label="See all projects"
-              className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 border-b border-foreground/30 pb-0.5"
+              className="text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) border-b border-foreground/30 pb-0.5"
             >
               See all
             </Link>

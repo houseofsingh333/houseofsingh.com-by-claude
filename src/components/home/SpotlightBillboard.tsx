@@ -65,7 +65,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
           {spotlight.label && (
             <p
               className="spotlight-label"
-              {...revealProps({ revealed, offset: 20, duration: 600, delay: 0 })}
+              {...revealProps({ revealed, delay: 0 })}
             >
               <span className="spotlight-label-dash" aria-hidden="true" />
               {spotlight.label}
@@ -77,7 +77,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
             <h2
               id={TITLE_ID}
               className="spotlight-title-el"
-              {...revealProps({ revealed, offset: 30, duration: 700, delay: 150 })}
+              {...revealProps({ revealed, delay: 150 })}
             >
               {spotlight.title}
             </h2>
@@ -87,7 +87,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
           {spotlight.teaser && (
             <p
               className="spotlight-teaser"
-              {...revealProps({ revealed, offset: 25, duration: 600, delay: 300 })}
+              {...revealProps({ revealed, delay: 300 })}
             >
               {spotlight.teaser}
             </p>
@@ -95,7 +95,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
 
           {/* CTA */}
           {spotlight.linkText && spotlight.linkUrl && (
-            <div {...revealProps({ revealed, offset: 20, duration: 500, delay: 450 })}>
+            <div {...revealProps({ revealed, delay: 450 })}>
               {isExternal ? (
                 <a
                   href={spotlight.linkUrl}
@@ -130,7 +130,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
       {spotlight.category && (
         <div
           className="spotlight-category"
-          {...revealProps({ revealed, offset: 0, duration: 800, delay: 600 })}
+          {...revealProps({ revealed, rise: false, delay: 600 })}
           aria-hidden="true"
         >
           {spotlight.category}
