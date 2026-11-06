@@ -132,8 +132,19 @@ export default async function RootLayout({
     : devPlaceholder(fallbackInstagramPhotos, []);
 
   return (
-    <html lang="en" className={playfair.variable}>
+    // suppressHydrationWarning: the script below adds the "js" class to
+    // <html> before React hydrates, which is intended.
+    <html lang="en" className={playfair.variable} suppressHydrationWarning>
       <head>
+        {/* Marks that JavaScript is running, before the first paint. Scroll
+            reveals start hidden only under this class (and only when the
+            visitor allows motion), so without JavaScript every reveal is
+            simply visible. See "Scroll reveal" in globals.css. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: 'document.documentElement.classList.add("js")',
+          }}
+        />
         {/* Intro video preload — desktop only. The intro overlay is skipped
             below 1024px, so without this media condition mobile downloaded
             126 KiB it never plays. */}

@@ -1,13 +1,8 @@
 "use client";
 
-import { useRef } from "react";
-import {
-  motion,
-  useInView,
-  useReducedMotion,
-  type HTMLMotionProps,
-} from "motion/react";
-import { EASE_SMOOTH } from "@/lib/animation";
+import { useRef, type ElementType, type HTMLAttributes } from "react";
+import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { revealProps } from "@/lib/reveal";
 
 type Props = {
   /** Stagger delay in seconds (for sequencing sibling reveals). Default 0. */
@@ -21,7 +16,7 @@ type Props = {
   /** Render as a different HTML element. Default "div". */
   as?: "div" | "section" | "article" | "figure" | "p" | "h1" | "h2" | "h3" | "span" | "li";
   children: React.ReactNode;
-} & Omit<HTMLMotionProps<"div">, "initial" | "animate" | "transition">;
+} & HTMLAttributes<HTMLElement>;
 
 /**
  * Reusable scroll-triggered reveal with editorial rhythm.
@@ -31,7 +26,10 @@ type Props = {
  *   <ScrollReveal>content</ScrollReveal>
  *   <ScrollReveal delay={0.1} offset={30}>staggered item</ScrollReveal>
  *
- * Respects prefers-reduced-motion: renders immediately with no animation.
+ * Visible by default. The hidden start state is applied by CSS only when
+ * JavaScript is running and the visitor allows motion (see "Scroll reveal"
+ * in globals.css), so the server HTML, reduced motion and no JavaScript all
+ * show the content immediately, with no fade.
  */
 export default function ScrollReveal({
   delay = 0,
@@ -40,39 +38,26 @@ export default function ScrollReveal({
   duration = 0.7,
   as = "div",
   children,
-  className,
   style,
   ...rest
 }: Props) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, amount: threshold });
-  const prefersReduced = useReducedMotion();
-
-  const MotionTag = motion[as] as typeof motion.div;
-
-  if (prefersReduced) {
-    return (
-      <MotionTag ref={ref} className={className} style={style} {...rest}>
-        {children}
-      </MotionTag>
-    );
-  }
+  const ref = useRef<HTMLElement>(null);
+  const revealed = useRevealOnScroll(ref, threshold);
+  const Tag = as as ElementType;
 
   return (
-    <MotionTag
+    <Tag
       ref={ref}
-      className={className}
-      style={style}
-      initial={{ opacity: 0, y: offset }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: offset }}
-      transition={{
-        duration,
-        delay,
-        ease: EASE_SMOOTH,
-      }}
       {...rest}
+      {...revealProps({
+        revealed,
+        offset,
+        duration: duration * 1000,
+        delay: delay * 1000,
+        style,
+      })}
     >
       {children}
-    </MotionTag>
+    </Tag>
   );
 }

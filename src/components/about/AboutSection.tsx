@@ -1,11 +1,13 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { PortableText } from "@portabletext/react";
 import { proseComponents } from "@/components/proseComponents";
 import SanityImage from "@/components/SanityImage";
 import { useColourReveal } from "@/hooks/useColourReveal";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
+import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { revealProps } from "@/lib/reveal";
 import type { AboutPageData } from "@/lib/types";
 import {
   FALLBACK_BIO_PARAGRAPHS,
@@ -40,11 +42,10 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
   } = data;
 
   const logoRef = useRef<HTMLDivElement>(null);
-  const [logoInView, setLogoInView] = useState(false);
   const reducedMotion = usePrefersReducedMotion();
-  // Under reduced motion the logo and text are shown at once, without the
-  // scroll reveal. Derived rather than stored, so no state is set in an effect.
-  const logoRevealed = reducedMotion || logoInView;
+  // The logo and its text fade in once the logo is in view. CSS shows them
+  // immediately under reduced motion or without JavaScript (revealProps).
+  const logoRevealed = useRevealOnScroll(logoRef, 0.25);
 
   // Portrait colour reveal — scroll-driven on every device (no hover path:
   // an iPad in landscape is 1024px+ yet has no hover). Shared with the
@@ -52,23 +53,6 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
   const portraitRef = useRef<HTMLDivElement>(null);
   const { revealed: saturated } = useColourReveal(portraitRef);
 
-  useEffect(() => {
-    const el = logoRef.current;
-    // Reduced motion needs no observer: logoRevealed is already true.
-    if (!el || reducedMotion) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setLogoInView(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.25 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [reducedMotion]);
 
   const roles = founderRoles ?? [
     "Creative Director",
@@ -164,33 +148,31 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
           <div
             ref={logoRef}
             className="flex-shrink-0"
-            style={{
-              opacity: logoRevealed ? 0.6 : 0,
-              transition: "opacity 1.2s ease",
-            }}
+            {...revealProps({
+              revealed: logoRevealed,
+              offset: 0,
+              duration: 1200,
+              ease: "ease",
+            })}
           >
+            {/* The logo rests at 60% opacity; the wrapper above fades in. */}
             <img
               src="/images/hos-logo.svg"
               alt="House of Singh"
-              className="w-48 md:w-56"
+              className="w-48 md:w-56 opacity-60"
             />
           </div>
 
           {/* Text */}
           <div
             className="max-w-[550px] text-sm md:text-[15px] text-muted-foreground leading-[1.9]"
-            style={
-              reducedMotion
-                ? {}
-                : {
-                    opacity: logoRevealed ? 1 : 0,
-                    transform: logoRevealed
-                      ? "translateY(0)"
-                      : "translateY(16px)",
-                    transition:
-                      "opacity 0.8s ease 0.4s, transform 0.8s ease 0.4s",
-                  }
-            }
+            {...revealProps({
+              revealed: logoRevealed,
+              offset: 16,
+              duration: 800,
+              delay: 400,
+              ease: "ease",
+            })}
           >
             {monikerText ? (
               <PortableText value={monikerText} components={proseComponents} />

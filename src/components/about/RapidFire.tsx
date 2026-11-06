@@ -1,39 +1,22 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import type { RapidFireItem } from "@/lib/types";
+import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { revealProps } from "@/lib/reveal";
 
 export default function RapidFire({ items }: { items: RapidFireItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [revealed, setRevealed] = useState(false);
 
   const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  // Scroll entrance with native Intersection Observer.
-  // Reduced motion is handled purely via CSS (!important overrides).
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    // Skip observer if user prefers reduced motion — CSS ensures visibility
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setRevealed(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
+  // Scroll entrance: the items fade in, staggered, once the list is in view.
+  // CSS shows them immediately under reduced motion or without JavaScript
+  // (revealProps and "Scroll reveal" in globals.css).
+  const revealed = useRevealOnScroll(sectionRef, 0.1);
 
   if (!items || items.length === 0) return null;
 
@@ -49,13 +32,12 @@ export default function RapidFire({ items }: { items: RapidFireItem[] }) {
           <div
             key={item.question}
             className="rapidfire-item"
-            style={{
-              opacity: revealed ? 1 : 0,
-              transform: revealed ? "translateY(0)" : "translateY(16px)",
-              transition: revealed
-                ? `opacity 500ms cubic-bezier(0.25, 0.1, 0.25, 1) ${index * 80}ms, transform 500ms cubic-bezier(0.25, 0.1, 0.25, 1) ${index * 80}ms`
-                : "none",
-            }}
+            {...revealProps({
+              revealed,
+              offset: 16,
+              duration: 500,
+              delay: index * 80,
+            })}
           >
             <button
               type="button"
