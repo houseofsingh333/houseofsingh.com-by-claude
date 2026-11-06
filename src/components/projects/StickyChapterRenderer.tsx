@@ -1,5 +1,3 @@
-"use client";
-
 import { PortableText } from "@portabletext/react";
 import AspectImage from "./AspectImage";
 import type { StickyChapterBlock } from "@/lib/placeholder-data";
