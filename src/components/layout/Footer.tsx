@@ -77,6 +77,7 @@ export default function Footer({ instagramPhotos = [] }: Props) {
         <div className="footer-grid">
           {/* Left Column: Crest + CTA */}
           <div className="footer-col-left">
+            {/* eslint-disable-next-line @next/next/no-img-element -- SVG logo: next/image adds nothing for vector files (no resizing or format conversion), so a plain img is right. */}
             <img
               src="/images/hos-logo.svg"
               alt="House of Singh"

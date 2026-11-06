@@ -156,6 +156,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
             })}
           >
             {/* The logo rests at 60% opacity; the wrapper above fades in. */}
+            {/* eslint-disable-next-line @next/next/no-img-element -- SVG logo: next/image adds nothing for vector files (no resizing or format conversion), so a plain img is right. */}
             <img
               src="/images/hos-logo.svg"
               alt="House of Singh"
