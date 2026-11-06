@@ -100,16 +100,11 @@ body {
 
 /* ——— Utility animations ——— */
 
-.editorial-fade-in {
-  animation: editorialFadeIn 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-}
-
 .editorial-slide-up {
   animation: editorialSlideUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .editorial-fade-in,
   .editorial-slide-up,
   /* Tailwind utilities built from the --animate-* tokens above: the About
      quote (animate-editorial-fade-in), the journal grid and the journal
@@ -448,15 +443,6 @@ body {
   margin-top: 4px;
 }
 
-/* Right Column: Instagram (mobile only on desktop/tablet) */
-
-.footer-col-right {
-  justify-self: end;
-  display: none;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
 /* TOP button — absolute positioned in footer-main on desktop */
 .footer-top-btn {
   position: absolute;
@@ -481,17 +467,6 @@ body {
   .footer-top-btn:hover {
     color: var(--foreground);
   }
-}
-
-.footer-ig-link {
-  display: block;
-}
-
-.footer-ig-box {
-  width: 280px;
-  aspect-ratio: 5 / 4;
-  overflow: hidden;
-  position: relative;
 }
 
 /* Part 3: Bottom Bar */
@@ -547,11 +522,6 @@ body {
 
 /* Mobile TOP ↑ in bottom bar — hidden on desktop */
 .footer-mobile-top-btn {
-  display: none;
-}
-
-/* Mobile Instagram text link — hidden on desktop */
-.footer-ig-mobile-link {
   display: none;
 }
 
@@ -623,15 +593,6 @@ body {
   }
 
   .footer-newsletter {
-    display: none !important;
-  }
-
-  /* 4. Hide Instagram column on tablet */
-  .footer-col-right {
-    display: none !important;
-  }
-
-  .footer-ig-mobile-link {
     display: none !important;
   }
 
@@ -711,16 +672,6 @@ body {
   }
 
   .footer-newsletter {
-    display: none !important;
-  }
-
-  /* RIGHT COLUMN — hidden on mobile */
-  .footer-col-right {
-    display: none !important;
-  }
-
-  /* Instagram link — hidden on mobile */
-  .footer-ig-link {
     display: none !important;
   }
 

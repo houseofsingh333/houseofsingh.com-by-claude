@@ -40,7 +40,7 @@ export function toDateOnly(value: string | null | undefined): string {
 }
 
 /** The calendar day in `value` as a local Date (midnight local), or null. */
-export function parseDateOnly(value: string | null | undefined): Date | null {
+function parseDateOnly(value: string | null | undefined): Date | null {
   const day = toDateOnly(value);
   if (!day) return null;
   const [year, month, date] = day.split("-").map(Number);

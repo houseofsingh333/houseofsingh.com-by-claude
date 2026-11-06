@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 
 /* ── Editorial intro copy ────────────────────────────────── */
-export function EditorialSidebar() {
+function EditorialSidebar() {
   return (
     <div className="mb-12 md:mb-20 lg:mb-24">
       <h1 className="font-editorial text-[2.5rem] sm:text-5xl md:text-6xl lg:text-7xl font-light text-foreground mb-6 md:mb-8 leading-[1.08] sm:leading-[1.05] text-balance">

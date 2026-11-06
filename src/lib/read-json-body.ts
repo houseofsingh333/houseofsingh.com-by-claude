@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 /** Largest form submission accepted. Real submissions are a few KB. */
-export const MAX_BODY_BYTES = 64 * 1024;
+const MAX_BODY_BYTES = 64 * 1024;
 
 type Result =
   | { ok: true; body: Record<string, unknown> }

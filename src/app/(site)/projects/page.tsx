@@ -58,7 +58,10 @@ export default async function ProjectsPage({
           thumbnailSrc:
             typeof p.thumbnail === "string"
               ? p.thumbnail
-              : p.thumbnail?.url ?? "/images/project-placeholder-1.svg",
+              : (p.thumbnail?.url ??
+                // Placeholder art only in local development; otherwise the
+                // card shows its calm empty frame.
+                devPlaceholder("/images/project-placeholder-1.svg", "")),
           thumbnailAlt: p.thumbnailAlt,
           excerpt: p.excerpt ?? "",
           isUpcoming: p.isUpcoming ?? false,

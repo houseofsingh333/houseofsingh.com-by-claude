@@ -1,5 +1,5 @@
 /**
- * scripts/import-journal-entries.mjs
+ * scripts/archive/import-journal-entries.mjs
  *
  * Bulk-import journalEntry documents from a CSV + a folder of photos.
  *
@@ -28,7 +28,7 @@
  *   SANITY_PROJECT_ID=31g7gu7n \
  *   SANITY_DATASET=production \
  *   SANITY_AUTH_TOKEN=sk...   \
- *   node scripts/import-journal-entries.mjs \
+ *   node scripts/archive/import-journal-entries.mjs \
  *     --folder journal-import \
  *     --csv journal-import/journal_import.csv \
  *     --limit 5

@@ -9,7 +9,7 @@ import {
 } from "@/lib/contact-form-data";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
 
-export type Phase = "form" | "review" | "done";
+type Phase = "form" | "review" | "done";
 
 export function useContactForm() {
   const [formData, setFormData] = useState<ContactFormData>(() => {

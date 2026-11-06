@@ -1,5 +1,5 @@
 /**
- * scripts/upload-project-assets.mjs
+ * scripts/archive/upload-project-assets.mjs
  *
  * Bulk-upload a folder of photos into Sanity's asset library (media browser)
  * so they can be picked when building project pages in the Studio. Creates
@@ -24,7 +24,7 @@
  *   SANITY_PROJECT_ID=31g7gu7n \
  *   SANITY_DATASET=production \
  *   SANITY_AUTH_TOKEN=sk...   \
- *   node scripts/upload-project-assets.mjs --folder project-assets/sikhs-in-the-6ix
+ *   node scripts/archive/upload-project-assets.mjs --folder project-assets/sikhs-in-the-6ix
  *
  *   Flags:
  *     --folder <path>   the project's subfolder of photos (required)

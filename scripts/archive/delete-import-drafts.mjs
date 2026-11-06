@@ -1,5 +1,5 @@
 /**
- * scripts/delete-import-drafts.mjs
+ * scripts/archive/delete-import-drafts.mjs
  *
  * Delete the journalEntry draft documents created by the import test batch.
  *
@@ -14,8 +14,8 @@
  *   SANITY_PROJECT_ID=31g7gu7n \
  *   SANITY_DATASET=production \
  *   SANITY_AUTH_TOKEN=sk...   \
- *   node scripts/delete-import-drafts.mjs           # deletes them
- *   node scripts/delete-import-drafts.mjs --dry-run # lists only, deletes nothing
+ *   node scripts/archive/delete-import-drafts.mjs           # deletes them
+ *   node scripts/archive/delete-import-drafts.mjs --dry-run # lists only, deletes nothing
  *
  * The token needs write access (Editor+). Create one at
  * https://www.sanity.io/manage → project → API → Tokens.

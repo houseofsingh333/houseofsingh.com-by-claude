@@ -2,6 +2,7 @@ import type { Metadata, ResolvingMetadata } from "next";
 import ContactForm from "@/components/contact/ContactForm";
 import { sanityFetch } from "@/sanity/fetch";
 import { contactPageQuery } from "@/sanity/queries";
+import { reportInstagramAltGaps } from "@/lib/instagram-alt";
 import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 import { fallbackInstagramPhotos } from "@/lib/placeholder-data";
 import { devPlaceholder } from "@/lib/placeholders";
@@ -49,6 +50,8 @@ export default async function ContactPage() {
   const photos = data?.instagramPhotos?.length
     ? data.instagramPhotos
     : devPlaceholder(fallbackInstagramPhotos, []);
+  // Names any photo without alt text in the build and server log.
+  reportInstagramAltGaps(photos);
 
   return (
     <ContactForm instagramPhotos={photos} />

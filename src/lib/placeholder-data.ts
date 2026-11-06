@@ -28,10 +28,6 @@ export type {
   ProjectDetail,
   JournalEntry,
   SiteSettings,
-  AboutMilestone,
-  FeaturedOutlet,
-  RapidFireItem,
-  PortableTextBlock,
   AboutPageData,
   HomeIntroData,
 } from "./types";
