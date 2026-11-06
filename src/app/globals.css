@@ -27,7 +27,20 @@
   --error: hsl(10 45% 42%);
   --border: hsl(40 10% 88%);
 
-  /* Editorial grid easing */
+  /* ——— Motion tokens: slow, soft, calm ———
+     --ease-slow (a soft sine) for reveals, fades, crossfades and the page
+     fade in; --ease-soft-out for hover and focus. Reduced motion turns all
+     of it off. Menu and popup opening, focus rings and form errors stay
+     quick on purpose. */
+  --ease-slow: cubic-bezier(0.37, 0, 0.63, 1);
+  --ease-soft-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --dur-reveal: 1400ms; /* scroll reveals, with a 12px rise */
+  --rise-reveal: 12px;
+  --dur-image: 1000ms; /* image fade ins and colour reveals */
+  --dur-hover: 500ms; /* hover and focus changes */
+  --dur-page: 600ms; /* page fade in, content swapped by a click */
+
+  /* Earlier fast curve, kept only for the menu and popup opening. */
   --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --editorial-duration: 1200ms;
 
@@ -56,7 +69,7 @@
   --color-border: var(--border);
   --font-editorial: var(--font-playfair), Georgia, serif;
   --animate-fade-in: fadeIn 0.3s ease-out;
-  --animate-editorial-fade-in: editorialFadeIn 1.2s ease-out both;
+  --animate-editorial-fade-in: editorialFadeIn var(--dur-reveal) var(--ease-slow) both;
 }
 
 html {
@@ -101,7 +114,7 @@ body {
 /* ——— Utility animations ——— */
 
 .editorial-slide-up {
-  animation: editorialSlideUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: editorialSlideUp var(--dur-page) var(--ease-slow) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -132,9 +145,7 @@ body {
   /* Colour reveal: slow and calm */
   .project-card-img {
     filter: grayscale(1);
-    transition:
-      filter 820ms cubic-bezier(0.4, 0, 0.2, 1),
-      transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: filter var(--dur-image) var(--ease-soft-out), transform var(--dur-hover) var(--ease-soft-out);
   }
   .project-card:hover .project-card-img {
     filter: grayscale(0);
@@ -191,7 +202,7 @@ body {
     opacity: 0;
     pointer-events: none;
     /* Fade OUT (cursor leaves): smooth and a touch quicker, no delay. */
-    transition: opacity 600ms var(--editorial-ease);
+    transition: opacity var(--dur-hover) var(--ease-soft-out);
   }
   /* Reveal on hover, and mirror for keyboard focus (accessibility).
      Fade IN: slow, unhurried, with a small settle delay so it feels
@@ -235,7 +246,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity var(--plate-fade-duration, 1.2s) cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity var(--plate-fade-duration, 1.2s) var(--ease-slow);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -309,7 +320,7 @@ body {
   font-size: 0.65em;
   color: var(--muted-foreground);
   display: none;
-  transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform var(--dur-hover) var(--ease-soft-out);
 }
 
 @media (min-width: 1024px) {
@@ -352,7 +363,7 @@ body {
 
 @media (min-width: 1024px) {
   .footer-nav-link {
-    transition: color 200ms ease;
+    transition: color var(--dur-hover) var(--ease-soft-out);
   }
   .footer-nav-link:hover {
     color: var(--foreground);
@@ -410,12 +421,12 @@ body {
 .footer-nl-arrow {
   font-size: 15px;
   display: inline-block;
-  transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform var(--dur-hover) var(--ease-soft-out);
 }
 
 @media (min-width: 1024px) {
   .footer-nl-btn {
-    transition: color 200ms ease;
+    transition: color var(--dur-hover) var(--ease-soft-out);
   }
   .footer-nl-btn:hover {
     color: var(--foreground);
@@ -462,7 +473,7 @@ body {
 
 @media (min-width: 1024px) {
   .footer-top-btn {
-    transition: color 200ms ease;
+    transition: color var(--dur-hover) var(--ease-soft-out);
   }
   .footer-top-btn:hover {
     color: var(--foreground);
@@ -506,7 +517,7 @@ body {
 
 @media (min-width: 1024px) {
   .footer-bottom-link {
-    transition: color 200ms ease;
+    transition: color var(--dur-hover) var(--ease-soft-out);
   }
   .footer-bottom-link:hover {
     color: var(--muted-foreground);
@@ -784,11 +795,7 @@ body {
 
 /* Base: shared transitions and interactions for all contact buttons */
 .contact-btn {
-  transition: color 350ms cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 350ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 350ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color var(--dur-hover) var(--ease-soft-out), background-color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out), transform var(--dur-hover) var(--ease-soft-out), opacity var(--dur-hover) var(--ease-soft-out);
 }
 
 .contact-btn:active {
@@ -852,7 +859,7 @@ body {
 
 /* Arrow nudge on hover */
 .contact-btn-arrow {
-  transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform var(--dur-hover) var(--ease-soft-out);
 }
 
 .contact-btn:hover .contact-btn-arrow-next {
@@ -865,9 +872,7 @@ body {
 
 /* Chip and select buttons — calm selection feedback */
 .contact-option {
-  transition: background-color 400ms cubic-bezier(0.22, 1, 0.36, 1),
-    color 400ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: background-color var(--dur-hover) var(--ease-soft-out), color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
 }
 
 .contact-option:focus-visible {
@@ -890,7 +895,7 @@ body {
   color: var(--muted-foreground);
   cursor: pointer;
   min-height: 44px;
-  transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color var(--dur-hover) var(--ease-soft-out);
 }
 
 /* Animated underline — overlays the subtle divider */
@@ -904,7 +909,7 @@ body {
   background-color: var(--foreground);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform var(--dur-hover) var(--ease-soft-out);
 }
 
 /* Desktop hover — left-to-right line reveal */
@@ -977,7 +982,7 @@ body {
     transform: none;
   }
   .editorial-slide-up {
-    animation: editorialFadeOnly 0.4s ease forwards;
+    animation: editorialFadeOnly var(--dur-page) var(--ease-slow) forwards;
   }
 }
 
@@ -990,7 +995,7 @@ body {
 /* ——— Projects grid reveal — premium page-load transition ——— */
 
 .projects-grid-reveal {
-  animation: projectsGridReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+  animation: projectsGridReveal var(--dur-page) var(--ease-slow) 0.08s both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1007,7 +1012,7 @@ body {
 }
 
 .projects-card-fade-in {
-  animation: projectsCardFadeIn 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: projectsCardFadeIn var(--dur-page) var(--ease-slow) both;
 }
 
 @keyframes projectsCardFadeIn {
@@ -1044,7 +1049,7 @@ body {
   .journal-stack-card {
     border: 1px solid hsl(30 10% 12% / 0.10);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    transition: filter 700ms ease-in-out;
+    transition: filter var(--dur-image) var(--ease-slow);
   }
 
   /* Tap / pressed state */
@@ -1184,7 +1189,7 @@ body {
   background-color: var(--foreground);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform var(--dur-hover) var(--ease-soft-out);
 }
 
 /* Desktop hover — line reveal matching contact-intent pattern */
@@ -1217,7 +1222,7 @@ body {
   font-size: 14px;
   font-weight: 400;
   color: var(--muted-foreground);
-  transition: transform 200ms ease;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
 }
 
 /* Question text */
@@ -1665,7 +1670,7 @@ body {
 
 .spotlight-cta-arrow {
   font-size: 16px;
-  transition: transform 300ms ease;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
 }
 
 .spotlight-cta:hover .spotlight-cta-arrow {
@@ -1682,12 +1687,12 @@ body {
   height: 1px;
   background: currentColor;
   clip-path: inset(0 70% 0 0);
-  transition: clip-path 500ms ease-out;
+  transition: clip-path var(--dur-hover) var(--ease-soft-out);
 }
 
 .spotlight-cta:hover::after {
   clip-path: inset(0 0% 0 0);
-  transition: clip-path 400ms ease-out;
+  transition: clip-path var(--dur-hover) var(--ease-soft-out);
 }
 
 .spotlight-cta:focus-visible {
@@ -1805,12 +1810,12 @@ body {
   @media (prefers-reduced-motion: no-preference) {
     html.js [data-reveal] {
       transition:
-        opacity var(--reveal-duration, 700ms) var(--reveal-ease, ease) var(--reveal-delay, 0ms),
-        transform var(--reveal-duration, 700ms) var(--reveal-ease, ease) var(--reveal-delay, 0ms);
+        opacity var(--dur-reveal) var(--ease-slow) var(--reveal-delay, 0ms),
+        transform var(--dur-reveal) var(--ease-slow) var(--reveal-delay, 0ms);
     }
     html.js [data-reveal]:not([data-revealed]) {
       opacity: 0;
-      transform: translateY(var(--reveal-offset, 20px));
+      transform: translateY(var(--reveal-offset, var(--rise-reveal)));
     }
   }
 }

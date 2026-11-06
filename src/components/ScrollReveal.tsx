@@ -9,22 +9,21 @@ type Props = {
   delay?: number;
   /** IntersectionObserver threshold (0-1). Default 0.15. */
   threshold?: number;
-  /** Vertical offset in px for the slide-up. Default 20. */
-  offset?: number;
-  /** Duration in seconds. Default 0.7. */
-  duration?: number;
+  /** Rise 12px while fading in (default), or false for a pure fade. */
+  rise?: boolean;
   /** Render as a different HTML element. Default "div". */
   as?: "div" | "section" | "article" | "figure" | "p" | "h1" | "h2" | "h3" | "span" | "li";
   children: React.ReactNode;
 } & HTMLAttributes<HTMLElement>;
 
 /**
- * Reusable scroll-triggered reveal with editorial rhythm.
- * Fade in + gentle upward translate on viewport entry.
+ * Reusable scroll-triggered reveal: a slow fade in with a gentle 12px rise
+ * (--dur-reveal, --ease-slow) on viewport entry.
  *
  * Usage:
  *   <ScrollReveal>content</ScrollReveal>
- *   <ScrollReveal delay={0.1} offset={30}>staggered item</ScrollReveal>
+ *   <ScrollReveal delay={0.1}>staggered item</ScrollReveal>
+ *   <ScrollReveal rise={false}>a pure fade</ScrollReveal>
  *
  * Visible by default. The hidden start state is applied by CSS only when
  * JavaScript is running and the visitor allows motion (see "Scroll reveal"
@@ -34,8 +33,7 @@ type Props = {
 export default function ScrollReveal({
   delay = 0,
   threshold = 0.15,
-  offset = 20,
-  duration = 0.7,
+  rise = true,
   as = "div",
   children,
   style,
@@ -51,8 +49,7 @@ export default function ScrollReveal({
       {...rest}
       {...revealProps({
         revealed,
-        offset,
-        duration: duration * 1000,
+        rise,
         delay: delay * 1000,
         style,
       })}

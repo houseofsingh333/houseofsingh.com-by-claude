@@ -34,8 +34,6 @@ export default function RapidFire({ items }: { items: RapidFireItem[] }) {
             className="rapidfire-item"
             {...revealProps({
               revealed,
-              offset: 16,
-              duration: 500,
               delay: index * 80,
             })}
           >

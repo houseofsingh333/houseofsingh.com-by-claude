@@ -2,23 +2,34 @@
 
 import { useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { EASE_SLOW } from "@/lib/animation";
 
-/** EASE_SLOW as a CSS easing string for the Web Animations API. */
-const EASE = `cubic-bezier(${EASE_SLOW.join(", ")})`;
-const FADE_IN_MS = 200;
 const RISE_PX = 6;
+
+/** A motion token from globals.css, with a fallback if it is missing. */
+function token(name: string, fallback: string): string {
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+  return value || fallback;
+}
+
+/** A CSS time ("600ms", or ".6s" as the minifier writes it) in milliseconds. */
+function toMs(time: string, fallback: number): number {
+  const n = parseFloat(time);
+  if (!Number.isFinite(n)) return fallback;
+  return /ms$/.test(time) ? n : /s$/.test(time) ? n * 1000 : fallback;
+}
 
 /**
  * Global page transition on every client side navigation, using the
  * browser's Web Animations API (no animation library).
  *
- * The new page fades in over 200 ms while rising 6px, on EASE_SLOW. There
- * is no fade out: in the App Router the old page is already gone when the
- * route changes, so fading "it" out only flashed the new page to blank and
- * back. Nothing runs on the first page load, and nothing runs at all when
- * the visitor prefers reduced motion. The wrapper is keyed by path, so pages
- * remount on navigation as before.
+ * The new page fades in while rising 6px, over --dur-page (600ms) on
+ * --ease-slow, read from globals.css so the tokens stay the single source.
+ * There is no fade out: in the App Router the old page is already gone when
+ * the route changes. Nothing runs on the first page load, and nothing at all
+ * when the visitor prefers reduced motion. The wrapper is keyed by path, so
+ * pages remount on navigation as before.
  */
 export default function PageTransition({
   children,
@@ -37,12 +48,14 @@ export default function PageTransition({
     firstPath.current = pathname;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    const duration = toMs(token("--dur-page", "600ms"), 600);
+    const easing = token("--ease-slow", "cubic-bezier(0.37, 0, 0.63, 1)");
     const fadeIn = el.animate(
       [
         { opacity: 0, transform: `translateY(${RISE_PX}px)` },
         { opacity: 1, transform: "translateY(0)" },
       ],
-      { duration: FADE_IN_MS, easing: EASE },
+      { duration, easing },
     );
     return () => fadeIn.cancel();
   }, [pathname]);

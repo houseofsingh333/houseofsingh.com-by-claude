@@ -43,7 +43,7 @@ export async function generateStaticParams() {
 function ProjectHeader({ category, title, intro, isUpcoming, author }: { category: string; title: string; intro?: string; isUpcoming?: boolean; author?: string | null }) {
   const authorText = author?.trim();
   return (
-    <ScrollReveal as="section" className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset mb-16 md:mb-20" offset={14} duration={0.8}>
+    <ScrollReveal as="section" className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset mb-16 md:mb-20">
       <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
         {category}
       </p>
@@ -186,7 +186,7 @@ export default async function ProjectDetailPage({ params }: Props) {
         {/* Cover image — only when a real asset exists (a coverImage object
             can carry alt with no asset at all; that must render no hero). */}
         {hasImageAsset(project.coverImage) && (
-          <ScrollReveal offset={0} duration={1} threshold={0.05} className="mb-20 md:mb-32 lg:mb-40">
+          <ScrollReveal rise={false} threshold={0.05} className="mb-20 md:mb-32 lg:mb-40">
             <div
               className="w-full"
               style={{ position: "relative", aspectRatio: `${project.coverImage.width || 1920} / ${project.coverImage.height || 1080}` }}

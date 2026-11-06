@@ -4,7 +4,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 export default function StudioRedirect() {
   return (
     <section className="bg-foreground text-background px-6 md:px-16 py-14 md:py-24">
-      <ScrollReveal offset={24} duration={0.9}>
+      <ScrollReveal>
         <div className="max-w-5xl mx-auto flex flex-col items-center text-center gap-6">
           <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground-inverse">
             A different practice
@@ -23,7 +23,7 @@ export default function StudioRedirect() {
             href="https://studios.houseofsingh.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs tracking-widest uppercase border border-background/20 px-8 py-4 hover:bg-background hover:text-foreground transition-all duration-500 mt-4"
+            className="inline-flex items-center gap-2 text-xs tracking-widest uppercase border border-background/20 px-8 py-4 hover:bg-background hover:text-foreground transition-all duration-(--dur-hover) ease-(--ease-soft-out) mt-4"
           >
             Visit Studios
             <ArrowUpRight className="h-3.5 w-3.5" />

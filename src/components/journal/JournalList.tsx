@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import SanityImage from "@/components/SanityImage";
 import type { JournalEntry } from "@/lib/placeholder-data";
 import { parseSanityDate } from "@/lib/dates";
@@ -10,6 +9,8 @@ import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 type Props = {
   entries: JournalEntry[];
+  /** Year and month from the address, read on the server; null if absent. */
+  requested?: { year: number; month: number } | null;
 };
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -46,22 +47,15 @@ function getMostRecentYearMonth(entries: JournalEntry[]): {
   return { year: d.getFullYear(), month: d.getMonth() + 1 };
 }
 
-export default function JournalList({ entries }: Props) {
-  const searchParams = useSearchParams();
+export default function JournalList({ entries, requested }: Props) {
   const initial = useMemo(() => getMostRecentYearMonth(entries), [entries]);
 
-  /* Resolve initial year/month: URL params take priority over defaults */
-  const resolved = useMemo(() => {
-    const yearParam = searchParams.get("year");
-    const monthParam = searchParams.get("month");
-
-    if (yearParam && monthParam) {
-      // Both params present: navigate to exact year + month
-      return { year: Number(yearParam), month: Number(monthParam) };
-    }
-    // No params (or only partial): use existing default
-    return initial;
-  }, [searchParams, initial]);
+  /* Initial year/month: the one in the address (read on the server by the
+     page) takes priority over the most recent month with entries. */
+  const resolved = useMemo(
+    () => (requested ? requested : initial),
+    [requested, initial],
+  );
 
   const [activeYear, setActiveYear] = useState<number>(resolved.year);
   const [activeMonth, setActiveMonth] = useState<number>(resolved.month);
@@ -216,17 +210,25 @@ export default function JournalList({ entries }: Props) {
         </h1>
       </section>
 
-      {/* Sentinel for sticky detection */}
-      <div ref={sentinelRef} className="h-0" />
+      {/* Sentinel for sticky detection. Lifted 24px (relative, so it takes no
+          space) to sit at the timeline's sticky edge, which starts 24px above
+          its content (see below). */}
+      <div ref={sentinelRef} className="relative -top-6 h-0" />
 
-      {/* Sticky Horizontal Timeline */}
-      <section
-        className={`px-6 md:px-16 pb-16 md:pb-28 transition-all duration-300 ${
-          isSticky
-            ? "sticky top-0 z-30 bg-background/95 backdrop-blur-sm py-6"
-            : ""
-        }`}
-      >
+      {/* Sticky Horizontal Timeline.
+          Its box never changes size: it is always sticky, with 24px of top
+          padding offset by a -24px margin, so it sits exactly where it did
+          unstuck and keeps 24px of breathing room when stuck. Earlier the
+          stuck state swapped in different padding, which moved the content
+          below and made the bar jitter while scrolling. Only the background
+          layer changes, by opacity. */}
+      <section className="sticky top-0 z-30 -mt-6 pt-6 px-6 md:px-16 pb-16 md:pb-28">
+        <div
+          aria-hidden="true"
+          className={`absolute inset-0 -z-10 bg-background/95 backdrop-blur-sm transition-opacity duration-300 motion-reduce:transition-none ${
+            isSticky ? "opacity-100" : "opacity-0"
+          }`}
+        />
         {/* Timeline — evenly distributed years */}
         <div className="relative overflow-x-auto md:overflow-visible scrollbar-hide snap-x snap-mandatory">
           <div className="relative w-full min-w-[480px] md:min-w-0">
@@ -244,14 +246,14 @@ export default function JournalList({ entries }: Props) {
                     className="flex-1 flex flex-col items-center snap-start group min-w-0"
                   >
                     <div
-                      className={`rounded-full transition-all duration-300 relative z-10 ${
+                      className={`rounded-full transition-all duration-(--dur-hover) ease-(--ease-soft-out) relative z-10 ${
                         isActive
                           ? "w-3 h-3 bg-foreground"
                           : "w-[10px] h-[10px] bg-border group-hover:bg-foreground/50"
                       }`}
                     />
                     <span
-                      className={`font-editorial text-sm md:text-base mt-3 transition-all duration-300 ${
+                      className={`font-editorial text-sm md:text-base mt-3 transition-all duration-(--dur-hover) ease-(--ease-soft-out) ${
                         isActive
                           ? "text-foreground font-medium"
                           : "text-muted-foreground group-hover:text-foreground"
@@ -267,12 +269,14 @@ export default function JournalList({ entries }: Props) {
         </div>
 
         {/* Months row */}
+        {/* Keeps its space when a year is collapsed (fades out instead of
+            collapsing), so nothing below moves. inert: not focusable while
+            hidden. */}
         <div
-          className={`overflow-hidden transition-all duration-400 ease-in-out ${
-            activeYear > 0
-              ? "max-h-24 opacity-100 mt-8"
-              : "max-h-0 opacity-0 mt-0"
+          className={`mt-8 transition-opacity duration-400 ease-in-out motion-reduce:transition-none ${
+            activeYear > 0 ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
+          inert={activeYear <= 0}
         >
           <div className="grid grid-cols-6 sm:grid-cols-12 gap-x-4 md:gap-x-6 gap-y-3 justify-items-start">
             {MONTHS.map((month) => {
@@ -286,7 +290,7 @@ export default function JournalList({ entries }: Props) {
                   key={month}
                   onClick={() => !isFuture && setActiveMonth(month)}
                   disabled={isFuture}
-                  className={`text-xs tracking-[0.15em] uppercase transition-all duration-200 pb-0.5 ${
+                  className={`text-xs tracking-[0.15em] uppercase transition-all duration-(--dur-hover) ease-(--ease-soft-out) pb-0.5 ${
                     isActive
                       ? "text-foreground border-b border-foreground"
                       : isFuture
@@ -323,11 +327,11 @@ export default function JournalList({ entries }: Props) {
                 className={`block group ${
                   reducedMotion
                     ? ""
-                    : "transition-transform duration-300 hover:-translate-y-1"
+                    : "transition-transform duration-(--dur-hover) ease-(--ease-soft-out) hover:-translate-y-1"
                 }`}
               >
                 {/* Image */}
-                <div data-journal-card className="relative overflow-hidden bg-secondary mb-5 shadow-sm group-hover:shadow-md transition-shadow duration-300 aspect-[3/4]">
+                <div data-journal-card className="relative overflow-hidden bg-secondary mb-5 shadow-sm group-hover:shadow-md transition-shadow duration-(--dur-hover) ease-(--ease-soft-out) aspect-[3/4]">
                   <SanityImage
                     image={entry.coverImage}
                     context="thumbnail"
@@ -336,7 +340,7 @@ export default function JournalList({ entries }: Props) {
                     className={`object-cover lg:grayscale ${
                       reducedMotion
                         ? ""
-                        : "transition-all duration-700 group-hover:scale-[1.03] lg:group-hover:grayscale-0"
+                        : "transition-all duration-(--dur-image) ease-(--ease-slow) group-hover:scale-[1.03] lg:group-hover:grayscale-0"
                     }`}
                   />
                 </div>
@@ -352,7 +356,7 @@ export default function JournalList({ entries }: Props) {
                 </h2>
 
                 {/* Read more */}
-                <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground group-hover:text-foreground transition-colors duration-300 border-b border-muted-foreground/30 group-hover:border-foreground pb-px">
+                <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground group-hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) border-b border-muted-foreground/30 group-hover:border-foreground pb-px">
                   Read more
                 </span>
               </Link>

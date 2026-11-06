@@ -20,7 +20,7 @@ export default function PracticeReveal({ children }: { children: ReactNode }) {
       <div
         ref={logoRef}
         className="flex-shrink-0"
-        {...revealProps({ revealed, offset: 0, duration: 1200, ease: "ease" })}
+        {...revealProps({ revealed, rise: false })}
       >
         {/* The logo rests at 60% opacity; the wrapper above fades in. */}
         {/* eslint-disable-next-line @next/next/no-img-element -- SVG logo: next/image adds nothing for vector files (no resizing or format conversion), so a plain img is right. */}
@@ -36,10 +36,7 @@ export default function PracticeReveal({ children }: { children: ReactNode }) {
         className="max-w-[550px] text-sm md:text-[15px] text-muted-foreground leading-[1.9]"
         {...revealProps({
           revealed,
-          offset: 16,
-          duration: 800,
           delay: 400,
-          ease: "ease",
         })}
       >
         {children}
