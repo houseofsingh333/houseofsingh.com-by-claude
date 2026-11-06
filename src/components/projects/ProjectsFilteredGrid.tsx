@@ -128,14 +128,16 @@ export default function ProjectsFilteredGrid({
             >
               {/* Cover image — 4:5 portrait ratio */}
               <div className="relative aspect-[4/5] overflow-hidden bg-secondary mb-5">
-                <Image
-                  src={project.thumbnailSrc}
-                  alt={project.thumbnailAlt}
-                  fill
-                  className="object-cover project-card-img"
-                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                  loader={project.thumbnailSrc.startsWith("https://cdn.sanity.io/") ? sanityLoader : undefined}
-                />
+                {project.thumbnailSrc && (
+                  <Image
+                    src={project.thumbnailSrc}
+                    alt={project.thumbnailAlt}
+                    fill
+                    className="object-cover project-card-img"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    loader={project.thumbnailSrc.startsWith("https://cdn.sanity.io/") ? sanityLoader : undefined}
+                  />
+                )}
               </div>
 
               {/* Card text */}

@@ -1,3 +1,5 @@
+import { placeholdersEnabled } from "@/lib/placeholders";
+
 // --------------- Types ---------------
 
 /** Shape returned by GROQ for image fields with asset metadata. */
@@ -133,7 +135,7 @@ export function hasImageAsset(
 
 // --------------- Main API ---------------
 
-export type ImageProps = {
+type ImageProps = {
   src: string;
   srcSet?: string;
   sizes: string;
@@ -189,8 +191,11 @@ export function getImageProps(
 ): ImageProps {
   const profile = profiles[context];
 
+  // A missing image shows placeholder art only in local development with
+  // NEXT_PUBLIC_USE_PLACEHOLDERS. Everywhere else src is empty and
+  // SanityImage renders nothing, leaving its calm frame in place.
   const placeholder = (alt: string): ImageProps => ({
-    src: "/images/project-placeholder-1.svg",
+    src: placeholdersEnabled ? "/images/project-placeholder-1.svg" : "",
     sizes: profile.sizes,
     width: 640,
     height: Math.round(640 / profile.aspectRatio),

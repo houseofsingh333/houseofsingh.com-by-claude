@@ -14,10 +14,15 @@
 
 const requested = process.env.NEXT_PUBLIC_USE_PLACEHOLDERS === "1";
 
-/** True on Vercel deployments (production or preview) and in CI. */
+/**
+ * True on Vercel deployments (production or preview) and in CI. Checks the
+ * browser visible NEXT_PUBLIC_VERCEL_ENV too: this module also runs in the
+ * browser (via the image helpers), where VERCEL_ENV does not exist.
+ */
+const vercelEnv =
+  process.env.VERCEL_ENV ?? process.env.NEXT_PUBLIC_VERCEL_ENV;
 const hostedOrCI =
-  (process.env.VERCEL_ENV !== undefined &&
-    process.env.VERCEL_ENV !== "development") ||
+  (vercelEnv !== undefined && vercelEnv !== "development") ||
   process.env.CI === "true";
 
 export const placeholdersEnabled = requested && !hostedOrCI;

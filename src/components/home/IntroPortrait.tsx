@@ -18,7 +18,7 @@ export default function IntroPortrait({
   founderName,
   roles,
 }: {
-  portrait: SanityImageAsset | string;
+  portrait: SanityImageAsset | string | null;
   founderName: string;
   roles: string[];
 }) {

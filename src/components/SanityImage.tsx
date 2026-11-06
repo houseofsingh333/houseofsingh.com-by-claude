@@ -45,6 +45,9 @@ export default function SanityImage({
   sizes,
 }: Props) {
   const props = getImageProps(image, context, altOverride);
+  // No image (and no local placeholder): render nothing. The parent frame
+  // keeps its size and background, so the layout does not move.
+  if (!props.src) return null;
   const useSanityLoader = props.src.startsWith("https://cdn.sanity.io/");
   // Loader bound to this context's profile so it reproduces the same
   // quality / fit / focal point the profile intends.

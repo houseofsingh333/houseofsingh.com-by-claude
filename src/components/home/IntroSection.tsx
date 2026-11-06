@@ -3,6 +3,7 @@ import { PortableText } from "@portabletext/react";
 import { proseComponents } from "@/components/proseComponents";
 import ScrollReveal from "@/components/ScrollReveal";
 import IntroPortrait from "./IntroPortrait";
+import { devPlaceholder } from "@/lib/placeholders";
 import type { HomeIntroData } from "@/lib/placeholder-data";
 
 const FALLBACK_ROLES = [
@@ -21,7 +22,8 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
     data.founderRoles && data.founderRoles.length > 0
       ? data.founderRoles
       : FALLBACK_ROLES;
-  const portrait = data.portrait ?? FALLBACK_PORTRAIT;
+  // Placeholder art only in local development; otherwise an empty frame.
+  const portrait = data.portrait ?? devPlaceholder(FALLBACK_PORTRAIT, null);
   const founderName = data.founderName ?? "Maninder Singh";
 
   return (
