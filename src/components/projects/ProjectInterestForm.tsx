@@ -82,7 +82,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         Share your story
       </h2>
       <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] max-w-xl mb-10">
-        Know someone — or are you someone — who should be part of this project?
+        Know someone, or are you someone, who should be part of this project?
         Tell us about it.
       </p>
 
