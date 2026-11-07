@@ -1,19 +1,17 @@
 /**
  * Blur up preview for a photo: Sanity's low quality image preview (lqip, a
- * tiny inline JPEG) shown blurred over the photo's frame, then dissolved away
- * once the sharp photo has loaded.
+ * tiny inline JPEG) shown blurred in the photo's frame, under the photo,
+ * which then dissolves in over it once loaded.
  *
- * Render it as the NEXT sibling after the photo's <img>, which must carry
+ * Render it as the PREVIOUS sibling of the photo's <img>, which must carry
  * `data-blurup` (see blurUpImgProps). The pre paint script in the root
  * layout marks each such image `data-loaded` on its load (or error) event,
- * from the first byte of the page, so this works before and without React.
- * CSS ("Blur up" in globals.css) then fades the preview out over --dur-image
- * on --ease-slow; instantly under reduced motion. Without JavaScript the
- * preview is never shown at all.
- *
- * It sits over the photo rather than hiding the photo, so the photo keeps
- * its own transitions and paints as soon as it arrives (good for LCP), and
- * it takes the same box, so nothing moves.
+ * from the first byte of the page, so this works before React starts.
+ * The photo is visible by default; only when JavaScript runs (the "js"
+ * class) does it start hidden and dissolve in over --dur-image on
+ * --ease-slow, instantly under reduced motion. Without JavaScript the
+ * preview is not drawn and the photo shows as normal. The preview takes the
+ * photo's own box, so nothing moves. See "Blur up" in globals.css.
  */
 export default function BlurUp({
   lqip,

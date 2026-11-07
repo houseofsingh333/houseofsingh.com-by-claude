@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { pageShareImages } from "@/lib/share-metadata";
 import { alt as journalShareAlt } from "@/app/journal/[slug]/opengraph-image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import NotFoundResponse from "@/components/NotFoundResponse";
 import { PortableText } from "@portabletext/react";
 import ReadingProgress from "@/components/ReadingProgress";
 import SanityImage from "@/components/SanityImage";
@@ -143,7 +143,7 @@ export default async function JournalDetailPage({ params }: Props) {
 
   // A Sanity failure has already thrown above (ISR keeps the last good page),
   // so reaching this point means Sanity answered and the slug does not exist.
-  if (!resolved) notFound();
+  if (!resolved) return <NotFoundResponse />;
 
   const settings = await sanityFetch<SiteSettings | null>({
     query: siteSettingsQuery,

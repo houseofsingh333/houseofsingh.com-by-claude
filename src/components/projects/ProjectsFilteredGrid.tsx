@@ -127,6 +127,7 @@ export default function ProjectsFilteredGrid({
             >
               {/* Cover image — 4:5 portrait ratio */}
               <div className="relative aspect-[4/5] overflow-hidden bg-secondary mb-5">
+                {project.thumbnailSrc && <BlurUp lqip={project.thumbnailLqip} />}
                 {project.thumbnailSrc && (
                   <Image
                     src={project.thumbnailSrc}
@@ -138,7 +139,6 @@ export default function ProjectsFilteredGrid({
                     {...blurUpImgProps(project.thumbnailLqip)}
                   />
                 )}
-                {project.thumbnailSrc && <BlurUp lqip={project.thumbnailLqip} />}
               </div>
 
               {/* Card text */}

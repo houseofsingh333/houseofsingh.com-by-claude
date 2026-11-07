@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import NotFoundResponse from "@/components/NotFoundResponse";
 
 /*
  * Catches every URL no other route matches and serves the public site's
@@ -10,13 +10,12 @@ import { notFound } from "next/navigation";
  * route, like the journal and project pages. Next.js then renders each
  * unknown URL fully before responding, so notFound() sets a true 404. As a
  * plain on demand route it would start streaming and lock the status at 200.
- * The loading.tsx beside this file renders the same 404 page, so the server
- * HTML is complete and styled (see the note there).
+ * NotFoundResponse makes the server HTML the full styled 404 page.
  */
 export function generateStaticParams(): { notFound: string[] }[] {
   return [];
 }
 
 export default function CatchAllNotFound() {
-  notFound();
+  return <NotFoundResponse />;
 }

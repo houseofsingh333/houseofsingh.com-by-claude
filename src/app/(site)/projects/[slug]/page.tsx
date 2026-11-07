@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { pageShareImages, routeShareImages } from "@/lib/share-metadata";
 import { alt as projectShareAlt } from "@/app/projects/[slug]/opengraph-image";
-import { notFound } from "next/navigation";
+import NotFoundResponse from "@/components/NotFoundResponse";
 import { sanityFetch } from "@/sanity/fetch";
 import { devPlaceholder } from "@/lib/placeholders";
 import {
@@ -216,10 +216,10 @@ export default async function ProjectDetailPage({ params }: Props) {
   }
 
   // Placeholder data is local development only. A Sanity failure has already
-  // thrown above (ISR keeps the last good page), so reaching notFound() means
+  // thrown above (ISR keeps the last good page), so reaching this point means
   // Sanity answered and the slug does not exist.
   const fallback = devPlaceholder(projects, []).find((p) => p.slug === slug);
-  if (!fallback) notFound();
+  if (!fallback) return <NotFoundResponse />;
 
   const fallbackCreativeWorkJsonLd = buildCreativeWorkJsonLd(fallback, settings);
   const fallbackBreadcrumbJsonLd = buildBreadcrumbJsonLd([
