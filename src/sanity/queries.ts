@@ -165,8 +165,12 @@ export const latestProjectsQuery = `*[_type == "project"] | order(_createdAt des
  * otherwise the cover and the first images of its content sections (the
  * page keeps the first four). "sectionImages" gathers those images in the
  * order the sections appear.
+ *
+ * The order is the homepage's (Homepage Order, lowest first); projects
+ * without an order value come after, newest first (published date, else
+ * when the project was created).
  */
-export const projectsListQuery = `*[_type == "project"] | order(title asc){
+export const projectsListQuery = `*[_type == "project"] | order(defined(homepageOrder) desc, homepageOrder asc, coalesce(publishedAt, _createdAt) desc){
   _id, title, "slug": slug.current, category, year, role,
   "thumbnail": thumbnail ${_imageAsset},
   "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt,
