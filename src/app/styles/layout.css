@@ -457,6 +457,112 @@ html:not(.js) .footer-time {
   }
 }
 
+/* ——— Newsletter note (NewsletterNote) ———
+   A small paper card in the bottom right, not modal, no overlay. It rises
+   12px and fades in over --dur-menu; reduced motion: it appears at once. */
+
+.note-card {
+  position: fixed;
+  z-index: 60;
+  right: 16px;
+  bottom: 16px;
+  width: min(360px, calc(100vw - 32px));
+  padding: 28px;
+  background: var(--paper);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent),
+    0 12px 32px color-mix(in srgb, var(--foreground) 12%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(var(--rise-reveal));
+  transition:
+    opacity var(--dur-menu) var(--editorial-ease),
+    transform var(--dur-menu) var(--editorial-ease),
+    visibility 0s linear var(--dur-menu);
+}
+
+.note-card[data-open] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity var(--dur-menu) var(--editorial-ease),
+    transform var(--dur-menu) var(--editorial-ease);
+}
+
+.note-input {
+  width: 100%;
+  padding: 8px 0;
+  font-size: 16px;
+  color: var(--foreground);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  outline: none;
+}
+
+.note-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.note-input:focus-visible {
+  border-bottom-color: var(--foreground);
+}
+
+.note-subscribe,
+.note-later {
+  min-height: 44px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
+}
+
+.note-subscribe,
+.note-later {
+  display: inline-flex;
+  align-items: flex-end;
+  padding-bottom: 4px;
+  border-bottom: 1px solid transparent;
+}
+
+.note-subscribe {
+  color: var(--foreground);
+  border-bottom-color: var(--foreground);
+}
+
+.note-subscribe:disabled {
+  color: var(--muted-foreground);
+  border-color: var(--border);
+  cursor: wait;
+}
+
+.note-later {
+  color: var(--muted-foreground);
+}
+
+.note-later:hover {
+  color: var(--foreground);
+}
+
+@media (min-width: 768px) {
+  .note-card {
+    right: 32px;
+    bottom: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-card,
+  .note-card[data-open] {
+    transition: none;
+  }
+  .note-card {
+    transform: none;
+  }
+}
+
 /* ——— Page not found (404) ———
    Text first in the markup (and on phones); on desktop the photograph
    takes the left column. */

@@ -6,8 +6,8 @@ import Link from "next/link";
 import NavOverlay, { SITE_MENU_ID } from "./NavOverlay";
 import IntroOverlay, { useIntroSequence } from "./IntroOverlay";
 
-const NewsletterModal = dynamic(
-  () => import("@/components/NewsletterModal"),
+const NewsletterNote = dynamic(
+  () => import("@/components/NewsletterNote"),
   { ssr: false },
 );
 import type { MenuPhoto, NavItem } from "@/lib/types";
@@ -179,7 +179,7 @@ export default function Header({ items, menuPhotos }: Props) {
         photos={menuPhotos}
       />
 
-      <NewsletterModal
+      <NewsletterNote
         isOpen={newsletterOpen}
         onClose={() => setNewsletterOpen(false)}
       />
