@@ -4,10 +4,8 @@ import AboutSection from "@/components/about/AboutSection";
 import { devPlaceholder } from "@/lib/placeholders";
 import { sanityFetch } from "@/sanity/fetch";
 import { aboutPageQuery } from "@/sanity/queries";
-import {
-  fallbackAboutPage,
-  type AboutPageData,
-} from "@/lib/placeholder-data";
+import { fallbackAboutPage } from "@/lib/placeholder-data";
+import type { AboutPageData } from "@/lib/types";
 import JsonLd from "@/components/JsonLd";
 import ReadingProgress from "@/components/ReadingProgress";
 import { buildFaqJsonLd } from "@/lib/structured-data";

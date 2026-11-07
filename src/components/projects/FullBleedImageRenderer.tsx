@@ -1,7 +1,7 @@
 import SanityImage from "@/components/SanityImage";
 import Caption from "./Caption";
 import { hasImageAsset } from "@/lib/sanityImage";
-import type { FullBleedImageBlock } from "@/lib/placeholder-data";
+import type { FullBleedImageBlock } from "@/lib/types";
 
 type Props = { section: FullBleedImageBlock };
 

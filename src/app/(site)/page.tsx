@@ -21,13 +21,15 @@ import {
   fallbackJournalEntries,
   fallbackSiteSettings,
   fallbackHomeIntro,
-  type HeroSlide,
-  type HomeIntroData,
-  type HomepageProject,
-  type JournalEntry,
-  type SiteSettings,
 } from "@/lib/placeholder-data";
-import type { SpotlightData } from "@/lib/types";
+import type {
+  HeroSlide,
+  HomeIntroData,
+  HomepageProject,
+  JournalEntry,
+  SiteSettings,
+  SpotlightData,
+} from "@/lib/types";
 import { devPlaceholder } from "@/lib/placeholders";
 import JsonLd from "@/components/JsonLd";
 import { buildProfilePageJsonLd } from "@/lib/structured-data";

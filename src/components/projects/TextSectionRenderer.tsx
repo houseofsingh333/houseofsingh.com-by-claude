@@ -1,6 +1,6 @@
 import { PortableText } from "@portabletext/react";
 import { proseComponents } from "@/components/proseComponents";
-import type { TextSectionBlock } from "@/lib/placeholder-data";
+import type { TextSectionBlock } from "@/lib/types";
 
 type Props = { section: TextSectionBlock };
 

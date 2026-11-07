@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type ElementType, type HTMLAttributes } from "react";
-import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { useInView } from "@/hooks/useInView";
 import { revealProps } from "@/lib/reveal";
 
 type Props = {
@@ -40,7 +40,7 @@ export default function ScrollReveal({
   ...rest
 }: Props) {
   const ref = useRef<HTMLElement>(null);
-  const revealed = useRevealOnScroll(ref, threshold);
+  const revealed = useInView(ref, { threshold });
   const Tag = as as ElementType;
 
   return (

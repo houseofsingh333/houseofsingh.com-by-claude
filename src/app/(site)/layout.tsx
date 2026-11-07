@@ -8,11 +8,8 @@ import {
   navigationQuery,
   siteSettingsQuery,
 } from "@/sanity/queries";
-import {
-  fallbackNavItems,
-  type NavItem,
-} from "@/lib/placeholder-data";
-import type { SiteSettings } from "@/lib/types";
+import { fallbackNavItems } from "@/lib/placeholder-data";
+import type { NavItem, SiteSettings } from "@/lib/types";
 import JsonLd from "@/components/JsonLd";
 import { buildSiteJsonLd } from "@/lib/structured-data";
 import { IntroProvider } from "@/components/IntroContext";

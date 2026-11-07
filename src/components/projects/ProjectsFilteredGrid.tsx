@@ -8,7 +8,7 @@ import { sanityLoader } from "@/lib/sanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import ProjectsFiltersHorizontal from "./ProjectsFiltersHorizontal";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
-import type { ProjectSummary } from "@/lib/placeholder-data";
+import type { ProjectSummary } from "@/lib/types";
 
 /** Lowercase slug-like form for matching: "Visual Identity" → "visual-identity" */
 function slugify(str: string): string {

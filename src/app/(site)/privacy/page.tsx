@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
+import SectionDivider from "@/components/SectionDivider";
 
 const TITLE = "Privacy Policy";
 const DESCRIPTION =
@@ -21,17 +22,6 @@ export async function generateMetadata(
   };
 }
 
-function SectionDivider({ label }: { label: string }) {
-  return (
-    <div className="mb-10">
-      <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
-        {label}
-      </p>
-      <div className="w-full h-px bg-border" />
-    </div>
-  );
-}
-
 export default function PrivacyPage() {
   return (
     <div className="overflow-hidden">
@@ -44,7 +34,7 @@ export default function PrivacyPage() {
             Last updated: 5 November 2026
           </p>
 
-          <SectionDivider label="Overview" />
+          <SectionDivider gap="mb-10" label="Overview" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               House of Singh is the personal brand and creative platform of
@@ -55,7 +45,7 @@ export default function PrivacyPage() {
             </p>
           </div>
 
-          <SectionDivider label="Information We Collect" />
+          <SectionDivider gap="mb-10" label="Information We Collect" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               <strong className="text-foreground">Contact form.</strong>{" "}
@@ -115,7 +105,7 @@ export default function PrivacyPage() {
             </p>
           </div>
 
-          <SectionDivider label="Saved Progress on the Contact Form" />
+          <SectionDivider gap="mb-10" label="Saved Progress on the Contact Form" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               While you fill in the contact form, your answers are saved in
@@ -132,7 +122,7 @@ export default function PrivacyPage() {
             </p>
           </div>
 
-          <SectionDivider label="How We Use Your Information" />
+          <SectionDivider gap="mb-10" label="How We Use Your Information" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>We use the information we collect to:</p>
             <ul className="list-disc pl-5 space-y-2">
@@ -147,7 +137,7 @@ export default function PrivacyPage() {
             </p>
           </div>
 
-          <SectionDivider label="Leaving the Newsletter" />
+          <SectionDivider gap="mb-10" label="Leaving the Newsletter" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               To be removed from the newsletter, send a message through the{" "}
@@ -159,7 +149,7 @@ export default function PrivacyPage() {
             </p>
           </div>
 
-          <SectionDivider label="Cookies and Browser Storage" />
+          <SectionDivider gap="mb-10" label="Cookies and Browser Storage" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               This website sets no cookies of its own and uses no advertising
@@ -175,7 +165,7 @@ export default function PrivacyPage() {
             </p>
           </div>
 
-          <SectionDivider label="Third Party Services" />
+          <SectionDivider gap="mb-10" label="Third Party Services" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>This website relies on the following services:</p>
             <ul className="list-disc pl-5 space-y-2">
@@ -211,7 +201,7 @@ export default function PrivacyPage() {
             </p>
           </div>
 
-          <SectionDivider label="Contact" />
+          <SectionDivider gap="mb-10" label="Contact" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8]">
             <p>
               If you have questions about this privacy policy or how your data

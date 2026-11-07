@@ -10,17 +10,7 @@ import FeaturedOn from "./FeaturedOn";
 import PracticeReveal from "./PracticeReveal";
 import RapidFire from "./RapidFire";
 import Timeline from "./Timeline";
-
-function SectionDivider({ label, gap = "mb-16" }: { label: string; gap?: string }) {
-  return (
-    <div className={gap}>
-      <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
-        {label}
-      </p>
-      <div className="w-full h-px bg-border" />
-    </div>
-  );
-}
+import SectionDivider from "@/components/SectionDivider";
 
 export default function AboutSection({ data }: { data: AboutPageData }) {
   const {

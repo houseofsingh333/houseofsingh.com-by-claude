@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import { usePrefersReducedMotion, useMediaQuery } from "@/hooks/useMediaQuery";
-import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { useInView } from "@/hooks/useInView";
 import { revealProps } from "@/lib/reveal";
 import type { SpotlightData } from "@/lib/types";
 
@@ -20,7 +20,7 @@ export default function SpotlightBillboard({ spotlight }: Props) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   // The text fades in, staggered, once the section is in view. CSS shows it
   // immediately under reduced motion or without JavaScript (revealProps).
-  const revealed = useRevealOnScroll(sectionRef, 0.15);
+  const revealed = useInView(sectionRef, { threshold: 0.15 });
 
   if (!spotlight.image) return null;
   if (

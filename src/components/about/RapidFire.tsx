@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import type { RapidFireItem } from "@/lib/types";
-import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { useInView } from "@/hooks/useInView";
 import { revealProps } from "@/lib/reveal";
 
 export default function RapidFire({ items }: { items: RapidFireItem[] }) {
@@ -16,7 +16,7 @@ export default function RapidFire({ items }: { items: RapidFireItem[] }) {
   // Scroll entrance: the items fade in, staggered, once the list is in view.
   // CSS shows them immediately under reduced motion or without JavaScript
   // (revealProps and "Scroll reveal" in globals.css).
-  const revealed = useRevealOnScroll(sectionRef, 0.1);
+  const revealed = useInView(sectionRef, { threshold: 0.1 });
 
   if (!items || items.length === 0) return null;
 

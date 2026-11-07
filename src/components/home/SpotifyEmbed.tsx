@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
+import { useInView } from "@/hooks/useInView";
 import ScrollReveal from "@/components/ScrollReveal";
 
 type Props = {
@@ -38,29 +39,10 @@ const EMBED_HEIGHT = 152;
 
 export default function SpotifyEmbed({ playlistUrl }: Props) {
   const holderRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
   // Mount the iframe only once the section approaches the viewport. The embed
   // ships ~676 KiB of JS and held the main thread for ~918ms; loading="lazy"
   // alone did not defer it because the element was already in the document.
-  useEffect(() => {
-    const el = holderRef.current;
-    // No fallback for browsers without IntersectionObserver: every browser
-    // Next.js 16 and React 19 support has it, so that branch could never run.
-    if (!el || inView) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "200px" },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [inView]);
+  const inView = useInView(holderRef, { rootMargin: "200px" });
 
   if (!playlistUrl) return null;
 

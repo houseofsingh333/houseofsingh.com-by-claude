@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { pageShareImages, routeShareImages } from "@/lib/share-metadata";
 import { alt as projectShareAlt } from "@/app/projects/[slug]/opengraph-image";
 import NotFoundResponse from "@/components/NotFoundResponse";
+import { toIsoTimestamp } from "@/lib/dates";
 import { sanityFetch } from "@/sanity/fetch";
 import { devPlaceholder } from "@/lib/placeholders";
 import {
@@ -10,7 +11,7 @@ import {
   siteSettingsQuery,
 } from "@/sanity/queries";
 import { fallbackProjects as projects } from "@/lib/placeholder-data";
-import type { ProjectDetail, SiteSettings } from "@/lib/placeholder-data";
+import type { ProjectDetail, SiteSettings } from "@/lib/types";
 import SanityImage from "@/components/SanityImage";
 import { hasImageAsset } from "@/lib/sanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -101,10 +102,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const author = project.author || "Maninder Singh";
 
     const publishedTime = project.publishedAt
-      ? new Date(project.publishedAt).toISOString()
+      ? toIsoTimestamp(project.publishedAt)
       : undefined;
     const modifiedTime = project.updatedAt
-      ? new Date(project.updatedAt).toISOString()
+      ? toIsoTimestamp(project.updatedAt)
       : undefined;
 
     return {

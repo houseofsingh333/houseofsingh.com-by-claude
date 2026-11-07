@@ -14,12 +14,9 @@ import {
   journalFeedQuery,
   siteSettingsQuery,
 } from "@/sanity/queries";
-import {
-  fallbackJournalEntries,
-  type JournalEntry,
-} from "@/lib/placeholder-data";
-import type { SiteSettings } from "@/lib/types";
-import { parseSanityDate } from "@/lib/dates";
+import { fallbackJournalEntries } from "@/lib/placeholder-data";
+import type { JournalEntry, SiteSettings } from "@/lib/types";
+import { formatEntryDate, parseSanityDate, toIsoTimestamp } from "@/lib/dates";
 import JsonLd from "@/components/JsonLd";
 import { normalizeTitle, pageTitle } from "@/lib/page-title";
 import {
@@ -91,7 +88,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const author = entry?.author || "Maninder Singh";
 
   const publishedTime = entry?.date
-    ? parseSanityDate(entry.date).toISOString()
+    ? toIsoTimestamp(entry.date)
     : undefined;
 
   return {
@@ -115,17 +112,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
     },
   };
-}
-
-function formatDate(dateStr: string | undefined | null) {
-  if (!dateStr) return "";
-  const d = parseSanityDate(dateStr);
-  if (isNaN(d.getTime())) return dateStr;
-  return d.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
 }
 
 export default async function JournalDetailPage({ params }: Props) {
@@ -234,7 +220,7 @@ export default async function JournalDetailPage({ params }: Props) {
 
             {/* Date */}
             <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-10">
-              {formatDate(resolved.date)}
+              {formatEntryDate(resolved.date)}
             </p>
 
             {/* Body */}
@@ -293,7 +279,7 @@ export default async function JournalDetailPage({ params }: Props) {
                         {prevEntry.title}
                       </p>
                       <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">
-                        {formatDate(prevEntry.date)}
+                        {formatEntryDate(prevEntry.date)}
                       </p>
                     </Link>
                   ) : (
@@ -323,7 +309,7 @@ export default async function JournalDetailPage({ params }: Props) {
                         {nextEntry.title}
                       </p>
                       <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">
-                        {formatDate(nextEntry.date)}
+                        {formatEntryDate(nextEntry.date)}
                       </p>
                     </Link>
                   ) : (

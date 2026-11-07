@@ -5,10 +5,8 @@ import JournalList from "@/components/journal/JournalList";
 import { sanityFetch } from "@/sanity/fetch";
 import { journalFeedQuery } from "@/sanity/queries";
 import { devPlaceholder } from "@/lib/placeholders";
-import {
-  fallbackJournalEntries,
-  type JournalEntry,
-} from "@/lib/placeholder-data";
+import { fallbackJournalEntries } from "@/lib/placeholder-data";
+import type { JournalEntry } from "@/lib/types";
 
 const TITLE = "Journal";
 const DESCRIPTION =

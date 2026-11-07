@@ -5,7 +5,7 @@ import SanityImage from "@/components/SanityImage";
 import Caption from "./Caption";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import { hasImageAsset } from "@/lib/sanityImage";
-import type { HorizontalGalleryBlock } from "@/lib/placeholder-data";
+import type { HorizontalGalleryBlock } from "@/lib/types";
 
 type Props = { section: HorizontalGalleryBlock };
 

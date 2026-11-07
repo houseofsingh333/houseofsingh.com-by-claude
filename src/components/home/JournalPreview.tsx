@@ -1,22 +1,13 @@
 import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
-import type { JournalEntry } from "@/lib/placeholder-data";
-import { parseSanityDate } from "@/lib/dates";
+import type { JournalEntry } from "@/lib/types";
+import { formatNumericDate, parseSanityDate } from "@/lib/dates";
 import JournalRowLink from "./JournalRowLink";
 import JournalStack from "./JournalStack";
 
 type Props = {
   entries: JournalEntry[];
 };
-
-/* ── Date formatter (desktop list) ── */
-
-const fmtDate = (d: string) =>
-  parseSanityDate(d).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
 
 const MAX_CARDS = 4;
 
@@ -91,7 +82,7 @@ export default function JournalPreview({ entries }: Props) {
               {/* Date + arrow */}
               <div className="hidden md:flex items-center gap-6 shrink-0">
                 <time className="text-xs tracking-widest text-muted-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) group-hover:text-foreground group-focus-visible:text-foreground">
-                  {fmtDate(entry.date)}
+                  {formatNumericDate(entry.date)}
                 </time>
                 <span className="text-foreground/0 group-hover:text-foreground group-focus-visible:text-foreground transition-[color,transform] duration-(--dur-hover) ease-(--ease-soft-out) translate-x-[-8px] group-hover:translate-x-0 group-focus-visible:translate-x-0">
                   →

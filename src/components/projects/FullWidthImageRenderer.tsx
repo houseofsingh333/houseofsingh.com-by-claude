@@ -1,7 +1,7 @@
 import AspectImage from "./AspectImage";
 import Caption from "./Caption";
 import { hasImageAsset } from "@/lib/sanityImage";
-import type { FullWidthImageBlock } from "@/lib/placeholder-data";
+import type { FullWidthImageBlock } from "@/lib/types";
 
 type Props = { section: FullWidthImageBlock };
 

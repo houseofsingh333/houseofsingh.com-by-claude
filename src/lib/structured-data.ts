@@ -17,6 +17,7 @@ import type {
   RapidFireItem,
   SanityImage,
 } from "@/lib/types";
+import { toIsoTimestamp } from "@/lib/dates";
 
 const SITE_URL = "https://houseofsingh.com";
 const STUDIO_URL = "https://studios.houseofsingh.com";
@@ -97,13 +98,6 @@ function imageUrl(image?: SanityImage | null): string | undefined {
   if (!image) return undefined;
   const raw = typeof image === "string" ? image : image.url;
   return absoluteUrl(raw);
-}
-
-/** Normalize a date string to ISO 8601; undefined if missing/invalid. */
-function toIso(date?: string | null): string | undefined {
-  if (!date) return undefined;
-  const d = new Date(date);
-  return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
 }
 
 // ——— Organization nodes ———
@@ -264,8 +258,8 @@ export function buildArticleJsonLd(
   entry: JournalEntry,
   settings?: SiteSettings | null,
 ): Json {
-  const datePublished = toIso(entry.date);
-  const dateModified = toIso(entry.updatedAt) ?? datePublished;
+  const datePublished = toIsoTimestamp(entry.date);
+  const dateModified = toIsoTimestamp(entry.updatedAt) ?? datePublished;
   const author = entry.author?.trim() || DEFAULTS.founderName;
 
   return {
@@ -300,8 +294,8 @@ export function buildCreativeWorkJsonLd(
       description: project.excerpt,
       genre: project.category,
       image: imageUrl(project.coverImage),
-      dateCreated: toIso(project.publishedAt),
-      dateModified: toIso(project.updatedAt),
+      dateCreated: toIsoTimestamp(project.publishedAt),
+      dateModified: toIsoTimestamp(project.updatedAt),
       author: compact({ "@type": "Person", name: author }),
       publisher: publisherNode(settings),
       url: `${SITE_URL}/projects/${project.slug}`,

@@ -1,7 +1,7 @@
 import AspectImage from "./AspectImage";
 import Caption from "./Caption";
 import { hasImageAsset } from "@/lib/sanityImage";
-import type { ImageRow3Block } from "@/lib/placeholder-data";
+import type { ImageRow3Block } from "@/lib/types";
 
 type Props = { section: ImageRow3Block };
 

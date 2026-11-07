@@ -5,7 +5,7 @@ import { sanityFetch } from "@/sanity/fetch";
 import { projectsListQuery } from "@/sanity/queries";
 import { fallbackProjects } from "@/lib/placeholder-data";
 import { devPlaceholder } from "@/lib/placeholders";
-import type { ProjectSummary, SanityImage } from "@/lib/placeholder-data";
+import type { ProjectSummary, SanityImage } from "@/lib/types";
 import ProjectsFilteredGrid from "@/components/projects/ProjectsFilteredGrid";
 
 const TITLE = "Projects";

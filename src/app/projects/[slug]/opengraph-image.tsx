@@ -2,7 +2,7 @@ import { sanityFetch } from "@/sanity/fetch";
 import { devPlaceholder } from "@/lib/placeholders";
 import { projectBySlugQuery } from "@/sanity/queries";
 import { fallbackProjects } from "@/lib/placeholder-data";
-import type { ProjectDetail } from "@/lib/placeholder-data";
+import type { ProjectDetail } from "@/lib/types";
 import {
   renderOgImage,
   OG_SIZE,

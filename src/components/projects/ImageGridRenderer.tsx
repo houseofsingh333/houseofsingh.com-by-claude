@@ -1,6 +1,6 @@
 import AspectImage from "./AspectImage";
 import { hasImageAsset } from "@/lib/sanityImage";
-import type { ImageGridBlock } from "@/lib/placeholder-data";
+import type { ImageGridBlock } from "@/lib/types";
 
 type Props = { section: ImageGridBlock };
 

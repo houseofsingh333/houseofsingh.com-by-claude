@@ -5,12 +5,16 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import NavOverlay, { SITE_MENU_ID } from "./NavOverlay";
 import { useIntro } from "@/components/IntroContext";
+import {
+  mediaMatchesNow,
+  prefersReducedMotionNow,
+} from "@/hooks/useMediaQuery";
 
 const NewsletterModal = dynamic(
   () => import("@/components/NewsletterModal"),
   { ssr: false },
 );
-import type { NavItem } from "@/lib/placeholder-data";
+import type { NavItem } from "@/lib/types";
 
 const SESSION_KEY = "hos_intro_seen";
 const SCROLL_SHOW = 60;
@@ -74,7 +78,7 @@ export default function Header({ items }: Props) {
     }
     if (
       !skip &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      prefersReducedMotionNow()
     ) {
       try {
         sessionStorage.setItem(SESSION_KEY, "1");
@@ -85,7 +89,7 @@ export default function Header({ items }: Props) {
     // Mobile: skip the intro entirely so the hero paints immediately. The
     // overlay delayed the hero caption long enough to be measured as LCP
     // (~4s render delay). Desktop keeps the full intro sequence.
-    if (!skip && window.matchMedia("(max-width: 1023px)").matches) {
+    if (!skip && mediaMatchesNow("(max-width: 1023px)")) {
       try {
         sessionStorage.setItem(SESSION_KEY, "1");
       } catch {}
