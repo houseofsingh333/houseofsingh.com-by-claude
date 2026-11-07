@@ -5,39 +5,34 @@ import { useInView } from "@/hooks/useInView";
 import { revealProps } from "@/lib/reveal";
 
 /**
- * "The Practice" on the About page: the logo and its text fade in together
- * once the logo is in view. Only this reveal runs in the browser; the text is
- * rendered on the server and passed in as children. CSS shows both at once
- * under reduced motion or without JavaScript (revealProps).
+ * Chapter III on the About page, the practice: the brass numeral, the crest
+ * and the practice text, centred. The crest and the text fade in together
+ * once in view; CSS shows both at once under reduced motion or without
+ * JavaScript (revealProps). The text is rendered on the server and passed in.
  */
-export default function PracticeReveal({ children }: { children: ReactNode }) {
-  const logoRef = useRef<HTMLDivElement>(null);
-  const revealed = useInView(logoRef, { threshold: 0.25 });
+export default function PracticeReveal({
+  logo,
+  children,
+}: {
+  /** The practice logo from Sanity, else the crest. */
+  logo: string | null;
+  children: ReactNode;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const revealed = useInView(ref, { threshold: 0.25 });
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">
-      {/* Logo */}
-      <div
-        ref={logoRef}
-        className="flex-shrink-0"
-        {...revealProps({ revealed, rise: false })}
-      >
-        {/* The logo rests at 60% opacity; the wrapper above fades in. */}
-        {/* eslint-disable-next-line @next/next/no-img-element -- SVG logo: next/image adds nothing for vector files (no resizing or format conversion), so a plain img is right. */}
-        <img
-          src="/images/hos-logo.svg"
-          alt="House of Singh"
-          className="w-48 md:w-56 opacity-60"
-        />
+    <div ref={ref} className="flex flex-col items-center gap-6 text-center">
+      <span aria-hidden="true" className="font-editorial italic text-[30px] leading-none text-accent">
+        III
+      </span>
+      <div {...revealProps({ revealed, rise: false })}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- SVG logo: next/image adds nothing for vector files. */}
+        <img src={logo || "/images/hos-logo.svg"} alt="House of Singh" width={260} height={260} className="w-[200px] md:w-[260px] h-auto" />
       </div>
-
-      {/* Text */}
       <div
-        className="max-w-[550px] text-sm md:text-[15px] text-muted-foreground leading-[1.9]"
-        {...revealProps({
-          revealed,
-          delay: 400,
-        })}
+        className="about-practice-text max-w-[640px] font-editorial text-[21px] md:text-[26px] leading-[1.45] text-foreground"
+        {...revealProps({ revealed, delay: 400 })}
       >
         {children}
       </div>

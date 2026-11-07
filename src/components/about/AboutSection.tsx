@@ -1,16 +1,47 @@
+import type { ReactNode } from "react";
 import { PortableText } from "@portabletext/react";
 import { proseComponents } from "@/components/proseComponents";
+import { storyFlow } from "@/lib/portableText";
 import type { AboutPageData } from "@/lib/types";
-import {
-  FALLBACK_BIO_PARAGRAPHS,
-  FALLBACK_MONIKER_PARAGRAPHS,
-} from "./about-constants";
+import { FALLBACK_BIO_PARAGRAPHS, FALLBACK_MONIKER_PARAGRAPHS } from "./about-constants";
 import AboutPortrait from "./AboutPortrait";
-import FeaturedOn from "./FeaturedOn";
+import Conversation from "./Conversation";
+import JourneyWalk from "./JourneyWalk";
 import PracticeReveal from "./PracticeReveal";
-import RapidFire from "./RapidFire";
-import Timeline from "./Timeline";
-import SectionDivider from "@/components/SectionDivider";
+import PressCuttings from "./PressCuttings";
+
+/*
+ * The About page in six chapters:
+ *   I    the portrait, the opening quote, the name and roles
+ *   II   the story: the founder bio in short paragraphs, one sentence lifted
+ *   III  the practice: the crest and the practice text, centred
+ *   IV   in print: Featured On as framed press cuttings
+ *   V    a walk through the years: the Journey milestones
+ *   VI   in conversation: Rapid Fire
+ * All text comes from the About page in Sanity.
+ */
+
+/** "Creative director, photographer and multidisciplinary designer" from the roles list. */
+function rolesLine(roles: string[]): string {
+  const lower = roles.map((r, i) => (i === 0 ? r.charAt(0).toUpperCase() + r.slice(1).toLowerCase() : r.toLowerCase()));
+  if (lower.length < 2) return lower.join("");
+  return `${lower.slice(0, -1).join(", ")} and ${lower[lower.length - 1]}`;
+}
+
+/** A chapter's brass numeral with its small label. */
+function ChapterMark({ numeral, label, children }: { numeral: string; label?: string; children?: ReactNode }) {
+  return (
+    <div className="flex items-baseline gap-4">
+      <span aria-hidden="true" className="font-editorial italic text-[30px] leading-none text-accent">
+        {numeral}
+      </span>
+      {label && (
+        <span className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground">{label}</span>
+      )}
+      {children}
+    </div>
+  );
+}
 
 export default function AboutSection({ data }: { data: AboutPageData }) {
   const {
@@ -18,93 +49,84 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
     founderName,
     founderRoles,
     founderBio,
+    bioPullQuote,
     portrait,
+    monikerLogo,
     monikerText,
     featuredOn,
     milestones,
     rapidFire,
   } = data;
 
-  const roles = founderRoles ?? [
-    "Creative Director",
-    "Multidisciplinary Designer",
-    "Photographer",
-  ];
+  const roles = founderRoles?.length
+    ? founderRoles
+    : ["Creative Director", "Photographer", "Multidisciplinary Designer"];
+  const story = storyFlow(founderBio, bioPullQuote);
 
   return (
-    <div className="overflow-hidden">
-      {/* ——— 1 · Intro Quote ——— */}
-      <section className="px-6 md:px-16 page-top-offset section-pb flex items-center justify-center">
-        <p className="font-editorial text-xl md:text-3xl lg:text-[2.5rem] font-light leading-[1.4] text-center max-w-3xl animate-editorial-fade-in">
-          &ldquo;
-          {introQuote ??
-            "The world is filled with beauty, waiting to be seen, felt, and celebrated."}
-          &rdquo;
-        </p>
-      </section>
-
-      {/* ——— 2 · Founder Section ——— */}
-      <section className="px-6 md:px-16 section-pb-lg">
-        {/* Layout mirrors the homepage IntroSection: 5/5 columns starting at
-            col-1 and col-7, gap-x-8, items-start, 440px text measure. */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-y-8 md:gap-x-8 md:gap-y-0 items-start">
-          {/* Portrait — left. Same sticky technique as the homepage
-              IntroSection: self-stretch gives the column full row height so
-              the sticky child has travel room, and the wrapper pins at
-              top-24 (clears the 68px fixed header). Desktop only; below
-              1024px the section simply stacks. If the text column is shorter
-              than the image the track never exceeds the sticky element, so
-              sticky never engages — no jumping, no gaps. */}
-          <div className="md:col-span-5 md:col-start-1 relative lg:self-stretch">
-            <div className="about-portrait-sticky lg:sticky lg:top-24">
-              <AboutPortrait image={portrait} alt={`${founderName} — ${roles[0]}`} />
-            </div>
-          </div>
-
-          {/* Text — right, left-aligned at the same column start as homepage intro */}
-          <div className="md:col-span-5 md:col-start-7 md:pt-8 lg:pt-14">
-            <div className="max-w-[440px]">
-              <h2 className="text-xs tracking-[0.25em] uppercase text-foreground mb-4">
-                {founderName}
-              </h2>
-              <div className="space-y-1 mb-10">
-                {roles.map((role) => (
-                  <p
-                    key={role}
-                    className="font-editorial text-lg md:text-xl font-light text-muted-foreground leading-[1.5]"
-                  >
-                    {role}
-                  </p>
-                ))}
-              </div>
-              <div className="text-sm md:text-[15px] text-muted-foreground leading-[1.9]">
-                {founderBio ? (
-                  <PortableText value={founderBio} components={proseComponents} />
-                ) : (
-                  FALLBACK_BIO_PARAGRAPHS.map((p, i) => (
-                    <p key={i} className="mb-6 last:mb-0">
-                      {p}
-                    </p>
-                  ))
-                )}
-              </div>
-            </div>
+    <div className="about-chapters">
+      {/* ——— I · The opening ——— */}
+      <section aria-labelledby="about-name" className="about-opening px-6 md:px-16 page-top-offset section-pb">
+        <AboutPortrait image={portrait} alt={`${founderName}, ${roles[0]}`} />
+        <div className="about-opening-text">
+          <ChapterMark numeral="I" />
+          {introQuote && (
+            <blockquote className="font-editorial italic text-[30px] md:text-[40px] lg:text-[48px] leading-[1.2] text-foreground">
+              &ldquo;{introQuote}&rdquo;
+            </blockquote>
+          )}
+          <div className="flex flex-col gap-1.5 border-t border-border pt-5">
+            <h2 id="about-name" className="font-editorial font-normal text-[24px] leading-[1.3] text-foreground">
+              {founderName}
+            </h2>
+            <p className="text-[14px] leading-[1.6] text-muted-foreground">{rolesLine(roles)}</p>
           </div>
         </div>
       </section>
 
-      {/* ——— 3 · House of Singh ——— */}
-      <section className="px-6 md:px-16 section-py-lg">
-        <SectionDivider label="The Practice — House of Singh" />
+      {/* ——— II · The story ——— */}
+      <section aria-labelledby="about-story" className="about-story px-6 md:px-16 section-py">
+        <ChapterMark numeral="II">
+          <h2 id="about-story" className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground font-normal">
+            The story
+          </h2>
+        </ChapterMark>
+        <div className="about-story-text">
+          {story.length > 0
+            ? story.map((item, i) =>
+                item.kind === "block" ? (
+                  <div key={i} className="about-story-p">
+                    <PortableText value={[item.block]} components={proseComponents} />
+                  </div>
+                ) : item.kind === "quote" ? (
+                  <p key={i} className="about-pull">
+                    {item.text}
+                  </p>
+                ) : (
+                  <p key={i} className="about-story-p">
+                    {item.text}
+                  </p>
+                ),
+              )
+            : FALLBACK_BIO_PARAGRAPHS.map((p) => (
+                <p key={p} className="about-story-p">
+                  {p}
+                </p>
+              ))}
+        </div>
+      </section>
 
-        {/* The logo and text reveal is the only client part; the text itself
-            is rendered here, on the server. */}
-        <PracticeReveal>
+      {/* ——— III · The practice ——— */}
+      <section aria-labelledby="about-practice" className="px-6 md:px-16 section-py">
+        <h2 id="about-practice" className="sr-only">
+          The practice, House of Singh
+        </h2>
+        <PracticeReveal logo={typeof monikerLogo === "string" ? monikerLogo : null}>
           {monikerText ? (
             <PortableText value={monikerText} components={proseComponents} />
           ) : (
-            FALLBACK_MONIKER_PARAGRAPHS.map((p, i) => (
-              <p key={i} className="mb-6 last:mb-0">
+            FALLBACK_MONIKER_PARAGRAPHS.map((p) => (
+              <p key={p} className="mb-6 last:mb-0">
                 {p}
               </p>
             ))
@@ -112,49 +134,47 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         </PracticeReveal>
       </section>
 
-      {/* ——— 4 · Featured On ——— */}
+      {/* ——— IV · In print ——— */}
       {featuredOn && featuredOn.length > 0 && (
-        <section
-          className="featured-panel px-6 md:px-16 section-py-lg"
-          style={{
-            paddingTop: "70px",
-            paddingBottom: "70px",
-          }}
-        >
-          <SectionDivider label="Featured On" />
-          <FeaturedOn outlets={featuredOn} />
+        <section aria-labelledby="about-print" className="px-6 md:px-16 section-py">
+          <div className="about-chapter-head">
+            <ChapterMark numeral="IV">
+              <h2 id="about-print" className="font-editorial font-normal text-[30px] md:text-[36px] leading-[1.15] text-foreground">
+                In print
+              </h2>
+            </ChapterMark>
+          </div>
+          <PressCuttings outlets={featuredOn} />
         </section>
       )}
 
-      {/* ——— 5 · Journey Timeline ——— */}
+      {/* ——— V · A walk through the years ——— */}
       {milestones && milestones.length > 0 && (
-        <section className="section-py-lg">
+        <section aria-labelledby="about-journey" className="section-py">
           <div className="px-6 md:px-16">
-            <div className="mb-16">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground">
-                  Journey
-                </p>
-                <p className="text-xs tracking-[0.15em] uppercase text-muted-foreground flex items-center gap-1.5">
-                  Scroll
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8h10M5.5 5.5L3 8l2.5 2.5M10.5 5.5L13 8l-2.5 2.5"/></svg>
-                </p>
-              </div>
-              <div className="w-full h-px bg-border" />
+            <div className="about-chapter-head">
+              <ChapterMark numeral="V" label="Journey" />
+              <h2 id="about-journey" className="font-editorial font-normal text-[30px] md:text-[40px] leading-[1.1] text-foreground">
+                A walk through the years
+              </h2>
             </div>
           </div>
-          <Timeline milestones={milestones} />
+          <JourneyWalk milestones={milestones} />
         </section>
       )}
 
-      {/* ——— 6 · Rapid Fire — bottom of page, above footer ——— */}
+      {/* ——— VI · In conversation ——— */}
       {rapidFire && rapidFire.length > 0 && (
-        <section className="px-6 md:px-16 section-py-lg">
-          <SectionDivider label="Rapidfire" gap="mb-8" />
-          <RapidFire items={rapidFire} />
+        <section aria-labelledby="about-conversation" className="about-conversation px-6 md:px-16 section-py-lg">
+          <div className="flex flex-col gap-5">
+            <ChapterMark numeral="VI" label="Rapid fire" />
+            <h2 id="about-conversation" className="font-editorial font-normal text-[30px] md:text-[40px] leading-[1.1] text-foreground">
+              In conversation
+            </h2>
+          </div>
+          <Conversation items={rapidFire} />
         </section>
       )}
-
     </div>
   );
 }

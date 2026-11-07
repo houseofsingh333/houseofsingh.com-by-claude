@@ -27,6 +27,8 @@
      #9B4B3B, 5.67:1 on the canvas and 5.02:1 on the Featured On panel. */
   --error: hsl(10 45% 42%);
   --border: hsl(40 10% 88%);
+  /* White paper: the mat of a framed press cutting (About, In print). */
+  --paper: #ffffff;
 
   /* ——— Motion tokens: slow, soft, calm ———
      --ease-slow (a soft sine) for reveals, fades, crossfades and the page

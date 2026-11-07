@@ -72,6 +72,7 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   founderName,
   founderRoles,
   founderBio,
+  bioPullQuote,
   "portrait": portrait ${_imageAsset},
   "monikerLogo": monikerLogo.asset->url,
   monikerText,

@@ -44,9 +44,9 @@ The palette is deliberately tight. A warm neutral base, a soft charcoal for text
 | Muted grey | `#76706B` | `--muted-foreground` is `hsl(30 5% 44%)` | Captions, labels, secondary text, metadata. The quietest readable grey on the canvas: do not fade it further with opacity. |
 | Muted grey, inverse | `#A8A39F` | `--muted-foreground-inverse` is `hsl(30 5% 64%)` | Secondary text on the dark charcoal band. 6.56:1 on charcoal. |
 | Border, hairline | `hsl(40 10% 88%)` | `--border` | Dividers, input underlines, thin rules. |
-| Antique brass | `#A8895C` | `--accent` | The single accent. Used rarely for emphasis. 3.07:1 on the canvas: for small graphics and hairlines, never for text. |
+| Antique brass | `#A8895C` | `--accent` | The single accent. Used rarely for emphasis. 3.07:1 on the canvas: for small graphics and hairlines, and for text only at 28px or larger (the italic chapter numerals I, II, III), where it reads as large text. Never for smaller text. |
 | Error, brick | `#9B4B3B` | `--error` is `hsl(10 45% 42%)` | Error messages and the hairline under an invalid field. Warm and muted, never a bright alarm red. 5.67:1 on the canvas, 5.02:1 on the Featured On panel. Functional only, never decorative. |
-| White | `#FFFFFF` | — | Rare. Contrast moments inside cards or over images only. |
+| White | `#FFFFFF` | `--paper` | Rare. Contrast moments inside cards or over images only, and the white paper mat of a framed press cutting (About, In print). |
 
 **Do not lighten the muted grey.** `--muted-foreground` was originally `hsl(30 5% 50%)` (`#868079`). Measured against the canvas it gives only **3.65:1**, below the WCAG AA minimum of 4.5:1 for normal text, so every caption, label, and piece of metadata on the site failed contrast. It was darkened to `hsl(30 5% 44%)`, which measures **4.57:1** and passes. It still sits far quieter than charcoal (15.34:1), so the hierarchy is unchanged. If this value is ever lightened again for aesthetic reasons, the whole secondary type layer silently fails accessibility — check the contrast ratio before changing it.
 

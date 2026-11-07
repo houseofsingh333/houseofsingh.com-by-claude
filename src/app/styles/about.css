@@ -1,316 +1,417 @@
-/* About: sticky portraits, Rapidfire, the Timeline, the Featured On panel.
+/* About: the page in six chapters (components/about/AboutSection).
    Imported by globals.css, in the order listed there. */
 
-/* ——— Sticky portraits — opt-out under reduced motion ———
-   Sticky positioning is layout, not animation, but pinned elements can feel
-   disorienting for motion-sensitive users, so they release to normal flow.
-   Covers the About founder portrait, pinned on desktop via the Tailwind
-   `lg:sticky` utility. */
-
-@media (prefers-reduced-motion: reduce) {
-  .about-portrait-sticky {
-    position: static;
-  }
+/* ——— I · The opening: the portrait large, the quote beside it ——— */
+.about-opening {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
 }
-
-/* ——— Rapidfire accordion — editorial Q&A interaction ——— */
-
-.rapidfire-section {
-  --rf-num-w: 34px;
-  --rf-gap: 24px;
-}
-
-.rapidfire-item {
-  position: relative;
-  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent);
-}
-
-/* Animated underline — overlays the subtle divider, left-to-right reveal */
-.rapidfire-item::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 1px;
-  background-color: var(--foreground);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--dur-hover) var(--ease-soft-out);
-}
-
-/* Desktop hover — line reveal matching contact-intent pattern */
-@media (hover: hover) {
-  .rapidfire-item:hover::after {
-    transform: scaleX(1);
-  }
-}
-
-.rapidfire-btn {
+.about-opening-text {
   display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 24px 0;
-  cursor: pointer;
-  text-align: left;
-  background: none;
-  border: none;
+  flex-direction: column;
+  gap: 28px;
+}
+@media (min-width: 1024px) {
+  .about-opening {
+    grid-template-columns: minmax(0, 540px) minmax(0, 1fr);
+    gap: 96px;
+    align-items: end;
+  }
+  .about-opening-text {
+    gap: 32px;
+    padding-bottom: 8px;
+  }
 }
 
-.rapidfire-btn:focus-visible {
-  outline: 1.5px solid var(--foreground);
-  outline-offset: 3px;
+/* Chapter heads with a hairline beneath (IV, V). */
+.about-chapter-head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
 }
 
-/* Number index: (01), (02) ... */
-.rapidfire-number {
-  flex-shrink: 0;
-  min-width: var(--rf-num-w);
-  font-size: 14px;
-  font-weight: 400;
+/* ——— II · The story: short paragraphs and one lifted sentence ——— */
+.about-story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+}
+.about-story-text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.about-story-p {
+  max-width: 640px;
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--foreground);
+}
+.about-pull {
+  max-width: 760px;
+  margin-block: 16px;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1.3;
+  color: var(--foreground);
+}
+@media (min-width: 768px) {
+  .about-story-p {
+    font-size: 19px;
+  }
+  .about-pull {
+    font-size: 40px;
+    line-height: 1.28;
+  }
+}
+@media (min-width: 1024px) {
+  .about-story {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 96px;
+  }
+}
+
+/* ——— III · The practice: the text in Playfair, centred ——— */
+.about-practice-text p {
+  margin-bottom: 0.9em;
+}
+.about-practice-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* ——— IV · In print: framed press cuttings ——— */
+.press-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px 32px;
+}
+@media (min-width: 768px) {
+  .press-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .press-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.press-cutting {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.press-mat {
+  display: block;
+  padding: 10px;
+  background: var(--paper);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent),
+    0 8px 20px color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+.press-photo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--secondary);
+}
+/* With no photograph, the publication's name stands in, like a masthead. */
+.press-masthead {
+  padding: 16px;
+  font-family: var(--font-editorial);
+  font-size: 22px;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--foreground);
+}
+.press-meta {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--muted-foreground);
-  transition: transform var(--dur-hover) var(--ease-soft-out);
 }
-
-/* Question text */
-.rapidfire-question {
-  flex: 1;
-  margin-left: var(--rf-gap);
+.press-title {
   font-family: var(--font-editorial);
   font-size: 18px;
-  font-weight: 500;
+  line-height: 1.3;
   color: var(--foreground);
-  transition: opacity 200ms ease;
+}
+a.press-cutting .press-title {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: transparent;
+  transition: text-decoration-color var(--dur-hover) var(--ease-soft-out);
+}
+a.press-cutting:hover .press-title,
+a.press-cutting:focus-visible .press-title {
+  text-decoration-color: var(--foreground);
+}
+a.press-cutting .press-mat {
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+a.press-cutting:hover .press-mat {
+  transform: translateY(-2px);
 }
 
-/* Eye toggle container — stacks two SVGs for crossfade */
-.rapidfire-toggle {
-  flex-shrink: 0;
+/* ——— V · Journey walk ———
+   A sideways row. The current milestone (data-active, set by JourneyWalk
+   from the scroll position) shows its year in charcoal and its photograph
+   in full; the others wait in grey with faded photographs. Opacity only.
+   Without JavaScript (no data-walking) every milestone is in full. */
+.walk-row {
+  display: flex;
+  gap: 48px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  padding-inline: 24px;
+  scroll-padding-inline: 24px;
+}
+.walk-row::-webkit-scrollbar {
+  display: none;
+}
+.walk-row:focus-visible {
+  outline: 1px solid var(--foreground);
+  outline-offset: 4px;
+}
+.walk-card {
+  flex: 0 0 auto;
+  width: min(76vw, 420px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scroll-snap-align: start;
+}
+/* Lets the last milestone reach the start of the row. */
+.walk-end {
+  flex: 0 0 auto;
+  width: max(0px, calc(100vw - min(76vw, 420px) - 120px));
+}
+.walk-year {
+  display: grid;
+  font-family: var(--font-editorial);
+  font-size: 72px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.walk-year > span {
+  grid-area: 1 / 1;
+  transition: opacity var(--dur-image) var(--ease-slow);
+}
+.walk-year-on {
+  color: var(--foreground);
+}
+.walk-year-off {
+  color: var(--muted-foreground);
+  opacity: 0;
+}
+.walk-photo {
   position: relative;
-  width: 22px;
-  height: 22px;
-  margin-left: 16px;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--secondary);
+  transition: opacity var(--dur-image) var(--ease-slow);
+}
+.walk-title {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--foreground);
+}
+.walk-text {
+  max-width: 380px;
+  font-size: 15px;
+  line-height: 1.7;
   color: var(--muted-foreground);
 }
-
-.rapidfire-toggle svg {
-  width: 22px;
-  height: 22px;
+.walk[data-walking] .walk-card:not([data-active]) .walk-year-on {
+  opacity: 0;
 }
-
-.rapidfire-eye {
-  position: absolute;
-  inset: 0;
+.walk[data-walking] .walk-card:not([data-active]) .walk-year-off {
+  opacity: 1;
+}
+.walk[data-walking] .walk-card:not([data-active]) .walk-photo {
+  opacity: 0.35;
+}
+.walk-progress {
+  display: none;
+}
+.walk[data-walking] .walk-progress {
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: opacity 250ms ease;
+  gap: 24px;
+  margin-top: 40px;
 }
-
-/* Desktop hover (1024px+) — dim question, nudge number on closed items */
-@media (min-width: 1024px) {
-  .rapidfire-btn:not([data-open]):hover .rapidfire-question {
-    opacity: 0.6;
-  }
-
-  .rapidfire-btn:not([data-open]):hover .rapidfire-number {
-    transform: translateX(2px);
-  }
+.walk-track {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }
-
-/* Answer panel — CSS grid height animation */
-.rapidfire-panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 400ms cubic-bezier(0.25, 0.1, 0.25, 1);
+.walk-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--foreground);
+  transform-origin: left center;
+  transform: scaleX(var(--walk, 0));
 }
-
-.rapidfire-panel[data-open] {
-  grid-template-rows: 1fr;
+.walk-mover {
+  position: absolute;
+  inset: 0;
+  transform: translateX(calc(var(--walk, 0) * 100%));
 }
-
-.rapidfire-panel > div {
-  overflow: hidden;
+.walk-dot {
+  position: absolute;
+  left: -3px;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
 }
-
-/* Answer text — indented to align with question, not number */
-.rapidfire-answer {
-  padding-left: calc(var(--rf-num-w) + var(--rf-gap));
-  padding-top: 8px;
-  padding-bottom: 24px;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.7;
-  color: var(--foreground);
-  opacity: 0.8;
-  max-width: 980px;
-}
-
-/* Mobile (< 768px) */
-@media (max-width: 767px) {
-  .rapidfire-section {
-    --rf-num-w: 28px;
-    --rf-gap: 16px;
-  }
-
-  .rapidfire-item::after {
-    display: none;
-  }
-
-  .rapidfire-btn {
-    padding: 20px 0;
-  }
-
-  .rapidfire-number {
-    font-size: 12px;
-  }
-
-  .rapidfire-question {
-    font-size: 16px;
-  }
-
-  .rapidfire-toggle {
-    width: 18px;
-    height: 18px;
-  }
-
-  .rapidfire-toggle svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .rapidfire-answer {
-    font-size: 15px;
-    line-height: 1.6;
-    max-width: none;
-  }
-}
-
-/* Reduced motion: show items immediately, instant expand/collapse */
-@media (prefers-reduced-motion: reduce) {
-  .rapidfire-item {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-
-  .rapidfire-number,
-  .rapidfire-question,
-  .rapidfire-eye,
-  .rapidfire-panel {
-    transition: none;
-  }
-}
-
-/* ——— About: Featured On panel ———
-   Muted text inside the panel switches to the darker panel grey so labels
-   and dates keep 4.5:1 on the tinted background. */
-.featured-panel {
-  background-color: var(--featured-panel);
-  --muted-foreground: var(--muted-foreground-panel);
-}
-
-/* ——— Timeline (about/Timeline.tsx): edge fades, milestone text, the phone
-   scroll snap and scroll driven colour, reduced motion ——— */
-
-.edge-fade {
-  width: 120px;
-}
-
-/* Milestone text never fades: muted grey (4.57:1) when inactive,
-   charcoal on the milestone in focus. */
-.film-text {
+.walk-hint {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--muted-foreground);
-  transition: color 0.3s ease;
 }
-.film-card[data-active] .film-text {
+@media (min-width: 768px) {
+  .walk-row {
+    gap: 72px;
+    padding-inline: 64px;
+    scroll-padding-inline: 64px;
+  }
+  .walk-year {
+    font-size: 120px;
+  }
+  .walk-title {
+    font-size: 30px;
+  }
+  .walk-end {
+    width: max(0px, calc(100vw - 420px - 200px));
+  }
+}
+
+/* ——— VI · In conversation ——— */
+.about-conversation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
+}
+@media (min-width: 1024px) {
+  .about-conversation {
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 96px;
+  }
+}
+.convo {
+  border-top: 1px solid var(--border);
+}
+.convo-item {
+  border-bottom: 1px solid var(--border);
+}
+.convo-q {
+  width: 100%;
+  min-height: 56px;
+  padding: 18px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  text-align: left;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--foreground);
+  cursor: pointer;
+}
+.convo-eye {
+  flex-shrink: 0;
+  display: flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+.convo-q:hover .convo-eye {
   color: var(--foreground);
 }
-@media (max-width: 1023px) {
-  .edge-fade {
-    width: 60px;
+.convo-a {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 0 28px;
+}
+html.js .convo-a:not([data-open]) {
+  display: none;
+}
+html:not(.js) .convo-eye {
+  display: none;
+}
+.convo-who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+/* Brass marks Maninder's reply; the name itself stays readable grey. */
+.convo-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.convo-reply {
+  max-width: 680px;
+  font-family: var(--font-editorial);
+  font-size: 22px;
+  line-height: 1.45;
+  color: var(--foreground);
+}
+@media (min-width: 768px) {
+  .convo-q {
+    font-size: 18px;
+  }
+  .convo-a {
+    padding-left: 64px;
+  }
+  .convo-reply {
+    font-size: 26px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .convo-a[data-open] {
+    animation: convo-in var(--dur-image) var(--ease-slow) both;
+  }
+}
+@keyframes convo-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise-reveal));
   }
 }
 
-/* ─── Mobile: scroll-snap + CSS scroll-driven animations ─── */
-@media (max-width: 767px) {
-  .timeline-scroll--mobile {
-    scroll-snap-type: x mandatory;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .film-card--mobile {
-    scroll-snap-align: center;
-  }
-  .film-card--mobile .film-frame {
-    will-change: filter, opacity;
-  }
-}
-
-/*
- * CSS Scroll-Driven Animation (mobile only)
- *
- * Uses animation-timeline: view(inline) to track each card's
- * horizontal position within the scroll container's viewport.
- * As a card enters from either side, it starts grayscale/faded/scaled-down
- * and transitions to full color/opacity/scale at the center,
- * then fades back out as it exits the other side.
- *
- * Browser support: Chrome 115+, Edge 115+. For unsupported browsers
- * (Safari, Firefox as of early 2026), the @supports fallback shows
- * all cards at full color/scale with no animation.
- */
-@media (max-width: 767px) {
-  @keyframes grayscale-to-color {
-    0% {
-      filter: grayscale(1);
-      opacity: 0.6;
-    }
-    50% {
-      filter: grayscale(0);
-      opacity: 1;
-    }
-    100% {
-      filter: grayscale(1);
-      opacity: 0.6;
-    }
-  }
-
-  @supports (animation-timeline: view()) {
-    .film-card--mobile .film-frame {
-      animation: grayscale-to-color linear both;
-      animation-timeline: view(inline);
-      animation-range: contain 0% contain 100%;
-    }
-  }
-
-  @supports not (animation-timeline: view()) {
-    .film-card--mobile .film-frame {
-      filter: grayscale(0);
-      opacity: 1;
-    }
-  }
-}
-
-/* Reduced motion. !important is needed here: these override the inline
-   transitions on the cards and frames, and the filter and opacity the
-   timeline sets from script while scrolling. */
 @media (prefers-reduced-motion: reduce) {
-  .film-card {
-    transform: none !important;
-    transition: none !important;
-  }
-  .film-frame {
-    transition: opacity 0.15s ease !important;
-    filter: none !important;
-  }
-  .film-text {
+  .walk-year > span,
+  .walk-photo,
+  .convo-eye,
+  a.press-cutting .press-mat,
+  a.press-cutting .press-title {
     transition: none;
   }
-  .film-card--mobile .film-frame {
-    animation: none !important;
-    filter: grayscale(0) !important;
-    opacity: 1 !important;
+  a.press-cutting:hover .press-mat {
+    transform: none;
   }
 }

@@ -267,6 +267,7 @@ export type AboutPageData = {
   founderName: string;
   founderRoles: string[] | null;
   founderBio: PortableTextBlock[] | null;
+  bioPullQuote?: string | null;
   portrait: SanityImage | null;
   monikerLogo: SanityImage | null;
   monikerText: PortableTextBlock[] | null;

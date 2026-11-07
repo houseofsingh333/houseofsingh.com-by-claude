@@ -69,7 +69,7 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 - Muted grey `#76706B` (`--muted-foreground` is `hsl(30 5% 44%)`), captions, labels, secondary text. This value meets WCAG AA (4.57:1) on the canvas; the earlier `hsl(30 5% 50%)` failed at 3.65:1. Do not lighten it without re-checking contrast, and do not fade it with opacity variants (`/40`, `/60` and so on) for readable text; hierarchy comes from size, letter spacing and uppercase labels.
 - Muted grey, inverse `#A8A39F` (`--muted-foreground-inverse` is `hsl(30 5% 64%)`), secondary text on the dark charcoal band. 6.56:1 on charcoal.
 - Border hairline `hsl(40 10% 88%)` (`--border`).
-- Antique brass `#A8895C` (`--accent`), the single accent, used rarely (the pulsing upcoming dot, a hairline, a hover, one point of emphasis). Always use the token, never the raw hex. It is 3.07:1 on the canvas, so never use it for text.
+- Antique brass `#A8895C` (`--accent`), the single accent, used rarely (the pulsing upcoming dot, a hairline, a hover, one point of emphasis). Always use the token, never the raw hex. It is 3.07:1 on the canvas, so use it for text only at 28px or larger (the italic chapter numerals), never for smaller text.
 - Error brick `#9B4B3B` (`--error` is `hsl(10 45% 42%)`), for error messages and invalid field hairlines only. 5.67:1 on the canvas. Never use Tailwind's default reds.
 - Do not introduce colors outside this palette without updating `BRAND_BOOK.md` first.
 

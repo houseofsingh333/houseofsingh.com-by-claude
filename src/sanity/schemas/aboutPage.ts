@@ -37,6 +37,13 @@ export const aboutPage = defineType({
         "The full bio shown on the About page, beside the portrait. Also used on the homepage if Homepage Bio is left empty.",
     }),
     defineField({
+      name: "bioPullQuote",
+      title: "Bio pull quote",
+      type: "string",
+      description:
+        "Optional. One sentence copied exactly from the Founder Bio, set large in italic on the About page. When empty, the longest sentence after the first is used.",
+    }),
+    defineField({
       name: "homeBio",
       title: "Homepage Bio (short)",
       type: "array",
