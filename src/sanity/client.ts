@@ -10,8 +10,8 @@ import { projectId, dataset, apiVersion, isSanityConfigured } from "./env";
  * ISR keeps the last good page.
  *
  * The library's own retries are off (maxRetries: 0): sanityFetch retries
- * brief network failures itself, logged and within one 8 second budget, so
- * the two never stack.
+ * brief network failures and HTTP 429, 502, 503 and 504 itself, logged and
+ * within one 8 second budget, so the two never stack.
  */
 export const client: SanityClient | null = isSanityConfigured
   ? createClient({
