@@ -45,12 +45,22 @@ export default function JournalFilmstrip({ entries }: { entries: JournalEntry[] 
     <section ref={sectionRef} aria-labelledby="journal-strip-title" className="section-py">
       <div className="px-6 md:px-16">
         <div className="flex items-end justify-between gap-6 border-b border-border pb-4 md:pb-6">
-          <h2
-            id="journal-strip-title"
-            className="font-editorial font-normal text-[32px] md:text-[44px] leading-[1.1] text-foreground"
-          >
-            Journal
-          </h2>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-baseline gap-4">
+              <span aria-hidden="true" className="font-editorial italic text-[30px] leading-none text-accent">
+                V
+              </span>
+              <span className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground">
+                Notebook
+              </span>
+            </div>
+            <h2
+              id="journal-strip-title"
+              className="font-editorial font-normal text-[32px] md:text-[44px] leading-[1.1] text-foreground"
+            >
+              Journal
+            </h2>
+          </div>
           <div className="flex items-center gap-5 md:gap-6">
             {drift && (
               <button
