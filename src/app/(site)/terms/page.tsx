@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
+import SectionDivider from "@/components/SectionDivider";
 
 const TITLE = "Terms of Use";
 const DESCRIPTION =
@@ -21,17 +22,6 @@ export async function generateMetadata(
   };
 }
 
-function SectionDivider({ label }: { label: string }) {
-  return (
-    <div className="mb-10">
-      <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
-        {label}
-      </p>
-      <div className="w-full h-px bg-border" />
-    </div>
-  );
-}
-
 export default function TermsPage() {
   return (
     <div className="overflow-hidden">
@@ -44,7 +34,7 @@ export default function TermsPage() {
             Last updated: March 2026
           </p>
 
-          <SectionDivider label="Use of This Website" />
+          <SectionDivider gap="mb-10" label="Use of This Website" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               This website is operated by Maninder Singh under the brand House
@@ -58,7 +48,7 @@ export default function TermsPage() {
             </p>
           </div>
 
-          <SectionDivider label="Intellectual Property" />
+          <SectionDivider gap="mb-10" label="Intellectual Property" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               All content on this website — including but not limited to
@@ -78,7 +68,7 @@ export default function TermsPage() {
             </p>
           </div>
 
-          <SectionDivider label="Limitation of Liability" />
+          <SectionDivider gap="mb-10" label="Limitation of Liability" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               This website and its content are provided &ldquo;as is&rdquo;
@@ -93,7 +83,7 @@ export default function TermsPage() {
             </p>
           </div>
 
-          <SectionDivider label="External Links" />
+          <SectionDivider gap="mb-10" label="External Links" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               This site may contain links to third-party websites. These links
@@ -103,7 +93,7 @@ export default function TermsPage() {
             </p>
           </div>
 
-          <SectionDivider label="Governing Law" />
+          <SectionDivider gap="mb-10" label="Governing Law" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8] mb-16">
             <p>
               These terms are governed by the laws of the Province of Ontario,
@@ -113,7 +103,7 @@ export default function TermsPage() {
             </p>
           </div>
 
-          <SectionDivider label="Changes to These Terms" />
+          <SectionDivider gap="mb-10" label="Changes to These Terms" />
           <div className="space-y-4 text-sm md:text-[15px] text-muted-foreground leading-[1.8]">
             <p>
               We may update these terms from time to time. Continued use of the
