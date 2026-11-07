@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef, type CSSProperties } from "re
 import SanityImage from "@/components/SanityImage";
 import { useIntro } from "@/components/IntroContext";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
-import type { HeroSlide } from "@/lib/placeholder-data";
+import type { HeroSlide } from "@/lib/types";
 
 /*
  * Home hero slideshow, in CSS (no animation library). See "Hero slideshow" in

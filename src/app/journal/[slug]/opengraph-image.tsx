@@ -2,7 +2,7 @@ import { sanityFetch } from "@/sanity/fetch";
 import { devPlaceholder } from "@/lib/placeholders";
 import { journalBySlugQuery } from "@/sanity/queries";
 import { fallbackJournalEntries } from "@/lib/placeholder-data";
-import type { JournalEntry } from "@/lib/placeholder-data";
+import type { JournalEntry } from "@/lib/types";
 import {
   renderOgImage,
   OG_SIZE,

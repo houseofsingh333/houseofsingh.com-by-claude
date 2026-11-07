@@ -1,6 +1,6 @@
 import AspectImage from "./AspectImage";
 import { hasImageAsset } from "@/lib/sanityImage";
-import type { ImageSingleBlock } from "@/lib/placeholder-data";
+import type { ImageSingleBlock } from "@/lib/types";
 
 type Props = { section: ImageSingleBlock };
 

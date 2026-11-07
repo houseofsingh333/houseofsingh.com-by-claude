@@ -1,4 +1,4 @@
-import type { PullQuoteBlock } from "@/lib/placeholder-data";
+import type { PullQuoteBlock } from "@/lib/types";
 
 type Props = { section: PullQuoteBlock };
 

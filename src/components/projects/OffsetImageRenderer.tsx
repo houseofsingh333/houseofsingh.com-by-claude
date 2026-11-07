@@ -1,7 +1,7 @@
 import AspectImage from "./AspectImage";
 import Caption from "./Caption";
 import { hasImageAsset } from "@/lib/sanityImage";
-import type { OffsetImageBlock } from "@/lib/placeholder-data";
+import type { OffsetImageBlock } from "@/lib/types";
 
 type Props = { section: OffsetImageBlock };
 

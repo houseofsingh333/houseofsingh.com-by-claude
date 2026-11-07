@@ -2,35 +2,8 @@
  * Placeholder / fallback data — used when Sanity returns null
  * (e.g. before content is populated in the CMS).
  *
- * Types live in ./types.ts and are re-exported here for
- * backward compatibility with existing import sites.
+ * Types live in ./types.ts; import them from "@/lib/types".
  */
-
-export type {
-  SanityImage,
-  NavItem,
-  HeroSlide,
-  ProjectSummary,
-  HomepageProject,
-  TextSectionBlock,
-  FullWidthImageBlock,
-  FullBleedImageBlock,
-  ImageRow3Block,
-  OffsetImageBlock,
-  TextWithImageBlock,
-  HorizontalGalleryBlock,
-  PullQuoteBlock,
-  ImageSingleBlock,
-  ImagePairBlock,
-  ImageGridBlock,
-  StickyChapterBlock,
-  ContentSection,
-  ProjectDetail,
-  JournalEntry,
-  SiteSettings,
-  AboutPageData,
-  HomeIntroData,
-} from "./types";
 
 import type {
   NavItem,

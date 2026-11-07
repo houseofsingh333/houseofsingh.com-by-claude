@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { X } from "lucide-react";
 import Link from "next/link";
-import type { NavItem } from "@/lib/placeholder-data";
+import type { NavItem } from "@/lib/types";
 
 /** id of the menu panel, referenced by the menu buttons' aria-controls. */
 export const SITE_MENU_ID = "site-menu";

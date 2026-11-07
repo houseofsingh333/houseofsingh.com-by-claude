@@ -1,6 +1,6 @@
 import { PortableText } from "@portabletext/react";
 import AspectImage from "./AspectImage";
-import type { StickyChapterBlock } from "@/lib/placeholder-data";
+import type { StickyChapterBlock } from "@/lib/types";
 import { hasImageAsset, type SanityImageAsset } from "@/lib/sanityImage";
 
 type Props = { section: StickyChapterBlock };

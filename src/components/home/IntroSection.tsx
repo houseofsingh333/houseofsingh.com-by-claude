@@ -4,7 +4,7 @@ import { proseComponents } from "@/components/proseComponents";
 import ScrollReveal from "@/components/ScrollReveal";
 import IntroPortrait from "./IntroPortrait";
 import { devPlaceholder } from "@/lib/placeholders";
-import type { HomeIntroData } from "@/lib/placeholder-data";
+import type { HomeIntroData } from "@/lib/types";
 
 const FALLBACK_ROLES = [
   "Creative Director",

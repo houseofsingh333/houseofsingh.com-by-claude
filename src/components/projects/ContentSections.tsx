@@ -1,5 +1,5 @@
 import ScrollReveal from "@/components/ScrollReveal";
-import type { ContentSection } from "@/lib/placeholder-data";
+import type { ContentSection } from "@/lib/types";
 import TextSectionRenderer from "./TextSectionRenderer";
 import FullWidthImageRenderer from "./FullWidthImageRenderer";
 import FullBleedImageRenderer from "./FullBleedImageRenderer";

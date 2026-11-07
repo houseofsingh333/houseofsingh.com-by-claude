@@ -3,7 +3,7 @@ import { proseComponents } from "@/components/proseComponents";
 import AspectImage from "./AspectImage";
 import Caption from "./Caption";
 import { hasImageAsset } from "@/lib/sanityImage";
-import type { TextWithImageBlock } from "@/lib/placeholder-data";
+import type { TextWithImageBlock } from "@/lib/types";
 
 type Props = { section: TextWithImageBlock };
 
