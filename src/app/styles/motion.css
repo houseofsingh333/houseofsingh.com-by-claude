@@ -191,3 +191,25 @@ html.js .blurup + img[data-blurup]:not([data-loaded]) {
     }
   }
 }
+
+/* ——— Line reveal (LineReveal) ———
+   A statement's lines fade and rise in turn once it is in view. Like the
+   scroll reveals, the hidden start state applies from the first paint only
+   when JavaScript runs (html.js) and motion is allowed; without either the
+   statement is simply there. The per line delay comes from the measured
+   --line, and only applies on the way in. */
+[data-line-reveal] [data-word] {
+  display: inline-block;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-line-reveal]:not([data-revealed]) [data-word] {
+    opacity: 0;
+    transform: translateY(var(--rise-reveal));
+  }
+  html.js [data-line-reveal][data-revealed] [data-word] {
+    transition:
+      opacity var(--dur-reveal) var(--ease-slow),
+      transform var(--dur-reveal) var(--ease-slow);
+    transition-delay: calc(var(--line, 0) * 160ms);
+  }
+}
