@@ -457,6 +457,70 @@ html:not(.js) .footer-time {
   }
 }
 
+/* ——— Page not found (404) ———
+   Text first in the markup (and on phones); on desktop the photograph
+   takes the left column. */
+
+.lost {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 56px;
+}
+
+.lost-text {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.lost-ways {
+  display: flex;
+  flex-direction: column;
+  max-width: 460px;
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.lost-way {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  transition: border-color var(--dur-hover) var(--ease-soft-out);
+}
+
+.lost-way:hover {
+  border-bottom-color: var(--foreground);
+}
+
+.lost-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--secondary);
+}
+
+@media (min-width: 1024px) {
+  .lost {
+    grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+    gap: 96px;
+    align-items: center;
+  }
+  .lost-photo {
+    grid-row: 1;
+    grid-column: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lost-way {
+    transition: none;
+  }
+}
+
 /* ——— Reading progress bar ——— */
 
 .reading-progress {

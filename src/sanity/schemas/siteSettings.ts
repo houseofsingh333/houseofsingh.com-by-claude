@@ -72,6 +72,17 @@ export const siteSettings = defineType({
         "Optional. The large line beside the House of Singh Studios panel. Shown when empty: Beyond the personal work, a studio for brands.",
     }),
 
+    /* ——— The 404 page ——— */
+    defineField({
+      name: "notFoundImage",
+      title: "Page not found: photograph",
+      type: "image",
+      options: { hotspot: true },
+      description:
+        "Optional. The photograph on the page not found (404) page. When empty, the cover of the Range day journal entry is used.",
+      fields: imageAltFields,
+    }),
+
     /* ——— Global SEO defaults ——— */
     defineField({
       name: "defaultMetaDescription",

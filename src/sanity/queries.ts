@@ -65,6 +65,21 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   googleVerification
 }`;
 
+// --------------- Page not found ---------------
+
+/**
+ * The 404 page: its photograph (Site Settings, else the cover of the Range
+ * day journal entry), the latest journal entry and the number of projects.
+ */
+export const notFoundQuery = `{
+  "image": coalesce(
+    *[_type == "siteSettings"][0].notFoundImage,
+    *[_type == "journalEntry" && title match "Range day"] | order(date desc)[0].coverImage
+  ) ${_imageAsset},
+  "latest": *[_type == "journalEntry"] | order(date desc)[0]{ title, "slug": slug.current },
+  "projects": count(*[_type == "project"])
+}`;
+
 // --------------- About Page ---------------
 
 export const aboutPageQuery = `*[_type == "aboutPage"][0]{
