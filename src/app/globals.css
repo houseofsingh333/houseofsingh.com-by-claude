@@ -1881,6 +1881,32 @@ html:not(.js) .hero-dots {
   --muted-foreground: var(--muted-foreground-panel);
 }
 
+/* ——— Page transitions (PageTransition, browser View Transitions) ———
+   The old page fades out and the new one fades in, over --dur-page on
+   --ease-slow. The rest of the document (header, footer) crossfades on the
+   same timing, so it reads as one calm change. Clicks pass through the
+   overlay. Reduced motion: no animation, the page changes at once. */
+::view-transition-old(.page),
+::view-transition-new(.page),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-page);
+  animation-timing-function: var(--ease-slow);
+}
+::view-transition-group(.page) {
+  animation: none;
+}
+::view-transition {
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 /* ——— Blur up ———
    A photo's tiny blurred preview (BlurUp) sits over the photo and dissolves
    once the photo has loaded (data-loaded, set by the pre paint script). Only
