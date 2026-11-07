@@ -9,8 +9,9 @@ import { notFound } from "next/navigation";
  * generateStaticParams returns no paths but makes this a prerendered (ISR)
  * route, like the journal and project pages. Next.js then renders each
  * unknown URL fully before responding, so notFound() sets a true 404. As a
- * plain on demand route it would start streaming, and (site)/loading.tsx
- * would lock the status at 200.
+ * plain on demand route it would start streaming and lock the status at 200.
+ * The loading.tsx beside this file renders the same 404 page, so the server
+ * HTML is complete and styled (see the note there).
  */
 export function generateStaticParams(): { notFound: string[] }[] {
   return [];
