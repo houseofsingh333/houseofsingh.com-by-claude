@@ -11,7 +11,7 @@ export default function ImagePairRenderer({ section }: Props) {
 
   return (
     <div
-      className={`project-section mx-auto max-w-6xl px-6 md:px-16 ${
+      className={`project-section mx-auto max-w-5xl px-6 md:px-16 ${
         isSideBySide ? "grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8" : "flex flex-col gap-5 md:gap-8"
       }`}
     >

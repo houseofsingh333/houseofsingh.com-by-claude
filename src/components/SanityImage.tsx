@@ -28,6 +28,11 @@ type Props = {
    * profile's sizes apply.
    */
   sizes?: string;
+  /**
+   * CSS object-position for a cropped (object-cover) photo, e.g. from the
+   * image's hotspot, so the crop keeps the subject. Default: centred.
+   */
+  objectPosition?: string;
 };
 
 /**
@@ -45,6 +50,7 @@ export default function SanityImage({
   className,
   fill = false,
   sizes,
+  objectPosition,
 }: Props) {
   const props = getImageProps(image, context, altOverride);
   // No image (and no local placeholder): render nothing. The parent frame
@@ -67,7 +73,7 @@ export default function SanityImage({
   // which swapped instantly instead of dissolving.
   const lqip = props.blurDataURL;
   const preview = (
-    <BlurUp lqip={lqip} position={objectPositionOf(className)} />
+    <BlurUp lqip={lqip} position={objectPosition ?? objectPositionOf(className)} />
   );
 
   if (fill) {
@@ -81,6 +87,7 @@ export default function SanityImage({
           sizes={sizes ?? props.sizes}
           priority={priority}
           className={className}
+          style={objectPosition ? { objectPosition } : undefined}
           loader={loader}
           {...blurUpImgProps(lqip)}
         />

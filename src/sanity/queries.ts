@@ -129,6 +129,7 @@ export const projectsListQuery = `*[_type == "project"] | order(title asc){
 
 export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug][0]{
   _id, title, "slug": slug.current, category,
+  year,
   excerpt,
   shortIntro,
   isUpcoming,
@@ -138,6 +139,7 @@ export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug
   updatedAt,
   "seo": seo ${_seo},
   "coverImage": coverImage ${_imageAsset},
+  "thumbnail": thumbnail ${_imageAsset},
   contentSections[]{
     _type,
     _key,
@@ -203,6 +205,13 @@ export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug
       layoutPreset
     }
   }
+}`;
+
+// Every project in the order of the projects page, for "Next project".
+export const projectLinksQuery = `*[_type == "project"] | order(title asc){
+  title, "slug": slug.current, isUpcoming,
+  "coverImage": coverImage ${_imageAsset},
+  "thumbnail": thumbnail ${_imageAsset}
 }`;
 
 // --------------- Spotlight ---------------

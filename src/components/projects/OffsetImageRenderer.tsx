@@ -2,6 +2,7 @@ import AspectImage from "./AspectImage";
 import Caption from "./Caption";
 import { hasImageAsset } from "@/lib/sanityImage";
 import type { OffsetImageBlock } from "@/lib/types";
+import { PAGE_COLUMN, READING_COLUMN, STORY_TEXT } from "./story";
 
 type Props = { section: OffsetImageBlock };
 
@@ -18,8 +19,8 @@ export default function OffsetImageRenderer({ section }: Props) {
   if (!hasImage) {
     if (!hasText) return null;
     return (
-      <div className="project-section mx-auto max-w-3xl px-6 md:px-16">
-        <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] whitespace-pre-line">
+      <div className={`project-section ${PAGE_COLUMN}`}>
+        <p className={`${READING_COLUMN} ${STORY_TEXT} whitespace-pre-line`}>
           {section.text}
         </p>
       </div>
@@ -27,7 +28,7 @@ export default function OffsetImageRenderer({ section }: Props) {
   }
 
   return (
-    <div className="project-section mx-auto max-w-6xl px-6 md:px-16">
+    <div className="project-section mx-auto max-w-5xl px-6 md:px-16">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
         <figure
           className={`md:col-span-8 ${imageLeft ? "md:order-1" : "md:order-2"}`}
@@ -39,7 +40,7 @@ export default function OffsetImageRenderer({ section }: Props) {
           <div
             className={`md:col-span-4 ${imageLeft ? "md:order-2" : "md:order-1"}`}
           >
-            <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] whitespace-pre-line">
+            <p className={`${STORY_TEXT} whitespace-pre-line`}>
               {section.text}
             </p>
           </div>

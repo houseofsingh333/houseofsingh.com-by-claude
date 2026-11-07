@@ -2,6 +2,8 @@ import { PortableText } from "@portabletext/react";
 import AspectImage from "./AspectImage";
 import type { StickyChapterBlock } from "@/lib/types";
 import { hasImageAsset, type SanityImageAsset } from "@/lib/sanityImage";
+import { proseComponents } from "@/components/proseComponents";
+import { STORY_TEXT } from "./story";
 
 type Props = { section: StickyChapterBlock };
 
@@ -87,8 +89,8 @@ export default function StickyChapterRenderer({ section }: Props) {
     <div className="project-section sticky-chapter mx-auto max-w-7xl px-6 md:px-16">
       {/* Mobile: single column sequence — text then images */}
       <div className="md:hidden flex flex-col gap-10">
-        <div className="text-sm text-muted-foreground leading-[1.9] [&>p]:mb-6 last:[&>p]:mb-0">
-          <PortableText value={section.stickyText} />
+        <div className={STORY_TEXT}>
+          <PortableText value={section.stickyText} components={proseComponents} />
         </div>
         <ChapterImages images={images} preset={section.layoutPreset} />
       </div>
@@ -96,8 +98,8 @@ export default function StickyChapterRenderer({ section }: Props) {
       {/* Desktop: two-column sticky layout — text stays while images scroll */}
       <div className="hidden md:grid md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)] md:gap-16 lg:gap-24 items-start">
         <div className="self-start">
-          <div className="sticky top-32 text-sm md:text-[15px] text-muted-foreground leading-[1.9] [&>p]:mb-6 last:[&>p]:mb-0 pr-4">
-            <PortableText value={section.stickyText} />
+          <div className={`sticky top-32 pr-4 ${STORY_TEXT}`}>
+            <PortableText value={section.stickyText} components={proseComponents} />
           </div>
         </div>
         <div>

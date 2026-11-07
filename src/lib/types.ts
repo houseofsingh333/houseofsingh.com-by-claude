@@ -169,7 +169,9 @@ export type ProjectDetail = {
   category: string;
   excerpt?: string;
   shortIntro?: string;
+  year?: number | null;
   coverImage?: SanityImageAsset | null;
+  thumbnail?: SanityImageAsset | null;
   contentSections?: ContentSection[];
   isUpcoming?: boolean;
   showInterestForm?: boolean;
@@ -269,4 +271,19 @@ export type HomeIntroData = {
   founderBio: PortableTextBlock[] | null;
   portrait: SanityImage | null;
   introQuote: string | null;
+};
+
+/** A project as linked from another project page ("Next project"). */
+export type ProjectLink = {
+  title: string;
+  slug: string;
+  isUpcoming?: boolean;
+  coverImage?: SanityImageAsset | null;
+  thumbnail?: SanityImageAsset | null;
+};
+
+/** The parts of the homepage spotlight a project page uses. */
+export type SpotlightLink = {
+  linkUrl?: string | null;
+  image?: SanityImageAsset | null;
 };

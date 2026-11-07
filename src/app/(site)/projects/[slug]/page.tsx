@@ -7,14 +7,28 @@ import { sanityFetch } from "@/sanity/fetch";
 import { devPlaceholder } from "@/lib/placeholders";
 import {
   projectBySlugQuery,
+  projectLinksQuery,
   projectsListQuery,
   siteSettingsQuery,
+  spotlightQuery,
 } from "@/sanity/queries";
 import { fallbackProjects as projects } from "@/lib/placeholder-data";
-import type { ProjectDetail, SiteSettings } from "@/lib/types";
-import SanityImage from "@/components/SanityImage";
-import { hasImageAsset } from "@/lib/sanityImage";
+import type {
+  ProjectDetail,
+  ProjectLink,
+  SiteSettings,
+  SpotlightLink,
+} from "@/lib/types";
 import ScrollReveal from "@/components/ScrollReveal";
+import { projectHeroImage } from "@/lib/projectHero";
+import ProjectHero from "@/components/projects/ProjectHero";
+import ProjectTitle from "@/components/projects/ProjectTitle";
+import NextProject from "@/components/projects/NextProject";
+import {
+  PAGE_COLUMN,
+  READING_COLUMN,
+  STORY_TEXT,
+} from "@/components/projects/story";
 import ReadingProgress from "@/components/ReadingProgress";
 import ContentSections from "@/components/projects/ContentSections";
 import ProjectInterestForm from "@/components/projects/ProjectInterestForm";
@@ -41,57 +55,33 @@ export async function generateStaticParams() {
   return devPlaceholder(projects, []).map((project) => ({ slug: project.slug }));
 }
 
-function ProjectHeader({ category, title, intro, isUpcoming, author }: { category: string; title: string; intro?: string; isUpcoming?: boolean; author?: string | null }) {
-  const authorText = author?.trim();
-  return (
-    <ScrollReveal as="section" className="mx-auto max-w-3xl px-6 md:px-16 page-top-offset mb-16 md:mb-20">
-      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-4">
-        {category}
-      </p>
-      <div className="w-full h-px bg-border mb-8 md:mb-10" />
-      <h1 className="font-editorial text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-[1.15] mb-4">
-        {title}
-      </h1>
-      {authorText && (
-        <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground mb-6">
-          {authorText}
-        </p>
-      )}
-      {isUpcoming && (
-        <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-8">
-          <span className="upcoming-dot" aria-hidden="true" />
-          Upcoming
-        </p>
-      )}
-      {!isUpcoming && !authorText && <div className="mb-4" />}
-      {intro && (
-        <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] max-w-xl">
-          {intro}
-        </p>
-      )}
-    </ScrollReveal>
-  );
-}
-
 const DEFAULT_DESCRIPTION = "A project by Maninder Singh.";
 
-// Share images: the cover photo from the Sanity CDN (1200x630 JPEG) when
-// there is one, otherwise the generated branded card from the
+/** The homepage spotlight, which an upcoming project may use as its hero. */
+function getSpotlight() {
+  return sanityFetch<SpotlightLink | null>({ query: spotlightQuery });
+}
+
+// Share images: the page's hero photo from the Sanity CDN (1200x630 JPEG)
+// when there is one, otherwise the generated branded card from the
 // opengraph-image and twitter-image routes in src/app/projects/[slug]/. Those
 // routes sit outside the (site) route group so their URLs carry no hash
 // suffix, and pageShareImages links them explicitly.
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = await sanityFetch<ProjectDetail>({
-    query: projectBySlugQuery,
-    params: { slug },
-  });
+  const [project, spotlight] = await Promise.all([
+    sanityFetch<ProjectDetail>({
+      query: projectBySlugQuery,
+      params: { slug },
+    }),
+    getSpotlight(),
+  ]);
 
   if (project) {
     const title = normalizeTitle(project.seo?.metaTitle || project.title);
     const share = pageShareImages({
       path: `/projects/${slug}`,
-      cover: project.coverImage,
+      cover: projectHeroImage(project, spotlight).image,
       pageTitle: title,
       cardAlt: projectShareAlt,
     });
@@ -156,17 +146,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+/** The project after this one in the projects page's order, wrapping round. */
+function nextProject(links: ProjectLink[] | null, slug: string): ProjectLink | null {
+  if (!links || links.length < 2) return null;
+  const i = links.findIndex((p) => p.slug === slug);
+  return i === -1 ? null : links[(i + 1) % links.length];
+}
+
 export default async function ProjectDetailPage({ params }: Props) {
   const { slug } = await params;
 
-  const project = await sanityFetch<ProjectDetail>({
-    query: projectBySlugQuery,
-    params: { slug },
-  });
-
-  const settings = await sanityFetch<SiteSettings | null>({
-    query: siteSettingsQuery,
-  });
+  const [project, settings, spotlight, links] = await Promise.all([
+    sanityFetch<ProjectDetail>({
+      query: projectBySlugQuery,
+      params: { slug },
+    }),
+    sanityFetch<SiteSettings | null>({ query: siteSettingsQuery }),
+    getSpotlight(),
+    sanityFetch<ProjectLink[] | null>({ query: projectLinksQuery }),
+  ]);
 
   // Sanity data available — render full project
   if (project) {
@@ -176,42 +174,46 @@ export default async function ProjectDetailPage({ params }: Props) {
       { name: "Projects", path: "/projects" },
       { name: project.title, path: `/projects/${project.slug}` },
     ]);
+    const hero = projectHeroImage(project, spotlight);
+    const next = nextProject(links, project.slug);
+    const intro = project.shortIntro?.trim();
 
     return (
       <article className="section-pb-lg">
         <JsonLd data={creativeWorkJsonLd} />
         <JsonLd data={breadcrumbJsonLd} />
         <ReadingProgress />
-        <ProjectHeader category={project.category} title={project.title} intro={project.shortIntro} isUpcoming={project.isUpcoming} author={project.author} />
 
-        {/* Cover image — only when a real asset exists (a coverImage object
-            can carry alt with no asset at all; that must render no hero). */}
-        {hasImageAsset(project.coverImage) && (
-          <ScrollReveal rise={false} threshold={0.05} className="mb-20 md:mb-32 lg:mb-40">
-            <div
-              className="w-full"
-              style={{ position: "relative", aspectRatio: `${project.coverImage.width || 1920} / ${project.coverImage.height || 1080}` }}
-            >
-              <SanityImage
-                image={project.coverImage}
-                context="hero"
-                priority
-                fill
-                className="object-cover"
-              />
-            </div>
+        {/* 1. Hero: cover, else thumbnail; upcoming: the spotlight image. */}
+        <ProjectHero image={hero.image} />
+
+        {/* 2. Title block */}
+        <ProjectTitle
+          title={project.title}
+          category={project.category}
+          year={project.year}
+          isUpcoming={project.isUpcoming}
+        />
+
+        {/* 3. Story: the intro, then the editor's blocks in their order. */}
+        {intro && (
+          <ScrollReveal className={`${PAGE_COLUMN} pt-12 md:pt-16`}>
+            <p className={`${READING_COLUMN} ${STORY_TEXT}`}>{intro}</p>
           </ScrollReveal>
         )}
-
-        {/* Content sections */}
         {project.contentSections && project.contentSections.length > 0 && (
-          <ContentSections sections={project.contentSections} />
+          <div className="pt-(--section-space-md)">
+            <ContentSections sections={project.contentSections} />
+          </div>
         )}
 
-        {/* Interest form — shown for upcoming projects with the flag enabled */}
+        {/* 4. Upcoming projects: the interest form, after the story. */}
         {project.showInterestForm && (
           <ProjectInterestForm projectTitle={project.title} />
         )}
+
+        {/* 5. Next project, wrapping from the last to the first. */}
+        {next && <NextProject project={next} />}
       </article>
     );
   }
@@ -233,13 +235,14 @@ export default async function ProjectDetailPage({ params }: Props) {
     <article className="section-pb-lg">
       <JsonLd data={fallbackCreativeWorkJsonLd} />
       <JsonLd data={fallbackBreadcrumbJsonLd} />
-      <ProjectHeader category={fallback.category} title={fallback.title} intro={fallback.excerpt} />
-      <section className="mx-auto max-w-3xl px-6 md:px-16">
+      <ProjectHero image={null} />
+      <ProjectTitle title={fallback.title} category={fallback.category} />
+      <div className={`${PAGE_COLUMN} pt-12`}>
         <p className="text-xs text-muted-foreground">
           Full project detail with content sections will render here once Sanity
           is connected.
         </p>
-      </section>
+      </div>
     </article>
   );
 }
