@@ -189,7 +189,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         <button
           type="submit"
           disabled={!canSubmit}
-          className="contact-btn contact-btn-primary"
+          className="contact-btn contact-btn-quiet"
         >
           {submitting ? "Sending…" : "Submit"}
         </button>

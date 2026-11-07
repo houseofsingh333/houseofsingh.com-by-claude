@@ -1,0 +1,99 @@
+/* Legal: Privacy and Terms (components/legal/LegalPage).
+   Imported by globals.css, in the order listed there. */
+
+.legal {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 48px;
+}
+.legal-contents {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.legal-contents ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.legal-contents-link {
+  display: block;
+  padding: 6px 0 6px 13px;
+  border-left: 1px solid transparent;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+  transition: color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
+}
+.legal-contents-link:hover,
+.legal-contents-link[aria-current] {
+  color: var(--foreground);
+  border-left-color: var(--foreground);
+}
+.legal-article {
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+.legal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  scroll-margin-top: 96px;
+}
+.legal-short {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--foreground);
+}
+.legal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--foreground);
+}
+.legal-body ul {
+  list-style: disc;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.legal-body strong {
+  font-weight: 500;
+}
+@media (min-width: 768px) {
+  .legal-body {
+    font-size: 17px;
+  }
+}
+@media (min-width: 1024px) {
+  .legal {
+    grid-template-columns: 240px minmax(0, 1fr);
+    grid-template-areas: "contents header" "contents article";
+    gap: 56px 112px;
+  }
+  .legal-header {
+    grid-area: header;
+  }
+  .legal-article {
+    grid-area: article;
+  }
+  .legal-contents {
+    grid-area: contents;
+    position: sticky;
+    top: 112px;
+    align-self: start;
+    padding-top: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .legal-contents-link {
+    transition: none;
+  }
+}

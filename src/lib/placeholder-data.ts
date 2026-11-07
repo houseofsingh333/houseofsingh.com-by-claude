@@ -16,7 +16,6 @@ import type {
   HomeIntroData,
 } from "./types";
 
-import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
 
 // --------------- Fallback Navigation ---------------
 
@@ -203,35 +202,6 @@ export const fallbackSiteSettings: SiteSettings = {
   spotifyPlaylistUrl:
     "https://open.spotify.com/embed/playlist/5siljeAcGgaINDEqVRBsAg?utm_source=generator",
 };
-
-// --------------- Fallback Instagram Photos ---------------
-
-export const fallbackInstagramPhotos: InstagramPhoto[] = [
-  {
-    id: "ig-1",
-    url: "/images/instagram-placeholder-1.svg",
-    permalink: "https://instagram.com/houseofsingh",
-    alt: "Light study — concentric circles and intersecting lines on dark background",
-  },
-  {
-    id: "ig-2",
-    url: "/images/instagram-placeholder-2.svg",
-    permalink: "https://instagram.com/houseofsingh",
-    alt: "Stillness — minimal landscape with warm earth tones",
-  },
-  {
-    id: "ig-3",
-    url: "/images/instagram-placeholder-3.svg",
-    permalink: "https://instagram.com/houseofsingh",
-    alt: "Texture and form — grid composition with warm dark tones",
-  },
-  {
-    id: "ig-4",
-    url: "/images/instagram-placeholder-4.svg",
-    permalink: "https://instagram.com/houseofsingh",
-    alt: "Craft and type — architectural lines with typography element",
-  },
-];
 
 // --------------- Fallback About Page ---------------
 

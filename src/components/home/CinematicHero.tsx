@@ -6,7 +6,7 @@ import { useIntro } from "@/components/IntroContext";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import type { HeroSlide } from "@/lib/types";
 import HeroStill from "./HeroStill";
-import { useSlideshow } from "./useSlideshow";
+import { SLIDE_DURATION, SLIDE_SHOWN_MS, useSlideshow } from "./useSlideshow";
 
 /*
  * Home hero slideshow, in CSS (no animation library). See "Hero slideshow" in
@@ -35,6 +35,8 @@ const KEN_BURNS_PRESETS: KenBurnsPreset[] = [
 
 type Props = {
   slides: HeroSlide[];
+  /** The slide buttons' labels (Site Settings, Chapter I). */
+  labels: { previous: string; next: string };
 };
 
 /** CSS variables for a slide's Ken Burns start and end. */
@@ -45,11 +47,11 @@ function kenBurnsVars(preset: KenBurnsPreset): CSSProperties {
   } as CSSProperties;
 }
 
-export default function CinematicHero({ slides }: Props) {
+export default function CinematicHero({ slides, labels }: Props) {
   const prefersReduced = usePrefersReducedMotion();
   // Shared signal from the Header intro overlay — no polling.
   const { introComplete } = useIntro();
-  const { current, previous, showCaption, isFirstSlide, loaded, goToSlide } =
+  const { current, previous, showCaption, isFirstSlide, loaded, goToSlide, cycle } =
     useSlideshow(slides.length, introComplete, prefersReduced);
 
   if (slides.length === 0) return null;
@@ -99,44 +101,47 @@ export default function CinematicHero({ slides }: Props) {
       {/* ——— Vignette overlay — film still feel ——— */}
       <div className="absolute inset-0 pointer-events-none hero-vignette" />
 
-      {/* ——— Bottom-left: dots + caption ——— */}
-      <div className="absolute bottom-6 left-5 md:bottom-8 md:left-8 z-10 flex items-center gap-4 md:gap-5">
-        {/* Slide dots: their space is held from the first paint (hidden
-            until the intro is done), so the caption beside them never
-            moves. With JavaScript off they are not shown at all. */}
-        {slides.length > 1 && (
-          <div
-            className={`hero-dots flex items-center gap-2 ${introComplete ? "" : "invisible"}`}
-          >
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => goToSlide(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                // The visible dot stays 6px; the ::after pseudo-element adds a
-                // centred 24x24 invisible hit area so the touch target meets
-                // the 24px minimum without changing the design.
-                className={`p-0 border-0 block w-1.5 h-1.5 rounded-full transition-all duration-500 cursor-pointer relative after:content-[''] after:absolute after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-6 after:h-6 ${
-                  i === current
-                    ? "bg-white scale-150"
-                    : "bg-white/25 hover:bg-white/50"
-                }`}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Caption — sequenced separately from the image: fades out, then
-            the next one rises in. The first caption paints at full opacity,
-            so it is never an invisible LCP element. */}
+      {/* ——— Bottom left: the place name, and a hairline that fills while
+          the slide plays (it restarts with each slide). Previous and next
+          are labelled buttons for keyboard and screen reader users; they
+          stay out of sight until focused, so the photograph stays clear. */}
+      <div className="absolute bottom-6 left-5 md:bottom-8 md:left-8 z-10 flex flex-col gap-2.5">
         {slide.caption && (
           <p
-            className="hero-caption text-[10px] md:text-xs tracking-[0.15em] uppercase text-white/70 max-w-[200px] md:max-w-md"
+            className="hero-caption text-[12px] md:text-[13px] tracking-[0.14em] uppercase text-white"
             data-visible={showCaption ? "" : undefined}
             data-first={isFirstSlide ? "" : undefined}
           >
             {slide.caption}
           </p>
+        )}
+        {slides.length > 1 && (
+          <span aria-hidden="true" className="hero-progress">
+            <span
+              key={`${current}-${cycle}`}
+              className="hero-progress-fill"
+              data-run={introComplete ? "" : undefined}
+              style={{ animationDuration: `${isFirstSlide ? SLIDE_DURATION : SLIDE_SHOWN_MS}ms` }}
+            />
+          </span>
+        )}
+        {slides.length > 1 && (
+          <div className="hero-nav flex gap-3">
+            <button
+              type="button"
+              onClick={() => goToSlide((current - 1 + slides.length) % slides.length)}
+              className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-[12px] focus-visible:tracking-[0.14em] focus-visible:uppercase focus-visible:text-white focus-visible:outline-1 focus-visible:outline-white"
+            >
+              {labels.previous}
+            </button>
+            <button
+              type="button"
+              onClick={() => goToSlide((current + 1) % slides.length)}
+              className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-[12px] focus-visible:tracking-[0.14em] focus-visible:uppercase focus-visible:text-white focus-visible:outline-1 focus-visible:outline-white"
+            >
+              {labels.next}
+            </button>
+          </div>
         )}
       </div>
 

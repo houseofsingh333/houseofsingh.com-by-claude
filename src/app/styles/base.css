@@ -26,6 +26,12 @@ body {
   padding-top: 300px;
 }
 
+/* Projects on phones: the crest ends near 110px, so 200px leaves calm air
+   without the long empty stretch above the title. */
+.page-top-offset-tight {
+  padding-top: 200px;
+}
+
 @media (min-width: 768px) {
   .page-top-offset {
     padding-top: 320px;

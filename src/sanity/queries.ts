@@ -29,21 +29,49 @@ const _seo = `{
 // --------------- Navigation ---------------
 
 export const navigationQuery = `*[_type == "navigation"][0]{
-  items[]{ label, href, external, order }
+  items[]{ label, href, external, order, "image": image ${_imageAsset} }
+}`;
+
+/**
+ * Default menu photographs, one per page, for pages whose menu item has no
+ * photograph of its own: the first hero slide, the About portrait, the
+ * first featured project, the latest journal entry and the Contact
+ * portrait (else the About portrait).
+ */
+export const menuPhotosQuery = `{
+  "home": *[_type == "heroSlide"] | order(order asc)[0]{ "image": image ${_imageAsset}, "alt": coalesce(image.alt, imageAlt), caption },
+  "about": *[_type == "aboutPage"][0]{ "image": portrait ${_imageAsset} },
+  "projects": *[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc)[0]{ title, "image": coalesce(coverImage, thumbnail) ${_imageAsset} },
+  "journal": *[_type == "journalEntry"] | order(date desc)[0]{ title, "image": coverImage ${_imageAsset} },
+  "contact": *[_type == "contactPage"][0]{ "image": portrait ${_imageAsset} }
 }`;
 
 // --------------- Site Settings ---------------
 
+/**
+ * Every Site Settings field (including the optional chapter texts read by
+ * lib/siteCopy.ts), with the record sleeve image resolved.
+ */
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
-  siteTitle,
-  tagline,
-  footerText,
-  spotifyPlaylistUrl,
-  defaultMetaDescription,
-  organizationName,
-  founderName,
-  sameAs,
-  googleVerification
+  ...,
+  "listeningSleeve": listeningSleeve ${_imageAsset},
+  "studioWorkCards": studioWorkCards[]{ _key, clientName, link, "image": image ${_imageAsset} }
+}`;
+
+// --------------- Page not found ---------------
+
+/**
+ * The 404 page: its photograph (Site Settings, else the cover of the Range
+ * day journal entry), the latest journal entry and the number of projects.
+ */
+export const notFoundQuery = `{
+  "image": coalesce(
+    *[_type == "siteSettings"][0].notFoundImage,
+    *[_type == "journalEntry" && title match "Range day"] | order(date desc)[0].coverImage
+  ) ${_imageAsset},
+  "latest": *[_type == "journalEntry"] | order(date desc)[0]{ title, "slug": slug.current },
+  "projects": count(*[_type == "project"]),
+  "settings": *[_type == "siteSettings"][0]
 }`;
 
 // --------------- About Page ---------------
@@ -53,6 +81,15 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   founderName,
   founderRoles,
   founderBio,
+  bioPullQuote,
+  aboutStoryLabel,
+  aboutPrintHeading,
+  aboutJourneyLabel,
+  aboutJourneyHeading,
+  aboutJourneyHint,
+  aboutConversationLabel,
+  aboutConversationHeading,
+  aboutReplyName,
   "portrait": portrait ${_imageAsset},
   "monikerLogo": monikerLogo.asset->url,
   monikerText,
@@ -109,13 +146,15 @@ export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
 export const homepageFeaturedProjectsQuery = `*[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc){
   _id, title, "slug": slug.current, category,
   "thumbnail": thumbnail ${_imageAsset},
-  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt
+  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt, year,
+  "coverImage": coverImage ${_imageAsset}
 }`;
 
 export const latestProjectsQuery = `*[_type == "project"] | order(_createdAt desc)[0...6]{
   _id, title, "slug": slug.current, category,
   "thumbnail": thumbnail ${_imageAsset},
-  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt
+  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt, year,
+  "coverImage": coverImage ${_imageAsset}
 }`;
 
 // --------------- Projects ---------------
@@ -224,14 +263,8 @@ export const spotlightQuery = `*[_type == "spotlight"][0]{
 // --------------- Contact Page ---------------
 
 export const contactPageQuery = `*[_type == "contactPage"][0]{
-  instagramPhotos[]{
-    "id": _key,
-    "url": image.asset->url,
-    "lqip": image.asset->metadata.lqip,
-    "alt": image.alt,
-    "isDecorative": image.isDecorative,
-    permalink
-  },
+  "portrait": coalesce(portrait, *[_type == "aboutPage"][0].portrait) ${_imageAsset},
+  portraitCaption,
   "seo": seo ${_seo},
   seoTitle,
   seoDescription

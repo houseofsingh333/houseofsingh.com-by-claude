@@ -72,7 +72,7 @@ export default async function ProjectsPage({
 
   return (
     <div className="overflow-hidden">
-      <section className="mx-auto max-w-7xl px-6 md:px-16 page-top-offset pb-20">
+      <section className="mx-auto max-w-7xl px-6 md:px-16 page-top-offset page-top-offset-tight pb-20">
         <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
           Portfolio
         </p>

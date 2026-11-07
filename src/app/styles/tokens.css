@@ -16,7 +16,8 @@
   --muted-foreground-inverse: hsl(30 5% 64%);
   /* The About page "Featured On" panel sits on a darker warm tint (#EDE9E4),
      where --muted-foreground only reaches 4.04:1. This one step darker grey,
-     #6B6661, gives 4.70:1 there. Used on that panel only (.featured-panel). */
+     #6B6661, gives 4.70:1 there. Also used for the record player's placeholder
+     label on --secondary. */
   --featured-panel: #ede9e4;
   --muted-foreground-panel: hsl(30 5% 40%);
   /* Antique brass #A8895C: the single accent, used rarely (the breathing
@@ -27,6 +28,8 @@
      #9B4B3B, 5.67:1 on the canvas and 5.02:1 on the Featured On panel. */
   --error: hsl(10 45% 42%);
   --border: hsl(40 10% 88%);
+  /* White paper: the mat of a framed press cutting (About, In print). */
+  --paper: #ffffff;
 
   /* ——— Motion tokens: slow, soft, calm ———
      --ease-slow (a soft sine) for reveals, fades, crossfades and the page
@@ -41,6 +44,8 @@
   --dur-hover: 500ms; /* hover and focus changes */
   --dur-page: 600ms; /* page fade in, content swapped by a click */
   --dur-develop: 1400ms; /* a photograph developing to full tone */
+  --dur-menu: 500ms; /* the menu and the newsletter note opening (the longest allowed) */
+  --dur-record-turn: 3600ms; /* one slow, steady turn of the home page record */
 
   /* Earlier fast curve, kept only for the menu and popup opening. */
   --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);

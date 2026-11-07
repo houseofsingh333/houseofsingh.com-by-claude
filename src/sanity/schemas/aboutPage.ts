@@ -1,10 +1,19 @@
 import { defineField, defineType } from "sanity";
 import { imageAltFields } from "./imageFields";
+import { ABOUT_COPY_FIELDS } from "../../lib/siteCopy";
 
 export const aboutPage = defineType({
   name: "aboutPage",
   title: "About Page",
   type: "document",
+  fieldsets: [
+    {
+      name: "chapterHeadings",
+      title: "Chapter headings",
+      description: "Optional. Each field shows today's text; when empty, that text is used.",
+      options: { collapsible: true, collapsed: true },
+    },
+  ],
   fields: [
     /* ——— 1 · Intro Quote ——— */
     defineField({
@@ -35,6 +44,13 @@ export const aboutPage = defineType({
       of: [{ type: "block" }],
       description:
         "The full bio shown on the About page, beside the portrait. Also used on the homepage if Homepage Bio is left empty.",
+    }),
+    defineField({
+      name: "bioPullQuote",
+      title: "Bio pull quote",
+      type: "string",
+      description:
+        "Optional. One sentence copied exactly from the Founder Bio, set large in italic on the About page. When empty, the longest sentence after the first is used.",
     }),
     defineField({
       name: "homeBio",
@@ -238,6 +254,16 @@ export const aboutPage = defineType({
       readOnly: true,
       hidden: ({ value }) => !value,
     }),
+    /* ——— Chapter headings: generated from lib/siteCopy.ts ——— */
+    ...ABOUT_COPY_FIELDS.map((f) =>
+      defineField({
+        name: f.name,
+        title: f.title,
+        type: "string",
+        fieldset: "chapterHeadings",
+        description: `Optional. When empty: ${f.text}`,
+      }),
+    ),
   ],
   preview: {
     select: { title: "founderName" },

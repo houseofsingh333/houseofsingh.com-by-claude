@@ -8,16 +8,39 @@ import {
 } from "@/components/contact/ReviewConfirmation";
 import { TwoColumnLayout } from "./ContactLayout";
 import { useContactForm } from "./useContactForm";
-import InstagramPhotoPlate, {
-  type InstagramPhoto,
-} from "./InstagramPhotoPlate";
+import SanityImage from "@/components/SanityImage";
+import type { SanityImage as SanityImageData } from "@/lib/types";
 import HoneypotField from "@/components/HoneypotField";
 
 type Props = {
-  instagramPhotos?: InstagramPhoto[];
+  /** Maninder's portrait: the Contact portrait, else the About portrait. */
+  portrait: SanityImageData | null;
+  /** The portrait's caption (Contact Page, Portrait caption). */
+  caption: string;
 };
 
-export default function ContactForm({ instagramPhotos = [] }: Props) {
+/** The portrait beside the form (and after it on phones). */
+function ContactPortrait({ image, caption }: { image: SanityImageData; caption: string }) {
+  return (
+    <figure className="flex flex-col gap-3">
+      <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
+        <SanityImage
+          image={image}
+          context="body"
+          alt={typeof image === "string" ? "Maninder Singh" : undefined}
+          fill
+          sizes="(min-width: 1280px) 460px, (min-width: 768px) 36vw, calc(100vw - 48px)"
+          className="object-cover object-top"
+        />
+      </div>
+      <figcaption className="text-[12px] tracking-[0.12em] uppercase text-muted-foreground">
+        {caption}
+      </figcaption>
+    </figure>
+  );
+}
+
+export default function ContactForm({ portrait, caption }: Props) {
   const {
     formData,
     currentStep,
@@ -42,10 +65,7 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
     setHoneypot,
   } = useContactForm();
 
-  const aside =
-    instagramPhotos.length > 0 ? (
-      <InstagramPhotoPlate photos={instagramPhotos} />
-    ) : undefined;
+  const aside = portrait ? <ContactPortrait image={portrait} caption={caption} /> : undefined;
 
   /* ── Confirmation ── */
   if (phase === "done") {
@@ -159,10 +179,10 @@ export default function ContactForm({ instagramPhotos = [] }: Props) {
           </div>
         </div>
 
-        {/* Mobile-only Instagram plate — placed near footer, after form content */}
-        {instagramPhotos.length > 0 && (
-          <div className="md:hidden mt-16 mb-4 px-2">
-            <InstagramPhotoPlate photos={instagramPhotos} />
+        {/* Phones: the portrait after the form */}
+        {portrait && (
+          <div className="md:hidden mt-16 mb-4">
+            <ContactPortrait image={portrait} caption={caption} />
           </div>
         )}
       </TwoColumnLayout>

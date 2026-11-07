@@ -2,16 +2,14 @@ import type { Metadata, ResolvingMetadata } from "next";
 import ContactForm from "@/components/contact/ContactForm";
 import { sanityFetch } from "@/sanity/fetch";
 import { contactPageQuery } from "@/sanity/queries";
-import { reportInstagramAltGaps } from "@/lib/instagram-alt";
-import type { InstagramPhoto } from "@/components/contact/InstagramPhotoPlate";
-import { fallbackInstagramPhotos } from "@/lib/placeholder-data";
-import { devPlaceholder } from "@/lib/placeholders";
-import type { Seo } from "@/lib/types";
+import type { SanityImage, Seo } from "@/lib/types";
 import { fullTitle, pageTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
 
 type ContactPageData = {
-  instagramPhotos?: InstagramPhoto[] | null;
+  /** The contact portrait, else the About portrait (contactPageQuery). */
+  portrait?: SanityImage | null;
+  portraitCaption?: string | null;
   seo?: Seo | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
@@ -47,13 +45,7 @@ export async function generateMetadata(
 export default async function ContactPage() {
   const data = await sanityFetch<ContactPageData>({ query: contactPageQuery });
 
-  const photos = data?.instagramPhotos?.length
-    ? data.instagramPhotos
-    : devPlaceholder(fallbackInstagramPhotos, []);
-  // Names any photo without alt text in the build and server log.
-  reportInstagramAltGaps(photos);
-
   return (
-    <ContactForm instagramPhotos={photos} />
+    <ContactForm portrait={data?.portrait ?? null} caption={data?.portraitCaption?.trim() || "Maninder Singh, Toronto"} />
   );
 }

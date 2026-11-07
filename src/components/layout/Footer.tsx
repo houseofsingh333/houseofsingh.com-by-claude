@@ -1,10 +1,7 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import HoneypotField from "@/components/HoneypotField";
-import { HONEYPOT_FIELD } from "@/lib/spam-protection";
-import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
+import TorontoTime from "@/components/TorontoTime";
+import type { SiteCopy } from "@/lib/siteCopy";
+import FooterNewsletter from "./FooterNewsletter";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -14,160 +11,48 @@ const NAV_LINKS = [
   { label: "Contact", href: "/contact" },
 ];
 
-export default function Footer() {
-  const [email, setEmail] = useState("");
-  const [company, setCompany] = useState(""); // honeypot
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    setStatus("loading");
-    try {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), [HONEYPOT_FIELD]: company }),
-      });
-      if (!res.ok) {
-        // Show the server's own wording (for example the rate limit message).
-        const data = await res.json().catch(() => ({}));
-        setErrorMsg(typeof data.error === "string" ? data.error : "");
-        setStatus("error");
-        return;
-      }
-      setStatus("success");
-      setEmail("");
-      setCompany("");
-    } catch {
-      setErrorMsg("");
-      setStatus("error");
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "instant" : "smooth" });
-  };
-
+/**
+ * The coda: "Start a project" at monumental size with its line, the time
+ * in Toronto, the site links and the newsletter, and a bottom line with the
+ * copyright, Privacy and Terms.
+ */
+export default function Footer({ copy }: { copy: Pick<SiteCopy, "codaCta" | "codaLine" | "codaTimeLabel"> }) {
   return (
     <footer className="footer-wrap">
-      {/* Rule */}
-      <div className="footer-rule" />
-
-      {/* Main Content — Three Columns */}
       <div className="footer-main">
-        {/* TOP button — positioned absolutely on desktop */}
-        <button
-          onClick={scrollToTop}
-          className="footer-top-btn"
-          type="button"
-        >
-          TOP <span>↑</span>
-        </button>
-        <div className="footer-grid">
-          {/* Left Column: Crest + CTA */}
-          <div className="footer-col-left">
-            {/* eslint-disable-next-line @next/next/no-img-element -- SVG logo: next/image adds nothing for vector files (no resizing or format conversion), so a plain img is right. */}
-            <img
-              src="/images/hos-logo.svg"
-              alt="House of Singh"
-              className="footer-crest"
-            />
+        <div className="footer-top">
+          <div className="footer-cta">
             <Link href="/contact" className="footer-cta-link">
-              <span className="footer-cta-heading">Start a project</span>
-              <span className="footer-cta-arrow">&rarr;</span>
+              {copy.codaCta}
             </Link>
-            <p className="footer-cta-subtitle">
-              Let&rsquo;s talk about a project, collaboration or an idea you may
-              have
-            </p>
+            <p className="footer-cta-subtitle">{copy.codaLine}</p>
           </div>
+          <p className="footer-time">
+            <span className="footer-time-label">{copy.codaTimeLabel}</span>
+            <TorontoTime className="footer-time-value" />
+          </p>
+        </div>
 
-          {/* Center Column: Nav + Newsletter */}
-          <div className="footer-col-center">
-            <nav className="footer-nav">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="footer-nav-link"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-
-            <div className="footer-newsletter">
-              <span className="footer-nl-label">NEWSLETTER</span>
-              {status === "success" ? (
-                <span className="footer-nl-thanks">Thank you</span>
-              ) : (
-                <form
-                  onSubmit={handleSubscribe}
-                  className="footer-nl-form"
-                >
-                  <HoneypotField value={company} onChange={setCompany} idSuffix="footer" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Get the latest stories and updates"
-                    aria-label="Email for newsletter"
-                    className="footer-nl-input"
-                  />
-                  <button
-                    type="submit"
-                    disabled={status === "loading"}
-                    className="footer-nl-btn"
-                  >
-                    <span className="footer-nl-arrow">
-                      {status === "loading" ? "..." : "\u2192"}
-                    </span>
-                  </button>
-                </form>
-              )}
-              {status === "error" && (
-                <p className="footer-nl-error" role="alert">
-                  {errorMsg || "Something went wrong. Try again."}
-                </p>
-              )}
-            </div>
-          </div>
-
+        <div className="footer-grid">
+          <nav aria-label="Footer" className="footer-nav">
+            {NAV_LINKS.map((link) => (
+              <Link key={link.href} href={link.href} className="footer-nav-link">
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <FooterNewsletter />
         </div>
       </div>
 
-      {/* Part 3: Bottom Bar */}
-      <div className="footer-rule" />
       <div className="footer-bottom">
-        <div className="footer-bottom-left">
-          <span className="footer-bottom-copyright">
-            &copy; 2026 HOUSE OF SINGH
-          </span>
-          <div className="footer-bottom-legal">
-            <Link href="/privacy" className="footer-bottom-link">
-              PRIVACY
-            </Link>
-            <Link href="/terms" className="footer-bottom-link">
-              TERMS
-            </Link>
-          </div>
-        </div>
-        <span className="footer-bottom-tagline">
-          Made by AI. Curated by humans.
-        </span>
-        <button
-          onClick={scrollToTop}
-          className="footer-mobile-top-btn"
-          type="button"
-        >
-          TOP <span>↑</span>
-        </button>
+        <span className="footer-bottom-copyright">&copy; 2026 House of Singh</span>
+        <Link href="/privacy" className="footer-bottom-link">
+          Privacy
+        </Link>
+        <Link href="/terms" className="footer-bottom-link">
+          Terms
+        </Link>
       </div>
     </footer>
   );

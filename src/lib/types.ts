@@ -24,6 +24,15 @@ export type NavItem = {
   href: string;
   external?: boolean;
   order?: number;
+  /** Optional menu photograph (navigation item "Menu photograph"). */
+  image?: SanityImageAsset | null;
+};
+
+/** A photograph shown in the menu while its page is hovered or focused. */
+export type MenuPhoto = {
+  image: SanityImage;
+  alt?: string | null;
+  caption?: string | null;
 };
 
 export type HeroSlide = {
@@ -58,6 +67,8 @@ export type HomepageProject = {
   thumbnail: SanityImage;
   thumbnailAlt: string;
   excerpt: string;
+  year?: number | null;
+  coverImage?: SanityImageAsset | null;
 };
 
 // --------------- Content Section Types ---------------
@@ -209,11 +220,26 @@ export type SpotlightData = {
   image: SanityImage;
 };
 
+/** A manual card in Chapter VII's Recent studio work row (Site Settings). */
+export type StudioWorkCard = {
+  _key?: string;
+  clientName?: string | null;
+  link?: string | null;
+  image?: SanityImage | null;
+};
+
 export type SiteSettings = {
   siteTitle: string;
   tagline: string;
   footerText: string;
   spotifyPlaylistUrl?: string;
+  listeningHeading?: string | null;
+  listeningNote?: string | null;
+  listeningIntro?: string | null;
+  listeningSleeve?: SanityImage | null;
+  practiceLine?: string | null;
+  /** Chapter VII: up to three manual cards under Recent studio work. */
+  studioWorkCards?: StudioWorkCard[] | null;
   defaultMetaDescription?: string | null;
   organizationName?: string | null;
   founderName?: string | null;
@@ -251,6 +277,16 @@ export type AboutPageData = {
   founderName: string;
   founderRoles: string[] | null;
   founderBio: PortableTextBlock[] | null;
+  bioPullQuote?: string | null;
+  /** Optional chapter headings (lib/siteCopy.ts ABOUT_COPY_FIELDS). */
+  aboutStoryLabel?: string | null;
+  aboutPrintHeading?: string | null;
+  aboutJourneyLabel?: string | null;
+  aboutJourneyHeading?: string | null;
+  aboutJourneyHint?: string | null;
+  aboutConversationLabel?: string | null;
+  aboutConversationHeading?: string | null;
+  aboutReplyName?: string | null;
   portrait: SanityImage | null;
   monikerLogo: SanityImage | null;
   monikerText: PortableTextBlock[] | null;

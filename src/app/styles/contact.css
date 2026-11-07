@@ -34,7 +34,7 @@
 }
 
 .contact-input:focus {
-  border-bottom-color: hsl(30 10% 20%);
+  border-bottom-color: var(--foreground);
   outline: none;
 }
 
@@ -86,11 +86,35 @@
 }
 
 .contact-btn-primary:hover {
-  background-color: hsl(30 10% 18%);
+  background-color: var(--foreground);
 }
 
 .contact-btn-primary:disabled {
   opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Quiet button: a text label over a hairline (the project interest form) */
+.contact-btn-quiet {
+  display: inline-flex;
+  align-items: flex-end;
+  min-height: 44px;
+  padding: 0 0 4px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  border-bottom: 1px solid var(--foreground);
+}
+
+.contact-btn-quiet:hover {
+  color: var(--muted-foreground);
+  border-bottom-color: var(--muted-foreground);
+}
+
+.contact-btn-quiet:disabled {
+  color: var(--muted-foreground);
+  border-bottom-color: var(--border);
   cursor: not-allowed;
 }
 

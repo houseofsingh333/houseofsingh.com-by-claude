@@ -1,100 +1,107 @@
-/* Layout: the site footer (desktop, tablet, phone) and the reading progress bar.
+/* Layout: the site footer (the coda) and the reading progress bar.
    Imported by globals.css, in the order listed there. */
 
-/* ——— Footer — Editorial three-column layout ——— */
+/* ——— Footer, the coda ———
+   "Start a project" at monumental size with its line, and the time in
+   Toronto (TorontoTime; hidden without JavaScript, as it needs a clock);
+   then the site links and the newsletter; then the bottom line with the
+   copyright, Privacy and Terms. */
 
 .footer-wrap {
   background: var(--background);
   border-top: 1px solid var(--border);
 }
 
-/* Crest — inside left column */
-
-.footer-crest {
-  width: 150px;
-  height: auto;
-  display: block;
-  opacity: 0.75;
-  margin-bottom: 32px;
-}
-
-/* Horizontal rule separator */
-
-.footer-rule {
-  height: 1px;
-  background: var(--border);
-}
-
-/* Part 2: Main Content — Three Columns */
-
 .footer-main {
-  padding: 48px 64px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  padding: 72px 24px 40px;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
+  align-items: end;
+}
+
+.footer-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.footer-cta-link {
+  align-self: flex-start;
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: clamp(52px, 9.4vw, 136px);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.14em;
+  text-decoration-color: transparent;
+  transition: text-decoration-color var(--dur-hover) var(--ease-soft-out);
+}
+
+.footer-cta-link:hover {
+  text-decoration-color: var(--foreground);
+}
+
+.footer-cta-subtitle {
+  max-width: 460px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted-foreground);
+}
+
+.footer-time {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-time-label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.footer-time-value {
+  font-family: var(--font-editorial);
+  font-size: 40px;
+  line-height: 1;
+  color: var(--foreground);
+}
+
+/* One line, even figures, set from the left: a new minute (or the real
+   time replacing the stand in) never moves the box or what is around it. */
+.toronto-time {
+  display: inline-block;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+html:not(.js) .footer-time {
+  display: none;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
-  align-items: end;
-}
-
-/* Left Column: CTA */
-
-.footer-col-left {
-}
-
-.footer-cta-link {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 10px;
-  text-decoration: none;
-}
-
-.footer-cta-heading {
-  font-family: var(--font-editorial);
-  font-style: normal;
-  font-size: clamp(28px, 3.5vw, 44px);
-  color: var(--foreground);
-  text-decoration: underline;
-  text-decoration-color: var(--border);
-  text-underline-offset: 6px;
-  text-decoration-thickness: 1px;
-}
-
-.footer-cta-arrow {
-  font-size: 0.65em;
-  color: var(--muted-foreground);
-  display: none;
-  transition: transform var(--dur-hover) var(--ease-soft-out);
-}
-
-@media (min-width: 1024px) {
-  .footer-cta-arrow {
-    display: inline-block;
-  }
-
-  .footer-cta-link:hover .footer-cta-arrow {
-    transform: translateX(4px);
-  }
-}
-
-.footer-cta-subtitle {
-  margin-top: 16px;
-  font-size: 16px;
-  color: var(--muted-foreground);
-  line-height: 1.6;
-  max-width: 340px;
-}
-
-/* Center Column: Nav + Newsletter */
-
-.footer-col-center {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
 }
 
 .footer-nav {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 0 24px;
 }
 
 .footer-nav-link {
@@ -102,25 +109,15 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted-foreground);
-  font-weight: 400;
   line-height: 2.8;
-  text-decoration: none;
+  transition: color var(--dur-hover) var(--ease-soft-out);
 }
 
-@media (min-width: 1024px) {
-  .footer-nav-link {
-    transition: color var(--dur-hover) var(--ease-soft-out);
-  }
-  .footer-nav-link:hover {
-    color: var(--foreground);
-  }
+.footer-nav-link:hover {
+  color: var(--foreground);
 }
 
 /* Newsletter */
-
-.footer-newsletter {
-  /* no extra margin — NEWSLETTER label uses same line-height as nav links */
-}
 
 .footer-nl-label {
   display: block;
@@ -128,7 +125,6 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--muted-foreground);
-  font-weight: 400;
   line-height: 2.8;
 }
 
@@ -139,47 +135,48 @@
 
 .footer-nl-input {
   width: 100%;
-  max-width: 240px;
-  font-size: 13px;
+  max-width: 280px;
+  font-size: 14px;
   font-family: inherit;
   border: none;
   border-bottom: 1px solid var(--border);
   background: transparent;
-  padding: 4px 0;
+  padding: 6px 0;
   color: var(--foreground);
   outline: none;
 }
 
+.footer-nl-input:focus-visible {
+  border-bottom-color: var(--foreground);
+}
+
 .footer-nl-input::placeholder {
-  color: var(--foreground);
-  opacity: 0.75;
+  color: var(--muted-foreground);
 }
 
 .footer-nl-btn {
+  min-width: 44px;
+  min-height: 44px;
   border: none;
   background: none;
   cursor: pointer;
   color: var(--muted-foreground);
-  padding-left: 16px;
   font-family: inherit;
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+
+.footer-nl-btn:hover {
+  color: var(--foreground);
 }
 
 .footer-nl-arrow {
-  font-size: 15px;
   display: inline-block;
+  font-size: 15px;
   transition: transform var(--dur-hover) var(--ease-soft-out);
 }
 
-@media (min-width: 1024px) {
-  .footer-nl-btn {
-    transition: color var(--dur-hover) var(--ease-soft-out);
-  }
-  .footer-nl-btn:hover {
-    color: var(--foreground);
-  }
-  .footer-nl-btn:hover .footer-nl-arrow {
-    transform: translateX(4px);
-  }
+.footer-nl-btn:hover .footer-nl-arrow {
+  transform: translateX(4px);
 }
 
 .footer-nl-btn:disabled {
@@ -188,313 +185,438 @@
 }
 
 .footer-nl-thanks {
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--muted-foreground);
 }
 
 .footer-nl-error {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--error);
   margin-top: 4px;
 }
 
-/* TOP button — absolute positioned in footer-main on desktop */
-.footer-top-btn {
-  position: absolute;
-  top: 48px;
-  right: 64px;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted-foreground);
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-  font-family: inherit;
-  z-index: 1;
-}
-
-@media (min-width: 1024px) {
-  .footer-top-btn {
-    transition: color var(--dur-hover) var(--ease-soft-out);
-  }
-  .footer-top-btn:hover {
-    color: var(--foreground);
-  }
-}
-
-/* Part 3: Bottom Bar */
+/* Bottom line */
 
 .footer-bottom {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
-  padding: 20px 64px;
-}
-
-.footer-bottom-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.footer-bottom-legal {
-  display: flex;
-  gap: 20px;
+  gap: 8px 24px;
+  padding: 20px 24px 28px;
+  border-top: 1px solid var(--border);
 }
 
 .footer-bottom-copyright,
-.footer-bottom-tagline {
-  font-size: 11px;
+.footer-bottom-link {
+  font-size: 12px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
   color: var(--muted-foreground);
 }
 
 .footer-bottom-link {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted-foreground);
-  text-decoration: none;
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+
+.footer-bottom-link:hover {
+  color: var(--foreground);
+}
+
+@media (min-width: 768px) {
+  .footer-main {
+    padding: 96px 64px 48px;
+  }
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px;
+  }
+  .footer-nav {
+    flex-direction: column;
+  }
+  .footer-cta-subtitle {
+    font-size: 18px;
+  }
+  .footer-bottom {
+    padding: 20px 64px 28px;
+  }
 }
 
 @media (min-width: 1024px) {
-  .footer-bottom-link {
-    transition: color var(--dur-hover) var(--ease-soft-out);
+  .footer-top {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 80px;
   }
-  .footer-bottom-link:hover {
-    color: var(--muted-foreground);
+  .footer-time-value {
+    font-size: 56px;
+  }
+  .footer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-/* Mobile TOP ↑ in bottom bar — hidden on desktop */
-.footer-mobile-top-btn {
+@media (prefers-reduced-motion: reduce) {
+  .footer-cta-link,
+  .footer-nav-link,
+  .footer-bottom-link,
+  .footer-nl-btn,
+  .footer-nl-arrow {
+    transition: none;
+  }
+}
+
+/* ——— Menu, the index room (NavOverlay) ———
+   A full screen canvas over the page. It fades in over --dur-menu on the
+   menu curve (--editorial-ease) and is inert while closed. The photograph
+   (desktop only) crossfades with the page under the pointer or focus.
+   Reduced motion: it appears and changes at once. */
+
+.menu-room {
+  position: fixed;
+  inset: 0;
+  z-index: 55; /* over the header bars (50), under the newsletter (60) */
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px 24px 24px;
+  background: var(--background);
+  color: var(--foreground);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-menu) var(--editorial-ease),
+    visibility 0s linear var(--dur-menu);
+}
+
+.menu-room[data-open] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity var(--dur-menu) var(--editorial-ease);
+}
+
+.menu-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+
+.menu-top > :first-child {
+  justify-self: start;
+}
+
+.menu-close {
+  min-height: 44px;
+  padding: 0;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  border-bottom: 1px solid var(--foreground);
+}
+
+.menu-wordmark {
+  font-family: var(--font-editorial);
+  font-size: 14px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.menu-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 48px;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-link {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: 6px 0;
+  color: var(--muted-foreground);
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+
+.menu-link[data-active],
+.menu-link:hover {
+  color: var(--foreground);
+}
+
+/* Brass, at 28px: the smallest size brass may be used for text. */
+.menu-num {
+  width: 48px;
+  flex-shrink: 0;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.menu-label {
+  font-family: var(--font-editorial);
+  font-size: 40px;
+  line-height: 1.1;
+}
+
+.menu-photo {
   display: none;
 }
 
-/* ——— Footer Tablet (768px – 1023px) ——— */
+.menu-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
 
-@media (min-width: 768px) and (max-width: 1023px) {
-  /* 1. Single-column layout (Instagram hidden on tablet) */
-  .footer-main {
-    max-width: 65%;
+@media (min-width: 768px) {
+  .menu-room {
+    padding: 24px 32px 32px;
   }
-
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
-    align-items: start;
-  }
-
-  /* 2. Left column: logo, CTA, subtitle */
-  .footer-col-left {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .footer-crest {
-    width: 120px;
-  }
-
-  .footer-cta-link {
-    text-decoration: none;
-    border-bottom: none;
-  }
-
-  .footer-cta-heading {
-    text-decoration: none;
-    border-bottom: none;
-  }
-
-  /* 3. Nav links: row 2, horizontal wrap */
-  .footer-col-center {
-    grid-column: 1;
-    grid-row: 2;
-    display: block;
-    padding: 0;
-    margin: 0;
-    padding-top: 24px;
-    border-top: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
-  }
-
-  .footer-nav {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px 18px;
-    padding: 0;
-    margin: 0;
-  }
-
-  .footer-nav-link {
-    display: inline;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--muted-foreground);
-    font-weight: 400;
-    padding: 0;
-    margin: 0;
-    line-height: 1.4;
-    min-height: auto;
-  }
-
-  .footer-newsletter {
-    display: none;
-  }
-
-  /* 5. Hide TOP button on tablet */
-  .footer-top-btn {
-    display: none;
-  }
-
-  /* 6. Bottom bar */
-  .footer-bottom {
-    padding: 24px 48px 20px;
-    margin-top: 40px;
+  .menu-label {
+    font-size: 52px;
   }
 }
 
-/* ——— Footer Mobile (below 768px) — clean rewrite ——— */
-
-@media (max-width: 767px) {
-  /* WRAPPER — no padding, everything stacks */
-  .footer-wrap {
-    padding: 0;
+@media (min-width: 1024px) {
+  .menu-room {
+    gap: 32px;
+    padding: 40px 96px 48px;
   }
-
-  /* TOP CTA AREA — centered */
-  .footer-col-left {
-    padding: 40px 24px 32px;
-    text-align: center;
-    border-bottom: none;
-    margin: 0;
+  .menu-wordmark {
+    font-size: 16px;
   }
-
-  .footer-crest {
-    width: 120px;
-    display: block;
-    margin: 0 auto;
-    opacity: 0.4;
+  .menu-body {
+    grid-template-columns: minmax(0, 1fr) 420px;
+    gap: 96px;
   }
-
-  .footer-cta-link {
-    justify-content: center;
-    text-decoration: none;
-    border-bottom: none;
+  .menu-label {
+    font-size: 64px;
   }
-
-  .footer-cta-heading {
-    text-decoration: none;
-    border-bottom: none;
-    font-size: 26px;
-    margin-top: 24px;
-  }
-
-  .footer-cta-subtitle {
-    font-size: 13px;
-    margin-top: 12px;
-    max-width: 280px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  /* MIDDLE GRID — override to single column */
-  .footer-main {
-    padding: 0;
-  }
-
-  .footer-grid {
+  .menu-photo {
+    justify-self: end;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    grid-template-columns: none;
-    padding: 0;
-    gap: 0;
+    gap: 12px;
+    margin: 0;
+    /* 420px wide, or less on a short screen so the room fits it. */
+    width: min(420px, calc((100svh - 300px) * 0.8));
   }
-
-  /* CENTER COLUMN — entirely hidden on mobile (nav + newsletter) */
-  .footer-col-center {
-    display: none;
+  .menu-photo-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--secondary);
   }
-
-  .footer-newsletter {
-    display: none;
+  .menu-photo-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--dur-image) var(--ease-slow);
   }
-
-  /* TOP button hidden on mobile (lives in footer-main now) */
-  .footer-top-btn {
-    display: none;
-  }
-
-  /* BOTTOM BAR */
-  .footer-bottom {
-    padding: 16px 24px 20px;
-    text-align: center;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-  }
-
-  .footer-bottom-left {
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-  }
-
-  .footer-bottom-copyright {
-    font-size: 10px;
-    color: var(--muted-foreground);
-  }
-
-  .footer-bottom-legal {
-    gap: 16px;
-    margin-top: 6px;
-  }
-
-  .footer-bottom-link {
-    font-size: 10px;
-    color: var(--muted-foreground);
-  }
-
-  .footer-bottom-tagline {
-    font-size: 9px;
-    color: var(--muted-foreground);
-    margin-top: 6px;
-    order: 2;
-  }
-
-  .footer-mobile-top-btn {
-    display: none;
-  }
-
-  /* No hover effects on mobile */
-  .footer-cta-link:hover,
-  .footer-nav-link:hover,
-  .footer-bottom-link:hover,
-  .footer-nl-btn:hover {
-    color: inherit;
+  .menu-photo-layer[data-active] {
     opacity: 1;
   }
+  .menu-photo-caption {
+    min-height: 1.5em;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+}
 
-  .footer-cta-link:hover .footer-cta-arrow {
+@media (prefers-reduced-motion: reduce) {
+  .menu-room,
+  .menu-room[data-open],
+  .menu-link,
+  .menu-photo-layer {
+    transition: none;
+  }
+}
+
+/* ——— Newsletter note (NewsletterNote) ———
+   A small paper card in the bottom right, not modal, no overlay. It rises
+   12px and fades in over --dur-menu; reduced motion: it appears at once. */
+
+.note-card {
+  position: fixed;
+  z-index: 60;
+  right: 16px;
+  bottom: 16px;
+  width: min(360px, calc(100vw - 32px));
+  padding: 28px;
+  background: var(--paper);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent),
+    0 12px 32px color-mix(in srgb, var(--foreground) 12%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(var(--rise-reveal));
+  transition:
+    opacity var(--dur-menu) var(--editorial-ease),
+    transform var(--dur-menu) var(--editorial-ease),
+    visibility 0s linear var(--dur-menu);
+}
+
+.note-card[data-open] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity var(--dur-menu) var(--editorial-ease),
+    transform var(--dur-menu) var(--editorial-ease);
+}
+
+.note-input {
+  width: 100%;
+  padding: 8px 0;
+  font-size: 16px;
+  color: var(--foreground);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  outline: none;
+}
+
+.note-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.note-input:focus-visible {
+  border-bottom-color: var(--foreground);
+}
+
+.note-subscribe,
+.note-later {
+  min-height: 44px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
+}
+
+.note-subscribe,
+.note-later {
+  display: inline-flex;
+  align-items: flex-end;
+  padding-bottom: 4px;
+  border-bottom: 1px solid transparent;
+}
+
+.note-subscribe {
+  color: var(--foreground);
+  border-bottom-color: var(--foreground);
+}
+
+.note-subscribe:disabled {
+  color: var(--muted-foreground);
+  border-color: var(--border);
+  cursor: wait;
+}
+
+.note-later {
+  color: var(--muted-foreground);
+}
+
+.note-later:hover {
+  color: var(--foreground);
+}
+
+@media (min-width: 768px) {
+  .note-card {
+    right: 32px;
+    bottom: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-card,
+  .note-card[data-open] {
+    transition: none;
+  }
+  .note-card {
     transform: none;
   }
 }
 
-/* ——— Footer reduced motion ——— */
+/* ——— Page not found (404) ———
+   Text first in the markup (and on phones); on desktop the photograph
+   takes the left column. */
+
+.lost {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 56px;
+}
+
+.lost-text {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.lost-ways {
+  display: flex;
+  flex-direction: column;
+  max-width: 460px;
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.lost-way {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  transition: border-color var(--dur-hover) var(--ease-soft-out);
+}
+
+.lost-way:hover {
+  border-bottom-color: var(--foreground);
+}
+
+.lost-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--secondary);
+}
+
+@media (min-width: 1024px) {
+  .lost {
+    grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+    gap: 96px;
+    align-items: center;
+  }
+  .lost-photo {
+    grid-row: 1;
+    grid-column: 1;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .footer-cta-link,
-  .footer-cta-arrow,
-  .footer-nav-link,
-  .footer-bottom-link,
-  .footer-nl-btn,
-  .footer-top-btn {
+  .lost-way {
     transition: none;
   }
 }

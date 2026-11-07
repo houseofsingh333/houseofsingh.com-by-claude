@@ -29,7 +29,7 @@ Maninder is the founder and creative director. He is not a developer. This means
 
 - **Framework:** Next.js, App Router. Server components by default. Use client components only when interactivity genuinely requires it, and keep them small and leaf level.
 - **CMS:** Sanity. Project ID `31g7gu7n`, dataset `production`.
-- **Styling:** Tailwind CSS v4. Configuration lives in the `@theme` block in `src/app/styles/tokens.css`; `globals.css` only imports the area stylesheets in `src/app/styles/` (tokens, base, layout and footer, home, about, journal, projects, contact, motion), and their order is the cascade order. There is no `tailwind.config` file. Do not add one. Do not introduce a different styling system.
+- **Styling:** Tailwind CSS v4. Configuration lives in the `@theme` block in `src/app/styles/tokens.css`; `globals.css` only imports the area stylesheets in `src/app/styles/` (tokens, base, layout and footer, home, about, journal, projects, contact, legal, motion), and their order is the cascade order. There is no `tailwind.config` file. Do not add one. Do not introduce a different styling system.
 - **Hosting:** Vercel. Production deploys from `main`. All work happens on `feature/next-work`, is pushed there (creating a Vercel preview), and reaches production only through a pull request into `main` that Maninder merges after checking the preview. Never push directly to `main`. Old branches were deleted on 4 Nov 2026; only main and feature/next-work exist.
 - **Dependencies:** Use npm ci, never npm install.
 - **CI:** Every pull request must show the ci check green before merging.
@@ -56,6 +56,7 @@ Maninder is the founder and creative director. He is not a developer. This means
 8. **Respect `prefers-reduced-motion` on every animation.** Provide a calm static fallback. This is mandatory, not optional.
 9. **Alt text is hard required on meaningful images** in the schema. Do not reintroduce silent empty alt fallbacks. Decorative images must be explicitly marked decorative.
 10. **Local development:** either reach Sanity, or run `NEXT_PUBLIC_USE_PLACEHOLDERS=1 npm run dev`.
+11. **The Content Security Policy is strict and lives in `next.config.ts`** (`contentSecurityPolicy`). The one exception: the home page alone allows `'unsafe-eval'` in `script-src`, because Spotify's iFrame API (which tells the record in Chapter VI when the music plays) calls eval and is refused without it. Never widen that to other routes or sitewide; add any new host to the policy deliberately and document why.
 
 ---
 
@@ -69,7 +70,7 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 - Muted grey `#76706B` (`--muted-foreground` is `hsl(30 5% 44%)`), captions, labels, secondary text. This value meets WCAG AA (4.57:1) on the canvas; the earlier `hsl(30 5% 50%)` failed at 3.65:1. Do not lighten it without re-checking contrast, and do not fade it with opacity variants (`/40`, `/60` and so on) for readable text; hierarchy comes from size, letter spacing and uppercase labels.
 - Muted grey, inverse `#A8A39F` (`--muted-foreground-inverse` is `hsl(30 5% 64%)`), secondary text on the dark charcoal band. 6.56:1 on charcoal.
 - Border hairline `hsl(40 10% 88%)` (`--border`).
-- Antique brass `#A8895C` (`--accent`), the single accent, used rarely (the pulsing upcoming dot, a hairline, a hover, one point of emphasis). Always use the token, never the raw hex. It is 3.07:1 on the canvas, so never use it for text.
+- Antique brass `#A8895C` (`--accent`), the single accent, used rarely (the pulsing upcoming dot, a hairline, a hover, one point of emphasis). Always use the token, never the raw hex. It is 3.07:1 on the canvas, so use it for text only at 28px or larger (the italic chapter numerals), never for smaller text.
 - Error brick `#9B4B3B` (`--error` is `hsl(10 45% 42%)`), for error messages and invalid field hairlines only. 5.67:1 on the canvas. Never use Tailwind's default reds.
 - Do not introduce colors outside this palette without updating `BRAND_BOOK.md` first.
 
