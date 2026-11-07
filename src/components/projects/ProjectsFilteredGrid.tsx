@@ -9,11 +9,8 @@ import ScrollReveal from "@/components/ScrollReveal";
 import ProjectsFiltersHorizontal from "./ProjectsFiltersHorizontal";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import type { ProjectSummary } from "@/lib/types";
+import { categoryHref, categorySlug } from "@/lib/projectCategories";
 
-/** Lowercase slug-like form for matching: "Visual Identity" → "visual-identity" */
-function slugify(str: string): string {
-  return str.toLowerCase().replace(/\s+/g, "-");
-}
 
 type Props = {
   projects: ProjectSummary[];
@@ -37,7 +34,7 @@ export default function ProjectsFilteredGrid({
     if (!initialFilter) return "All";
     const param = initialFilter.toLowerCase();
     const match = categories.find(
-      (cat) => cat.toLowerCase() === param || slugify(cat) === param,
+      (cat) => cat.toLowerCase() === param || categorySlug(cat) === param,
     );
     return match ?? "All";
   });
@@ -56,14 +53,9 @@ export default function ProjectsFilteredGrid({
     setTimeout(() => {
       setActive(category);
 
-      // Keep URL in sync so filter state is shareable and survives refresh
-      const url = new URL(window.location.href);
-      if (category === "All") {
-        url.searchParams.delete("filter");
-      } else {
-        url.searchParams.set("filter", slugify(category));
-      }
-      window.history.replaceState({}, "", url.toString());
+      // Keep the address in sync so the view is shareable and survives a
+      // refresh: each category has its own cached page.
+      window.history.replaceState(window.history.state, "", categoryHref(category === "All" ? null : category));
 
       // Scroll so the filter row sits at the top of the viewport,
       // just below any fixed header.

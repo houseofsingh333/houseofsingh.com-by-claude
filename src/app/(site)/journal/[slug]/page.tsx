@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { journalMonthHref } from "@/lib/journalArchive";
 import { pageShareImages } from "@/lib/share-metadata";
 import { alt as journalShareAlt } from "@/app/journal/[slug]/opengraph-image";
 import Link from "next/link";
@@ -145,7 +146,7 @@ export default async function JournalDetailPage({ params }: Props) {
 
   /* Build back-link with year/month so the journal page returns to the same position */
   const entryDate = parseSanityDate(resolved.date);
-  const backHref = `/journal?year=${entryDate.getFullYear()}&month=${entryDate.getMonth() + 1}`;
+  const backHref = journalMonthHref(entryDate.getFullYear(), entryDate.getMonth() + 1);
 
   /* Fetch all entries for prev/next navigation */
   const allData = await sanityFetch<JournalEntry[] | null>({

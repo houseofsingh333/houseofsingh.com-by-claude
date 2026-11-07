@@ -50,6 +50,31 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  /*
+   * The journal's months and the projects' categories have their own
+   * cached addresses now. The older addresses that carried them in the
+   * query (?year=&month= and ?filter=) are sent there permanently, so
+   * existing links and bookmarks keep working.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/journal",
+        has: [
+          { type: "query", key: "year", value: "(?<year>\\d{4})" },
+          { type: "query", key: "month", value: "(?<month>\\d{1,2})" },
+        ],
+        destination: "/journal/archive/:year/:month",
+        permanent: true,
+      },
+      {
+        source: "/projects",
+        has: [{ type: "query", key: "filter", value: "(?<filter>.+)" }],
+        destination: "/projects/category/:filter",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       { source: "/(.*)", headers: securityHeaders },

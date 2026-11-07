@@ -8,10 +8,12 @@ import { useInView } from "@/hooks/useInView";
 import JournalTimeline from "./JournalTimeline";
 import JournalCard from "./JournalCard";
 import { useJournalCardColour } from "./useJournalCardColour";
+import { journalMonthHref } from "@/lib/journalLinks";
 
 type Props = {
   entries: JournalEntry[];
-  /** Year and month from the address, read on the server; null if absent. */
+  /** The month this page's address names (/journal/archive/<year>/<month>);
+   *  null on /journal, which opens on the most recent month. */
   requested?: { year: number; month: number } | null;
 };
 
@@ -88,19 +90,32 @@ export default function JournalList({ entries, requested }: Props) {
     return map;
   }, [entries]);
 
+  /** The month a year link opens: its most recent month with entries. */
+  const yearMonth = (year: number) => {
+    const months = monthsWithEntries[year];
+    return months && months.size > 0 ? Math.max(...months) : 1;
+  };
+
+  /** Show the chosen month's own address, without loading a page. */
+  const showAddress = (year: number, month: number) => {
+    window.history.replaceState(window.history.state, "", journalMonthHref(year, month));
+  };
+
   const handleYearClick = (year: number) => {
     if (activeYear === year) {
       setActiveYear(-1);
       return;
     }
-    setActiveYear(year);
     // Select the latest month that has entries for this year
-    const months = monthsWithEntries[year];
-    if (months && months.size > 0) {
-      setActiveMonth(Math.max(...months));
-    } else {
-      setActiveMonth(1);
-    }
+    const month = yearMonth(year);
+    setActiveYear(year);
+    setActiveMonth(month);
+    showAddress(year, month);
+  };
+
+  const handleMonthClick = (month: number) => {
+    setActiveMonth(month);
+    showAddress(activeYear, month);
   };
 
   // Memoised so the colour reveal observer below re-runs only when the
@@ -145,7 +160,9 @@ export default function JournalList({ entries, requested }: Props) {
         monthsWithEntries={monthsWithEntries}
         isSticky={isSticky}
         onYearClick={handleYearClick}
-        onMonthClick={setActiveMonth}
+        onMonthClick={handleMonthClick}
+        yearHref={(year) => journalMonthHref(year, yearMonth(year))}
+        monthHref={(month) => journalMonthHref(activeYear > 0 ? activeYear : resolved.year, month)}
       />
 
       {/* Article Grid */}
