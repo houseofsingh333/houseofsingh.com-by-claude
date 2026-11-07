@@ -191,7 +191,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "third-parties",
     title: "Third party services",
-    short: "Vercel hosts the site, Sanity stores its content and your submissions, and Spotify plays the playlist. Each has its own privacy policy.",
+    short: "Vercel hosts the site, Sanity stores its content and your submissions, Spotify plays the playlist, and the studio logo comes from studios.houseofsingh.com. Each has its own privacy policy.",
     body: (
       <>
         <p>This website relies on the following services:</p>
@@ -209,7 +209,9 @@ const SECTIONS: LegalSection[] = [
             <strong className="text-foreground">Spotify</strong>: the playlist player on
             the home page. It loads from Spotify when you scroll to it, and
             Spotify may set its own cookies once it loads or when you use
-            it. See the{" "}
+            it. When you reach the music section, the home page also loads
+            Spotify&apos;s player script, which tells the page when the music
+            is playing so the record can turn. See the{" "}
             <a
               href="https://www.spotify.com/legal/privacy-policy/"
               target="_blank"
@@ -219,6 +221,11 @@ const SECTIONS: LegalSection[] = [
               Spotify privacy policy
             </a>
             .
+          </li>
+          <li>
+            <strong className="text-foreground">House of Singh Studios</strong>: the
+            studio panel on the home page loads the House of Singh Studios
+            logo from studios.houseofsingh.com.
           </li>
         </ul>
         <p>
@@ -249,5 +256,5 @@ const SECTIONS: LegalSection[] = [
 ];
 
 export default function PrivacyPage() {
-  return <LegalPage title="Privacy Policy" updated="Last updated: 5 November 2026" sections={SECTIONS} />;
+  return <LegalPage title="Privacy Policy" updated="Last updated: 7 November 2026" sections={SECTIONS} />;
 }
