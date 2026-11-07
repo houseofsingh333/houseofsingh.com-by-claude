@@ -131,99 +131,6 @@ html:not(.js) .hero-progress {
   }
 }
 
-/* ——— Projects Archive — horizontal scroll strip ——— */
-
-/* Responsive gutters on the archive rail */
-.archive-scroll {
-  --archive-gutter: 24px;
-  --archive-gap: 20px;
-  padding-left: var(--archive-gutter);
-  padding-right: var(--archive-gutter);
-  scroll-padding-left: var(--archive-gutter);
-  scroll-padding-right: var(--archive-gutter);
-  scroll-snap-type: x mandatory;
-  gap: var(--archive-gap);
-  background-color: var(--background);
-}
-@media (min-width: 768px) {
-  .archive-scroll {
-    --archive-gutter: 64px;
-    --archive-gap: 20px;
-    scroll-snap-type: x proximity;
-  }
-}
-.archive-scroll {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.archive-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-/* Card width: partial next-card reveal at every breakpoint */
-.archive-card {
-  width: calc((100vw - var(--archive-gutter) - var(--archive-gap)) / 1.15);
-}
-@media (min-width: 768px) {
-  .archive-card {
-    width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 2.2);
-  }
-}
-@media (min-width: 1024px) {
-  .archive-card {
-    width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 2.25);
-  }
-}
-
-/* Tablet: taller cards — 90vh instead of 60vh */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .archive-card .max-h-\[60vh\] {
-    max-height: 90vh;
-  }
-}
-
-/* ——— Custom micro scrollbar (desktop only) ——— */
-
-.archive-scrollbar-track {
-  position: relative;
-  height: 2px;
-  background: color-mix(in srgb, var(--foreground) 4%, transparent);
-  border-radius: 1px;
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-
-.section-archive:hover .archive-scrollbar-track {
-  opacity: 1;
-}
-
-.archive-scrollbar-thumb {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: color-mix(in srgb, var(--foreground) 15%, transparent);
-  border-radius: 9999px;
-  will-change: transform;
-}
-
-@media (max-width: 1023px) {
-  .archive-scrollbar-track {
-    display: none;
-  }
-}
-
-/* ——— Reduced motion: disable grain, blur, and archive transitions ——— */
-
-@media (prefers-reduced-motion: reduce) {
-  .archive-img-reduced {
-    transition: none;
-  }
-  .archive-scrollbar-track {
-    transition: none;
-  }
-}
-
 /* ── Spotlight Billboard — Cinematic Takeover ── */
 
 .spotlight-section {
@@ -460,5 +367,274 @@ html:not(.js) .hero-progress {
 
   .spotlight-cta-arrow {
     transition: none;
+  }
+}
+
+/* ——— Exhibition (home/exhibition), Chapter III ———
+   Each project is a room. Default (phones, tablets, reduced motion, and
+   before any script): the framed print centred with its wall label beneath,
+   rooms in sequence. Desktop with motion allowed: each room is a track
+   about two screens tall whose stage pins for one screen of scrolling.
+   One progress value, --p (0 to 1), drives everything by transform and
+   opacity: the photo grows from print to full screen (--g, the first 60%),
+   the four canvas wall panels slide outward to open the 4:5 print into the
+   whole screen, the label and frame shadow fade, and the plate with
+   "Enter the project" fades in. CSS scroll driven animation sets --p where
+   supported; ExhibitionProgress sets it elsewhere. */
+@property --p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+.exhibition {
+  padding-block: var(--section-space-md);
+}
+.exhibition-room + .exhibition-room {
+  margin-top: var(--section-space-md);
+}
+.exhibition-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.exhibition-head {
+  align-self: stretch;
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.exhibition-room + .exhibition-room .exhibition-head,
+.exhibition-room + .exhibition-room .exhibition-skip {
+  display: none;
+}
+.exhibition-skip {
+  align-self: flex-end;
+  margin-right: 24px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+.exhibition-print {
+  position: relative;
+  width: min(360px, 72vw);
+  aspect-ratio: 4 / 5;
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent),
+    0 12px 32px color-mix(in srgb, var(--foreground) 10%, transparent);
+  background: var(--secondary);
+}
+.exhibition-photo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.exhibition-wall,
+.exhibition-frame,
+.exhibition-plate,
+.exhibition-bar {
+  display: none;
+}
+.exhibition-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 320px;
+  padding-inline: 24px;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .exhibition-skip {
+    margin-right: 64px;
+  }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .exhibition {
+    padding-block: var(--section-space-md) 0;
+  }
+  .exhibition-room {
+    position: relative;
+    height: 200svh;
+    --g: min(1, calc(var(--p) / 0.6));
+  }
+  @supports (animation-timeline: view()) {
+    .exhibition-room {
+      animation: exhibition-room linear both;
+      animation-timeline: view();
+      animation-range: contain 0% contain 100%;
+    }
+  }
+  .exhibition-room + .exhibition-room {
+    margin-top: 0;
+  }
+  .exhibition-room + .exhibition-room .exhibition-head,
+  .exhibition-room + .exhibition-room .exhibition-skip {
+    display: flex;
+  }
+  .exhibition-room + .exhibition-room .exhibition-skip {
+    display: block;
+  }
+  .exhibition-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+    display: block;
+    background: var(--background);
+  }
+  .exhibition-head {
+    position: absolute;
+    top: 96px;
+    left: 0;
+    right: 0;
+    z-index: 4;
+    margin: 0;
+    opacity: calc(1 - var(--g) * 2);
+  }
+  .exhibition-skip {
+    position: absolute;
+    top: 104px;
+    right: 0;
+    z-index: 6;
+    margin-right: 64px;
+    background: var(--background);
+    padding: 6px 10px 4px;
+    color: var(--foreground);
+  }
+  .exhibition-print {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    aspect-ratio: auto;
+    box-shadow: none;
+    background: transparent;
+  }
+  .exhibition-photo {
+    transform: scale(calc(0.5 + 0.5 * var(--g)));
+    transform-origin: 50% 50%;
+  }
+  .exhibition-wall {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    background: var(--background);
+  }
+  .exhibition-wall-l,
+  .exhibition-wall-r {
+    top: 0;
+    bottom: 0;
+    width: calc(50% - 20svh);
+  }
+  .exhibition-wall-l {
+    left: 0;
+    transform: translateX(calc(var(--g) * -100%));
+  }
+  .exhibition-wall-r {
+    right: 0;
+    transform: translateX(calc(var(--g) * 100%));
+  }
+  .exhibition-wall-t,
+  .exhibition-wall-b {
+    left: 0;
+    right: 0;
+    height: 25svh;
+  }
+  .exhibition-wall-t {
+    top: 0;
+    transform: translateY(calc(var(--g) * -100%));
+  }
+  .exhibition-wall-b {
+    bottom: 0;
+    transform: translateY(calc(var(--g) * 100%));
+  }
+  .exhibition-frame {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    left: calc(50% - 20svh);
+    top: 25svh;
+    width: 40svh;
+    height: 50svh;
+    box-shadow:
+      0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent),
+      0 12px 32px color-mix(in srgb, var(--foreground) 10%, transparent);
+    opacity: calc(1 - var(--g) * 4);
+    pointer-events: none;
+  }
+  .exhibition-label {
+    position: absolute;
+    z-index: 5;
+    bottom: 25svh;
+    align-items: flex-start;
+    text-align: left;
+    max-width: 240px;
+    padding: 0;
+    opacity: calc(1 - var(--g) * 2.5);
+  }
+  .exhibition-room[data-side="right"] .exhibition-label {
+    left: calc(50% + 20svh + 48px);
+  }
+  .exhibition-room[data-side="left"] .exhibition-label {
+    right: calc(50% + 20svh + 48px);
+    align-items: flex-end;
+    text-align: right;
+  }
+  .exhibition-label:focus-within {
+    opacity: 1;
+  }
+  .exhibition-label-enter {
+    display: none;
+  }
+  .exhibition-plate {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    z-index: 4;
+    left: 64px;
+    bottom: 56px;
+    width: 380px;
+    padding: 28px 32px;
+    background: var(--background);
+    opacity: calc((var(--p) - 0.6) * 5);
+  }
+  .exhibition-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    right: 0;
+    bottom: 56px;
+    opacity: calc(1 - var(--g) * 3);
+  }
+  .exhibition-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .exhibition-line-fill {
+    display: block;
+    height: 100%;
+    background: var(--foreground);
+    transform-origin: left center;
+    transform: scaleX(calc((var(--i) + var(--p)) / var(--n)));
+  }
+}
+@keyframes exhibition-room {
+  from {
+    --p: 0;
+  }
+  to {
+    --p: 1;
   }
 }

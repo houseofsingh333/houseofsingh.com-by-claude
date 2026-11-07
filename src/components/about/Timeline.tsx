@@ -145,7 +145,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
 
   const isMobile = device === "mobile";
 
-  // Desktop click-and-drag, shared with ProjectsArchive. Touch layouts already
+  // Desktop click-and-drag (useDragToScroll). Touch layouts already
   // scroll natively, so the mouse path is skipped there.
   useDragToScroll(scrollRef, !isMobile);
 

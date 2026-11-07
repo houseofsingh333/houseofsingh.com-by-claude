@@ -109,13 +109,15 @@ export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
 export const homepageFeaturedProjectsQuery = `*[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc){
   _id, title, "slug": slug.current, category,
   "thumbnail": thumbnail ${_imageAsset},
-  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt
+  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt, year,
+  "coverImage": coverImage ${_imageAsset}
 }`;
 
 export const latestProjectsQuery = `*[_type == "project"] | order(_createdAt desc)[0...6]{
   _id, title, "slug": slug.current, category,
   "thumbnail": thumbnail ${_imageAsset},
-  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt
+  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt, year,
+  "coverImage": coverImage ${_imageAsset}
 }`;
 
 // --------------- Projects ---------------

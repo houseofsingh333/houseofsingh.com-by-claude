@@ -1,6 +1,6 @@
 import CinematicHero from "@/components/home/CinematicHero";
 import IntroSection from "@/components/home/IntroSection";
-import ProjectsArchive from "@/components/home/ProjectsArchive";
+import Exhibition from "@/components/home/exhibition/Exhibition";
 import SpotlightBillboard from "@/components/home/SpotlightBillboard";
 import JournalFilmstrip from "@/components/home/filmstrip/JournalFilmstrip";
 import SpotifyEmbed from "@/components/home/SpotifyEmbed";
@@ -103,7 +103,7 @@ export default async function HomePage() {
       <CinematicHero slides={heroSlides} />
       {homeIntro && <IntroSection data={homeIntro} />}
       {homepageProjects.length > 0 && (
-        <ProjectsArchive projects={homepageProjects} />
+        <Exhibition projects={homepageProjects} />
       )}
       {spotlight?.enabled && <SpotlightBillboard spotlight={spotlight} />}
       {journalEntries.length > 0 && (

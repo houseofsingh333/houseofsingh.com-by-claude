@@ -58,6 +58,8 @@ export type HomepageProject = {
   thumbnail: SanityImage;
   thumbnailAlt: string;
   excerpt: string;
+  year?: number | null;
+  coverImage?: SanityImageAsset | null;
 };
 
 // --------------- Content Section Types ---------------
