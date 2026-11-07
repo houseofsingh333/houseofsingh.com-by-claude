@@ -120,7 +120,10 @@ export default function RootLayout({
             __html:
               'document.documentElement.classList.add("js");' +
               'var m=function(e){var t=e.target;if(t&&t.tagName==="IMG"&&t.hasAttribute("data-blurup"))t.setAttribute("data-loaded","")};' +
-              'document.addEventListener("load",m,true);document.addEventListener("error",m,true);',
+              'document.addEventListener("load",m,true);document.addEventListener("error",m,true);' +
+              // 3. Safety net: once the page has loaded, any blur up photo
+              //    already complete is marked too, so none can stay hidden.
+              'addEventListener("load",function(){document.querySelectorAll("img[data-blurup]").forEach(function(i){if(i.complete)i.setAttribute("data-loaded","")})});',
           }}
         />
       </head>

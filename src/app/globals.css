@@ -1908,9 +1908,12 @@ html:not(.js) .hero-dots {
 }
 
 /* ——— Blur up ———
-   A photo's tiny blurred preview (BlurUp) sits over the photo and dissolves
-   once the photo has loaded (data-loaded, set by the pre paint script). Only
-   shown when JavaScript runs; instant under reduced motion. */
+   A photo's tiny blurred preview (BlurUp) sits under the photo. The photo is
+   visible by default: in the server HTML, with JavaScript off, and on any
+   photo without a preview. Only under the pre paint "js" class does a photo
+   with a preview start hidden; once it has loaded (data-loaded, set by the
+   pre paint script) it dissolves in over the preview, as an animation so it
+   never fights the photo's own hover transitions. Reduced motion: instant. */
 .blurup {
   display: none;
   position: absolute;
@@ -1931,15 +1934,24 @@ html.js .blurup {
   filter: blur(18px);
   transform: scale(1.12);
 }
-img[data-loaded] + .blurup {
+/* The photo paints above its preview (a fill photo is already positioned). */
+.blurup + img[data-blurup] {
+  position: relative;
+}
+html.js .blurup + img[data-blurup]:not([data-loaded]) {
   opacity: 0;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .blurup {
-    transition: opacity var(--dur-image) var(--ease-slow);
+  html.js .blurup + img[data-blurup][data-loaded] {
+    animation: blurup-in var(--dur-image) var(--ease-slow) backwards;
   }
 }
-/* A non filling photo gets a wrapper so the preview has a box to cover. */
+@keyframes blurup-in {
+  from {
+    opacity: 0;
+  }
+}
+/* A non filling photo gets a wrapper so the preview has a box to fill. */
 .blurup-wrap {
   position: relative;
   display: block;

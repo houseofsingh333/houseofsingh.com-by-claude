@@ -62,9 +62,9 @@ export default function SanityImage({
       })
     : undefined;
 
-  // Blur up: the tiny lqip preview over the photo, dissolving on load
-  // (BlurUp.tsx). Replaces next/image's own blur placeholder, which swapped
-  // instantly instead of dissolving.
+  // Blur up: the tiny lqip preview under the photo, which dissolves in over
+  // it on load (BlurUp.tsx). Replaces next/image's own blur placeholder,
+  // which swapped instantly instead of dissolving.
   const lqip = props.blurDataURL;
   const preview = (
     <BlurUp lqip={lqip} position={objectPositionOf(className)} />
@@ -73,6 +73,7 @@ export default function SanityImage({
   if (fill) {
     return (
       <>
+        {preview}
         <Image
           src={props.src}
           alt={props.alt}
@@ -83,7 +84,6 @@ export default function SanityImage({
           loader={loader}
           {...blurUpImgProps(lqip)}
         />
-        {preview}
       </>
     );
   }
@@ -101,11 +101,11 @@ export default function SanityImage({
       {...blurUpImgProps(lqip)}
     />
   );
-  // A non filling photo needs a positioned box for the preview to cover.
+  // A non filling photo needs a positioned box for the preview to fill.
   return lqip ? (
     <span className="blurup-wrap">
-      {img}
       {preview}
+      {img}
     </span>
   ) : (
     img

@@ -51,6 +51,7 @@ export default function InstagramPhotoStack({
         className="instagram-plate-layer"
         style={styleFor(i, i === activeIndex)}
       >
+        <BlurUp lqip={photo.lqip} />
         <Image
           loader={sanityLoader}
           src={photo.url}
@@ -64,7 +65,6 @@ export default function InstagramPhotoStack({
           className="instagram-plate-img"
           {...blurUpImgProps(photo.lqip)}
         />
-        <BlurUp lqip={photo.lqip} />
       </span>
     ) : null,
   );
