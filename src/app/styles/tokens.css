@@ -1,0 +1,74 @@
+/* Design tokens: palette, spacing, motion, and the Tailwind theme mapping.
+   Imported by globals.css, in the order listed there. */
+
+/* ——— Design tokens ——— */
+
+:root {
+  --background: #F9F7F5;
+  --foreground: hsl(30 10% 12%);
+  --secondary: hsl(40 10% 93%);
+  /* Darkened from 50% to 44% lightness: 50% gave only 3.65:1 on --background,
+     below the WCAG AA 4.5:1 minimum for normal text. 44% gives ~4.57:1 while
+     staying clearly quieter than --foreground. */
+  --muted-foreground: hsl(30 5% 44%);
+  /* Quiet text on the dark charcoal band (--foreground as background):
+     #A8A39F, 6.56:1 on it. The same warm grey family as --muted-foreground. */
+  --muted-foreground-inverse: hsl(30 5% 64%);
+  /* The About page "Featured On" panel sits on a darker warm tint (#EDE9E4),
+     where --muted-foreground only reaches 4.04:1. This one step darker grey,
+     #6B6661, gives 4.70:1 there. Used on that panel only (.featured-panel). */
+  --featured-panel: #ede9e4;
+  --muted-foreground-panel: hsl(30 5% 40%);
+  /* Antique brass #A8895C: the single accent, used rarely (the breathing
+     upcoming dot). 3.07:1 on the canvas, so for small graphics and hairlines
+     only, never for text. */
+  --accent: #a8895c;
+  /* Error messages and invalid field hairlines: a warm, muted brick red.
+     #9B4B3B, 5.67:1 on the canvas and 5.02:1 on the Featured On panel. */
+  --error: hsl(10 45% 42%);
+  --border: hsl(40 10% 88%);
+
+  /* ——— Motion tokens: slow, soft, calm ———
+     --ease-slow (a soft sine) for reveals, fades, crossfades and the page
+     fade in; --ease-soft-out for hover and focus. Reduced motion turns all
+     of it off. Menu and popup opening, focus rings and form errors stay
+     quick on purpose. */
+  --ease-slow: cubic-bezier(0.37, 0, 0.63, 1);
+  --ease-soft-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --dur-reveal: 1400ms; /* scroll reveals, with a 12px rise */
+  --rise-reveal: 12px;
+  --dur-image: 1000ms; /* image fade ins and colour reveals */
+  --dur-hover: 500ms; /* hover and focus changes */
+  --dur-page: 600ms; /* page fade in, content swapped by a click */
+
+  /* Earlier fast curve, kept only for the menu and popup opening. */
+  --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --editorial-duration: 1200ms;
+
+  /* Section spacing scale — consistent vertical rhythm */
+  --section-space-sm: 4rem;   /* 64px — page header bottoms, tight sections */
+  --section-space-md: 5rem;   /* 80px — standard section rhythm */
+  --section-space-lg: 6rem;   /* 96px — generous: about sections, page closers */
+}
+
+@media (min-width: 768px) {
+  :root {
+    --section-space-sm: 6rem;   /* 96px */
+    --section-space-md: 9rem;   /* 144px */
+    --section-space-lg: 9rem;   /* 144px */
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-secondary: var(--secondary);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted-foreground-inverse: var(--muted-foreground-inverse);
+  --color-accent: var(--accent);
+  --color-error: var(--error);
+  --color-border: var(--border);
+  --font-editorial: var(--font-playfair), Georgia, serif;
+  --animate-fade-in: fadeIn 0.3s ease-out;
+  --animate-editorial-fade-in: editorialFadeIn var(--dur-reveal) var(--ease-slow) both;
+}

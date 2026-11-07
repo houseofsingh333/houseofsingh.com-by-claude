@@ -27,7 +27,7 @@ type Props = {
  *
  * Visible by default. The hidden start state is applied by CSS only when
  * JavaScript is running and the visitor allows motion (see "Scroll reveal"
- * in globals.css), so the server HTML, reduced motion and no JavaScript all
+ * in styles/motion.css), so the server HTML, reduced motion and no JavaScript all
  * show the content immediately, with no fade.
  */
 export default function ScrollReveal({

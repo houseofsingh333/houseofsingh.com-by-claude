@@ -11,7 +11,7 @@
  * class) does it start hidden and dissolve in over --dur-image on
  * --ease-slow, instantly under reduced motion. Without JavaScript the
  * preview is not drawn and the photo shows as normal. The preview takes the
- * photo's own box, so nothing moves. See "Blur up" in globals.css.
+ * photo's own box, so nothing moves. See "Blur up" in styles/motion.css.
  */
 export default function BlurUp({
   lqip,

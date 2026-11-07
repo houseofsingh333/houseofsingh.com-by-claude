@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import SanityImage from "@/components/SanityImage";
 import { useIntro } from "@/components/IntroContext";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import type { HeroSlide } from "@/lib/types";
+import HeroStill from "./HeroStill";
+import { useSlideshow } from "./useSlideshow";
 
 /*
  * Home hero slideshow, in CSS (no animation library). See "Hero slideshow" in
- * globals.css: each slide crossfades in over --hero-fade (about 2s) on
+ * styles/home.css: each slide crossfades in over --hero-fade (about 2s) on
  * --ease-slow, on top of the previous slide, and drifts with a slow, gentle
  * Ken Burns zoom. Reduced motion: the first slide, still, with no zoom.
  */
@@ -30,9 +32,6 @@ const KEN_BURNS_PRESETS: KenBurnsPreset[] = [
   { from: { scale: 1.045, x: "0%", y: "0.3%" }, to: { scale: 1.01, x: "0%", y: "-0.2%" } },
 ];
 
-const SLIDE_DURATION = 8000;
-const CAPTION_IN_DELAY = 1.2;
-const CAPTION_OUT_DURATION = 0.6;
 
 type Props = {
   slides: HeroSlide[];
@@ -50,130 +49,15 @@ export default function CinematicHero({ slides }: Props) {
   const prefersReduced = usePrefersReducedMotion();
   // Shared signal from the Header intro overlay — no polling.
   const { introComplete } = useIntro();
-  // The slide shown, and the one it replaced (kept underneath while the new
-  // one fades in over it, its zoom still running so it never snaps back).
-  const [{ current, previous }, setSlide] = useState<{
-    current: number;
-    previous: number | null;
-  }>({ current: 0, previous: null });
-  // Starts true so the first caption is present in the server-rendered HTML
-  // and paints with the hero. Gating it behind the intro made it an invisible
-  // LCP element (4-5s render delay). Later slides re-sequence it normally.
-  const [showCaption, setShowCaption] = useState(true);
-  const [isFirstSlide, setIsFirstSlide] = useState(true);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const captionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Slides load progressively: the current and the next, then each later one
-  // as the show reaches the slide before it. Loaded slides stay mounted.
-  const [loaded, setLoaded] = useState<ReadonlySet<number>>(
-    () => new Set([0, 1].filter((i) => i < slides.length)),
-  );
-  const next = slides.length ? (current + 1) % slides.length : 0;
-  if (slides.length > 0 && (!loaded.has(current) || !loaded.has(next))) {
-    setLoaded(new Set([...loaded, current, next]));
-  }
-
-  const showSlide = useCallback((index: number) => {
-    setSlide((s) =>
-      s.current === index ? s : { current: index, previous: s.current },
-    );
-    setIsFirstSlide(false);
-  }, []);
-
-  // ——— Show caption after image settles ———
-  const scheduleCaptionIn = useCallback(() => {
-    captionTimerRef.current = setTimeout(() => {
-      setShowCaption(true);
-    }, CAPTION_IN_DELAY * 1000);
-  }, []);
-
-  // ——— Manual slide navigation (dot click) ———
-  const goToSlide = useCallback((index: number) => {
-    if (index === current) return;
-    if (timerRef.current) clearTimeout(timerRef.current);
-    if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
-    setShowCaption(false);
-    setTimeout(() => {
-      showSlide(index);
-      scheduleCaptionIn();
-    }, CAPTION_OUT_DURATION * 1000 + 50);
-  }, [current, showSlide, scheduleCaptionIn]);
-
-  // ——— Pause autoplay when tab is hidden, resume when visible ———
-  const visibleRef = useRef(true);
-  useEffect(() => {
-    const handler = () => {
-      if (document.hidden) {
-        visibleRef.current = false;
-        if (timerRef.current) clearTimeout(timerRef.current);
-        if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
-      } else {
-        visibleRef.current = true;
-      }
-    };
-    document.addEventListener("visibilitychange", handler);
-    return () => document.removeEventListener("visibilitychange", handler);
-  }, []);
-
-  // ——— Autoplay timer ———
-  useEffect(() => {
-    if (!introComplete || slides.length <= 1 || prefersReduced) return;
-
-    const advance = () => {
-      // Skip advance if tab is hidden — autoplay resumes on next interval when visible
-      if (!visibleRef.current) return;
-      // 1. Hide caption first
-      setShowCaption(false);
-
-      // 2. After caption fades out, switch slide
-      timerRef.current = setTimeout(() => {
-        setSlide((s) => ({
-          current: (s.current + 1) % slides.length,
-          previous: s.current,
-        }));
-        setIsFirstSlide(false);
-
-        // 3. Schedule caption in for new slide
-        scheduleCaptionIn();
-      }, CAPTION_OUT_DURATION * 1000 + 100);
-    };
-
-    const id = setInterval(advance, SLIDE_DURATION);
-    return () => {
-      clearInterval(id);
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
-    };
-  }, [introComplete, slides.length, prefersReduced, scheduleCaptionIn]);
+  const { current, previous, showCaption, isFirstSlide, loaded, goToSlide } =
+    useSlideshow(slides.length, introComplete, prefersReduced);
 
   if (slides.length === 0) return null;
 
   const slide = slides[current];
 
   // ——— Reduced motion: static first slide, no animation ———
-  if (prefersReduced) {
-    return (
-      <div className="relative w-full h-[100svh] bg-secondary overflow-hidden">
-        <SanityImage
-          image={slides[0].image}
-          context="hero"
-          alt={slides[0].imageAlt || slides[0].caption || "Hero"}
-          priority
-          fill
-          className="object-cover"
-        />
-        <div className="hero-vignette absolute inset-0 pointer-events-none" />
-        {slides[0].caption && (
-          <div className="absolute bottom-8 left-5 md:bottom-10 md:left-8 z-10">
-            <p className="text-xs tracking-[0.15em] uppercase text-white/70">
-              {slides[0].caption}
-            </p>
-          </div>
-        )}
-      </div>
-    );
-  }
+  if (prefersReduced) return <HeroStill slide={slides[0]} />;
 
   return (
     <div className="relative w-full h-[100svh] bg-secondary overflow-hidden">

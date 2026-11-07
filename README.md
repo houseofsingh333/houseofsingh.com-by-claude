@@ -6,7 +6,7 @@ The website for House of Singh, the personal brand and creative platform of Mani
 
 * **Framework:** Next.js with the App Router, written in TypeScript. Pages are server components by default.
 * **Content:** Sanity. The Studio is built into the site at `/studio-sanity`. Content is read through ISR with a 60 second revalidation window.
-* **Styling:** Tailwind CSS v4. All theme tokens live in the `@theme` block in `src/app/globals.css`; there is no `tailwind.config` file.
+* **Styling:** Tailwind CSS v4. All theme tokens live in `src/app/styles/tokens.css` (imported by `src/app/globals.css` with the other area stylesheets); there is no `tailwind.config` file.
 * **Hosting:** Vercel. `main` is production, and every push to a branch gets a preview deployment.
 * **Performance monitoring:** Vercel Speed Insights.
 

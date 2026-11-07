@@ -1,0 +1,254 @@
+/* Contact: the Instagram plate, form inputs, buttons and intent options.
+   Imported by globals.css, in the order listed there. */
+
+/* ——— Instagram photo plate crossfade ——— */
+
+/* One crossfade layer per photo (with its blur up preview inside). */
+.instagram-plate-layer {
+  position: absolute;
+  inset: 0;
+  transition: opacity var(--plate-fade-duration, 1.2s) var(--ease-slow);
+}
+
+.instagram-plate-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .instagram-plate-layer {
+    transition: none;
+  }
+}
+
+/* ——— Contact form — editorial input refinements ——— */
+
+/* Underline inputs: calm focus transition */
+.contact-input {
+  border-bottom-width: 1px;
+  border-bottom-color: var(--border);
+  transition: border-color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-input:focus {
+  border-bottom-color: hsl(30 10% 20%);
+  outline: none;
+}
+
+.contact-input:focus::placeholder {
+  color: var(--muted-foreground);
+}
+
+.contact-input::placeholder {
+  color: var(--muted-foreground);
+  transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Typed text should be distinctly darker than body copy */
+.contact-input:not(:placeholder-shown) {
+  color: var(--foreground);
+}
+
+.contact-input[aria-invalid="true"] {
+  border-bottom-color: var(--error);
+}
+
+/* ——— Contact buttons — standardised site-wide tokens ——— */
+
+/* Base: shared transitions and interactions for all contact buttons */
+.contact-btn {
+  transition: color var(--dur-hover) var(--ease-soft-out), background-color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out), transform var(--dur-hover) var(--ease-soft-out), opacity var(--dur-hover) var(--ease-soft-out);
+}
+
+.contact-btn:active {
+  transform: translateY(1px);
+  opacity: 0.85;
+  transition-duration: 100ms;
+}
+
+/* Focus-visible for keyboard navigation — calm ring */
+.contact-btn:focus-visible {
+  outline: 1.5px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* Primary button — filled, site-consistent */
+.contact-btn-primary {
+  padding: 0.75rem 1.5rem;                  /* px-6 py-3 */
+  font-size: 0.8125rem;                     /* ~13px, matches site text-sm */
+  letter-spacing: 0.1em;                    /* tracking-widest */
+  text-transform: uppercase;
+  background-color: var(--foreground);
+  color: var(--background);
+}
+
+.contact-btn-primary:hover {
+  background-color: hsl(30 10% 18%);
+}
+
+.contact-btn-primary:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Secondary button — outlined, site-consistent */
+.contact-btn-secondary {
+  padding: 0.75rem 1.25rem;                 /* px-5 py-3 */
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+}
+
+.contact-btn-secondary:hover {
+  color: var(--foreground);
+  border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+}
+
+/* Ghost button — text only, minimal */
+.contact-btn-ghost {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.contact-btn-ghost:hover {
+  color: var(--muted-foreground);
+}
+
+/* Arrow nudge on hover */
+.contact-btn-arrow {
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+
+.contact-btn:hover .contact-btn-arrow-next {
+  transform: translateX(2px);
+}
+
+.contact-btn:hover .contact-btn-arrow-back {
+  transform: translateX(-2px);
+}
+
+/* Chip and select buttons — calm selection feedback */
+.contact-option {
+  transition: background-color var(--dur-hover) var(--ease-soft-out), color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
+}
+
+.contact-option:focus-visible {
+  outline: 1.5px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* ——— Intent options — editorial divider-line interaction ——— */
+
+.contact-intent-list {
+  border-top: 1px solid var(--border);
+}
+
+.contact-intent-option {
+  position: relative;
+  display: block;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  min-height: 44px;
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+
+/* Animated underline — overlays the subtle divider */
+.contact-intent-option::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background-color: var(--foreground);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+
+/* Desktop hover — left-to-right line reveal */
+@media (hover: hover) {
+  .contact-intent-option:hover {
+    color: var(--foreground);
+  }
+
+  .contact-intent-option:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Selected state — darker line stays visible */
+.contact-intent-option.is-selected {
+  color: var(--foreground);
+}
+
+
+/* Keyboard focus — calm underline, no harsh outline */
+.contact-intent-option:focus-visible {
+  outline: none;
+  color: var(--foreground);
+}
+
+/* Selected and keyboard focused: the line stays drawn */
+.contact-intent-option.is-selected::after,
+.contact-intent-option:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Touch devices — instant feedback, no directional animation */
+@media (hover: none) {
+  .contact-intent-option::after {
+    transform: scaleX(1);
+    opacity: 0;
+    transition: opacity 80ms ease;
+  }
+
+  .contact-intent-option:active {
+    color: var(--foreground);
+  }
+
+  .contact-intent-option:active::after {
+    opacity: 1;
+    transition-duration: 0ms;
+  }
+
+  .contact-intent-option.is-selected::after,
+  .contact-intent-option:focus-visible::after {
+    opacity: 1;
+  }
+}
+
+/* Reduced motion: simplify all contact interactions */
+@media (prefers-reduced-motion: reduce) {
+  .contact-input,
+  .contact-btn,
+  .contact-btn-arrow,
+  .contact-option,
+  .contact-intent-option,
+  .contact-intent-option::after {
+    transition: none;
+  }
+  .contact-btn:active {
+    transform: none;
+  }
+  .editorial-slide-up {
+    animation: editorialFadeOnly var(--dur-page) var(--ease-slow) forwards;
+  }
+}
+
+/* Fade-only fallback for reduced motion on step transitions */
+@keyframes editorialFadeOnly {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

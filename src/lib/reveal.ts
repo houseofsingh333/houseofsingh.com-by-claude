@@ -23,7 +23,7 @@ type RevealOptions = {
  * at all, vary per element.
  *
  * The element is visible by default. The CSS rules under "Scroll reveal" in
- * globals.css hide it before its reveal only when JavaScript has run and the
+ * styles/motion.css hide it before its reveal only when JavaScript has run and the
  * visitor has not asked for reduced motion.
  */
 export function revealProps({

@@ -183,7 +183,7 @@ Motion is calm and minimal. It supports the content, never performs for its own 
 - The pulsing brass dot on upcoming projects is the reference for brand motion: slow, breathing, about a two and a half to three second cycle, never a fast blink.
 - Always respect the user's reduced motion preference. When reduced motion is on, animations resolve to a calm static state.
 
-**The motion tokens (in `globals.css`; always use these, never hard coded values).**
+**The motion tokens (in `src/app/styles/tokens.css`; always use these, never hard coded values).**
 
 | Token | Value | Use |
 |---|---|---|
@@ -262,7 +262,7 @@ The voice is the same calm, grounded, reflective voice used across the brand. (D
 
 **Feel:** Calm, editorial, crafted, grounded, timeless.
 
-**Motion:** Tokens in `globals.css`: `--ease-slow` `cubic-bezier(0.37, 0, 0.63, 1)` for reveals, fades and the page fade in; `--ease-soft-out` `cubic-bezier(0.33, 1, 0.68, 1)` for hover and focus; `--dur-reveal` 1400ms with a 12px rise, `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-page` 600ms. Focus rings, form errors and the menu and popup opening stay quick. Slow, gentle, minimal. Respect reduced motion. The 2.8s breathing brass dot is the reference.
+**Motion:** Tokens in `src/app/styles/tokens.css`: `--ease-slow` `cubic-bezier(0.37, 0, 0.63, 1)` for reveals, fades and the page fade in; `--ease-soft-out` `cubic-bezier(0.33, 1, 0.68, 1)` for hover and focus; `--dur-reveal` 1400ms with a 12px rise, `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-page` 600ms. Focus rings, form errors and the menu and popup opening stay quick. Slow, gentle, minimal. Respect reduced motion. The 2.8s breathing brass dot is the reference.
 
 **The test:** Calm, considered, crafted, or loud, rushed, generic? Ship only the former.
 

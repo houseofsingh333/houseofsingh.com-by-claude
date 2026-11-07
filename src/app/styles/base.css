@@ -1,0 +1,69 @@
+/* Base: html and body, page offsets, section spacing utilities, utility animations.
+   Imported by globals.css, in the order listed there. */
+
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Smooth scrolling (anchor jumps, the skip link) only when the visitor
+   allows motion; otherwise the browser default of an instant jump. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* ——— Page top offset — clears the State 1 crest on subpages ——— */
+
+.page-top-offset {
+  padding-top: 300px;
+}
+
+@media (min-width: 768px) {
+  .page-top-offset {
+    padding-top: 320px;
+  }
+}
+
+/* ——— Section spacing utilities ——— */
+
+.section-py     { padding-top: var(--section-space-md); padding-bottom: var(--section-space-md); }
+.section-py-lg  { padding-top: var(--section-space-lg); padding-bottom: var(--section-space-lg); }
+.section-pb-sm  { padding-bottom: var(--section-space-sm); }
+.section-pb     { padding-bottom: var(--section-space-md); }
+.section-pb-lg  { padding-bottom: var(--section-space-lg); }
+
+/* ——— Utility animations ——— */
+
+.editorial-slide-up {
+  animation: editorialSlideUp var(--dur-page) var(--ease-slow) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-slide-up,
+  /* Tailwind utilities built from the --animate-* tokens above: the About
+     quote (animate-editorial-fade-in), the journal grid and the journal
+     hover preview (animate-fade-in). Content simply appears. */
+  .animate-editorial-fade-in,
+  .animate-fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hide scrollbar for timeline scrubber */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

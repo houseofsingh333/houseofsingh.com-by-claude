@@ -4,11 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import NavOverlay, { SITE_MENU_ID } from "./NavOverlay";
-import { useIntro } from "@/components/IntroContext";
-import {
-  mediaMatchesNow,
-  prefersReducedMotionNow,
-} from "@/hooks/useMediaQuery";
+import IntroOverlay, { useIntroSequence } from "./IntroOverlay";
 
 const NewsletterModal = dynamic(
   () => import("@/components/NewsletterModal"),
@@ -16,13 +12,8 @@ const NewsletterModal = dynamic(
 );
 import type { NavItem } from "@/lib/types";
 
-const SESSION_KEY = "hos_intro_seen";
 const SCROLL_SHOW = 60;
 const SCROLL_HIDE = 20;
-/** Hard cap so a slow or broken video never traps the user on the overlay.
-   Set above the real clip length (~5.06s) so a healthy intro plays in full;
-   onError/onStalled already handle broken playback immediately. */
-const INTRO_MAX_MS = 6500;
 
 type Props = {
   items: NavItem[];
@@ -32,88 +23,11 @@ export default function Header({ items }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [newsletterOpen, setNewsletterOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [introVisible, setIntroVisible] = useState(false);
-  const [introFading, setIntroFading] = useState(false);
-  const [introDone, setIntroDone] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const introTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const introMaxTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const introDismissedRef = useRef(false);
+  const { introVisible, introFading, introDone, dismissIntro } =
+    useIntroSequence();
   const menuButton1Ref = useRef<HTMLButtonElement>(null);
   const menuButton2Ref = useRef<HTMLButtonElement>(null);
   const menuWasOpenRef = useRef(false);
-
-  /* Signals the hero (via context) that the intro is over — no polling. */
-  const { completeIntro } = useIntro();
-
-  /* Dismiss the intro overlay. Idempotent: whichever trigger fires first
-     (video ended, error, stalled, or the hard max-duration timer) wins. The
-     hero is already painted underneath, so this only fades the overlay away. */
-  const dismissIntro = useCallback(() => {
-    if (introDismissedRef.current) return;
-    introDismissedRef.current = true;
-    if (introMaxTimerRef.current) clearTimeout(introMaxTimerRef.current);
-    try {
-      sessionStorage.setItem(SESSION_KEY, "1");
-    } catch {}
-    // Tell the hero to begin right away (matches the old video-end timing).
-    completeIntro();
-    setIntroFading(true);
-    introTimerRef.current = setTimeout(() => {
-      setIntroVisible(false);
-      setIntroFading(false);
-      setIntroDone(true);
-      document.body.style.overflow = "";
-    }, 500);
-  }, [completeIntro]);
-
-  /* ── State 0: decide whether to play intro ── */
-  /* eslint-disable react-hooks/set-state-in-effect -- one-time init from browser APIs */
-  useEffect(() => {
-    let skip = false;
-    try {
-      if (sessionStorage.getItem(SESSION_KEY)) skip = true;
-    } catch {
-      skip = true;
-    }
-    if (
-      !skip &&
-      prefersReducedMotionNow()
-    ) {
-      try {
-        sessionStorage.setItem(SESSION_KEY, "1");
-      } catch {}
-      skip = true;
-    }
-
-    // Mobile: skip the intro entirely so the hero paints immediately. The
-    // overlay delayed the hero caption long enough to be measured as LCP
-    // (~4s render delay). Desktop keeps the full intro sequence.
-    if (!skip && mediaMatchesNow("(max-width: 1023px)")) {
-      try {
-        sessionStorage.setItem(SESSION_KEY, "1");
-      } catch {}
-      skip = true;
-    }
-
-    if (skip) {
-      setIntroDone(true);
-      completeIntro();
-    } else {
-      document.body.style.overflow = "hidden";
-      setIntroVisible(true);
-      // Hard safety net: dismiss even if the video never fires `ended`.
-      introMaxTimerRef.current = setTimeout(dismissIntro, INTRO_MAX_MS);
-    }
-  }, [completeIntro, dismissIntro]);
-  /* eslint-enable react-hooks/set-state-in-effect */
-
-  useEffect(() => {
-    return () => {
-      if (introTimerRef.current) clearTimeout(introTimerRef.current);
-      if (introMaxTimerRef.current) clearTimeout(introMaxTimerRef.current);
-    };
-  }, []);
 
   /* ── Scroll listener with hysteresis (State 1 ↔ State 2) ── */
   useEffect(() => {
@@ -164,41 +78,7 @@ export default function Header({ items }: Props) {
     <>
       {/* ═══ STATE 0 : Video intro overlay ═══ */}
       {introVisible && (
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-white"
-          style={{
-            opacity: introFading ? 0 : 1,
-            transition: "opacity 500ms ease-in-out",
-            pointerEvents: introFading ? "none" : "auto",
-          }}
-        >
-          {/* Centered video container with overflow hidden */}
-          <div className="relative w-[480px] max-w-[85vw] overflow-hidden">
-            <video
-              ref={videoRef}
-              autoPlay
-              muted
-              playsInline
-              preload="auto"
-              onEnded={dismissIntro}
-              onError={dismissIntro}
-              onStalled={dismissIntro}
-              className="w-full h-auto object-cover"
-            >
-              <source
-                src="/images/HOS_Logo_Animation.mp4"
-                type="video/mp4"
-              />
-            </video>
-            {/* Edge feather mask — blends video edges into white overlay */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                boxShadow: "inset 0 0 40px 20px white",
-              }}
-            />
-          </div>
-        </div>
+        <IntroOverlay fading={introFading} onDismiss={dismissIntro} />
       )}
 
       {/* ═══ STATE 1 : Crest + controls — top-edges at 32px rail ═══ */}

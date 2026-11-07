@@ -109,7 +109,7 @@ export default function RootLayout({
         {/* Pre paint script. Scroll reveals start hidden only under the "js"
             class (and only when the visitor allows motion), so without
             JavaScript every reveal is simply visible; see "Scroll reveal" in
-            globals.css. It also marks loaded blur up photos (BlurUp.tsx).
+            styles/motion.css. It also marks loaded blur up photos (BlurUp.tsx).
             Harmless on routes outside the site, such as the Studio. */}
         <script
           dangerouslySetInnerHTML={{

@@ -1,0 +1,175 @@
+/* Projects: project cards, grid transitions, horizontal gallery, the upcoming dot.
+   Imported by globals.css, in the order listed there. */
+
+/* ——— Project cards — desktop: B&W → colour on hover ——— */
+
+@media (min-width: 768px) {
+  /* Colour reveal: slow and calm */
+  .project-card-img {
+    filter: grayscale(1);
+    transition: filter var(--dur-image) var(--ease-soft-out), transform var(--dur-hover) var(--ease-soft-out);
+  }
+  .project-card:hover .project-card-img {
+    filter: grayscale(0);
+    transform: scale(1.02);
+  }
+  /* Keyboard focus mirrors hover — accessibility */
+  .project-card:focus-visible .project-card-img {
+    filter: grayscale(0);
+    transform: scale(1.02);
+  }
+}
+
+/* ——— Project cards — mobile/tablet: always colour, tap/focus feedback ——— */
+
+@media (max-width: 767px) {
+  .project-card-img {
+    /* Always full colour — no hover on touch devices */
+    filter: grayscale(0);
+    transition: transform 180ms ease-out;
+  }
+  .project-card:active .project-card-img,
+  .project-card:focus-visible .project-card-img {
+    transform: scale(1.02);
+  }
+  .project-card-title {
+    transition: opacity 180ms ease-out;
+  }
+  .project-card:active .project-card-title,
+  .project-card:focus-visible .project-card-title {
+    opacity: 0.65;
+  }
+}
+
+/* ——— Project card excerpt — desktop hover reveal, hidden on mobile/tablet ——— */
+
+/* Mobile & tablet (<1024px): never show the excerpt — keep cards clean. */
+.project-card-excerpt-wrap {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  /* Desktop: the wrapper is a zero-height anchor; the excerpt overlays into
+     the grid gap below the title, so revealing it never shifts any card. */
+  .project-card-excerpt-wrap {
+    display: block;
+    position: relative;
+  }
+  .project-card-excerpt {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 2px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+    /* Fade OUT (cursor leaves): smooth and a touch quicker, no delay. */
+    transition: opacity var(--dur-hover) var(--ease-soft-out);
+  }
+  /* Reveal on hover, and mirror for keyboard focus (accessibility).
+     Fade IN: slow, unhurried, with a small settle delay so it feels
+     considered rather than instant. */
+  .project-card:hover .project-card-excerpt,
+  .project-card:focus-visible .project-card-excerpt {
+    opacity: 1;
+    transition: opacity 1600ms var(--editorial-ease) 100ms;
+  }
+}
+
+/* Reduced motion: reveal instantly, no animated fade. Show/hide rules stay. */
+@media (prefers-reduced-motion: reduce) {
+  .project-card-excerpt,
+  .project-card:hover .project-card-excerpt,
+  .project-card:focus-visible .project-card-excerpt {
+    transition: none;
+  }
+}
+
+/* ——— Projects grid reveal — premium page-load transition ——— */
+
+.projects-grid-reveal {
+  animation: projectsGridReveal var(--dur-page) var(--ease-slow) 0.08s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-grid-reveal {
+    animation: none;
+  }
+}
+
+/* ——— Projects grid filter transition ——— */
+
+.projects-grid-fade-out {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.projects-card-fade-in {
+  animation: projectsCardFadeIn var(--dur-page) var(--ease-slow) both;
+}
+
+@keyframes projectsCardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-grid-fade-out {
+    transition: none;
+  }
+  .projects-card-fade-in {
+    animation: none;
+  }
+}
+
+/* ——— Horizontal gallery — quiet thin scroll affordance ——— */
+
+.hos-hscroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.hos-hscroll::-webkit-scrollbar {
+  height: 4px;
+}
+.hos-hscroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.hos-hscroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* ——— Upcoming project — pulsing accent dot ——— */
+
+.upcoming-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: upcomingPulse 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upcoming-dot {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+@keyframes upcomingPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}

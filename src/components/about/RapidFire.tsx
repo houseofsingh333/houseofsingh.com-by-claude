@@ -15,7 +15,7 @@ export default function RapidFire({ items }: { items: RapidFireItem[] }) {
 
   // Scroll entrance: the items fade in, staggered, once the list is in view.
   // CSS shows them immediately under reduced motion or without JavaScript
-  // (revealProps and "Scroll reveal" in globals.css).
+  // (revealProps and "Scroll reveal" in styles/motion.css).
   const revealed = useInView(sectionRef, { threshold: 0.1 });
 
   if (!items || items.length === 0) return null;

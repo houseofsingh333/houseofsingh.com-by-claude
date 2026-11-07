@@ -202,7 +202,7 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
               className="film-frame relative w-full overflow-hidden"
               style={{
                 aspectRatio: "3 / 4",
-                border: "1px solid rgba(0,0,0,0.06)",
+                border: "1px solid color-mix(in srgb, var(--foreground) 6%, transparent)",
                 ...(isMobile
                   ? {}
                   : {
@@ -244,107 +244,6 @@ export default function Timeline({ milestones }: { milestones: AboutMilestone[] 
         ))}
       </div>
 
-      {/* Responsive & reduced-motion overrides */}
-      <style jsx>{`
-        .edge-fade {
-          width: 120px;
-        }
-
-        /* Milestone text never fades: muted grey (4.57:1) when inactive,
-           charcoal on the milestone in focus. */
-        .film-text {
-          color: var(--muted-foreground);
-          transition: color 0.3s ease;
-        }
-        .film-card[data-active] .film-text {
-          color: var(--foreground);
-        }
-        @media (max-width: 1023px) {
-          .edge-fade {
-            width: 60px;
-          }
-        }
-
-        /* ─── Mobile: scroll-snap + CSS scroll-driven animations ─── */
-        @media (max-width: 767px) {
-          .timeline-scroll--mobile {
-            scroll-snap-type: x mandatory;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-          }
-
-          .film-card--mobile {
-            scroll-snap-align: center;
-          }
-          .film-card--mobile .film-frame {
-            will-change: filter, opacity;
-          }
-        }
-
-        /*
-         * CSS Scroll-Driven Animation (mobile only)
-         *
-         * Uses animation-timeline: view(inline) to track each card's
-         * horizontal position within the scroll container's viewport.
-         * As a card enters from either side, it starts grayscale/faded/scaled-down
-         * and transitions to full color/opacity/scale at the center,
-         * then fades back out as it exits the other side.
-         *
-         * Browser support: Chrome 115+, Edge 115+. For unsupported browsers
-         * (Safari, Firefox as of early 2026), the @supports fallback shows
-         * all cards at full color/scale with no animation.
-         */
-        @media (max-width: 767px) {
-          @keyframes grayscale-to-color {
-            0% {
-              filter: grayscale(1);
-              opacity: 0.6;
-            }
-            50% {
-              filter: grayscale(0);
-              opacity: 1;
-            }
-            100% {
-              filter: grayscale(1);
-              opacity: 0.6;
-            }
-          }
-
-          @supports (animation-timeline: view()) {
-            .film-card--mobile .film-frame {
-              animation: grayscale-to-color linear both;
-              animation-timeline: view(inline);
-              animation-range: contain 0% contain 100%;
-            }
-          }
-
-          @supports not (animation-timeline: view()) {
-            .film-card--mobile .film-frame {
-              filter: grayscale(0);
-              opacity: 1;
-            }
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .film-card {
-            transform: none !important;
-            transition: none !important;
-          }
-          .film-frame {
-            transition: opacity 0.15s ease !important;
-            filter: none !important;
-          }
-          .film-text {
-            transition: none;
-          }
-          .film-card--mobile .film-frame {
-            animation: none !important;
-            filter: grayscale(0) !important;
-            opacity: 1 !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
