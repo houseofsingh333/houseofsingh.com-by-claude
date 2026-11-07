@@ -9,8 +9,11 @@ import { useInView } from "@/hooks/useInView";
  * (next.config.ts).
  */
 const API_SRC = "https://open.spotify.com/embed/iframe-api/v1";
-/** The API must be loaded and its player ready within this, or it is not used. */
-const API_TIMEOUT_MS = 4000;
+/**
+ * The API must be loaded and its player ready within this, or it is not
+ * used. On the preview it needed about 5 s.
+ */
+const API_TIMEOUT_MS = 12000;
 /** The full size Spotify player; the placeholder matches it, so nothing shifts. */
 export const PLAYER_HEIGHT = 352;
 const TITLE = "Maninder's studio playlist, on Spotify";
@@ -81,9 +84,14 @@ type Props = {
  * loads, and builds its own player out of sight; only if that player is
  * ready within API_TIMEOUT_MS, and the visitor has not started using the
  * normal one, does it take the normal player's place. Its playback events
- * then set data-playing on the record, so the disc turns only while the
- * playlist plays. If the API fails, is blocked or is slow, the normal
- * player stays and the disc stays still.
+ * then set data-playing on the record: the disc turns while Spotify plays
+ * and stops when it pauses.
+ *
+ * Safety net, when the API never takes over (blocked, slow, or the visitor
+ * pressed play first): the disc starts turning when focus moves into the
+ * normal player (the visitor clicked it) and stops when the section leaves
+ * the viewport; if the player still has focus when the section returns,
+ * the disc turns again. Reduced motion: the disc never turns (CSS).
  */
 export default function RecordPlayer({ embedSrc, recordId }: Props) {
   const holderRef = useRef<HTMLDivElement>(null);
@@ -110,11 +118,24 @@ export default function RecordPlayer({ embedSrc, recordId }: Props) {
       mount.replaceChildren();
     };
     const deadline = window.setTimeout(giveUp, API_TIMEOUT_MS);
+    // The section in view or not, for the safety net below.
+    let inSection = true;
+    const playerFocused = () => !!plainRef.current && document.activeElement === plainRef.current;
+    const section = holderRef.current?.closest("section") ?? null;
+    const sectionObserver = new IntersectionObserver((entries) => {
+      inSection = entries.some((e) => e.isIntersecting);
+      if (handed) return;
+      if (!inSection) record?.removeAttribute("data-playing");
+      else if (playerFocused()) record?.setAttribute("data-playing", "");
+    });
+    if (section) sectionObserver.observe(section);
     // Focus moving into the normal player means the visitor is using it:
-    // never swap it out from under them.
+    // never swap it out from under them, and (the safety net) turn the disc.
     const onBlur = () =>
       window.setTimeout(() => {
-        if (document.activeElement === plainRef.current) giveUp();
+        if (!playerFocused()) return;
+        giveUp();
+        if (!handed && inSection) record?.setAttribute("data-playing", "");
       }, 0);
     window.addEventListener("blur", onBlur);
 
@@ -149,6 +170,7 @@ export default function RecordPlayer({ embedSrc, recordId }: Props) {
       stopped = true;
       window.clearTimeout(deadline);
       window.removeEventListener("blur", onBlur);
+      sectionObserver.disconnect();
       controller?.destroy();
       mount.replaceChildren();
       record?.removeAttribute("data-playing");
