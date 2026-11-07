@@ -48,21 +48,13 @@ export const menuPhotosQuery = `{
 
 // --------------- Site Settings ---------------
 
+/**
+ * Every Site Settings field (including the optional chapter texts read by
+ * lib/siteCopy.ts), with the record sleeve image resolved.
+ */
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
-  siteTitle,
-  tagline,
-  footerText,
-  spotifyPlaylistUrl,
-  listeningHeading,
-  listeningNote,
-  listeningIntro,
-  "listeningSleeve": listeningSleeve ${_imageAsset},
-  practiceLine,
-  defaultMetaDescription,
-  organizationName,
-  founderName,
-  sameAs,
-  googleVerification
+  ...,
+  "listeningSleeve": listeningSleeve ${_imageAsset}
 }`;
 
 // --------------- Page not found ---------------

@@ -224,8 +224,9 @@ const SECTIONS: LegalSection[] = [
           </li>
           <li>
             <strong className="text-foreground">House of Singh Studios</strong>: the
-            studio panel on the home page loads the House of Singh Studios
-            logo from studios.houseofsingh.com.
+            studio panel on the home page shows recent work from House of
+            Singh Studios, read from the studio&apos;s own Sanity content, with
+            its images loaded from Sanity.
           </li>
         </ul>
         <p>

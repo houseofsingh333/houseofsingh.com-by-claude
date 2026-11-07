@@ -665,118 +665,152 @@ html:not(.js) .hero-progress {
   }
 }
 
-/* ——— Door (StudioDoor), Chapter VII ———
-   A canvas half and a charcoal half for House of Singh Studios. Default
-   (phones, reduced motion, no JavaScript): both halves in place, stacked
-   below 1024px. Desktop with motion allowed and JavaScript running: the
-   section is 170svh tall, its stage pins for one screen and --p (0 to 1,
-   from a scroll timeline or ScrollProgress) slides the charcoal half in
-   from the right over the first 60%. Focus inside it brings it in at once.
-   Transforms and opacity only. */
-.door {
-  background: var(--background);
-  overflow-x: clip;
+/* ——— Window (StudioWindow), Chapter VII ———
+   A still section (canvas "Window B1"). The visit link's hairline draws
+   from left to right and its arrow eases forward on hover and keyboard
+   focus; each studio thumbnail comes into colour (its greyscale copy fades
+   away). Transforms and opacity only; reduced motion: at once. */
+.window {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
 }
-.door-stage {
+.window-main {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-}
-.door-canvas {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  padding-block: var(--section-space-md);
-}
-.door-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   gap: 32px;
-  padding-block: var(--section-space-md);
-  background: var(--foreground);
-  color: var(--background);
+  align-items: center;
 }
-/* The studio's logo, drawn light on the charcoal. Fixed height, so it
-   takes its place without moving anything when it arrives. */
-.door-logo {
+.window-logo {
   display: block;
-  height: 48px;
-  width: auto;
-  max-width: 260px;
-  object-fit: contain;
-  object-position: left center;
-  filter: brightness(0) invert(1);
+  width: min(240px, 70%);
+  height: auto;
 }
-.door-link {
+.window-text {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.window-link {
   align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  color: var(--foreground);
+}
+.window-link-label {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 0 6px;
   font-size: 13px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--background);
-  border-bottom: 1px solid var(--background);
-  transition: color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
 }
-.door-link:hover {
-  color: var(--muted-foreground-inverse);
-  border-color: var(--muted-foreground-inverse);
+.window-link-arrow {
+  transition: transform var(--dur-hover) var(--ease-soft-out);
 }
-.door-hint {
-  display: none;
+.window-link-line {
+  position: relative;
+  display: block;
+  height: 1px;
+  background: var(--border);
+}
+.window-link-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--foreground);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+.window-link:hover .window-link-line::after,
+.window-link:focus-visible .window-link-line::after {
+  transform: scaleX(1);
+}
+.window-link:hover .window-link-arrow,
+.window-link:focus-visible .window-link-arrow {
+  transform: translate(3px, -3px);
+}
+.window-work {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.window-work-label {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.window-work-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.window-work-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.window-thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 140 / 100;
+  overflow: hidden;
+  background: var(--secondary);
+}
+.window-thumb-grey {
+  position: absolute;
+  inset: 0;
+  filter: grayscale(1);
+  transition: opacity var(--dur-hover) var(--ease-soft-out);
+}
+.window-work-item:hover .window-thumb-grey,
+.window-work-item:focus-visible .window-thumb-grey {
+  opacity: 0;
+}
+.window-work-name {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+.window-work-item:focus-visible {
+  outline: 1px solid var(--foreground);
+  outline-offset: 4px;
 }
 @media (min-width: 1024px) {
-  .door-stage {
-    grid-template-columns: 44% minmax(0, 1fr);
-    min-height: min(100svh, 800px);
+  .window-main {
+    grid-template-columns: 380px minmax(0, 1fr);
+    gap: 72px;
   }
-  .door-canvas {
-    justify-content: space-between;
-    padding-block: 96px;
+  .window-logo {
+    width: 340px;
   }
-  .door-panel {
-    padding: 88px 96px;
+  .window-work {
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 28px;
   }
-}
-@supports (animation-timeline: view()) {
-  .door {
-    animation: door-progress linear both;
-    animation-timeline: view();
-    animation-range: contain 0% contain 100%;
+  .window-work-label {
+    min-width: 150px;
+    padding-bottom: 6px;
   }
-}
-@keyframes door-progress {
-  from {
-    --p: 0;
+  .window-work-list {
+    display: flex;
+    gap: 28px;
   }
-  to {
-    --p: 1;
+  .window-work-item {
+    width: 140px;
   }
 }
-@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-  html.js .door {
-    height: 170svh;
-    --g: min(1, calc(var(--p) / 0.6));
-  }
-  html.js .door-stage {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-  }
-  html.js .door-panel {
-    transform: translateX(calc((1 - var(--g)) * 100%));
-  }
-  html.js .door-panel:focus-within {
-    transform: none;
-  }
-  html.js .door-hint {
-    display: block;
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted-foreground);
-    opacity: calc(1 - var(--g) * 2);
+@media (prefers-reduced-motion: reduce) {
+  .window-link-arrow,
+  .window-link-line::after,
+  .window-thumb-grey {
+    transition: none;
   }
 }

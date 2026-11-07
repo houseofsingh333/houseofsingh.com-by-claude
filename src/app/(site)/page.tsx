@@ -4,7 +4,8 @@ import Exhibition from "@/components/home/exhibition/Exhibition";
 import SpotlightBillboard from "@/components/home/SpotlightBillboard";
 import JournalFilmstrip from "@/components/home/filmstrip/JournalFilmstrip";
 import RecordChapter from "@/components/home/record/RecordChapter";
-import StudioDoor from "@/components/home/StudioDoor";
+import StudioWindow from "@/components/home/StudioWindow";
+import { siteCopy } from "@/lib/siteCopy";
 import { sanityFetch } from "@/sanity/fetch";
 import {
   heroSlidesQuery,
@@ -93,6 +94,8 @@ export default async function HomePage() {
   const journalEntries = journal?.length
     ? journal
     : devPlaceholder(fallbackJournalEntries, []);
+  // Every chapter text from Site Settings, or today's text when empty.
+  const copy = siteCopy(settings);
   const spotifyUrl =
     settings?.spotifyPlaylistUrl ?? fallbackSiteSettings.spotifyPlaylistUrl;
 
@@ -116,7 +119,7 @@ export default async function HomePage() {
         intro={settings?.listeningIntro}
         sleeve={settings?.listeningSleeve}
       />
-      <StudioDoor line={settings?.practiceLine} />
+      <StudioWindow copy={copy} caseStudies={settings?.practiceCaseStudies} />
     </>
   );
 }

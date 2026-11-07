@@ -230,6 +230,8 @@ export type SiteSettings = {
   listeningIntro?: string | null;
   listeningSleeve?: SanityImage | null;
   practiceLine?: string | null;
+  /** Hand picked studio case study slugs (Chapter VII). */
+  practiceCaseStudies?: string[] | null;
   defaultMetaDescription?: string | null;
   organizationName?: string | null;
   founderName?: string | null;

@@ -26,7 +26,7 @@ function contentSecurityPolicy({ unsafeEval }: { unsafeEval: boolean }): string 
     "default-src 'self'",
     `script-src 'self' 'unsafe-inline'${unsafeEval ? " 'unsafe-eval'" : ""} https://vercel.live https://va.vercel-scripts.com https://core.sanity-cdn.com https://open.spotify.com https://embed-cdn.spotifycdn.com`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https://cdn.sanity.io https://studios.houseofsingh.com",
+    "img-src 'self' data: blob: https://cdn.sanity.io",
     "font-src 'self'",
     "connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://va.vercel-scripts.com",
     "frame-src https://open.spotify.com",
