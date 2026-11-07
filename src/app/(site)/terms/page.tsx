@@ -3,6 +3,10 @@ import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
 import LegalPage, { type LegalSection } from "@/components/legal/LegalPage";
+import { siteCopy, type CopyKey } from "@/lib/siteCopy";
+import { sanityFetch } from "@/sanity/fetch";
+import { siteSettingsQuery } from "@/sanity/queries";
+import type { SiteSettings } from "@/lib/types";
 
 const TITLE = "Terms of Use";
 const DESCRIPTION =
@@ -23,14 +27,15 @@ export async function generateMetadata(
 }
 
 /*
- * Each "short" is an In short line written strictly from that section's own
- * text. The section text itself is unchanged.
+ * Each section's In short line is editable in Site Settings, Privacy and
+ * Terms (lib/siteCopy.ts holds today's text, written strictly from that
+ * section's own text). The section text itself is unchanged.
  */
-const SECTIONS: LegalSection[] = [
+const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
   {
     id: "use",
     title: "Use of this website",
-    short: "the site is for information and portfolio purposes. Browse freely, but do not scrape or copy it with automated tools.",
+    short: "termsShortUse",
     body: (
       <>
         <p>
@@ -49,7 +54,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "intellectual-property",
     title: "Intellectual property",
-    short: "the work on this site belongs to Maninder Singh / House of Singh. Ask before using any of it commercially.",
+    short: "termsShortProperty",
     body: (
       <>
         <p>
@@ -74,7 +79,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "liability",
     title: "Limitation of liability",
-    short: "the site is provided as is, without guarantees.",
+    short: "termsShortLiability",
     body: (
       <>
         <p>
@@ -94,7 +99,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "external-links",
     title: "External links",
-    short: "links to other sites are not endorsements, and their content is their own.",
+    short: "termsShortLinks",
     body: (
       <>
         <p>
@@ -109,7 +114,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "governing-law",
     title: "Governing law",
-    short: "these terms follow the laws of Ontario, Canada.",
+    short: "termsShortLaw",
     body: (
       <>
         <p>
@@ -124,7 +129,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "changes",
     title: "Changes to these terms",
-    short: "these terms may change, and using the site after a change means accepting it.",
+    short: "termsShortChanges",
     body: (
       <>
         <p>
@@ -137,6 +142,9 @@ const SECTIONS: LegalSection[] = [
   },
 ];
 
-export default function TermsPage() {
-  return <LegalPage title="Terms of Use" updated="Last updated: March 2026" sections={SECTIONS} />;
+export default async function TermsPage() {
+  const settings = await sanityFetch<SiteSettings | null>({ query: siteSettingsQuery });
+  const copy = siteCopy(settings);
+  const sections = SECTIONS.map((section) => ({ ...section, short: copy[section.short] }));
+  return <LegalPage title="Terms of Use" updated="Last updated: March 2026" sections={sections} labels={{ contents: copy.legalContentsLabel, inShort: copy.legalShortPrefix }} />;
 }

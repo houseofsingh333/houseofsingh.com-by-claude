@@ -33,7 +33,7 @@ function EyeOpen() {
  * time. Each question is a button with aria-expanded and an eye icon (closed
  * or open). Without JavaScript every reply is shown.
  */
-export default function Conversation({ items }: { items: RapidFireItem[] }) {
+export default function Conversation({ items, replyName }: { items: RapidFireItem[]; replyName: string }) {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
@@ -66,7 +66,7 @@ export default function Conversation({ items }: { items: RapidFireItem[] }) {
             >
               <p className="convo-who">
                 <span aria-hidden="true" className="convo-dot" />
-                Maninder
+                {replyName}
               </p>
               <p className="convo-reply">{item.answer}</p>
             </div>

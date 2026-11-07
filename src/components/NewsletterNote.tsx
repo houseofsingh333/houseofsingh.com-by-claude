@@ -2,11 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import HoneypotField from "@/components/HoneypotField";
+import type { SiteCopy } from "@/lib/siteCopy";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
+
+export type NewsletterCopy = Pick<
+  SiteCopy,
+  | "newsletterHeading"
+  | "newsletterText"
+  | "newsletterPlaceholder"
+  | "newsletterSubscribe"
+  | "newsletterNotNow"
+  | "newsletterThanksHeading"
+  | "newsletterThanksText"
+>;
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  /** The card's texts (Site Settings, Newsletter card). */
+  copy: NewsletterCopy;
 };
 
 /** How long the thank you holds before the note closes itself. */
@@ -19,7 +33,7 @@ const CONFIRM_HOLD_MS = 2500;
  * email field; Not now and Escape close it, and focus goes back to where it
  * was. It rises in within --dur-menu (see "Newsletter note" in layout.css).
  */
-export default function NewsletterNote({ isOpen, onClose }: Props) {
+export default function NewsletterNote({ isOpen, onClose, copy }: Props) {
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState(""); // honeypot
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -106,20 +120,20 @@ export default function NewsletterNote({ isOpen, onClose }: Props) {
       {status === "success" ? (
         <div className="flex flex-col gap-2">
           <h2 id="newsletter-title" className="font-editorial font-normal text-[24px] leading-[1.2] text-foreground">
-            Thank you
+            {copy.newsletterThanksHeading}
           </h2>
           <p className="text-[14px] leading-[1.6] text-muted-foreground">
-            You&apos;ve been added to our mailing list. We&apos;ll be in touch.
+            {copy.newsletterThanksText}
           </p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <h2 id="newsletter-title" className="font-editorial font-normal text-[24px] leading-[1.2] text-foreground">
-              Stay in touch
+              {copy.newsletterHeading}
             </h2>
             <p className="text-[14px] leading-[1.6] text-muted-foreground">
-              Subscribe for updates on new work, journal entries, and studio news.
+              {copy.newsletterText}
             </p>
           </div>
           <HoneypotField value={company} onChange={setCompany} idSuffix="newsletter" />
@@ -131,7 +145,7 @@ export default function NewsletterNote({ isOpen, onClose }: Props) {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
+              placeholder={copy.newsletterPlaceholder}
               className="note-input"
             />
           </label>
@@ -142,10 +156,10 @@ export default function NewsletterNote({ isOpen, onClose }: Props) {
           )}
           <div className="flex items-center justify-between gap-4">
             <button type="submit" disabled={status === "loading"} className="note-subscribe">
-              {status === "loading" ? "Subscribing" : "Subscribe"}
+              {status === "loading" ? `${copy.newsletterSubscribe}…` : copy.newsletterSubscribe}
             </button>
             <button type="button" onClick={onClose} className="note-later">
-              Not now
+              {copy.newsletterNotNow}
             </button>
           </div>
         </form>

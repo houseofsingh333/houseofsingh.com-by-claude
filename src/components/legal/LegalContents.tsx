@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
  * The contents list of a legal page. The section nearest the top of the
  * screen is marked (aria-current and a charcoal hairline) as you read.
  */
-export default function LegalContents({ items }: { items: { id: string; title: string }[] }) {
+export default function LegalContents({ items, label }: { items: { id: string; title: string }[]; label: string }) {
   const [current, setCurrent] = useState<string | null>(null);
 
   useEffect(() => {
@@ -25,8 +25,8 @@ export default function LegalContents({ items }: { items: { id: string; title: s
   }, [items]);
 
   return (
-    <nav aria-label="Contents" className="legal-contents">
-      <p className="text-[12px] tracking-[0.14em] uppercase text-muted-foreground">Contents</p>
+    <nav aria-label={label} className="legal-contents">
+      <p className="text-[12px] tracking-[0.14em] uppercase text-muted-foreground">{label}</p>
       <ul>
         {items.map((item) => (
           <li key={item.id}>

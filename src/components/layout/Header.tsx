@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import NavOverlay, { SITE_MENU_ID } from "./NavOverlay";
+import NavOverlay, { SITE_MENU_ID, type MenuCopy } from "./NavOverlay";
+import type { NewsletterCopy } from "@/components/NewsletterNote";
 import IntroOverlay, { useIntroSequence } from "./IntroOverlay";
 
 const NewsletterNote = dynamic(
@@ -19,9 +20,12 @@ type Props = {
   items: NavItem[];
   /** Menu photographs by page link (see buildMenuPhotos in the layout). */
   menuPhotos: Record<string, MenuPhoto>;
+  /** The menu's and the newsletter card's texts (Site Settings). */
+  menuCopy: MenuCopy;
+  newsletterCopy: NewsletterCopy;
 };
 
-export default function Header({ items, menuPhotos }: Props) {
+export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [newsletterOpen, setNewsletterOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -177,11 +181,13 @@ export default function Header({ items, menuPhotos }: Props) {
         onNewsletterOpen={handleNewsletterOpen}
         items={items}
         photos={menuPhotos}
+        copy={menuCopy}
       />
 
       <NewsletterNote
         isOpen={newsletterOpen}
         onClose={() => setNewsletterOpen(false)}
+        copy={newsletterCopy}
       />
     </>
   );

@@ -35,6 +35,8 @@ const KEN_BURNS_PRESETS: KenBurnsPreset[] = [
 
 type Props = {
   slides: HeroSlide[];
+  /** The slide buttons' labels (Site Settings, Chapter I). */
+  labels: { previous: string; next: string };
 };
 
 /** CSS variables for a slide's Ken Burns start and end. */
@@ -45,7 +47,7 @@ function kenBurnsVars(preset: KenBurnsPreset): CSSProperties {
   } as CSSProperties;
 }
 
-export default function CinematicHero({ slides }: Props) {
+export default function CinematicHero({ slides, labels }: Props) {
   const prefersReduced = usePrefersReducedMotion();
   // Shared signal from the Header intro overlay — no polling.
   const { introComplete } = useIntro();
@@ -130,14 +132,14 @@ export default function CinematicHero({ slides }: Props) {
               onClick={() => goToSlide((current - 1 + slides.length) % slides.length)}
               className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-[12px] focus-visible:tracking-[0.14em] focus-visible:uppercase focus-visible:text-white focus-visible:outline-1 focus-visible:outline-white"
             >
-              Previous slide
+              {labels.previous}
             </button>
             <button
               type="button"
               onClick={() => goToSlide((current + 1) % slides.length)}
               className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-[12px] focus-visible:tracking-[0.14em] focus-visible:uppercase focus-visible:text-white focus-visible:outline-1 focus-visible:outline-white"
             >
-              Next slide
+              {labels.next}
             </button>
           </div>
         )}

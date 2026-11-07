@@ -1,5 +1,6 @@
 import Link from "next/link";
 import TorontoTime from "@/components/TorontoTime";
+import type { SiteCopy } from "@/lib/siteCopy";
 import FooterNewsletter from "./FooterNewsletter";
 
 const NAV_LINKS = [
@@ -15,22 +16,19 @@ const NAV_LINKS = [
  * in Toronto, the site links and the newsletter, and a bottom line with the
  * copyright, Privacy and Terms.
  */
-export default function Footer() {
+export default function Footer({ copy }: { copy: Pick<SiteCopy, "codaCta" | "codaLine" | "codaTimeLabel"> }) {
   return (
     <footer className="footer-wrap">
       <div className="footer-main">
         <div className="footer-top">
           <div className="footer-cta">
             <Link href="/contact" className="footer-cta-link">
-              Start a project
+              {copy.codaCta}
             </Link>
-            <p className="footer-cta-subtitle">
-              Let&rsquo;s talk about a project, collaboration or an idea you may
-              have
-            </p>
+            <p className="footer-cta-subtitle">{copy.codaLine}</p>
           </div>
           <p className="footer-time">
-            <span className="footer-time-label">In Toronto it is</span>
+            <span className="footer-time-label">{copy.codaTimeLabel}</span>
             <TorontoTime className="footer-time-value" />
           </p>
         </div>

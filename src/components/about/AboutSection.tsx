@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { PortableText } from "@portabletext/react";
 import { proseComponents } from "@/components/proseComponents";
 import { storyFlow } from "@/lib/portableText";
+import { aboutCopy } from "@/lib/siteCopy";
 import type { AboutPageData } from "@/lib/types";
 import { FALLBACK_BIO_PARAGRAPHS, FALLBACK_MONIKER_PARAGRAPHS } from "./about-constants";
 import AboutPortrait from "./AboutPortrait";
@@ -62,6 +63,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
     ? founderRoles
     : ["Creative Director", "Photographer", "Multidisciplinary Designer"];
   const story = storyFlow(founderBio, bioPullQuote);
+  const copy = aboutCopy(data);
 
   return (
     <div className="about-chapters">
@@ -88,7 +90,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       <section aria-labelledby="about-story" className="about-story px-6 md:px-16 section-py">
         <ChapterMark numeral="II">
           <h2 id="about-story" className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground font-normal">
-            The story
+            {copy.aboutStoryLabel}
           </h2>
         </ChapterMark>
         <div className="about-story-text">
@@ -140,7 +142,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
           <div className="about-chapter-head">
             <ChapterMark numeral="IV">
               <h2 id="about-print" className="font-editorial font-normal text-[30px] md:text-[36px] leading-[1.15] text-foreground">
-                In print
+                {copy.aboutPrintHeading}
               </h2>
             </ChapterMark>
           </div>
@@ -153,13 +155,13 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         <section aria-labelledby="about-journey" className="section-py">
           <div className="px-6 md:px-16">
             <div className="about-chapter-head">
-              <ChapterMark numeral="V" label="Journey" />
+              <ChapterMark numeral="V" label={copy.aboutJourneyLabel} />
               <h2 id="about-journey" className="font-editorial font-normal text-[30px] md:text-[40px] leading-[1.1] text-foreground">
-                A walk through the years
+                {copy.aboutJourneyHeading}
               </h2>
             </div>
           </div>
-          <JourneyWalk milestones={milestones} />
+          <JourneyWalk milestones={milestones} hint={copy.aboutJourneyHint} />
         </section>
       )}
 
@@ -167,12 +169,12 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       {rapidFire && rapidFire.length > 0 && (
         <section aria-labelledby="about-conversation" className="about-conversation px-6 md:px-16 section-py-lg">
           <div className="flex flex-col gap-5">
-            <ChapterMark numeral="VI" label="Rapid fire" />
+            <ChapterMark numeral="VI" label={copy.aboutConversationLabel} />
             <h2 id="about-conversation" className="font-editorial font-normal text-[30px] md:text-[40px] leading-[1.1] text-foreground">
-              In conversation
+              {copy.aboutConversationHeading}
             </h2>
           </div>
-          <Conversation items={rapidFire} />
+          <Conversation items={rapidFire} replyName={copy.aboutReplyName} />
         </section>
       )}
     </div>

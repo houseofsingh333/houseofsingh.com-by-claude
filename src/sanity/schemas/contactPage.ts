@@ -36,6 +36,12 @@ export const contactPage = defineType({
       fields: imageAltFields,
     }),
     defineField({
+      name: "portraitCaption",
+      title: "Portrait caption",
+      type: "string",
+      description: "Optional. When empty: Maninder Singh, Toronto",
+    }),
+    defineField({
       name: "instagramPhotos",
       title: "Instagram Photos",
       type: "array",

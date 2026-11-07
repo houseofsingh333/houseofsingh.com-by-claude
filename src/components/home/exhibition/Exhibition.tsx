@@ -1,3 +1,4 @@
+import type { SiteCopy } from "@/lib/siteCopy";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import { hasImageAsset } from "@/lib/sanityImage";
@@ -21,7 +22,7 @@ const ROOMS = 4;
  * Phones, tablets and reduced motion get the framed prints with their
  * labels in sequence, unpinned. The wall label's title is always a link.
  */
-export default function Exhibition({ projects }: { projects: HomepageProject[] }) {
+export default function Exhibition({ projects, copy }: { projects: HomepageProject[]; copy: SiteCopy }) {
   const rooms = projects.slice(0, ROOMS);
   const n = rooms.length;
   return (
@@ -46,12 +47,12 @@ export default function Exhibition({ projects }: { projects: HomepageProject[] }
               <div className="exhibition-head px-6 md:px-16" aria-hidden={i > 0 ? true : undefined}>
                 <span className="font-editorial italic text-[30px] leading-none text-accent">III</span>
                 <h2 id={i === 0 ? "chapter-work" : undefined} className="font-editorial font-normal text-[30px] md:text-[36px] leading-[1.1] text-foreground">
-                  The work
+                  {copy.workHeading}
                 </h2>
               </div>
 
               <a href="#journal-strip-title" className="exhibition-skip">
-                Skip to journal
+                {copy.workSkipLink}
               </a>
 
               <div className="exhibition-print">
@@ -86,7 +87,7 @@ export default function Exhibition({ projects }: { projects: HomepageProject[] }
                   <p className="mt-2 text-[14px] leading-[1.6] text-foreground">{project.excerpt}</p>
                 )}
                 <Link href={href} className="exhibition-label-enter mt-3 self-start text-[12px] tracking-[0.12em] uppercase text-foreground border-b border-foreground pb-1">
-                  Enter the project
+                  {copy.workEnterLink}
                 </Link>
               </div>
 
@@ -95,7 +96,7 @@ export default function Exhibition({ projects }: { projects: HomepageProject[] }
                 <p className="font-editorial text-[44px] leading-[1.05] text-foreground">{project.title}</p>
                 {project.excerpt && <p className="text-[15px] leading-[1.6] text-foreground">{project.excerpt}</p>}
                 <Link href={href} tabIndex={-1} className="self-start mt-1.5 text-[12px] tracking-[0.12em] uppercase text-foreground border-b border-foreground pb-1">
-                  Enter the project
+                  {copy.workEnterLink}
                 </Link>
               </div>
 

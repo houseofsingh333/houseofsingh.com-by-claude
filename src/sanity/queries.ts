@@ -69,7 +69,8 @@ export const notFoundQuery = `{
     *[_type == "journalEntry" && title match "Range day"] | order(date desc)[0].coverImage
   ) ${_imageAsset},
   "latest": *[_type == "journalEntry"] | order(date desc)[0]{ title, "slug": slug.current },
-  "projects": count(*[_type == "project"])
+  "projects": count(*[_type == "project"]),
+  "settings": *[_type == "siteSettings"][0]
 }`;
 
 // --------------- About Page ---------------
@@ -80,6 +81,14 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   founderRoles,
   founderBio,
   bioPullQuote,
+  aboutStoryLabel,
+  aboutPrintHeading,
+  aboutJourneyLabel,
+  aboutJourneyHeading,
+  aboutJourneyHint,
+  aboutConversationLabel,
+  aboutConversationHeading,
+  aboutReplyName,
   "portrait": portrait ${_imageAsset},
   "monikerLogo": monikerLogo.asset->url,
   monikerText,
@@ -254,6 +263,7 @@ export const spotlightQuery = `*[_type == "spotlight"][0]{
 
 export const contactPageQuery = `*[_type == "contactPage"][0]{
   "portrait": coalesce(portrait, *[_type == "aboutPage"][0].portrait) ${_imageAsset},
+  portraitCaption,
   "seo": seo ${_seo},
   seoTitle,
   seoDescription

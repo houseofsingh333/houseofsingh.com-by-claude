@@ -9,6 +9,7 @@ import { shareCard } from "@/lib/share-metadata";
 type ContactPageData = {
   /** The contact portrait, else the About portrait (contactPageQuery). */
   portrait?: SanityImage | null;
+  portraitCaption?: string | null;
   seo?: Seo | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
@@ -45,6 +46,6 @@ export default async function ContactPage() {
   const data = await sanityFetch<ContactPageData>({ query: contactPageQuery });
 
   return (
-    <ContactForm portrait={data?.portrait ?? null} />
+    <ContactForm portrait={data?.portrait ?? null} caption={data?.portraitCaption?.trim() || "Maninder Singh, Toronto"} />
   );
 }

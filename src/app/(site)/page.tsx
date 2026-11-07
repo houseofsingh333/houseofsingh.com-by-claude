@@ -103,22 +103,16 @@ export default async function HomePage() {
     <>
       <JsonLd data={buildProfilePageJsonLd()} />
       <h1 className="sr-only">House of Singh, Maninder Singh: creative director, photographer and multidisciplinary designer</h1>
-      <CinematicHero slides={heroSlides} />
-      {homeIntro && <IntroSection data={homeIntro} />}
+      <CinematicHero slides={heroSlides} labels={{ previous: copy.heroPreviousLabel, next: copy.heroNextLabel }} />
+      {homeIntro && <IntroSection data={homeIntro} copy={copy} />}
       {homepageProjects.length > 0 && (
-        <Exhibition projects={homepageProjects} />
+        <Exhibition projects={homepageProjects} copy={copy} />
       )}
-      {spotlight?.enabled && <SpotlightBillboard spotlight={spotlight} />}
+      {spotlight?.enabled && <SpotlightBillboard spotlight={spotlight} copy={copy} />}
       {journalEntries.length > 0 && (
-        <JournalFilmstrip entries={latestJournal(journalEntries)} />
+        <JournalFilmstrip entries={latestJournal(journalEntries)} label={copy.notebookLabel} />
       )}
-      <RecordChapter
-        playlistUrl={spotifyUrl}
-        heading={settings?.listeningHeading}
-        note={settings?.listeningNote}
-        intro={settings?.listeningIntro}
-        sleeve={settings?.listeningSleeve}
-      />
+      <RecordChapter playlistUrl={spotifyUrl} sleeve={settings?.listeningSleeve} copy={copy} />
       <StudioWindow copy={copy} caseStudies={settings?.practiceCaseStudies} />
     </>
   );

@@ -3,12 +3,15 @@ import SanityImage from "@/components/SanityImage";
 import { hasImageAsset } from "@/lib/sanityImage";
 import { sanityFetch } from "@/sanity/fetch";
 import { notFoundQuery } from "@/sanity/queries";
+import { siteCopy } from "@/lib/siteCopy";
 import type { SanityImage as SanityImageData } from "@/lib/types";
 
 type NotFoundData = {
   image?: SanityImageData | null;
   latest?: { title?: string | null; slug?: string | null } | null;
   projects?: number | null;
+  /** Site Settings, for the page's editable texts (404 page tab). */
+  settings?: object | null;
 };
 
 const NUMBERS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
@@ -33,24 +36,25 @@ export default async function NotFound() {
   } catch {
     data = null;
   }
+  const copy = siteCopy(data?.settings);
   const latest = data?.latest?.slug ? data.latest : null;
   const ways = [
     latest
-      ? { href: `/journal/${latest.slug}`, label: "The latest entry", note: latest.title ?? "" }
-      : { href: "/journal", label: "The journal", note: "" },
-    { href: "/projects", label: "The work", note: data?.projects ? projectCount(data.projects) : "" },
-    { href: "/", label: "Home", note: "Start again" },
+      ? { href: `/journal/${latest.slug}`, label: copy.notFoundLatest, note: latest.title ?? "" }
+      : { href: "/journal", label: copy.notFoundJournal, note: "" },
+    { href: "/projects", label: copy.notFoundWork, note: data?.projects ? projectCount(data.projects) : "" },
+    { href: "/", label: copy.notFoundHome, note: copy.notFoundHomeNote },
   ];
 
   return (
     <section className="lost px-6 md:px-16 page-top-offset section-pb">
       <div className="lost-text">
-        <p className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground">404</p>
+        <p className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground">{copy.notFoundLabel}</p>
         <h1 className="font-editorial font-normal text-[40px] md:text-[60px] leading-[1.05] text-foreground">
-          This page has wandered off.
+          {copy.notFoundHeading}
         </h1>
         <p className="max-w-[420px] text-[16px] md:text-[17px] leading-[1.7] text-muted-foreground">
-          The page you were looking for has moved or no longer exists.
+          {copy.notFoundLine}
         </p>
         <nav aria-label="Ways back" className="lost-ways">
           {ways.map((w) => (

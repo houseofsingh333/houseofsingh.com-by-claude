@@ -12,6 +12,7 @@ import {
 import { fallbackNavItems } from "@/lib/placeholder-data";
 import type { MenuPhoto, NavItem, SanityImage, SiteSettings } from "@/lib/types";
 import { hasImageAsset } from "@/lib/sanityImage";
+import { siteCopy } from "@/lib/siteCopy";
 
 type MenuPhotoDefaults = {
   home?: { image?: SanityImage | null; alt?: string | null; caption?: string | null } | null;
@@ -25,10 +26,14 @@ type MenuPhotoDefaults = {
  * The menu photograph for each page, by its link: the item's own Menu
  * photograph when set, else a sensible default from the page itself.
  */
-function buildMenuPhotos(items: NavItem[], d: MenuPhotoDefaults | null): Record<string, MenuPhoto> {
+function buildMenuPhotos(
+  items: NavItem[],
+  d: MenuPhotoDefaults | null,
+  aboutCaption: string,
+): Record<string, MenuPhoto> {
   const defaults: Record<string, MenuPhoto | null> = {
     "/": d?.home?.image ? { image: d.home.image, alt: d.home.alt, caption: d.home.caption } : null,
-    "/about": d?.about?.image ? { image: d.about.image, caption: "Maninder Singh, Toronto" } : null,
+    "/about": d?.about?.image ? { image: d.about.image, caption: aboutCaption } : null,
     "/projects": d?.projects?.image ? { image: d.projects.image, caption: d.projects.title } : null,
     "/journal": d?.journal?.image ? { image: d.journal.image, caption: d.journal.title } : null,
     "/contact": d?.contact?.image
@@ -77,7 +82,9 @@ export default async function SiteLayout({
     sanityItems && sanityItems.length >= 4 ? sanityItems : fallbackNavItems;
 
   // The fallback nav lists the site's real routes, so it stays as a default.
-  const menuPhotos = buildMenuPhotos(navItems, menuDefaults);
+  // Every editable text from Site Settings, or today's text when empty.
+  const copy = siteCopy(settings);
+  const menuPhotos = buildMenuPhotos(navItems, menuDefaults, copy.artistCaption);
 
   return (
     <>
@@ -102,11 +109,29 @@ export default async function SiteLayout({
         Skip to content
       </a>
       <IntroProvider>
-        <Header items={navItems} menuPhotos={menuPhotos} />
+        <Header
+          items={navItems}
+          menuPhotos={menuPhotos}
+          menuCopy={{
+            menuClose: copy.menuClose,
+            menuInstagram: copy.menuInstagram,
+            menuNewsletter: copy.menuNewsletter,
+            menuTimeLabel: copy.menuTimeLabel,
+          }}
+          newsletterCopy={{
+            newsletterHeading: copy.newsletterHeading,
+            newsletterText: copy.newsletterText,
+            newsletterPlaceholder: copy.newsletterPlaceholder,
+            newsletterSubscribe: copy.newsletterSubscribe,
+            newsletterNotNow: copy.newsletterNotNow,
+            newsletterThanksHeading: copy.newsletterThanksHeading,
+            newsletterThanksText: copy.newsletterThanksText,
+          }}
+        />
         <main id="main-content" className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>
-        <Footer />
+        <Footer copy={{ codaCta: copy.codaCta, codaLine: copy.codaLine, codaTimeLabel: copy.codaTimeLabel }} />
       </IntroProvider>
       <SpeedInsights />
     </>

@@ -1,10 +1,19 @@
 import { defineField, defineType } from "sanity";
 import { imageAltFields } from "./imageFields";
+import { ABOUT_COPY_FIELDS } from "../../lib/siteCopy";
 
 export const aboutPage = defineType({
   name: "aboutPage",
   title: "About Page",
   type: "document",
+  fieldsets: [
+    {
+      name: "chapterHeadings",
+      title: "Chapter headings",
+      description: "Optional. Each field shows today's text; when empty, that text is used.",
+      options: { collapsible: true, collapsed: true },
+    },
+  ],
   fields: [
     /* ——— 1 · Intro Quote ——— */
     defineField({
@@ -245,6 +254,16 @@ export const aboutPage = defineType({
       readOnly: true,
       hidden: ({ value }) => !value,
     }),
+    /* ——— Chapter headings: generated from lib/siteCopy.ts ——— */
+    ...ABOUT_COPY_FIELDS.map((f) =>
+      defineField({
+        name: f.name,
+        title: f.title,
+        type: "string",
+        fieldset: "chapterHeadings",
+        description: `Optional. When empty: ${f.text}`,
+      }),
+    ),
   ],
   preview: {
     select: { title: "founderName" },

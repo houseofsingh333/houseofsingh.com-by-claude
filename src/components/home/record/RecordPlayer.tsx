@@ -16,7 +16,6 @@ const API_SRC = "https://open.spotify.com/embed/iframe-api/v1";
 const API_TIMEOUT_MS = 12000;
 /** The full size Spotify player; the placeholder matches it, so nothing shifts. */
 export const PLAYER_HEIGHT = 352;
-const TITLE = "Maninder's studio playlist, on Spotify";
 
 type PlaybackEvent = { data?: { isPaused?: boolean } };
 type Controller = {
@@ -75,6 +74,8 @@ type Props = {
   embedSrc: string;
   /** The id of the record element that turns while the music plays. */
   recordId: string;
+  /** The player's accessible title (Site Settings, Chapter VI player label). */
+  title: string;
 };
 
 /**
@@ -93,7 +94,7 @@ type Props = {
  * the viewport; if the player still has focus when the section returns,
  * the disc turns again. Reduced motion: the disc never turns (CSS).
  */
-export default function RecordPlayer({ embedSrc, recordId }: Props) {
+export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
   const holderRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
   const plainRef = useRef<HTMLIFrameElement>(null);
@@ -156,7 +157,7 @@ export default function RecordPlayer({ embedSrc, recordId }: Props) {
             if (stopped) return;
             handed = true;
             window.clearTimeout(deadline);
-            mount.querySelector("iframe")?.setAttribute("title", TITLE);
+            mount.querySelector("iframe")?.setAttribute("title", title);
             setHandedOver(true);
           });
           c.addListener("playback_update", (e) => {
@@ -176,7 +177,7 @@ export default function RecordPlayer({ embedSrc, recordId }: Props) {
       record?.removeAttribute("data-playing");
       setHandedOver(false);
     };
-  }, [inView, uri, recordId]);
+  }, [inView, uri, recordId, title]);
 
   return (
     <div ref={holderRef} className="record-player" style={{ height: PLAYER_HEIGHT }}>
@@ -189,7 +190,7 @@ export default function RecordPlayer({ embedSrc, recordId }: Props) {
       {inView && !handedOver && (
         <iframe
           ref={plainRef}
-          title={TITLE}
+          title={title}
           src={embedSrc}
           width="100%"
           height={PLAYER_HEIGHT}
@@ -199,7 +200,7 @@ export default function RecordPlayer({ embedSrc, recordId }: Props) {
       )}
       <noscript>
         <iframe
-          title={TITLE}
+          title={title}
           src={embedSrc}
           width="100%"
           height={PLAYER_HEIGHT}

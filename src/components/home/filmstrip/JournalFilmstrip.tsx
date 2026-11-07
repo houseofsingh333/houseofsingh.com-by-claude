@@ -20,7 +20,14 @@ import { useFilmstripDrift } from "./useFilmstripDrift";
  * readers. A pause button controls the movement, as moving content longer
  * than five seconds needs.
  */
-export default function JournalFilmstrip({ entries }: { entries: JournalEntry[] }) {
+export default function JournalFilmstrip({
+  entries,
+  label,
+}: {
+  entries: JournalEntry[];
+  /** The small label above the heading (Site Settings, Chapter V). */
+  label: string;
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -51,7 +58,7 @@ export default function JournalFilmstrip({ entries }: { entries: JournalEntry[] 
                 V
               </span>
               <span className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground">
-                Notebook
+                {label}
               </span>
             </div>
             <h2

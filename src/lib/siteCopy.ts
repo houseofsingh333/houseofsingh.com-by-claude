@@ -137,7 +137,9 @@ export const SITE_COPY_FIELDS = [
     multiline: true,
   },
 
-  // ——— Privacy and Terms: the In short lines ———
+  // ——— Privacy and Terms ———
+  { name: "legalContentsLabel", title: "Contents label", group: "legal", text: "Contents" },
+  { name: "legalShortPrefix", title: "In short label", group: "legal", text: "In short:" },
   { name: "privacyShortOverview", title: "Privacy: Overview", group: "legal", fieldset: "privacy", text: "this page explains what the site collects, where it is kept, and how it is used.", multiline: true },
   { name: "privacyShortCollect", title: "Privacy: Information we collect", group: "legal", fieldset: "privacy", text: "what you send through the contact form, the project interest form and the newsletter signup is saved in Sanity. Abuse protection counts submissions in memory only, and page speed is measured without cookies.", multiline: true },
   { name: "privacyShortProgress", title: "Privacy: Saved progress", group: "legal", fieldset: "privacy", text: "your contact form draft stays in your own browser until you send it, and is deleted when you do.", multiline: true },

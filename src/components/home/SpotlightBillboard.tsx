@@ -3,6 +3,7 @@ import SanityImage from "@/components/SanityImage";
 import { hasImageAsset } from "@/lib/sanityImage";
 import type { SpotlightData } from "@/lib/types";
 import ScrollProgress from "./ScrollProgress";
+import type { SiteCopy } from "@/lib/siteCopy";
 
 const TITLE_ID = "spotlight-billboard-title";
 
@@ -16,7 +17,7 @@ const TITLE_ID = "spotlight-billboard-title";
  * "Aperture" in styles/home.css). Phones, reduced motion and no JavaScript:
  * the open layout. All text comes from the spotlight's Sanity fields.
  */
-export default function SpotlightBillboard({ spotlight }: { spotlight: SpotlightData }) {
+export default function SpotlightBillboard({ spotlight, copy }: { spotlight: SpotlightData; copy: SiteCopy }) {
   if (!hasImageAsset(spotlight.image)) return null;
   const isExternal = /^https?:\/\//.test(spotlight.linkUrl ?? "");
 
@@ -35,7 +36,7 @@ export default function SpotlightBillboard({ spotlight }: { spotlight: Spotlight
             IV
           </span>
           <span className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground-inverse">
-            In the studio now
+            {copy.studioNowLabel}
           </span>
         </div>
 
@@ -90,7 +91,7 @@ export default function SpotlightBillboard({ spotlight }: { spotlight: Spotlight
           </div>
         </div>
 
-        <span className="aperture-hint" aria-hidden="true">Scroll to open</span>
+        <span className="aperture-hint" aria-hidden="true">{copy.studioNowHint}</span>
       </div>
     </section>
   );

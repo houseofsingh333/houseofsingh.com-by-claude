@@ -3,6 +3,7 @@ import { devPlaceholder } from "@/lib/placeholders";
 import { plainParagraphs, splitFirstSentence } from "@/lib/portableText";
 import type { HomeIntroData } from "@/lib/types";
 import ArtistPortrait from "./artist/ArtistPortrait";
+import type { SiteCopy } from "@/lib/siteCopy";
 import LineReveal from "./artist/LineReveal";
 
 const FALLBACK_BIO =
@@ -16,7 +17,7 @@ const FALLBACK_PORTRAIT = "/images/hero-placeholder-1.svg";
  * out as one large Playfair statement that reveals line by line, the rest
  * at reading size) and a link to About. Phone: portrait above, text below.
  */
-export default function IntroSection({ data }: { data: HomeIntroData }) {
+export default function IntroSection({ data, copy }: { data: HomeIntroData; copy: SiteCopy }) {
   const portrait = data.portrait ?? devPlaceholder(FALLBACK_PORTRAIT, null);
   const founderName = data.founderName ?? "Maninder Singh";
   const paragraphs = plainParagraphs(data.founderBio);
@@ -30,7 +31,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
         <ArtistPortrait
           portrait={portrait}
           alt={`Portrait of ${founderName}`}
-          caption={`${founderName}, Toronto`}
+          caption={copy.artistCaption}
         />
         <div className="flex flex-col gap-7 md:gap-8">
           <span
@@ -40,7 +41,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
             II
           </span>
           <h2 id="chapter-artist" className="sr-only">
-            The artist
+            {copy.artistHeading}
           </h2>
           <LineReveal
             text={first}
@@ -58,7 +59,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
             href="/about"
             className="self-start text-[13px] tracking-[0.12em] uppercase text-foreground border-b border-foreground pb-1 transition-colors duration-(--dur-hover) ease-(--ease-soft-out) hover:text-muted-foreground hover:border-muted-foreground"
           >
-            More about Maninder
+            {copy.artistLink}
           </Link>
         </div>
       </div>

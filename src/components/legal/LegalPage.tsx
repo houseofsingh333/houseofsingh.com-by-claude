@@ -19,10 +19,13 @@ export default function LegalPage({
   title,
   updated,
   sections,
+  labels,
 }: {
   title: string;
   updated: string;
   sections: LegalSection[];
+  /** "Contents" and "In short:" (Site Settings, Privacy and Terms). */
+  labels: { contents: string; inShort: string };
 }) {
   return (
     <div className="legal px-6 md:px-16 page-top-offset section-pb">
@@ -32,14 +35,17 @@ export default function LegalPage({
         </h1>
         <p className="text-[13px] text-muted-foreground">{updated}</p>
       </header>
-      <LegalContents items={sections.map(({ id, title }) => ({ id, title }))} />
+      <LegalContents label={labels.contents} items={sections.map(({ id, title }) => ({ id, title }))} />
       <article className="legal-article">
         {sections.map((s) => (
           <section key={s.id} id={s.id} aria-labelledby={`${s.id}-title`} className="legal-section">
             <h2 id={`${s.id}-title`} className="font-editorial font-normal text-[26px] md:text-[30px] leading-[1.2] text-foreground">
               {s.title}
             </h2>
-            <p className="legal-short">In short: {s.short}</p>
+            <p className="legal-short">
+              {`${labels.inShort} `}
+              {s.short}
+            </p>
             <div className="legal-body">{s.body}</div>
           </section>
         ))}

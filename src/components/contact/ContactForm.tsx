@@ -15,10 +15,12 @@ import HoneypotField from "@/components/HoneypotField";
 type Props = {
   /** Maninder's portrait: the Contact portrait, else the About portrait. */
   portrait: SanityImageData | null;
+  /** The portrait's caption (Contact Page, Portrait caption). */
+  caption: string;
 };
 
 /** The portrait beside the form (and after it on phones). */
-function ContactPortrait({ image }: { image: SanityImageData }) {
+function ContactPortrait({ image, caption }: { image: SanityImageData; caption: string }) {
   return (
     <figure className="flex flex-col gap-3">
       <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
@@ -32,13 +34,13 @@ function ContactPortrait({ image }: { image: SanityImageData }) {
         />
       </div>
       <figcaption className="text-[12px] tracking-[0.12em] uppercase text-muted-foreground">
-        Maninder Singh, Toronto
+        {caption}
       </figcaption>
     </figure>
   );
 }
 
-export default function ContactForm({ portrait }: Props) {
+export default function ContactForm({ portrait, caption }: Props) {
   const {
     formData,
     currentStep,
@@ -63,7 +65,7 @@ export default function ContactForm({ portrait }: Props) {
     setHoneypot,
   } = useContactForm();
 
-  const aside = portrait ? <ContactPortrait image={portrait} /> : undefined;
+  const aside = portrait ? <ContactPortrait image={portrait} caption={caption} /> : undefined;
 
   /* ── Confirmation ── */
   if (phase === "done") {
@@ -180,7 +182,7 @@ export default function ContactForm({ portrait }: Props) {
         {/* Phones: the portrait after the form */}
         {portrait && (
           <div className="md:hidden mt-16 mb-4">
-            <ContactPortrait image={portrait} />
+            <ContactPortrait image={portrait} caption={caption} />
           </div>
         )}
       </TwoColumnLayout>

@@ -15,7 +15,7 @@ import type { AboutMilestone } from "@/lib/types";
  * walk is. Opacity and transforms only (see "Journey walk" in about.css).
  * Without JavaScript every milestone is shown in full.
  */
-export default function JourneyWalk({ milestones }: { milestones: AboutMilestone[] }) {
+export default function JourneyWalk({ milestones, hint }: { milestones: AboutMilestone[]; hint: string }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   useDragToScroll(rowRef, true);
@@ -96,7 +96,7 @@ export default function JourneyWalk({ milestones }: { milestones: AboutMilestone
             <span className="walk-dot" />
           </span>
         </span>
-        <span className="walk-hint">Scroll to walk on</span>
+        <span className="walk-hint">{hint}</span>
       </div>
     </div>
   );

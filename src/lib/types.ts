@@ -270,6 +270,15 @@ export type AboutPageData = {
   founderRoles: string[] | null;
   founderBio: PortableTextBlock[] | null;
   bioPullQuote?: string | null;
+  /** Optional chapter headings (lib/siteCopy.ts ABOUT_COPY_FIELDS). */
+  aboutStoryLabel?: string | null;
+  aboutPrintHeading?: string | null;
+  aboutJourneyLabel?: string | null;
+  aboutJourneyHeading?: string | null;
+  aboutJourneyHint?: string | null;
+  aboutConversationLabel?: string | null;
+  aboutConversationHeading?: string | null;
+  aboutReplyName?: string | null;
   portrait: SanityImage | null;
   monikerLogo: SanityImage | null;
   monikerText: PortableTextBlock[] | null;

@@ -1,6 +1,7 @@
 import SanityImage from "@/components/SanityImage";
 import type { SanityImage as SanityImageData } from "@/lib/types";
 import RecordPlayer from "./RecordPlayer";
+import type { SiteCopy } from "@/lib/siteCopy";
 
 /*
  * Chapter VI, the record: the playlist as a record on Maninder's shelf. A
@@ -9,12 +10,6 @@ import RecordPlayer from "./RecordPlayer";
  * plays (see RecordPlayer and "Record" in styles/home.css); with reduced
  * motion it never turns.
  */
-
-const DEFAULT_HEADING = "On my turntable";
-const DEFAULT_NOTE =
-  "This playlist showcases the music that keeps me inspired and in sync with my work.";
-const DEFAULT_INTRO =
-  "What plays in my studio while I work. Press play and listen along; the record turns while the music plays.";
 
 const RECORD_ID = "studio-record";
 
@@ -40,13 +35,12 @@ function Crest({ className }: { className: string }) {
 
 type Props = {
   playlistUrl?: string;
-  heading?: string | null;
-  note?: string | null;
-  intro?: string | null;
   sleeve?: SanityImageData | null;
+  /** Site Settings, Chapter VI (today's text when empty). */
+  copy: SiteCopy;
 };
 
-export default function RecordChapter({ playlistUrl, heading, note, intro, sleeve }: Props) {
+export default function RecordChapter({ playlistUrl, sleeve, copy }: Props) {
   if (!playlistUrl) return null;
   const embedSrc = toEmbedUrl(playlistUrl);
 
@@ -59,20 +53,20 @@ export default function RecordChapter({ playlistUrl, heading, note, intro, sleev
               VI
             </span>
             <span className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground">
-              Listening
+              {copy.listeningLabel}
             </span>
           </div>
           <h2
             id="chapter-listening"
             className="font-editorial font-normal text-[36px] md:text-[44px] lg:text-[52px] leading-[1.1] text-foreground"
           >
-            {heading || DEFAULT_HEADING}
+            {copy.listeningHeading}
           </h2>
           <p className="font-editorial italic text-[20px] md:text-[22px] leading-[1.5] text-foreground">
-            {note || DEFAULT_NOTE}
+            {copy.listeningNote}
           </p>
           <p className="text-[16px] md:text-[17px] leading-[1.7] text-muted-foreground max-w-[480px]">
-            {intro || DEFAULT_INTRO}
+            {copy.listeningIntro}
           </p>
         </div>
 
@@ -98,15 +92,15 @@ export default function RecordChapter({ playlistUrl, heading, note, intro, sleev
               ) : (
                 <Crest className="record-sleeve-crest" />
               )}
-              <span className="record-tag">From Maninder&apos;s shelf</span>
+              <span className="record-tag">{copy.listeningTag}</span>
             </div>
           </div>
 
           <div className="flex flex-col gap-3">
             <p className="text-[12px] tracking-[0.14em] uppercase text-muted-foreground">
-              Maninder&apos;s studio playlist, on Spotify
+              {copy.listeningPlayerLabel}
             </p>
-            <RecordPlayer embedSrc={embedSrc} recordId={RECORD_ID} />
+            <RecordPlayer embedSrc={embedSrc} recordId={RECORD_ID} title={copy.listeningPlayerLabel} />
           </div>
         </div>
       </div>

@@ -8,6 +8,7 @@ import SanityImage from "@/components/SanityImage";
 import TorontoTime from "@/components/TorontoTime";
 import { roman } from "@/lib/roman";
 import type { MenuPhoto, NavItem } from "@/lib/types";
+import type { SiteCopy } from "@/lib/siteCopy";
 
 /** id of the menu panel, referenced by the menu buttons' aria-controls. */
 export const SITE_MENU_ID = "site-menu";
@@ -19,7 +20,11 @@ type Props = {
   items: NavItem[];
   /** Menu photographs by page link. */
   photos: Record<string, MenuPhoto>;
+  /** The menu's small texts (Site Settings, Menu). */
+  copy: MenuCopy;
 };
+
+export type MenuCopy = Pick<SiteCopy, "menuClose" | "menuInstagram" | "menuNewsletter" | "menuTimeLabel">;
 
 const SMALL_LINK =
   "text-[12px] tracking-[0.12em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) py-2";
@@ -41,6 +46,7 @@ export default function NavOverlay({
   onNewsletterOpen,
   items,
   photos,
+  copy,
 }: Props) {
   const sorted = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const pages = sorted.filter((item) => !item.external);
@@ -76,8 +82,8 @@ export default function NavOverlay({
       className="menu-room"
     >
       <div className="menu-top">
-        <button type="button" onClick={onClose} aria-label="Close menu" className="menu-close">
-          Close
+        <button type="button" onClick={onClose} aria-label={`${copy.menuClose} menu`} className="menu-close">
+          {copy.menuClose}
         </button>
         <span aria-hidden="true" className="menu-wordmark">
           House of Singh
@@ -157,15 +163,15 @@ export default function NavOverlay({
             rel="noopener noreferrer"
             className={SMALL_LINK}
           >
-            Instagram
+            {copy.menuInstagram}
             <span className="sr-only"> (opens in a new tab)</span>
           </a>
           <button type="button" onClick={onNewsletterOpen} className={SMALL_LINK}>
-            Newsletter
+            {copy.menuNewsletter}
           </button>
         </div>
         <p className="text-[12px] tracking-[0.12em] uppercase text-muted-foreground">
-          Toronto <TorontoTime />
+          {copy.menuTimeLabel} <TorontoTime />
         </p>
       </div>
     </nav>

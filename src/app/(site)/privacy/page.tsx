@@ -3,6 +3,10 @@ import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
 import LegalPage, { type LegalSection } from "@/components/legal/LegalPage";
+import { siteCopy, type CopyKey } from "@/lib/siteCopy";
+import { sanityFetch } from "@/sanity/fetch";
+import { siteSettingsQuery } from "@/sanity/queries";
+import type { SiteSettings } from "@/lib/types";
 
 const TITLE = "Privacy Policy";
 const DESCRIPTION =
@@ -23,14 +27,15 @@ export async function generateMetadata(
 }
 
 /*
- * Each "short" is an In short line written strictly from that section's own
- * text. The section text itself is unchanged.
+ * Each section's In short line is editable in Site Settings, Privacy and
+ * Terms (lib/siteCopy.ts holds today's text, written strictly from that
+ * section's own text). The section text itself is unchanged.
  */
-const SECTIONS: LegalSection[] = [
+const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
   {
     id: "overview",
     title: "Overview",
-    short: "this page explains what the site collects, where it is kept, and how it is used.",
+    short: "privacyShortOverview",
     body: (
       <>
         <p>
@@ -46,7 +51,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "information-we-collect",
     title: "Information we collect",
-    short: "what you send through the contact form, the project interest form and the newsletter signup is saved in Sanity. Abuse protection counts submissions in memory only, and page speed is measured without cookies.",
+    short: "privacyShortCollect",
     body: (
       <>
         <p>
@@ -111,7 +116,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "saved-progress",
     title: "Saved progress on the contact form",
-    short: "your contact form draft stays in your own browser until you send it, and is deleted when you do.",
+    short: "privacyShortProgress",
     body: (
       <>
         <p>
@@ -133,7 +138,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "how-we-use",
     title: "How we use your information",
-    short: "to reply to you, to send the newsletter you signed up for, and to make pages load faster. It is never sold, rented or shared for marketing.",
+    short: "privacyShortUse",
     body: (
       <>
         <p>We use the information we collect to:</p>
@@ -153,7 +158,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "leaving-the-newsletter",
     title: "Leaving the newsletter",
-    short: "ask through the contact page and you will be removed.",
+    short: "privacyShortNewsletter",
     body: (
       <>
         <p>
@@ -170,7 +175,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "cookies",
     title: "Cookies and browser storage",
-    short: "no cookies of our own and no tracking. Two small notes sit in session storage, and the Spotify player may set its own cookies.",
+    short: "privacyShortCookies",
     body: (
       <>
         <p>
@@ -191,7 +196,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "third-parties",
     title: "Third party services",
-    short: "Vercel hosts the site, Sanity stores its content and your submissions, Spotify plays the playlist, and the studio logo comes from studios.houseofsingh.com. Each has its own privacy policy.",
+    short: "privacyShortThirdParties",
     body: (
       <>
         <p>This website relies on the following services:</p>
@@ -240,7 +245,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "contact",
     title: "Contact",
-    short: "questions about this policy go through the contact page.",
+    short: "privacyShortContact",
     body: (
       <>
         <p>
@@ -256,6 +261,9 @@ const SECTIONS: LegalSection[] = [
   },
 ];
 
-export default function PrivacyPage() {
-  return <LegalPage title="Privacy Policy" updated="Last updated: 7 November 2026" sections={SECTIONS} />;
+export default async function PrivacyPage() {
+  const settings = await sanityFetch<SiteSettings | null>({ query: siteSettingsQuery });
+  const copy = siteCopy(settings);
+  const sections = SECTIONS.map((section) => ({ ...section, short: copy[section.short] }));
+  return <LegalPage title="Privacy Policy" updated="Last updated: 7 November 2026" sections={sections} labels={{ contents: copy.legalContentsLabel, inShort: copy.legalShortPrefix }} />;
 }
