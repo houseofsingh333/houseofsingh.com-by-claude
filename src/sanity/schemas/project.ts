@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 import { imageAltFields } from "./imageFields";
 
 export const project = defineType({
@@ -49,6 +49,36 @@ export const project = defineType({
       options: { hotspot: true },
       description: "Card image. Recommended: JPEG, min 1600px wide, 4:3 ratio.",
       fields: imageAltFields,
+    }),
+    defineField({
+      name: "plates",
+      title: "Plate photographs",
+      type: "array",
+      description:
+        "Optional. Up to four photographs that take turns on the Projects page, in this order. When empty, the cover and the first images of the content sections are used.",
+      validation: (rule) => rule.max(4),
+      of: [
+        defineArrayMember({
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: "alt",
+              title: "Alt Text",
+              type: "string",
+              description: "Describe the photograph for screen readers. Required.",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: "role",
+      title: "Role",
+      type: "string",
+      description:
+        "Optional. Your role on the project, for example Photographer or Curator. Shown on the Projects page beside the category and year, only when filled.",
     }),
     defineField({
       name: "shortIntro",

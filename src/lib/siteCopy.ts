@@ -7,7 +7,7 @@
  * so the description and the default can never drift apart.
  */
 
-export type CopyGroup = "homepage" | "menu" | "notFound" | "newsletter" | "legal";
+export type CopyGroup = "homepage" | "menu" | "notFound" | "newsletter" | "legal" | "projects";
 
 type CopyField = {
   name: string;
@@ -88,6 +88,24 @@ export const SITE_COPY_FIELDS = [
   },
   { name: "codaTimeLabel", title: "Time label", group: "homepage", fieldset: "coda", text: "In Toronto it is" },
 
+  // ——— Projects page ———
+  { name: "projectsHeading", title: "Heading", group: "projects", text: "Projects" },
+  { name: "projectsViewOne", title: "View: one by one", group: "projects", text: "One by one" },
+  { name: "projectsViewGlance", title: "View: at a glance", group: "projects", text: "At a glance" },
+  { name: "projectsIconOne", title: "Phone view icon, to one by one (read by screen readers)", group: "projects", text: "View one by one" },
+  { name: "projectsIconGlance", title: "Phone view icon, to at a glance (read by screen readers)", group: "projects", text: "View all at a glance" },
+  { name: "projectsAllWork", title: "Filter: all work", group: "projects", text: "All work" },
+  { name: "projectsEnter", title: "Project link", group: "projects", text: "Enter the project" },
+  { name: "projectsPrevious", title: "Previous", group: "projects", text: "Previous" },
+  { name: "projectsNext", title: "Next", group: "projects", text: "Next" },
+  { name: "projectsNextPrefix", title: "Next title prefix", group: "projects", text: "Next:" },
+  { name: "projectsPause", title: "Pause", group: "projects", text: "Pause" },
+  { name: "projectsPlay", title: "Play", group: "projects", text: "Play" },
+  { name: "projectsPreviousProject", title: "Phone arrow, previous (read by screen readers)", group: "projects", text: "Previous project" },
+  { name: "projectsNextProject", title: "Phone arrow, next (read by screen readers)", group: "projects", text: "Next project" },
+  { name: "projectsGoTo", title: "Progress tick (read by screen readers, before the title)", group: "projects", text: "Go to" },
+  { name: "projectsUpcoming", title: "Upcoming label", group: "projects", text: "Upcoming" },
+
   // ——— Menu ———
   { name: "menuClose", title: "Close button", group: "menu", text: "Close" },
   { name: "menuInstagram", title: "Instagram link", group: "menu", text: "Instagram" },
@@ -138,7 +156,7 @@ export const SITE_COPY_FIELDS = [
   { name: "privacyShortProgress", title: "Privacy: Saved progress", group: "legal", fieldset: "privacy", text: "your contact form draft stays in your own browser until you send it, and is deleted when you do.", multiline: true },
   { name: "privacyShortUse", title: "Privacy: How we use your information", group: "legal", fieldset: "privacy", text: "to reply to you, to send the newsletter you signed up for, and to make pages load faster. It is never sold, rented or shared for marketing.", multiline: true },
   { name: "privacyShortNewsletter", title: "Privacy: Leaving the newsletter", group: "legal", fieldset: "privacy", text: "ask through the contact page and you will be removed.", multiline: true },
-  { name: "privacyShortCookies", title: "Privacy: Cookies and browser storage", group: "legal", fieldset: "privacy", text: "no cookies of our own and no tracking. Two small notes sit in session storage, and the Spotify player may set its own cookies.", multiline: true },
+  { name: "privacyShortCookies", title: "Privacy: Cookies and browser storage", group: "legal", fieldset: "privacy", text: "no cookies of our own and no tracking. Two small notes sit in session storage, one in local storage remembers your Projects view, and the Spotify player may set its own cookies.", multiline: true },
   { name: "privacyShortThirdParties", title: "Privacy: Third party services", group: "legal", fieldset: "privacy", text: "Vercel hosts the site, Sanity stores its content and your submissions, and Spotify plays the playlist. Each has its own privacy policy.", multiline: true },
   { name: "privacyShortContact", title: "Privacy: Contact", group: "legal", fieldset: "privacy", text: "questions about this policy go through the contact page.", multiline: true },
   { name: "termsShortUse", title: "Terms: Use of this website", group: "legal", fieldset: "terms", text: "the site is for information and portfolio purposes. Browse freely, but do not scrape or copy it with automated tools.", multiline: true },

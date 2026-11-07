@@ -159,11 +159,27 @@ export const latestProjectsQuery = `*[_type == "project"] | order(_createdAt des
 
 // --------------- Projects ---------------
 
+/**
+ * Every project for the Projects page. "plates" are the photographs that
+ * take turns on its plate: the project's Plate photographs when set,
+ * otherwise the cover and the first images of its content sections (the
+ * page keeps the first four). "sectionImages" gathers those images in the
+ * order the sections appear.
+ */
 export const projectsListQuery = `*[_type == "project"] | order(title asc){
-  _id, title, "slug": slug.current, category,
+  _id, title, "slug": slug.current, category, year, role,
   "thumbnail": thumbnail ${_imageAsset},
   "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt,
-  isUpcoming
+  isUpcoming,
+  "plates": plates[0...4] ${_imageAsset},
+  "cover": coverImage ${_imageAsset},
+  "sectionImages": contentSections[]{
+    "list": select(
+      defined(image.asset) => [image],
+      defined(images) => images[defined(asset)],
+      []
+    )
+  }.list[][0...8] ${_imageAsset}
 }`;
 
 export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug][0]{

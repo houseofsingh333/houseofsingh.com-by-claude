@@ -33,6 +33,7 @@ export const siteSettings = defineType({
     { name: "notFound", title: "404 page" },
     { name: "newsletter", title: "Newsletter card" },
     { name: "legal", title: "Privacy and Terms" },
+    { name: "projects", title: "Projects page" },
   ],
   fieldsets: [
     { name: "chapter1", title: "Chapter I, the hero", options: { collapsible: true, collapsed: true } },
