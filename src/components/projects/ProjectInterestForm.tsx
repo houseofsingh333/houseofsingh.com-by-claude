@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import HoneypotField from "@/components/HoneypotField";
+import { PAGE_COLUMN, READING_COLUMN } from "./story";
 
 type Props = {
   projectTitle: string;
@@ -56,7 +57,8 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
 
   if (submitted) {
     return (
-      <section className="mx-auto max-w-3xl px-6 md:px-16 section-py">
+      <section className={`${PAGE_COLUMN} pt-(--section-space-md)`}>
+        <div className={READING_COLUMN}>
         <div className="w-full h-px bg-border mb-10" />
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">
           Thank you
@@ -64,12 +66,14 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.9]">
           Your interest has been submitted. We&apos;ll be in touch.
         </p>
+      </div>
       </section>
     );
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-6 md:px-16 section-py">
+    <section className={`${PAGE_COLUMN} pt-(--section-space-md)`}>
+        <div className={READING_COLUMN}>
       <div className="w-full h-px bg-border mb-10" />
       <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">
         Interested?
@@ -88,7 +92,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         <div>
           <label
             htmlFor="interest-name"
-            className="block text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2"
+            className="block text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2"
           >
             Name *
           </label>
@@ -106,7 +110,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         <div>
           <label
             htmlFor="interest-email"
-            className="block text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2"
+            className="block text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2"
           >
             Email *
           </label>
@@ -124,7 +128,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         <div>
           <label
             htmlFor="interest-phone"
-            className="block text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2"
+            className="block text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2"
           >
             Phone
           </label>
@@ -141,7 +145,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         <div>
           <label
             htmlFor="interest-instagram"
-            className="block text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2"
+            className="block text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2"
           >
             Instagram
           </label>
@@ -158,7 +162,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         <div>
           <label
             htmlFor="interest-story"
-            className="block text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2"
+            className="block text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2"
           >
             Your story or nomination *
           </label>
@@ -190,6 +194,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
           {submitting ? "Sending…" : "Submit"}
         </button>
       </form>
-    </section>
+    </div>
+      </section>
   );
 }

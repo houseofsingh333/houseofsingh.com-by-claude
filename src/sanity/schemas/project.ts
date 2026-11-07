@@ -26,12 +26,20 @@ export const project = defineType({
       description: "e.g. Photography, Design, Collaborations",
     }),
     defineField({
+      name: "year",
+      title: "Year",
+      type: "number",
+      description:
+        "The year of the work, shown beside the category under the title. Optional.",
+      validation: (rule) => rule.integer().min(1900).max(2100),
+    }),
+    defineField({
       name: "coverImage",
       title: "Cover Image",
       type: "image",
       options: { hotspot: true },
       description:
-        "Hero image shown at the top of the project page. Recommended: JPEG, min 1920px wide.",
+        "Hero photograph at the top of the project page, shown about 16:9 on desktop and 4:5 on phone: set the hotspot on the subject. Without one the page uses the thumbnail. Recommended: JPEG, min 2400px wide.",
       fields: imageAltFields,
     }),
     defineField({

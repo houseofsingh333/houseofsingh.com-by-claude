@@ -20,7 +20,7 @@ type Props = {
 
 export default function ContentSections({ sections }: Props) {
   return (
-    <div className="content-sections flex flex-col gap-20 md:gap-32 lg:gap-40">
+    <div className="content-sections flex flex-col gap-(--section-space-md)">
       {sections.map((section, index) => {
         let child: React.ReactNode = null;
 
