@@ -216,6 +216,10 @@ export type SiteSettings = {
   tagline: string;
   footerText: string;
   spotifyPlaylistUrl?: string;
+  listeningHeading?: string | null;
+  listeningNote?: string | null;
+  listeningIntro?: string | null;
+  listeningSleeve?: SanityImage | null;
   defaultMetaDescription?: string | null;
   organizationName?: string | null;
   founderName?: string | null;

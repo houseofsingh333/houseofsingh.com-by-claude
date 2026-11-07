@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { imageAltFields } from "./imageFields";
 
 export const siteSettings = defineType({
   name: "siteSettings",
@@ -27,6 +28,39 @@ export const siteSettings = defineType({
       type: "url",
       description:
         "The embed URL for your Spotify playlist (e.g. https://open.spotify.com/embed/playlist/...)",
+    }),
+
+    /* ——— Home page, Chapter VI: the record ——— */
+    defineField({
+      name: "listeningHeading",
+      title: "Listening: heading",
+      type: "string",
+      description: "Optional. Shown when empty: On my turntable",
+    }),
+    defineField({
+      name: "listeningNote",
+      title: "Listening: playlist note",
+      type: "text",
+      rows: 2,
+      description:
+        "Optional. The italic note under the heading. Shown when empty: This playlist showcases the music that keeps me inspired and in sync with my work.",
+    }),
+    defineField({
+      name: "listeningIntro",
+      title: "Listening: line",
+      type: "text",
+      rows: 2,
+      description:
+        "Optional. The reading line under the note. Shown when empty: What plays in my studio while I work. Press play and listen along; the record turns while the music plays.",
+    }),
+    defineField({
+      name: "listeningSleeve",
+      title: "Listening: record sleeve",
+      type: "image",
+      options: { hotspot: true },
+      description:
+        "Optional. A square image for the record sleeve. When empty, a plain sleeve with the crest is shown.",
+      fields: imageAltFields,
     }),
 
     /* ——— Global SEO defaults ——— */

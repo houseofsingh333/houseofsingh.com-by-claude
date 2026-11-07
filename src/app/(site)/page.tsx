@@ -3,7 +3,7 @@ import IntroSection from "@/components/home/IntroSection";
 import Exhibition from "@/components/home/exhibition/Exhibition";
 import SpotlightBillboard from "@/components/home/SpotlightBillboard";
 import JournalFilmstrip from "@/components/home/filmstrip/JournalFilmstrip";
-import SpotifyEmbed from "@/components/home/SpotifyEmbed";
+import RecordChapter from "@/components/home/record/RecordChapter";
 import StudioRedirect from "@/components/home/StudioRedirect";
 import { sanityFetch } from "@/sanity/fetch";
 import {
@@ -109,7 +109,13 @@ export default async function HomePage() {
       {journalEntries.length > 0 && (
         <JournalFilmstrip entries={latestJournal(journalEntries)} />
       )}
-      <SpotifyEmbed playlistUrl={spotifyUrl} />
+      <RecordChapter
+        playlistUrl={spotifyUrl}
+        heading={settings?.listeningHeading}
+        note={settings?.listeningNote}
+        intro={settings?.listeningIntro}
+        sleeve={settings?.listeningSleeve}
+      />
       <StudioRedirect />
     </>
   );
