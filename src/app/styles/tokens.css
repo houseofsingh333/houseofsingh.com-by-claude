@@ -16,7 +16,8 @@
   --muted-foreground-inverse: hsl(30 5% 64%);
   /* The About page "Featured On" panel sits on a darker warm tint (#EDE9E4),
      where --muted-foreground only reaches 4.04:1. This one step darker grey,
-     #6B6661, gives 4.70:1 there. Used on that panel only (.featured-panel). */
+     #6B6661, gives 4.70:1 there. Also used for the record player's placeholder
+     label on --secondary. */
   --featured-panel: #ede9e4;
   --muted-foreground-panel: hsl(30 5% 40%);
   /* Antique brass #A8895C: the single accent, used rarely (the breathing

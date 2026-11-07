@@ -639,11 +639,16 @@ html:not(.js) .hero-progress {
   font-size: 11px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--muted-foreground);
+  /* The darker panel grey: plain muted grey falls short of AA on --secondary. */
+  color: var(--muted-foreground-panel);
 }
 .record-player-mount {
   position: absolute;
   inset: 0;
+  visibility: hidden; /* out of sight (and out of the Tab order) until ready */
+}
+.record-player-mount[data-ready] {
+  visibility: visible;
 }
 .record-player-mount iframe,
 .record-player-frame {

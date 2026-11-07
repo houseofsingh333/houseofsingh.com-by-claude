@@ -3,16 +3,21 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "@/hooks/useInView";
 
-/** Spotify's official iFrame API. Allowed in script-src (next.config.ts). */
+/**
+ * Spotify's official iFrame API. Its loader pulls a second script from
+ * embed-cdn.spotifycdn.com; both hosts are allowed in script-src
+ * (next.config.ts).
+ */
 const API_SRC = "https://open.spotify.com/embed/iframe-api/v1";
-/** Give up on the API after this long and show the plain embed. */
-const API_TIMEOUT_MS = 8000;
+/** The API must be loaded and its player ready within this, or it is not used. */
+const API_TIMEOUT_MS = 4000;
 /** The full size Spotify player; the placeholder matches it, so nothing shifts. */
 export const PLAYER_HEIGHT = 352;
 const TITLE = "Maninder's studio playlist, on Spotify";
 
 type PlaybackEvent = { data?: { isPaused?: boolean } };
 type Controller = {
+  addListener(event: "ready", cb: () => void): void;
   addListener(event: "playback_update", cb: (e: PlaybackEvent) => void): void;
   destroy(): void;
 };
@@ -71,55 +76,83 @@ type Props = {
 
 /**
  * The Spotify player under the record. It mounts once the chapter nears
- * the viewport (the embed is heavy), through Spotify's iFrame API, whose
- * playback events set data-playing on the record so the disc turns only
- * while the playlist plays. If the API cannot load, a plain embed takes
- * its place: the player works normally and the disc stays still.
+ * the viewport (the embed is heavy) and never depends on Spotify's iFrame
+ * API: the normal Spotify iframe is shown straight away. Meanwhile the API
+ * loads, and builds its own player out of sight; only if that player is
+ * ready within API_TIMEOUT_MS, and the visitor has not started using the
+ * normal one, does it take the normal player's place. Its playback events
+ * then set data-playing on the record, so the disc turns only while the
+ * playlist plays. If the API fails, is blocked or is slow, the normal
+ * player stays and the disc stays still.
  */
 export default function RecordPlayer({ embedSrc, recordId }: Props) {
   const holderRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
+  const plainRef = useRef<HTMLIFrameElement>(null);
   const inView = useInView(holderRef, { rootMargin: "200px" });
-  const [apiFailed, setApiFailed] = useState(false);
+  // True once the API's player has taken over from the normal one.
+  const [handedOver, setHandedOver] = useState(false);
   const uri = toUri(embedSrc);
-  // Without a Spotify address there is nothing for the API to control.
-  const plain = inView && (apiFailed || !uri);
 
   useEffect(() => {
     const mount = mountRef.current;
+    // Without a Spotify address there is nothing for the API to control.
     if (!inView || !mount || !uri) return;
     const record = document.getElementById(recordId);
-    let cancelled = false;
+    let stopped = false; // unmounted, out of time, or the visitor began
+    let handed = false;
     let controller: Controller | null = null;
-    // The API replaces this element with its iframe; React never renders
-    // into the mount, so the swap cannot upset it.
+    const giveUp = () => {
+      if (handed) return;
+      stopped = true;
+      controller?.destroy();
+      controller = null;
+      mount.replaceChildren();
+    };
+    const deadline = window.setTimeout(giveUp, API_TIMEOUT_MS);
+    // Focus moving into the normal player means the visitor is using it:
+    // never swap it out from under them.
+    const onBlur = () =>
+      window.setTimeout(() => {
+        if (document.activeElement === plainRef.current) giveUp();
+      }, 0);
+    window.addEventListener("blur", onBlur);
+
+    // The API replaces this element with its own iframe; React never
+    // renders into the mount, so the swap cannot upset it.
     const target = document.createElement("div");
     mount.appendChild(target);
-
     loadApi()
       .then((api) => {
-        if (cancelled) return;
+        if (stopped) return;
         api.createController(target, { uri, width: "100%", height: PLAYER_HEIGHT }, (c) => {
-          if (cancelled) {
+          if (stopped) {
             c.destroy();
             return;
           }
           controller = c;
-          mount.querySelector("iframe")?.setAttribute("title", TITLE);
+          c.addListener("ready", () => {
+            if (stopped) return;
+            handed = true;
+            window.clearTimeout(deadline);
+            mount.querySelector("iframe")?.setAttribute("title", TITLE);
+            setHandedOver(true);
+          });
           c.addListener("playback_update", (e) => {
-            record?.toggleAttribute("data-playing", e.data?.isPaused === false);
+            if (handed) record?.toggleAttribute("data-playing", e.data?.isPaused === false);
           });
         });
       })
-      .catch(() => {
-        if (!cancelled) setApiFailed(true);
-      });
+      .catch(giveUp);
 
     return () => {
-      cancelled = true;
+      stopped = true;
+      window.clearTimeout(deadline);
+      window.removeEventListener("blur", onBlur);
       controller?.destroy();
       mount.replaceChildren();
       record?.removeAttribute("data-playing");
+      setHandedOver(false);
     };
   }, [inView, uri, recordId]);
 
@@ -129,15 +162,16 @@ export default function RecordPlayer({ embedSrc, recordId }: Props) {
       <span aria-hidden="true" className="record-player-placeholder">
         Playlist
       </span>
-      <div ref={mountRef} className="record-player-mount" />
-      {plain && (
+      {/* The API's player, out of sight until it is ready to take over. */}
+      <div ref={mountRef} className="record-player-mount" data-ready={handedOver ? "" : undefined} />
+      {inView && !handedOver && (
         <iframe
+          ref={plainRef}
           title={TITLE}
           src={embedSrc}
           width="100%"
           height={PLAYER_HEIGHT}
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
           className="record-player-frame"
         />
       )}
