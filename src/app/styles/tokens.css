@@ -40,6 +40,7 @@
   --dur-image: 1000ms; /* image fade ins and colour reveals */
   --dur-hover: 500ms; /* hover and focus changes */
   --dur-page: 600ms; /* page fade in, content swapped by a click */
+  --dur-develop: 1400ms; /* a photograph developing to full tone */
 
   /* Earlier fast curve, kept only for the menu and popup opening. */
   --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);

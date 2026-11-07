@@ -33,6 +33,13 @@ type Props = {
    * image's hotspot, so the crop keeps the subject. Default: centred.
    */
   objectPosition?: string;
+  /**
+   * Develop like a print the first time it is in view (see "Photographs
+   * that develop" in styles/motion.css). On by default for content
+   * photographs; never for priority images, so the largest paint is never
+   * held back. Set false for images with their own reveal.
+   */
+  develop?: boolean;
 };
 
 /**
@@ -51,6 +58,7 @@ export default function SanityImage({
   fill = false,
   sizes,
   objectPosition,
+  develop = true,
 }: Props) {
   const props = getImageProps(image, context, altOverride);
   // No image (and no local placeholder): render nothing. The parent frame
@@ -72,6 +80,14 @@ export default function SanityImage({
   // it on load (BlurUp.tsx). Replaces next/image's own blur placeholder,
   // which swapped instantly instead of dissolving.
   const lqip = props.blurDataURL;
+  // Attributes the pre paint script adds before React hydrates (data-loaded,
+  // data-developed) are expected, not a mismatch.
+  const marks = {
+    ...blurUpImgProps(lqip),
+    ...(develop && !priority
+      ? { "data-develop": "", suppressHydrationWarning: true }
+      : {}),
+  };
   const preview = (
     <BlurUp lqip={lqip} position={objectPosition ?? objectPositionOf(className)} />
   );
@@ -89,7 +105,7 @@ export default function SanityImage({
           className={className}
           style={objectPosition ? { objectPosition } : undefined}
           loader={loader}
-          {...blurUpImgProps(lqip)}
+          {...marks}
         />
       </>
     );
@@ -105,7 +121,7 @@ export default function SanityImage({
       priority={priority}
       className={className}
       loader={loader}
-      {...blurUpImgProps(lqip)}
+      {...marks}
     />
   );
   // A non filling photo needs a positioned box for the preview to fill.
