@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
+import { PRIVACY_UPDATED } from "@/lib/legalDates";
+import { PRIVACY_DESCRIPTION } from "@/lib/pageDescriptions";
 import { shareCard } from "@/lib/share-metadata";
 import LegalPage, { type LegalSection } from "@/components/legal/LegalPage";
 import { siteCopy, type CopyKey } from "@/lib/siteCopy";
@@ -9,8 +11,7 @@ import { siteSettingsQuery } from "@/sanity/queries";
 import type { SiteSettings } from "@/lib/types";
 
 const TITLE = "Privacy Policy";
-const DESCRIPTION =
-  "What House of Singh collects through this website, where it is kept, and how it is used.";
+const DESCRIPTION = PRIVACY_DESCRIPTION;
 
 export async function generateMetadata(
   _props: unknown,
@@ -259,5 +260,5 @@ export default async function PrivacyPage() {
   const settings = await sanityFetch<SiteSettings | null>({ query: siteSettingsQuery });
   const copy = siteCopy(settings);
   const sections = SECTIONS.map((section) => ({ ...section, short: copy[section.short] }));
-  return <LegalPage title="Privacy Policy" updated="Last updated: 7 November 2026" sections={sections} labels={{ contents: copy.legalContentsLabel, inShort: copy.legalShortPrefix }} />;
+  return <LegalPage title="Privacy Policy" updated={PRIVACY_UPDATED.label} sections={sections} labels={{ contents: copy.legalContentsLabel, inShort: copy.legalShortPrefix }} />;
 }

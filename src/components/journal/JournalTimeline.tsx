@@ -1,6 +1,8 @@
 "use client";
 
+import type { MouseEvent } from "react";
 import { MONTH_SHORT_LABELS } from "@/lib/dates";
+import { isPlainClick } from "@/lib/journalLinks";
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
@@ -17,7 +19,18 @@ type Props = {
   isSticky: boolean;
   onYearClick: (year: number) => void;
   onMonthClick: (month: number) => void;
+  /** The address each year link points to (its most recent month). */
+  yearHref: (year: number) => string;
+  /** The address of a month of the open year. */
+  monthHref: (month: number) => string;
 };
+
+/** Handle a plain click here (instant switch); let other clicks follow the link. */
+function handle(e: MouseEvent<HTMLAnchorElement>, action: () => void) {
+  if (!isPlainClick(e)) return;
+  e.preventDefault();
+  action();
+}
 
 /**
  * The journal's sticky year and month filter bar.
@@ -27,6 +40,10 @@ type Props = {
  * keeps 24px of breathing room when stuck. Earlier the stuck state swapped
  * in different padding, which moved the content below and made the bar
  * jitter while scrolling. Only the background layer changes, by opacity.
+ *
+ * Years and months are real links (each month has its own address), so
+ * search engines can reach every month. A plain click still switches the
+ * view at once, without loading a page; other clicks follow the link.
  */
 export default function JournalTimeline({
   years,
@@ -36,6 +53,8 @@ export default function JournalTimeline({
   isSticky,
   onYearClick,
   onMonthClick,
+  yearHref,
+  monthHref,
 }: Props) {
   return (
     <section className="sticky top-0 z-30 -mt-6 pt-6 px-6 md:px-16 pb-16 md:pb-28">
@@ -56,9 +75,10 @@ export default function JournalTimeline({
             {years.map((year) => {
               const isActive = activeYear === year;
               return (
-                <button
+                <a
                   key={year}
-                  onClick={() => onYearClick(year)}
+                  href={yearHref(year)}
+                  onClick={(e) => handle(e, () => onYearClick(year))}
                   className="flex-1 flex flex-col items-center snap-start group min-w-0"
                 >
                   <div
@@ -77,7 +97,7 @@ export default function JournalTimeline({
                   >
                     {year}
                   </span>
-                </button>
+                </a>
               );
             })}
           </div>
@@ -101,12 +121,7 @@ export default function JournalTimeline({
               activeYear === currentYear && month > currentMonth;
             const hasEntries = monthsWithEntries[activeYear]?.has(month);
 
-            return (
-              <button
-                key={month}
-                onClick={() => !isFuture && onMonthClick(month)}
-                disabled={isFuture}
-                className={`text-xs tracking-[0.15em] uppercase transition-all duration-(--dur-hover) ease-(--ease-soft-out) pb-0.5 ${
+            const className = `text-xs tracking-[0.15em] uppercase transition-all duration-(--dur-hover) ease-(--ease-soft-out) pb-0.5 ${
                   isActive
                     ? "text-foreground border-b border-foreground"
                     : isFuture
@@ -114,10 +129,21 @@ export default function JournalTimeline({
                       : hasEntries
                         ? "text-muted-foreground hover:text-foreground border-b border-transparent hover:border-foreground"
                         : "text-muted-foreground hover:text-foreground border-b border-transparent"
-                }`}
-              >
-                {MONTH_SHORT_LABELS[month - 1]}
-              </button>
+                }`;
+              return isFuture ? (
+                <span key={month} aria-disabled="true" className={className}>
+                  {MONTH_SHORT_LABELS[month - 1]}
+                </span>
+              ) : (
+                <a
+                  key={month}
+                  href={monthHref(month)}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={(e) => handle(e, () => onMonthClick(month))}
+                  className={className}
+                >
+                  {MONTH_SHORT_LABELS[month - 1]}
+                </a>
             );
           })}
         </div>

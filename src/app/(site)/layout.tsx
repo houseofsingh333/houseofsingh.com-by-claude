@@ -1,3 +1,4 @@
+import { preload } from "react-dom";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import Header from "@/components/layout/Header";
@@ -86,18 +87,18 @@ export default async function SiteLayout({
   const copy = siteCopy(settings);
   const menuPhotos = buildMenuPhotos(navItems, menuDefaults, copy.artistCaption);
 
+  // Intro video preload, desktop only. The intro overlay is skipped below
+  // 1024px, so without this media condition mobile downloaded 126 KiB it
+  // never plays. React's preload() emits exactly one <link> in the <head>;
+  // a JSX <link> here was emitted twice.
+  preload("/images/HOS_Logo_Animation.mp4", {
+    as: "video",
+    type: "video/mp4",
+    media: "(min-width: 1024px)",
+  });
+
   return (
     <>
-      {/* Intro video preload, desktop only. The intro overlay is skipped
-          below 1024px, so without this media condition mobile downloaded
-          126 KiB it never plays. React places this link in the <head>. */}
-      <link
-        rel="preload"
-        as="video"
-        href="/images/HOS_Logo_Animation.mp4"
-        type="video/mp4"
-        media="(min-width: 1024px)"
-      />
       {/* No Spotify preconnects here: the embed mounts only when it scrolls
           into view, so eager hints sat unused on every page load and were
           flagged as wasted connections. */}

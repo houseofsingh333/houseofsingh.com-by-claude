@@ -1,16 +1,11 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
-import { sanityFetch } from "@/sanity/fetch";
-import { projectsListQuery } from "@/sanity/queries";
-import { fallbackProjects } from "@/lib/placeholder-data";
-import { devPlaceholder } from "@/lib/placeholders";
-import type { ProjectSummary, SanityImage } from "@/lib/types";
-import ProjectsFilteredGrid from "@/components/projects/ProjectsFilteredGrid";
+import ProjectsIndex from "@/components/projects/ProjectsIndex";
+import { PROJECTS_DESCRIPTION, PROJECTS_TITLE } from "@/lib/pageDescriptions";
 
-const TITLE = "Projects";
-const DESCRIPTION =
-  "Selected projects by Maninder Singh spanning design, photography, and creative direction.";
+const TITLE = PROJECTS_TITLE;
+const DESCRIPTION = PROJECTS_DESCRIPTION;
 
 export async function generateMetadata(
   _props: unknown,
@@ -26,69 +21,7 @@ export async function generateMetadata(
   };
 }
 
-type SanityProject = {
-  _id: string;
-  title: string;
-  slug: string;
-  category: string;
-  thumbnail: SanityImage | null;
-  thumbnailAlt: string;
-  excerpt: string;
-  isUpcoming?: boolean;
-};
-
-export default async function ProjectsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ filter?: string }>;
-}) {
-  const params = await searchParams;
-
-  const data = await sanityFetch<SanityProject[] | null>({
-    query: projectsListQuery,
-  });
-
-  const projects: ProjectSummary[] =
-    data && data.length > 0
-      ? data.map((p) => ({
-          _id: p._id,
-          title: p.title,
-          slug: p.slug,
-          category: p.category ?? "",
-          thumbnailSrc:
-            typeof p.thumbnail === "string"
-              ? p.thumbnail
-              : (p.thumbnail?.url ??
-                // Placeholder art only in local development; otherwise the
-                // card shows its calm empty frame.
-                devPlaceholder("/images/project-placeholder-1.svg", "")),
-          thumbnailAlt: p.thumbnailAlt,
-          thumbnailLqip:
-            typeof p.thumbnail === "object" ? p.thumbnail?.lqip : null,
-          excerpt: p.excerpt ?? "",
-          isUpcoming: p.isUpcoming ?? false,
-        }))
-      : devPlaceholder(fallbackProjects, []);
-
-  return (
-    <div className="overflow-hidden">
-      <section className="mx-auto max-w-7xl px-6 md:px-16 page-top-offset page-top-offset-tight pb-20">
-        <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
-          Portfolio
-        </p>
-        <div className="w-full h-px bg-border mb-8 md:mb-10" />
-        <h1 className="font-editorial text-3xl md:text-5xl lg:text-6xl font-light text-foreground leading-none">
-          Projects
-        </h1>
-      </section>
-
-      {/* Filter rail + grid — same max-width and padding as header */}
-      <section className="mx-auto max-w-7xl px-6 md:px-16 section-pb-lg">
-        <ProjectsFilteredGrid
-          projects={projects}
-          initialFilter={params.filter}
-        />
-      </section>
-    </div>
-  );
+/** All projects. Each category has its own cached page (category/[category]). */
+export default function ProjectsPage() {
+  return <ProjectsIndex />;
 }

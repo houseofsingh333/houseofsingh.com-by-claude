@@ -31,12 +31,12 @@ export const seo = defineType({
       type: "text",
       rows: 3,
       description:
-        "Summary shown in search results and social/AI previews. Aim for ~160 characters.",
+        "Summary shown in search results and social/AI previews. Aim for 120 to 155 characters.",
       validation: (rule) =>
         rule
-          .max(180)
+          .max(155)
           .warning(
-            "Descriptions longer than ~160 characters are often truncated in search results.",
+            "Descriptions longer than 155 characters are often cut off in search results.",
           ),
     }),
     defineField({
