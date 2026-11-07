@@ -71,8 +71,32 @@
 .hero-caption[data-first] {
   transition: none;
 }
-/* Without JavaScript the dots cannot work, so they take no space. */
-html:not(.js) .hero-dots {
+/* The hairline under the place name fills while the slide plays: a scale
+   from the left over the slide's time (set inline), restarted per slide.
+   Without JavaScript nothing plays, so it takes no space. */
+.hero-progress {
+  display: block;
+  width: 56px;
+  height: 1px;
+  overflow: hidden;
+  background: color-mix(in srgb, #ffffff 35%, transparent);
+}
+.hero-progress-fill {
+  display: block;
+  height: 100%;
+  background: #ffffff;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.hero-progress-fill[data-run] {
+  animation: hero-progress linear forwards;
+}
+@keyframes hero-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+html:not(.js) .hero-progress {
   display: none;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -86,6 +110,9 @@ html:not(.js) .hero-dots {
   .hero-kb[data-run] {
     animation: none;
     transform: none;
+  }
+  .hero-progress-fill[data-run] {
+    animation: none;
   }
 }
 

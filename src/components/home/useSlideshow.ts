@@ -2,14 +2,17 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 
-const SLIDE_DURATION = 8000;
+export const SLIDE_DURATION = 8000;
 const CAPTION_IN_DELAY = 1.2;
 const CAPTION_OUT_DURATION = 0.6;
+/** From a slide appearing to the next caption fading out, after the first. */
+export const SLIDE_SHOWN_MS = SLIDE_DURATION - (CAPTION_OUT_DURATION * 1000 + 100);
 
 /**
  * The home hero slideshow's timing: which slide is shown and which it
- * replaced, the caption sequence (fade out, switch, rise in), dot
- * navigation, a pause while the tab is hidden, and autoplay every 8 s once
+ * replaced, the caption sequence (fade out, switch, rise in), previous and
+ * next navigation (which restarts the 8 s cycle, so the progress hairline
+ * stays in step), a pause while the tab is hidden, and autoplay every 8 s once
  * the intro is complete. Slides load progressively: the current and the
  * next, then each later one as the show reaches it; loaded slides stay.
  * No autoplay with reduced motion or a single slide.
@@ -30,6 +33,8 @@ export function useSlideshow(
   // LCP element (4-5s render delay). Later slides re-sequence it normally.
   const [showCaption, setShowCaption] = useState(true);
   const [isFirstSlide, setIsFirstSlide] = useState(true);
+  // Bumped by manual navigation: restarts the autoplay cycle.
+  const [cycle, setCycle] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const captionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -63,6 +68,7 @@ export function useSlideshow(
     if (timerRef.current) clearTimeout(timerRef.current);
     if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
     setShowCaption(false);
+    setCycle((c) => c + 1);
     setTimeout(() => {
       showSlide(index);
       scheduleCaptionIn();
@@ -114,7 +120,7 @@ export function useSlideshow(
       if (timerRef.current) clearTimeout(timerRef.current);
       if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
     };
-  }, [introComplete, slideCount, prefersReduced, scheduleCaptionIn]);
+  }, [introComplete, slideCount, prefersReduced, scheduleCaptionIn, cycle]);
 
-  return { current, previous, showCaption, isFirstSlide, loaded, goToSlide };
+  return { current, previous, showCaption, isFirstSlide, loaded, goToSlide, cycle };
 }
