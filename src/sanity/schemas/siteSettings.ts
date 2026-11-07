@@ -63,6 +63,15 @@ export const siteSettings = defineType({
       fields: imageAltFields,
     }),
 
+    /* ——— Home page, Chapter VII: the door to the studio ——— */
+    defineField({
+      name: "practiceLine",
+      title: "The practice: line",
+      type: "string",
+      description:
+        "Optional. The large line beside the House of Singh Studios panel. Shown when empty: Beyond the personal work, a studio for brands.",
+    }),
+
     /* ——— Global SEO defaults ——— */
     defineField({
       name: "defaultMetaDescription",

@@ -14,10 +14,12 @@ const securityHeaders = [
   // record (Chapter VI) loads to learn when the playlist plays, so the disc
   // turns only then. If it is blocked, the player still works as a plain
   // embed (frame-src) and the disc stays still.
+  // img-src allows https://studios.houseofsingh.com for the House of Singh
+  // Studios logo in the home page door (Chapter VII), served by the studio.
   {
     key: "Content-Security-Policy",
     value:
-      "default-src 'self'; script-src 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://core.sanity-cdn.com https://open.spotify.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://va.vercel-scripts.com; frame-src https://open.spotify.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://core.sanity-cdn.com https://open.spotify.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io https://studios.houseofsingh.com; font-src 'self'; connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://va.vercel-scripts.com; frame-src https://open.spotify.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'",
   },
 ];
 

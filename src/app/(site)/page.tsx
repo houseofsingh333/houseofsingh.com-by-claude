@@ -4,7 +4,7 @@ import Exhibition from "@/components/home/exhibition/Exhibition";
 import SpotlightBillboard from "@/components/home/SpotlightBillboard";
 import JournalFilmstrip from "@/components/home/filmstrip/JournalFilmstrip";
 import RecordChapter from "@/components/home/record/RecordChapter";
-import StudioRedirect from "@/components/home/StudioRedirect";
+import StudioDoor from "@/components/home/StudioDoor";
 import { sanityFetch } from "@/sanity/fetch";
 import {
   heroSlidesQuery,
@@ -116,7 +116,7 @@ export default async function HomePage() {
         intro={settings?.listeningIntro}
         sleeve={settings?.listeningSleeve}
       />
-      <StudioRedirect />
+      <StudioDoor line={settings?.practiceLine} />
     </>
   );
 }

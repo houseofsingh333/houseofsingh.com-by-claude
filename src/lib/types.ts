@@ -220,6 +220,7 @@ export type SiteSettings = {
   listeningNote?: string | null;
   listeningIntro?: string | null;
   listeningSleeve?: SanityImage | null;
+  practiceLine?: string | null;
   defaultMetaDescription?: string | null;
   organizationName?: string | null;
   founderName?: string | null;

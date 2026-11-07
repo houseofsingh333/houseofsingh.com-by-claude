@@ -43,6 +43,7 @@ export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   listeningNote,
   listeningIntro,
   "listeningSleeve": listeningSleeve ${_imageAsset},
+  practiceLine,
   defaultMetaDescription,
   organizationName,
   founderName,

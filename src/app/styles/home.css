@@ -674,3 +674,119 @@ html:not(.js) .hero-progress {
     animation: none;
   }
 }
+
+/* ——— Door (StudioDoor), Chapter VII ———
+   A canvas half and a charcoal half for House of Singh Studios. Default
+   (phones, reduced motion, no JavaScript): both halves in place, stacked
+   below 1024px. Desktop with motion allowed and JavaScript running: the
+   section is 170svh tall, its stage pins for one screen and --p (0 to 1,
+   from a scroll timeline or ScrollProgress) slides the charcoal half in
+   from the right over the first 60%. Focus inside it brings it in at once.
+   Transforms and opacity only. */
+.door {
+  background: var(--background);
+  overflow-x: clip;
+}
+.door-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.door-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-block: var(--section-space-md);
+}
+.door-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
+  padding-block: var(--section-space-md);
+  background: var(--foreground);
+  color: var(--background);
+}
+/* The studio's logo, drawn light on the charcoal. Fixed height, so it
+   takes its place without moving anything when it arrives. */
+.door-logo {
+  display: block;
+  height: 48px;
+  width: auto;
+  max-width: 260px;
+  object-fit: contain;
+  object-position: left center;
+  filter: brightness(0) invert(1);
+}
+.door-link {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0 6px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--background);
+  border-bottom: 1px solid var(--background);
+  transition: color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
+}
+.door-link:hover {
+  color: var(--muted-foreground-inverse);
+  border-color: var(--muted-foreground-inverse);
+}
+.door-hint {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .door-stage {
+    grid-template-columns: 44% minmax(0, 1fr);
+    min-height: min(100svh, 800px);
+  }
+  .door-canvas {
+    justify-content: space-between;
+    padding-block: 96px;
+  }
+  .door-panel {
+    padding: 88px 96px;
+  }
+}
+@supports (animation-timeline: view()) {
+  .door {
+    animation: door-progress linear both;
+    animation-timeline: view();
+    animation-range: contain 0% contain 100%;
+  }
+}
+@keyframes door-progress {
+  from {
+    --p: 0;
+  }
+  to {
+    --p: 1;
+  }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  html.js .door {
+    height: 170svh;
+    --g: min(1, calc(var(--p) / 0.6));
+  }
+  html.js .door-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+  }
+  html.js .door-panel {
+    transform: translateX(calc((1 - var(--g)) * 100%));
+  }
+  html.js .door-panel:focus-within {
+    transform: none;
+  }
+  html.js .door-hint {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    opacity: calc(1 - var(--g) * 2);
+  }
+}
