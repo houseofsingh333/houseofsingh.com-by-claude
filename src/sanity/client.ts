@@ -8,6 +8,10 @@ import { projectId, dataset, apiVersion, isSanityConfigured } from "./env";
  * The 8 second timeout makes a slow Sanity fail fast instead of holding a
  * render for the library default of 5 minutes; sanityFetch then throws and
  * ISR keeps the last good page.
+ *
+ * The library's own retries are off (maxRetries: 0): sanityFetch retries
+ * brief network failures itself, logged and within one 8 second budget, so
+ * the two never stack.
  */
 export const client: SanityClient | null = isSanityConfigured
   ? createClient({
@@ -16,5 +20,6 @@ export const client: SanityClient | null = isSanityConfigured
       apiVersion,
       useCdn: true,
       timeout: 8000,
+      maxRetries: 0,
     })
   : null;
