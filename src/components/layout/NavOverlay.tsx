@@ -1,10 +1,13 @@
 "use client";
 
-import { useRef } from "react";
-import { useFocusTrap } from "@/hooks/useFocusTrap";
-import { X } from "lucide-react";
+import { useRef, useState } from "react";
 import Link from "next/link";
-import type { NavItem } from "@/lib/types";
+import { usePathname } from "next/navigation";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
+import SanityImage from "@/components/SanityImage";
+import TorontoTime from "@/components/TorontoTime";
+import { roman } from "@/lib/roman";
+import type { MenuPhoto, NavItem } from "@/lib/types";
 
 /** id of the menu panel, referenced by the menu buttons' aria-controls. */
 export const SITE_MENU_ID = "site-menu";
@@ -14,125 +17,157 @@ type Props = {
   onClose: () => void;
   onNewsletterOpen: () => void;
   items: NavItem[];
+  /** Menu photographs by page link. */
+  photos: Record<string, MenuPhoto>;
 };
 
+const SMALL_LINK =
+  "text-[12px] tracking-[0.12em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) py-2";
+
+/**
+ * The menu as an index room: a full screen canvas with the pages in large
+ * Playfair, numbered I to V in brass, and a photograph that changes with
+ * the page under the pointer or focus (each page's Menu photograph in
+ * Sanity, or a default from the page). Below: Studio, Instagram and the
+ * newsletter as small links, and the time in Toronto. It fades in within
+ * 500ms (see "Menu, the index room" in styles/layout.css).
+ *
+ * While open the rest of the page is inert, focus moves to the first page,
+ * Tab stays inside, Escape closes, and focus returns to the dot (Header).
+ */
 export default function NavOverlay({
   isOpen,
   onClose,
   onNewsletterOpen,
   items,
+  photos,
 }: Props) {
   const sorted = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const pages = sorted.filter((item) => !item.external);
+  const outside = sorted.filter((item) => item.external);
+  const pathname = usePathname();
+  const current = pages.findIndex((p) =>
+    p.href === "/" ? pathname === "/" : pathname === p.href || pathname.startsWith(p.href + "/"),
+  );
+
   const panelRef = useRef<HTMLElement>(null);
-  const backdropRef = useRef<HTMLDivElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
-  // While open: the rest of the page is inert, focus moves to the first menu
-  // link, Escape closes, and Tab loops inside the menu. Keyboard and screen
-  // reader behaviour only; nothing here changes how the menu looks. Focus
-  // returns to the visible menu button from Header, so restoreFocus is off.
   useFocusTrap({
     active: isOpen,
     containerRef: panelRef,
-    keepRefs: [backdropRef],
     onEscape: onClose,
     initialFocusRef: firstLinkRef,
   });
 
+  // The page under the pointer or focus; the current page until then.
+  const [hovered, setHovered] = useState<number | null>(null);
+  const active = hovered ?? Math.max(0, current);
+  // Photographs load only once the menu has been opened, never with the page.
+  const [opened, setOpened] = useState(false);
+  if (isOpen && !opened) setOpened(true);
+
   return (
-    <>
-      {/* Right-side backdrop */}
-      <div
-        ref={backdropRef}
-        className={`fixed inset-0 z-40 transition-opacity duration-500 motion-reduce:transition-none ${
-          isOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
-        }`}
-        onClick={onClose}
-      />
+    <nav
+      ref={panelRef}
+      id={SITE_MENU_ID}
+      aria-label="Site menu"
+      inert={!isOpen}
+      data-open={isOpen ? "" : undefined}
+      className="menu-room"
+    >
+      <div className="menu-top">
+        <button type="button" onClick={onClose} aria-label="Close menu" className="menu-close">
+          Close
+        </button>
+        <span aria-hidden="true" className="menu-wordmark">
+          House of Singh
+        </span>
+        <span aria-hidden="true" />
+      </div>
 
-      {/* Left-half panel. Inert while closed, so its links are out of the
-          Tab order and hidden from screen readers; the slide is unchanged. */}
-      <nav
-        ref={panelRef}
-        id={SITE_MENU_ID}
-        aria-label="Site menu"
-        inert={!isOpen}
-        className={`fixed top-0 left-0 z-50 h-full w-full md:w-1/2 bg-background border-r border-border flex flex-col transform transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] motion-reduce:transition-none ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        {/* Close button */}
-        <div className="flex items-center px-6 py-5 md:px-8 md:py-6">
-          <button
-            onClick={onClose}
-            aria-label="Close menu"
-            className="flex items-center gap-2 group min-h-[44px]"
-          >
-            <X className="h-4 w-4 text-foreground" />
-            <span className="text-xs tracking-widest uppercase text-foreground">
-              Close
-            </span>
-          </button>
-        </div>
-
-        {/* Nav items */}
-        <ul className="flex flex-col gap-0 px-6 md:px-8 pt-8 md:pt-12 flex-1 overflow-y-auto">
-          {sorted.map((item, i) => (
-            <li key={item.href} className="border-b border-border/50">
-              {item.external ? (
-                <a
-                  ref={i === 0 ? firstLinkRef : undefined}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={onClose}
-                  aria-label="Studio, opens House of Singh Studios in a new tab"
-                  className="group flex items-center py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) min-h-[48px]"
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    {item.label}
-                    <span
-                      aria-hidden="true"
-                      className="text-xs tracking-widest text-muted-foreground transition-transform duration-(--dur-hover) ease-(--ease-soft-out) group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:transform-none"
-                    >
-                      ↗
-                    </span>
-                  </span>
-                </a>
-              ) : (
-                <Link
-                  ref={i === 0 ? firstLinkRef : undefined}
-                  href={item.href}
-                  onClick={onClose}
-                  className="block py-4 md:py-5 text-lg md:text-2xl lg:text-3xl font-light tracking-tight text-foreground hover:text-muted-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) min-h-[48px]"
-                >
-                  {item.label}
-                </Link>
-              )}
+      <div className="menu-body">
+        <ul className="menu-list" onMouseLeave={() => setHovered(null)}>
+          {pages.map((item, i) => (
+            <li key={item.href}>
+              <Link
+                ref={i === 0 ? firstLinkRef : undefined}
+                href={item.href}
+                onClick={onClose}
+                onMouseEnter={() => setHovered(i)}
+                onFocus={() => setHovered(i)}
+                aria-current={i === current ? "page" : undefined}
+                data-active={i === active ? "" : undefined}
+                className="menu-link"
+              >
+                <span aria-hidden="true" className="menu-num">
+                  {roman(i + 1)}
+                </span>
+                <span className="menu-label">{item.label}</span>
+              </Link>
             </li>
           ))}
         </ul>
 
-        {/* Bottom: Instagram + Newsletter */}
-        <div className="px-6 md:px-8 pb-6 md:pb-8 pt-4 flex items-center gap-6">
+        {/* Decorative here: it only echoes the page under the pointer. */}
+        <figure aria-hidden="true" className="menu-photo">
+          <div className="menu-photo-frame">
+            {opened &&
+              pages.map((item, i) => {
+                const photo = photos[item.href];
+                if (!photo) return null;
+                return (
+                  <div key={item.href} className="menu-photo-layer" data-active={i === active ? "" : undefined}>
+                    <SanityImage
+                      image={photo.image}
+                      context="thumbnail"
+                      alt={photo.alt ?? undefined}
+                      fill
+                      sizes="420px"
+                      className="object-cover"
+                      develop={false}
+                    />
+                  </div>
+                );
+              })}
+          </div>
+          <figcaption className="menu-photo-caption">
+            {photos[pages[active]?.href]?.caption ?? ""}
+          </figcaption>
+        </figure>
+      </div>
+
+      <div className="menu-foot">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+          {outside.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onClose}
+              className={SMALL_LINK}
+            >
+              {item.label}
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          ))}
           <a
             href="https://www.instagram.com/houseofsingh"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) py-2"
+            className={SMALL_LINK}
           >
             Instagram
+            <span className="sr-only"> (opens in a new tab)</span>
           </a>
-          <span className="text-border">&middot;</span>
-          <button
-            onClick={onNewsletterOpen}
-            className="text-[11px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) py-2"
-          >
+          <button type="button" onClick={onNewsletterOpen} className={SMALL_LINK}>
             Newsletter
           </button>
         </div>
-      </nav>
-    </>
+        <p className="text-[12px] tracking-[0.12em] uppercase text-muted-foreground">
+          Toronto <TorontoTime />
+        </p>
+      </div>
+    </nav>
   );
 }

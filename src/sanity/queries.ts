@@ -29,7 +29,21 @@ const _seo = `{
 // --------------- Navigation ---------------
 
 export const navigationQuery = `*[_type == "navigation"][0]{
-  items[]{ label, href, external, order }
+  items[]{ label, href, external, order, "image": image ${_imageAsset} }
+}`;
+
+/**
+ * Default menu photographs, one per page, for pages whose menu item has no
+ * photograph of its own: the first hero slide, the About portrait, the
+ * first featured project, the latest journal entry and the first Contact
+ * photograph.
+ */
+export const menuPhotosQuery = `{
+  "home": *[_type == "heroSlide"] | order(order asc)[0]{ "image": image ${_imageAsset}, "alt": coalesce(image.alt, imageAlt), caption },
+  "about": *[_type == "aboutPage"][0]{ "image": portrait ${_imageAsset} },
+  "projects": *[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc)[0]{ title, "image": coalesce(coverImage, thumbnail) ${_imageAsset} },
+  "journal": *[_type == "journalEntry"] | order(date desc)[0]{ title, "image": coverImage ${_imageAsset} },
+  "contact": *[_type == "contactPage"][0].instagramPhotos[0]{ "image": image ${_imageAsset} }
 }`;
 
 // --------------- Site Settings ---------------

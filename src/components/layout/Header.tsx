@@ -10,16 +10,18 @@ const NewsletterModal = dynamic(
   () => import("@/components/NewsletterModal"),
   { ssr: false },
 );
-import type { NavItem } from "@/lib/types";
+import type { MenuPhoto, NavItem } from "@/lib/types";
 
 const SCROLL_SHOW = 60;
 const SCROLL_HIDE = 20;
 
 type Props = {
   items: NavItem[];
+  /** Menu photographs by page link (see buildMenuPhotos in the layout). */
+  menuPhotos: Record<string, MenuPhoto>;
 };
 
-export default function Header({ items }: Props) {
+export default function Header({ items, menuPhotos }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [newsletterOpen, setNewsletterOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -174,6 +176,7 @@ export default function Header({ items }: Props) {
         onClose={closeMenu}
         onNewsletterOpen={handleNewsletterOpen}
         items={items}
+        photos={menuPhotos}
       />
 
       <NewsletterModal

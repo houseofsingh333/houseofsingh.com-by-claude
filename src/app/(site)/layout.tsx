@@ -5,11 +5,47 @@ import Footer from "@/components/layout/Footer";
 import PageTransition from "@/components/PageTransition";
 import { sanityFetch } from "@/sanity/fetch";
 import {
+  menuPhotosQuery,
   navigationQuery,
   siteSettingsQuery,
 } from "@/sanity/queries";
 import { fallbackNavItems } from "@/lib/placeholder-data";
-import type { NavItem, SiteSettings } from "@/lib/types";
+import type { MenuPhoto, NavItem, SanityImage, SiteSettings } from "@/lib/types";
+import { hasImageAsset } from "@/lib/sanityImage";
+
+type MenuPhotoDefaults = {
+  home?: { image?: SanityImage | null; alt?: string | null; caption?: string | null } | null;
+  about?: { image?: SanityImage | null } | null;
+  projects?: { image?: SanityImage | null; title?: string | null } | null;
+  journal?: { image?: SanityImage | null; title?: string | null } | null;
+  contact?: { image?: SanityImage | null } | null;
+};
+
+/**
+ * The menu photograph for each page, by its link: the item's own Menu
+ * photograph when set, else a sensible default from the page itself.
+ */
+function buildMenuPhotos(items: NavItem[], d: MenuPhotoDefaults | null): Record<string, MenuPhoto> {
+  const defaults: Record<string, MenuPhoto | null> = {
+    "/": d?.home?.image ? { image: d.home.image, alt: d.home.alt, caption: d.home.caption } : null,
+    "/about": d?.about?.image ? { image: d.about.image, caption: "Maninder Singh, Toronto" } : null,
+    "/projects": d?.projects?.image ? { image: d.projects.image, caption: d.projects.title } : null,
+    "/journal": d?.journal?.image ? { image: d.journal.image, caption: d.journal.title } : null,
+    "/contact": d?.contact?.image
+      ? { image: d.contact.image }
+      : d?.about?.image
+        ? { image: d.about.image }
+        : null,
+  };
+  const photos: Record<string, MenuPhoto> = {};
+  for (const item of items) {
+    if (item.external) continue;
+    const own = item.image && hasImageAsset(item.image) ? { image: item.image, caption: item.image.caption } : null;
+    const photo = own ?? defaults[item.href];
+    if (photo && hasImageAsset(photo.image)) photos[item.href] = photo;
+  }
+  return photos;
+}
 import JsonLd from "@/components/JsonLd";
 import { buildSiteJsonLd } from "@/lib/structured-data";
 import { IntroProvider } from "@/components/IntroContext";
@@ -28,9 +64,10 @@ export default async function SiteLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [navData, settings] = await Promise.all([
+  const [navData, settings, menuDefaults] = await Promise.all([
     sanityFetch<{ items: NavItem[] } | null>({ query: navigationQuery }),
     sanityFetch<SiteSettings | null>({ query: siteSettingsQuery }),
+    sanityFetch<MenuPhotoDefaults | null>({ query: menuPhotosQuery }),
   ]);
 
   const jsonLd = buildSiteJsonLd(settings);
@@ -40,6 +77,7 @@ export default async function SiteLayout({
     sanityItems && sanityItems.length >= 4 ? sanityItems : fallbackNavItems;
 
   // The fallback nav lists the site's real routes, so it stays as a default.
+  const menuPhotos = buildMenuPhotos(navItems, menuDefaults);
 
   return (
     <>
@@ -64,7 +102,7 @@ export default async function SiteLayout({
         Skip to content
       </a>
       <IntroProvider>
-        <Header items={navItems} />
+        <Header items={navItems} menuPhotos={menuPhotos} />
         <main id="main-content" className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>
