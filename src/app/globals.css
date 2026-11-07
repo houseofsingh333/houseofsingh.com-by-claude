@@ -1099,6 +1099,83 @@ body {
     linear-gradient(to top, rgba(0, 0, 0, 0.35) 0%, transparent 40%);
 }
 
+/* ——— Hero slideshow (CinematicHero), in CSS ———
+   Each slide is stacked. The active slide fades in over --hero-fade on
+   --ease-slow, on top of the slide it replaces, which stays fully visible
+   underneath (its zoom still running) until it is covered. The first slide
+   is shown at once. The Ken Burns zoom is a slow, linear drift between two
+   transforms the component sets per slide (--kb-from, --kb-to); it starts
+   when data-run is set and keeps its end position. */
+:root {
+  --hero-fade: 2000ms;
+  --hero-kb-duration: 12000ms;
+}
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.hero-slide[data-state="active"] {
+  opacity: 1;
+  z-index: 2;
+  transition: opacity var(--hero-fade) var(--ease-slow);
+}
+.hero-slide[data-state="leaving"] {
+  opacity: 1;
+  z-index: 1;
+}
+.hero-slide[data-first] {
+  transition: none;
+}
+.hero-kb {
+  position: absolute;
+  inset: 0;
+  transform: var(--kb-from);
+}
+.hero-kb[data-run] {
+  animation: heroKenBurns var(--hero-kb-duration) linear forwards;
+}
+@keyframes heroKenBurns {
+  from {
+    transform: var(--kb-from);
+  }
+  to {
+    transform: var(--kb-to);
+  }
+}
+/* Caption: fades out (0.6s), then the next one fades and rises 12px in. */
+.hero-caption {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 600ms var(--ease-slow),
+    transform 0s linear 600ms;
+}
+.hero-caption[data-visible] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 1200ms var(--ease-slow),
+    transform 1200ms var(--ease-slow);
+}
+.hero-caption[data-first] {
+  transition: none;
+}
+/* Without JavaScript the dots cannot work, so they take no space. */
+html:not(.js) .hero-dots {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide,
+  .hero-caption {
+    transition: none !important;
+  }
+  .hero-kb {
+    animation: none !important;
+    transform: none;
+  }
+}
+
 /* ——— Horizontal gallery — quiet thin scroll affordance ——— */
 
 .hos-hscroll {

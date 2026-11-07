@@ -1,17 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useReducedMotion,
-} from "motion/react";
+import { useState, useEffect, useCallback, useRef, type CSSProperties } from "react";
 import SanityImage from "@/components/SanityImage";
 import { useIntro } from "@/components/IntroContext";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import type { HeroSlide } from "@/lib/placeholder-data";
-import { EASE_SLOW } from "@/lib/animation";
 
-// ——— Ken Burns presets ———
+/*
+ * Home hero slideshow, in CSS (no animation library). See "Hero slideshow" in
+ * globals.css: each slide crossfades in over --hero-fade (about 2s) on
+ * --ease-slow, on top of the previous slide, and drifts with a slow, gentle
+ * Ken Burns zoom. Reduced motion: the first slide, still, with no zoom.
+ */
+
+// ——— Ken Burns presets: gentle (about 40% smaller moves than before) ———
 
 type KenBurnsPreset = {
   from: { scale: number; x: string; y: string };
@@ -19,31 +21,41 @@ type KenBurnsPreset = {
 };
 
 const KEN_BURNS_PRESETS: KenBurnsPreset[] = [
-  { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.06, x: "-1.5%", y: "-1%" } },
-  { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.05, x: "1.5%", y: "0%" } },
-  { from: { scale: 1.06, x: "0%", y: "-0.5%" }, to: { scale: 1.0, x: "0%", y: "0.5%" } },
-  { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.04, x: "1%", y: "1%" } },
-  { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.05, x: "1.2%", y: "-0.8%" } },
-  { from: { scale: 1.0, x: "0.5%", y: "0%" }, to: { scale: 1.07, x: "-1%", y: "0.3%" } },
-  { from: { scale: 1.08, x: "0%", y: "0.5%" }, to: { scale: 1.02, x: "0%", y: "-0.3%" } },
+  { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.035, x: "-0.9%", y: "-0.6%" } },
+  { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.03, x: "0.9%", y: "0%" } },
+  { from: { scale: 1.035, x: "0%", y: "-0.3%" }, to: { scale: 1.0, x: "0%", y: "0.3%" } },
+  { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.025, x: "0.6%", y: "0.6%" } },
+  { from: { scale: 1.0, x: "0%", y: "0%" }, to: { scale: 1.03, x: "0.7%", y: "-0.5%" } },
+  { from: { scale: 1.0, x: "0.3%", y: "0%" }, to: { scale: 1.04, x: "-0.6%", y: "0.2%" } },
+  { from: { scale: 1.045, x: "0%", y: "0.3%" }, to: { scale: 1.01, x: "0%", y: "-0.2%" } },
 ];
 
 const SLIDE_DURATION = 8000;
-const IMAGE_FADE_DURATION = 1.5;
 const CAPTION_IN_DELAY = 1.2;
-const CAPTION_IN_DURATION = 1.2;
 const CAPTION_OUT_DURATION = 0.6;
-const FIRST_SLIDE_FADE_DURATION = 1.8;
 
 type Props = {
   slides: HeroSlide[];
 };
 
+/** CSS variables for a slide's Ken Burns start and end. */
+function kenBurnsVars(preset: KenBurnsPreset): CSSProperties {
+  return {
+    "--kb-from": `translate(${preset.from.x}, ${preset.from.y}) scale(${preset.from.scale})`,
+    "--kb-to": `translate(${preset.to.x}, ${preset.to.y}) scale(${preset.to.scale})`,
+  } as CSSProperties;
+}
+
 export default function CinematicHero({ slides }: Props) {
-  const prefersReduced = useReducedMotion();
+  const prefersReduced = usePrefersReducedMotion();
   // Shared signal from the Header intro overlay — no polling.
   const { introComplete } = useIntro();
-  const [current, setCurrent] = useState(0);
+  // The slide shown, and the one it replaced (kept underneath while the new
+  // one fades in over it, its zoom still running so it never snaps back).
+  const [{ current, previous }, setSlide] = useState<{
+    current: number;
+    previous: number | null;
+  }>({ current: 0, previous: null });
   // Starts true so the first caption is present in the server-rendered HTML
   // and paints with the hero. Gating it behind the intro made it an invisible
   // LCP element (4-5s render delay). Later slides re-sequence it normally.
@@ -51,6 +63,23 @@ export default function CinematicHero({ slides }: Props) {
   const [isFirstSlide, setIsFirstSlide] = useState(true);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const captionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Slides load progressively: the current and the next, then each later one
+  // as the show reaches the slide before it. Loaded slides stay mounted.
+  const [loaded, setLoaded] = useState<ReadonlySet<number>>(
+    () => new Set([0, 1].filter((i) => i < slides.length)),
+  );
+  const next = slides.length ? (current + 1) % slides.length : 0;
+  if (slides.length > 0 && (!loaded.has(current) || !loaded.has(next))) {
+    setLoaded(new Set([...loaded, current, next]));
+  }
+
+  const showSlide = useCallback((index: number) => {
+    setSlide((s) =>
+      s.current === index ? s : { current: index, previous: s.current },
+    );
+    setIsFirstSlide(false);
+  }, []);
 
   // ——— Show caption after image settles ———
   const scheduleCaptionIn = useCallback(() => {
@@ -66,46 +95,10 @@ export default function CinematicHero({ slides }: Props) {
     if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
     setShowCaption(false);
     setTimeout(() => {
-      setCurrent(index);
-      setIsFirstSlide(false);
+      showSlide(index);
       scheduleCaptionIn();
     }, CAPTION_OUT_DURATION * 1000 + 50);
-  }, [current, scheduleCaptionIn]);
-
-  // The first caption is shown from the initial render (see useState above),
-  // so there is no intro-gated timer here. Later slides are sequenced by
-  // scheduleCaptionIn() from the autoplay/navigation handlers.
-
-  // ——— Autoplay timer ———
-  useEffect(() => {
-    if (!introComplete || slides.length <= 1 || prefersReduced) return;
-
-    const advance = () => {
-      // Skip advance if tab is hidden — autoplay resumes on next interval when visible
-      if (!visibleRef.current) return;
-      // 1. Hide caption first
-      setShowCaption(false);
-
-      // 2. After caption fades out, switch slide
-      timerRef.current = setTimeout(() => {
-        setCurrent((prev) => {
-          const next = (prev + 1) % slides.length;
-          return next;
-        });
-        setIsFirstSlide(false);
-
-        // 3. Schedule caption in for new slide
-        scheduleCaptionIn();
-      }, CAPTION_OUT_DURATION * 1000 + 100);
-    };
-
-    const id = setInterval(advance, SLIDE_DURATION);
-    return () => {
-      clearInterval(id);
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
-    };
-  }, [introComplete, slides.length, prefersReduced, scheduleCaptionIn]);
+  }, [current, showSlide, scheduleCaptionIn]);
 
   // ——— Pause autoplay when tab is hidden, resume when visible ———
   const visibleRef = useRef(true);
@@ -123,11 +116,40 @@ export default function CinematicHero({ slides }: Props) {
     return () => document.removeEventListener("visibilitychange", handler);
   }, []);
 
+  // ——— Autoplay timer ———
+  useEffect(() => {
+    if (!introComplete || slides.length <= 1 || prefersReduced) return;
+
+    const advance = () => {
+      // Skip advance if tab is hidden — autoplay resumes on next interval when visible
+      if (!visibleRef.current) return;
+      // 1. Hide caption first
+      setShowCaption(false);
+
+      // 2. After caption fades out, switch slide
+      timerRef.current = setTimeout(() => {
+        setSlide((s) => ({
+          current: (s.current + 1) % slides.length,
+          previous: s.current,
+        }));
+        setIsFirstSlide(false);
+
+        // 3. Schedule caption in for new slide
+        scheduleCaptionIn();
+      }, CAPTION_OUT_DURATION * 1000 + 100);
+    };
+
+    const id = setInterval(advance, SLIDE_DURATION);
+    return () => {
+      clearInterval(id);
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
+    };
+  }, [introComplete, slides.length, prefersReduced, scheduleCaptionIn]);
+
   if (slides.length === 0) return null;
 
   const slide = slides[current];
-  const preset = KEN_BURNS_PRESETS[current % KEN_BURNS_PRESETS.length];
-  const fadeDuration = isFirstSlide ? FIRST_SLIDE_FADE_DURATION : IMAGE_FADE_DURATION;
 
   // ——— Reduced motion: static first slide, no animation ———
   if (prefersReduced) {
@@ -155,61 +177,53 @@ export default function CinematicHero({ slides }: Props) {
 
   return (
     <div className="relative w-full h-[100svh] bg-secondary overflow-hidden">
-      {/* ——— Image layers with crossfade + Ken Burns ——— */}
-      <AnimatePresence mode="sync">
-        <motion.div
-          key={slide._id + "-" + current}
-          className="absolute inset-0"
-          // The first slide skips the enter animation entirely (initial={false}),
-          // so it renders at opacity 1 with no transition — a child at opacity 1
-          // inside an animating opacity-0 parent still cannot paint, which kept
-          // the caption out of LCP. Later slides keep the crossfade.
-          initial={isFirstSlide ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={
-            isFirstSlide
-              ? { duration: 0 }
-              : { opacity: { duration: fadeDuration, ease: EASE_SLOW } }
-          }
-        >
-          <motion.div
-            className="absolute inset-0"
-            initial={{
-              scale: preset.from.scale,
-              x: preset.from.x,
-              y: preset.from.y,
-            }}
-            animate={introComplete ? {
-              scale: preset.to.scale,
-              x: preset.to.x,
-              y: preset.to.y,
-            } : undefined}
-            transition={{
-              duration: SLIDE_DURATION / 1000,
-              ease: "linear",
-            }}
+      {/* ——— Image layers: crossfade + Ken Burns, in CSS ——— */}
+      {slides.map((s, i) => {
+        if (!loaded.has(i)) return null;
+        const state =
+          i === current ? "active" : i === previous ? "leaving" : "idle";
+        return (
+          <div
+            key={s._id + "-" + i}
+            className="hero-slide"
+            data-state={state}
+            // The first slide is shown at once, with no fade in.
+            data-first={isFirstSlide && i === current ? "" : undefined}
+            aria-hidden={state !== "active"}
           >
-            <SanityImage
-              image={slide.image}
-              context="hero"
-              alt={slide.imageAlt || slide.caption || "Hero"}
-              priority={current === 0}
-              fill
-              className="object-cover"
-            />
-          </motion.div>
-        </motion.div>
-      </AnimatePresence>
+            <div
+              className="hero-kb"
+              style={kenBurnsVars(KEN_BURNS_PRESETS[i % KEN_BURNS_PRESETS.length])}
+              // The zoom runs once the intro is done, restarting each time
+              // the slide becomes active, and keeps running while it is
+              // covered by the next slide.
+              data-run={introComplete && state !== "idle" ? "" : undefined}
+            >
+              <SanityImage
+                image={s.image}
+                context="hero"
+                alt={s.imageAlt || s.caption || "Hero"}
+                priority={i === 0}
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        );
+      })}
 
       {/* ——— Vignette overlay — film still feel ——— */}
       <div className="absolute inset-0 pointer-events-none hero-vignette" />
 
       {/* ——— Bottom-left: dots + caption ——— */}
       <div className="absolute bottom-6 left-5 md:bottom-8 md:left-8 z-10 flex items-center gap-4 md:gap-5">
-        {/* Slide dots — always visible once intro is done */}
-        {introComplete && slides.length > 1 && (
-          <div className="flex items-center gap-2">
+        {/* Slide dots: their space is held from the first paint (hidden
+            until the intro is done), so the caption beside them never
+            moves. With JavaScript off they are not shown at all. */}
+        {slides.length > 1 && (
+          <div
+            className={`hero-dots flex items-center gap-2 ${introComplete ? "" : "invisible"}`}
+          >
             {slides.map((_, i) => (
               <button
                 key={i}
@@ -228,29 +242,18 @@ export default function CinematicHero({ slides }: Props) {
           </div>
         )}
 
-        {/* Caption — sequenced separately from image */}
-        <AnimatePresence mode="wait">
-          {showCaption && slide.caption && (
-            <motion.p
-              key={"caption-" + current}
-              className="text-[10px] md:text-xs tracking-[0.15em] uppercase text-white/70 max-w-[200px] md:max-w-md"
-              // The first caption paints at full opacity so it is never an
-              // invisible LCP element. Subsequent slides keep the calm
-              // fade-and-rise reveal.
-              initial={
-                isFirstSlide ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }
-              }
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 0 }}
-              transition={{
-                duration: isFirstSlide ? 0 : CAPTION_IN_DURATION,
-                ease: EASE_SLOW,
-              }}
-            >
-              {slide.caption}
-            </motion.p>
-          )}
-        </AnimatePresence>
+        {/* Caption — sequenced separately from the image: fades out, then
+            the next one rises in. The first caption paints at full opacity,
+            so it is never an invisible LCP element. */}
+        {slide.caption && (
+          <p
+            className="hero-caption text-[10px] md:text-xs tracking-[0.15em] uppercase text-white/70 max-w-[200px] md:max-w-md"
+            data-visible={showCaption ? "" : undefined}
+            data-first={isFirstSlide ? "" : undefined}
+          >
+            {slide.caption}
+          </p>
+        )}
       </div>
 
       {/* ——— Scroll indicator — right side ——— */}
