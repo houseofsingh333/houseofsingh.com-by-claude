@@ -44,6 +44,8 @@ export type ProjectSummary = {
   category: string;
   thumbnailSrc: string;
   thumbnailAlt: string;
+  /** Sanity's tiny blurred preview of the thumbnail (lqip), if any. */
+  thumbnailLqip?: string | null;
   excerpt: string;
   isUpcoming?: boolean;
 };

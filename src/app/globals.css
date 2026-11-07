@@ -240,17 +240,23 @@ body {
 
 /* ——— Instagram photo plate crossfade ——— */
 
+/* One crossfade layer per photo (with its blur up preview inside). */
+.instagram-plate-layer {
+  position: absolute;
+  inset: 0;
+  transition: opacity var(--plate-fade-duration, 1.2s) var(--ease-slow);
+}
+
 .instagram-plate-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity var(--plate-fade-duration, 1.2s) var(--ease-slow);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .instagram-plate-img {
+  .instagram-plate-layer {
     transition: none;
   }
 }
@@ -1796,6 +1802,46 @@ body {
 .featured-panel {
   background-color: var(--featured-panel);
   --muted-foreground: var(--muted-foreground-panel);
+}
+
+/* ——— Blur up ———
+   A photo's tiny blurred preview (BlurUp) sits over the photo and dissolves
+   once the photo has loaded (data-loaded, set by the pre paint script). Only
+   shown when JavaScript runs; instant under reduced motion. */
+.blurup {
+  display: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+html.js .blurup {
+  display: block;
+}
+.blurup::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  filter: blur(18px);
+  transform: scale(1.12);
+}
+img[data-loaded] + .blurup {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .blurup {
+    transition: opacity var(--dur-image) var(--ease-slow);
+  }
+}
+/* A non filling photo gets a wrapper so the preview has a box to cover. */
+.blurup-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* ——— Scroll reveal ———

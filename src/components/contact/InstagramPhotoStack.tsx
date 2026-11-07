@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties } from "react";
 import Image from "next/image";
+import BlurUp, { blurUpImgProps } from "@/components/BlurUp";
 import { sanityLoader } from "@/lib/sanityImage";
 import type { InstagramPhoto } from "./InstagramPhotoPlate";
 
@@ -12,7 +13,7 @@ type Props = {
   sizes: string;
   /** Load the first photo straight away (above the fold) instead of lazily. */
   eagerFirst?: boolean;
-  /** Extra inline style per photo (opacity and transition of the crossfade). */
+  /** Inline style per photo layer (the crossfade's opacity). */
   styleFor: (index: number, active: boolean) => CSSProperties;
 };
 
@@ -41,22 +42,30 @@ export default function InstagramPhotoStack({
     setLoaded(new Set([...loaded, activeIndex, next]));
   }
 
+  // Each photo sits in its own layer with its blur up preview; the
+  // crossfade fades the layer, so an inactive photo's preview never shows.
   return photos.map((photo, i) =>
     loaded.has(i) ? (
-      <Image
+      <span
         key={photo.id}
-        loader={sanityLoader}
-        src={photo.url}
-        // Alt text comes from Sanity, where it is required unless the editor
-        // marked the photo decorative. Photos missing it are reported at
-        // build time (reportInstagramAltGaps), never given a generic stand in.
-        alt={photo.isDecorative ? "" : (photo.alt ?? "")}
-        fill
-        sizes={sizes}
-        loading={eagerFirst && i === 0 ? "eager" : "lazy"}
-        className="instagram-plate-img"
+        className="instagram-plate-layer"
         style={styleFor(i, i === activeIndex)}
-      />
+      >
+        <Image
+          loader={sanityLoader}
+          src={photo.url}
+          // Alt text comes from Sanity, where it is required unless the editor
+          // marked the photo decorative. Photos missing it are reported at
+          // build time (reportInstagramAltGaps), never given a generic stand in.
+          alt={photo.isDecorative ? "" : (photo.alt ?? "")}
+          fill
+          sizes={sizes}
+          loading={eagerFirst && i === 0 ? "eager" : "lazy"}
+          className="instagram-plate-img"
+          {...blurUpImgProps(photo.lqip)}
+        />
+        <BlurUp lqip={photo.lqip} />
+      </span>
     ) : null,
   );
 }

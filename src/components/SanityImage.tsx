@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import BlurUp, { blurUpImgProps, objectPositionOf } from "@/components/BlurUp";
 import {
   getImageProps,
   makeSanityLoader,
@@ -32,7 +33,8 @@ type Props = {
 /**
  * Optimized image component that uses:
  * - Sanity CDN transforms (auto format, responsive widths)
- * - next/image for lazy loading, layout stability, and blur placeholder
+ * - next/image for lazy loading and layout stability
+ * - a blur up preview (lqip) that dissolves once the photo loads (BlurUp)
  * - Centralized profiles from lib/sanityImage.ts
  */
 export default function SanityImage({
@@ -60,23 +62,33 @@ export default function SanityImage({
       })
     : undefined;
 
+  // Blur up: the tiny lqip preview over the photo, dissolving on load
+  // (BlurUp.tsx). Replaces next/image's own blur placeholder, which swapped
+  // instantly instead of dissolving.
+  const lqip = props.blurDataURL;
+  const preview = (
+    <BlurUp lqip={lqip} position={objectPositionOf(className)} />
+  );
+
   if (fill) {
     return (
-      <Image
-        src={props.src}
-        alt={props.alt}
-        fill
-        sizes={sizes ?? props.sizes}
-        priority={priority}
-        className={className}
-        placeholder={props.blurDataURL ? "blur" : "empty"}
-        blurDataURL={props.blurDataURL}
-        loader={loader}
-      />
+      <>
+        <Image
+          src={props.src}
+          alt={props.alt}
+          fill
+          sizes={sizes ?? props.sizes}
+          priority={priority}
+          className={className}
+          loader={loader}
+          {...blurUpImgProps(lqip)}
+        />
+        {preview}
+      </>
     );
   }
 
-  return (
+  const img = (
     <Image
       src={props.src}
       alt={props.alt}
@@ -85,9 +97,17 @@ export default function SanityImage({
       sizes={sizes ?? props.sizes}
       priority={priority}
       className={className}
-      placeholder={props.blurDataURL ? "blur" : "empty"}
-      blurDataURL={props.blurDataURL}
       loader={loader}
+      {...blurUpImgProps(lqip)}
     />
+  );
+  // A non filling photo needs a positioned box for the preview to cover.
+  return lqip ? (
+    <span className="blurup-wrap">
+      {img}
+      {preview}
+    </span>
+  ) : (
+    img
   );
 }

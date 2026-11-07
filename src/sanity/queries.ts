@@ -218,6 +218,7 @@ export const contactPageQuery = `*[_type == "contactPage"][0]{
   instagramPhotos[]{
     "id": _key,
     "url": image.asset->url,
+    "lqip": image.asset->metadata.lqip,
     "alt": image.alt,
     "isDecorative": image.isDecorative,
     permalink

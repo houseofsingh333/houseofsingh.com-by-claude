@@ -106,14 +106,21 @@ export default function RootLayout({
     // <html> before React hydrates, which is intended.
     <html lang="en" className={playfair.variable} suppressHydrationWarning>
       <head>
-        {/* Marks that JavaScript is running, before the first paint. Scroll
-            reveals start hidden only under this class (and only when the
-            visitor allows motion), so without JavaScript every reveal is
-            simply visible. See "Scroll reveal" in globals.css. Harmless on
-            routes outside the site, such as the Studio. */}
+        {/* Pre paint script. Scroll reveals start hidden only under the "js"
+            class (and only when the visitor allows motion), so without
+            JavaScript every reveal is simply visible; see "Scroll reveal" in
+            globals.css. It also marks loaded blur up photos (BlurUp.tsx).
+            Harmless on routes outside the site, such as the Studio. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: 'document.documentElement.classList.add("js")',
+            // 1. "js": JavaScript is running (scroll reveals, blur up).
+            // 2. Marks each blur up photo data-loaded when it loads or fails,
+            //    from the first byte, so its preview can dissolve even before
+            //    React has started. Capture phase, as load does not bubble.
+            __html:
+              'document.documentElement.classList.add("js");' +
+              'var m=function(e){var t=e.target;if(t&&t.tagName==="IMG"&&t.hasAttribute("data-blurup"))t.setAttribute("data-loaded","")};' +
+              'document.addEventListener("load",m,true);document.addEventListener("error",m,true);',
           }}
         />
       </head>

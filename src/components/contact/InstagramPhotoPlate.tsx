@@ -11,6 +11,8 @@ export type InstagramPhoto = {
   permalink: string;
   alt?: string | null;
   isDecorative?: boolean | null;
+  /** Sanity's tiny blurred preview (lqip), for the blur up. */
+  lqip?: string | null;
 };
 
 type Props = {
