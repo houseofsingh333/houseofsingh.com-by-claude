@@ -1,112 +1,17 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
-import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useDragToScroll } from "@/hooks/useDragToScroll";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
-import { useInView } from "@/hooks/useInView";
+import ArchiveCard from "./ArchiveCard";
+import { useCentredCard, useScrollHint } from "./useArchiveStrip";
 import type { HomepageProject } from "@/lib/types";
 
 type Props = {
   projects: HomepageProject[];
 };
-
-/* ─── Card renderer ─── */
-
-function ProjectCard({
-  project,
-  isFocused,
-  prefersReducedMotion,
-  onMouseEnter,
-  onMouseLeave,
-  onFocus,
-  onBlur,
-}: {
-  project: HomepageProject;
-  isFocused: boolean;
-  prefersReducedMotion: boolean;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
-  onFocus?: () => void;
-  onBlur?: () => void;
-}) {
-  return (
-    <Link
-      href={`/projects/${project.slug}`}
-      data-archive-card
-      className="archive-card group flex-shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
-      style={{ scrollSnapAlign: "start" }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onFocus={onFocus}
-      onBlur={onBlur}
-    >
-      {/* Image — 3:4 portrait ratio, capped so heading + image + text fit in viewport */}
-      <div className="relative aspect-[3/4] max-h-[60vh] overflow-hidden mb-4 md:mb-5">
-        {/* Grain overlay */}
-        <div
-          className={`archive-grain absolute inset-0 z-10 pointer-events-none transition-opacity duration-(--dur-hover) ease-(--ease-soft-out) ${
-            isFocused ? "opacity-0" : "opacity-100"
-          }`}
-        />
-
-        <div
-          className={`archive-img-wrap w-full h-full ${prefersReducedMotion ? "archive-img-reduced" : ""}`}
-          style={
-            prefersReducedMotion
-              ? undefined
-              : {
-                  filter: isFocused
-                    ? "brightness(1)"
-                    : "brightness(0.95)",
-                  transition: "filter var(--dur-image) var(--ease-soft-out)",
-                }
-          }
-        >
-          <SanityImage
-            image={project.thumbnail}
-            context="thumbnail"
-            alt={project.thumbnailAlt}
-            fill
-            className="object-cover w-full h-full"
-          />
-        </div>
-      </div>
-
-      {/* Category */}
-      <p
-        // Was opacity 0.35 / 0.7 on --muted-foreground, which blended toward the
-        // background and failed WCAG AA. The focus shift is now a colour change
-        // at full opacity: both states pass, and focus still visibly lifts it.
-        className="text-[10px] tracking-[0.2em] uppercase mb-2 transition-colors duration-(--dur-hover) ease-(--ease-soft-out)"
-        style={{
-          color: isFocused
-            ? "var(--foreground)"
-            : "var(--muted-foreground)",
-        }}
-      >
-        {project.category}
-      </p>
-
-      {/* Title */}
-      <h3 className="archive-card-title font-editorial text-lg md:text-xl font-light text-foreground leading-snug">
-        <span className="archive-title-text relative inline">
-          {project.title}
-          <span
-            className="absolute left-0 right-0 bottom-[-3px] h-px bg-foreground/30 origin-left transition-transform duration-(--dur-hover) ease-(--ease-soft-out)"
-            style={{
-              transform: isFocused ? "scaleX(1)" : "scaleX(0)",
-            }}
-          />
-        </span>
-      </h3>
-    </Link>
-  );
-}
-
-/* ─── Main export ─── */
 
 export default function ProjectsArchive({ projects }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -114,120 +19,10 @@ export default function ProjectsArchive({ projects }: Props) {
   // Shared hook: reads the setting and follows live changes, like the old
   // listener did, without setting state inside an effect.
   const prefersReducedMotion = usePrefersReducedMotion();
-  const [activeIndex, setActiveIndex] = useState(0);
+  const activeIndex = useCentredCard(scrollRef, thumbRef);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const focusedIndex = hoveredIndex ?? activeIndex;
-
-  // Center-card detection + scrollbar thumb
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const onScroll = () => {
-      // 1. Center-card detection (grayscale→color focus)
-      const scrollCenter = el.scrollLeft + el.clientWidth / 2;
-      const cards = el.querySelectorAll<HTMLElement>("[data-archive-card]");
-      let closest = 0;
-      let minDist = Infinity;
-
-      cards.forEach((card, i) => {
-        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-        const dist = Math.abs(scrollCenter - cardCenter);
-        if (dist < minDist) {
-          minDist = dist;
-          closest = i;
-        }
-      });
-
-      setActiveIndex((prev) => (prev === closest ? prev : closest));
-
-      // 2. Update custom scrollbar thumb (via ref — no re-render)
-      const thumb = thumbRef.current;
-      if (thumb) {
-        const ratio = el.clientWidth / el.scrollWidth;
-        const thumbW = Math.max(ratio * 100, 8);
-        const maxScroll = el.scrollWidth - el.clientWidth;
-        const progress = maxScroll > 0 ? el.scrollLeft / maxScroll : 0;
-        const thumbL = progress * (100 - thumbW);
-        thumb.style.width = `${thumbW}%`;
-        thumb.style.transform = `translateX(${(thumbL / thumbW) * 100}%)`;
-      }
-    };
-
-    onScroll();
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // One-time nudge — subtle scroll hint, once per session, cancellable.
-  // Runs when the strip is 30% in view.
-  const stripInView = useInView(scrollRef, { threshold: 0.3 });
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || !stripInView || prefersReducedMotion) return;
-
-    const STORAGE_KEY = "projects-nudge-done";
-    try {
-      if (sessionStorage.getItem(STORAGE_KEY)) return;
-    } catch {
-      return;
-    }
-
-    let cancelled = false;
-    let nudgeRaf: number | undefined;
-
-    const cancelNudge = () => {
-      cancelled = true;
-    };
-
-    // Ease-in-out cubic
-    const easeInOut = (t: number) =>
-      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-    // Cancel on any user interaction
-    el.addEventListener("wheel", cancelNudge, { once: true });
-    el.addEventListener("touchstart", cancelNudge, { once: true });
-    el.addEventListener("mousedown", cancelNudge, { once: true });
-
-    const duration = 650;
-    const distance = 14;
-
-    const start = performance.now();
-    const animateOut = (now: number) => {
-      if (cancelled) return;
-      const t = Math.min((now - start) / duration, 1);
-      el.scrollLeft = distance * easeInOut(t);
-      if (t < 1) {
-        nudgeRaf = requestAnimationFrame(animateOut);
-      } else {
-        const start2 = performance.now();
-        const animateBack = (now2: number) => {
-          if (cancelled) return;
-          const t2 = Math.min((now2 - start2) / duration, 1);
-          el.scrollLeft = distance * (1 - easeInOut(t2));
-          if (t2 < 1) nudgeRaf = requestAnimationFrame(animateBack);
-        };
-        nudgeRaf = requestAnimationFrame(animateBack);
-      }
-    };
-
-    const delay = setTimeout(() => {
-      try {
-        sessionStorage.setItem(STORAGE_KEY, "1");
-      } catch {
-        /* noop */
-      }
-      if (!cancelled) nudgeRaf = requestAnimationFrame(animateOut);
-    }, 300);
-
-    return () => {
-      clearTimeout(delay);
-      if (nudgeRaf) cancelAnimationFrame(nudgeRaf);
-      el.removeEventListener("wheel", cancelNudge);
-      el.removeEventListener("touchstart", cancelNudge);
-      el.removeEventListener("mousedown", cancelNudge);
-    };
-  }, [stripInView, prefersReducedMotion]);
+  useScrollHint(scrollRef, prefersReducedMotion);
 
   // Drag-to-scroll — desktop click-and-drag affordance.
   // Shared with the About Journey timeline via useDragToScroll so the two
@@ -265,7 +60,7 @@ export default function ProjectsArchive({ projects }: Props) {
         }}
       >
         {projects.map((project, i) => (
-          <ProjectCard
+          <ArchiveCard
             key={project._id}
             project={project}
             isFocused={focusedIndex === i}

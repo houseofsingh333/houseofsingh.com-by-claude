@@ -6,7 +6,6 @@ import NotFoundResponse from "@/components/NotFoundResponse";
 import { PortableText } from "@portabletext/react";
 import ReadingProgress from "@/components/ReadingProgress";
 import SanityImage from "@/components/SanityImage";
-import { hasImageAsset } from "@/lib/sanityImage";
 import { sanityFetch } from "@/sanity/fetch";
 import { devPlaceholder } from "@/lib/placeholders";
 import {
@@ -23,6 +22,8 @@ import {
   buildArticleJsonLd,
   buildBreadcrumbJsonLd,
 } from "@/lib/structured-data";
+import EntryNavigation from "@/components/journal/EntryNavigation";
+import EntryCover from "@/components/journal/EntryCover";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -161,12 +162,6 @@ export default async function JournalDetailPage({ params }: Props) {
   const nextEntry =
     currentIdx < sorted.length - 1 ? sorted[currentIdx + 1] : null;
 
-  /* Cover caption (only when the cover is an asset object carrying one) */
-  const coverCaption =
-    resolved.coverImage && typeof resolved.coverImage === "object"
-      ? resolved.coverImage.caption
-      : undefined;
-
   return (
     <>
       <JsonLd data={articleJsonLd} />
@@ -191,25 +186,7 @@ export default async function JournalDetailPage({ params }: Props) {
           {/* Left column — cover image in a fixed 4:5 portrait box for a
               consistent look across every entry. The crop respects the image's
               hotspot (focal point) so it won't cut through faces/subjects. */}
-          {hasImageAsset(resolved.coverImage) && (
-            <figure className="mb-10 lg:mb-0">
-              <div className="relative aspect-[4/5] w-full overflow-hidden bg-secondary">
-                <SanityImage
-                  image={resolved.coverImage}
-                  context="hero"
-                  alt={resolved.title}
-                  priority
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              {coverCaption && (
-                <figcaption className="text-xs text-muted-foreground mt-3">
-                  {coverCaption}
-                </figcaption>
-              )}
-            </figure>
-          )}
+          <EntryCover entry={resolved} />
 
           {/* Right column — title, date, body, and navigation */}
           <div className="min-w-0">
@@ -255,71 +232,8 @@ export default async function JournalDetailPage({ params }: Props) {
               ) : null}
             </div>
 
-            {/* Prev / Next navigation — inside the text column, after a
-                hairline rule; constrained to the column width. */}
-            <div className="border-t border-border pt-10">
-              <div className="grid grid-cols-2 gap-4 md:gap-8">
-                {/* Previous (newer) */}
-                <div>
-                  {prevEntry ? (
-                    <Link
-                      href={`/journal/${prevEntry.slug}`}
-                      className="group block"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="block text-sm text-muted-foreground mb-2 transition-[transform,color] duration-(--dur-hover) ease-(--ease-soft-out) group-hover:text-foreground motion-safe:group-hover:-translate-x-0.5"
-                      >
-                        &larr;
-                      </span>
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
-                        Previous
-                      </p>
-                      <p className="text-xs md:text-sm uppercase tracking-[0.1em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
-                        {prevEntry.title}
-                      </p>
-                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">
-                        {formatEntryDate(prevEntry.date)}
-                      </p>
-                    </Link>
-                  ) : (
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                      No previous entry
-                    </p>
-                  )}
-                </div>
-
-                {/* Next (older) */}
-                <div className="text-right">
-                  {nextEntry ? (
-                    <Link
-                      href={`/journal/${nextEntry.slug}`}
-                      className="group block"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="block text-sm text-muted-foreground mb-2 transition-[transform,color] duration-(--dur-hover) ease-(--ease-soft-out) group-hover:text-foreground motion-safe:group-hover:translate-x-0.5"
-                      >
-                        &rarr;
-                      </span>
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
-                        Next
-                      </p>
-                      <p className="text-xs md:text-sm uppercase tracking-[0.1em] text-foreground group-hover:text-muted-foreground transition-colors leading-relaxed">
-                        {nextEntry.title}
-                      </p>
-                      <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mt-1">
-                        {formatEntryDate(nextEntry.date)}
-                      </p>
-                    </Link>
-                  ) : (
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                      No next entry
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
+            {/* Prev / Next navigation */}
+            <EntryNavigation prev={prevEntry} next={nextEntry} />
           </div>
         </div>
       </div>
