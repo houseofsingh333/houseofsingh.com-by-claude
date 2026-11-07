@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 type Props = {
   categories: string[];
@@ -21,7 +20,8 @@ const BTN_INACTIVE =
  *
  * Desktop: single-line rail. If categories overflow, a "More" text item
  *          opens a minimal multi-column panel listing all categories.
- * Mobile:  horizontal scrollable row of all categories (swipeable).
+ * Mobile:  every category on wrapped lines, so no word is ever cut off
+ *          at the screen edge.
  *
  * Typography-only active state: darker text + subtle underline.
  */
@@ -34,8 +34,6 @@ export default function ProjectsFiltersHorizontal({
   const [overflowing, setOverflowing] = useState(false);
   const railRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const mobileRailRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
 
   // ——— Overflow detection (desktop) ———
   useEffect(() => {
@@ -76,22 +74,6 @@ export default function ProjectsFiltersHorizontal({
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [panelOpen]);
-
-  // ——— Scroll active filter into view on mobile ———
-  useEffect(() => {
-    const rail = mobileRailRef.current;
-    if (!rail) return;
-    const activeBtn = rail.querySelector(
-      "[aria-current='true']",
-    ) as HTMLElement;
-    if (activeBtn) {
-      activeBtn.scrollIntoView({
-        inline: "center",
-        behavior: prefersReducedMotion ? "instant" : "smooth",
-        block: "nearest",
-      });
-    }
-  }, [active, prefersReducedMotion]);
 
   const select = useCallback(
     (cat: string) => {
@@ -143,11 +125,8 @@ export default function ProjectsFiltersHorizontal({
         </div>
       </div>
 
-      {/* ——— Mobile: horizontal scrollable row ——— */}
-      <div
-        ref={mobileRailRef}
-        className="md:hidden flex items-center gap-5 overflow-x-auto scrollbar-hide -mx-6 px-6"
-      >
+      {/* ——— Mobile: wrapped lines, never cut off ——— */}
+      <div className="md:hidden flex flex-wrap items-center gap-x-5 gap-y-3">
         {allCategories.map((cat) => {
           const isActive = active === cat;
           return (
