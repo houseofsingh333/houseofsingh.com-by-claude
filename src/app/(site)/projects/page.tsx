@@ -63,6 +63,8 @@ export default async function ProjectsPage({
                 // card shows its calm empty frame.
                 devPlaceholder("/images/project-placeholder-1.svg", "")),
           thumbnailAlt: p.thumbnailAlt,
+          thumbnailLqip:
+            typeof p.thumbnail === "object" ? p.thumbnail?.lqip : null,
           excerpt: p.excerpt ?? "",
           isUpcoming: p.isUpcoming ?? false,
         }))

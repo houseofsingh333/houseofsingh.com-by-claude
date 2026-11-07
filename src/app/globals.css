@@ -240,17 +240,23 @@ body {
 
 /* ——— Instagram photo plate crossfade ——— */
 
+/* One crossfade layer per photo (with its blur up preview inside). */
+.instagram-plate-layer {
+  position: absolute;
+  inset: 0;
+  transition: opacity var(--plate-fade-duration, 1.2s) var(--ease-slow);
+}
+
 .instagram-plate-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity var(--plate-fade-duration, 1.2s) var(--ease-slow);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .instagram-plate-img {
+  .instagram-plate-layer {
     transition: none;
   }
 }
@@ -1093,6 +1099,83 @@ body {
     linear-gradient(to top, rgba(0, 0, 0, 0.35) 0%, transparent 40%);
 }
 
+/* ——— Hero slideshow (CinematicHero), in CSS ———
+   Each slide is stacked. The active slide fades in over --hero-fade on
+   --ease-slow, on top of the slide it replaces, which stays fully visible
+   underneath (its zoom still running) until it is covered. The first slide
+   is shown at once. The Ken Burns zoom is a slow, linear drift between two
+   transforms the component sets per slide (--kb-from, --kb-to); it starts
+   when data-run is set and keeps its end position. */
+:root {
+  --hero-fade: 2000ms;
+  --hero-kb-duration: 12000ms;
+}
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.hero-slide[data-state="active"] {
+  opacity: 1;
+  z-index: 2;
+  transition: opacity var(--hero-fade) var(--ease-slow);
+}
+.hero-slide[data-state="leaving"] {
+  opacity: 1;
+  z-index: 1;
+}
+.hero-slide[data-first] {
+  transition: none;
+}
+.hero-kb {
+  position: absolute;
+  inset: 0;
+  transform: var(--kb-from);
+}
+.hero-kb[data-run] {
+  animation: heroKenBurns var(--hero-kb-duration) linear forwards;
+}
+@keyframes heroKenBurns {
+  from {
+    transform: var(--kb-from);
+  }
+  to {
+    transform: var(--kb-to);
+  }
+}
+/* Caption: fades out (0.6s), then the next one fades and rises 12px in. */
+.hero-caption {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 600ms var(--ease-slow),
+    transform 0s linear 600ms;
+}
+.hero-caption[data-visible] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 1200ms var(--ease-slow),
+    transform 1200ms var(--ease-slow);
+}
+.hero-caption[data-first] {
+  transition: none;
+}
+/* Without JavaScript the dots cannot work, so they take no space. */
+html:not(.js) .hero-dots {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide,
+  .hero-caption {
+    transition: none !important;
+  }
+  .hero-kb {
+    animation: none !important;
+    transform: none;
+  }
+}
+
 /* ——— Horizontal gallery — quiet thin scroll affordance ——— */
 
 .hos-hscroll {
@@ -1796,6 +1879,72 @@ body {
 .featured-panel {
   background-color: var(--featured-panel);
   --muted-foreground: var(--muted-foreground-panel);
+}
+
+/* ——— Page transitions (PageTransition, browser View Transitions) ———
+   The old page fades out and the new one fades in, over --dur-page on
+   --ease-slow. The rest of the document (header, footer) crossfades on the
+   same timing, so it reads as one calm change. Clicks pass through the
+   overlay. Reduced motion: no animation, the page changes at once. */
+::view-transition-old(.page),
+::view-transition-new(.page),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-page);
+  animation-timing-function: var(--ease-slow);
+}
+::view-transition-group(.page) {
+  animation: none;
+}
+::view-transition {
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ——— Blur up ———
+   A photo's tiny blurred preview (BlurUp) sits over the photo and dissolves
+   once the photo has loaded (data-loaded, set by the pre paint script). Only
+   shown when JavaScript runs; instant under reduced motion. */
+.blurup {
+  display: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+html.js .blurup {
+  display: block;
+}
+.blurup::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  filter: blur(18px);
+  transform: scale(1.12);
+}
+img[data-loaded] + .blurup {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .blurup {
+    transition: opacity var(--dur-image) var(--ease-slow);
+  }
+}
+/* A non filling photo gets a wrapper so the preview has a box to cover. */
+.blurup-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* ——— Scroll reveal ———
