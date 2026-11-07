@@ -34,7 +34,7 @@
 }
 
 .contact-input:focus {
-  border-bottom-color: hsl(30 10% 20%);
+  border-bottom-color: var(--foreground);
   outline: none;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .contact-btn-primary:hover {
-  background-color: hsl(30 10% 18%);
+  background-color: var(--foreground);
 }
 
 .contact-btn-primary:disabled {

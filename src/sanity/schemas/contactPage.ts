@@ -27,11 +27,20 @@ export const contactPage = defineType({
       of: [{ type: "string" }],
     }),
     defineField({
+      name: "portrait",
+      title: "Portrait",
+      type: "image",
+      options: { hotspot: true },
+      description:
+        "Optional. The portrait beside the contact form. When empty, the About page portrait is used.",
+      fields: imageAltFields,
+    }),
+    defineField({
       name: "instagramPhotos",
       title: "Instagram Photos",
       type: "array",
       description:
-        "Curated Instagram photos shown as a rotating plate on the contact page.",
+        "Curated Instagram photos. No longer shown on the contact page (the portrait took their place); kept so nothing is lost.",
       of: [
         {
           type: "object",

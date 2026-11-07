@@ -35,15 +35,15 @@ export const navigationQuery = `*[_type == "navigation"][0]{
 /**
  * Default menu photographs, one per page, for pages whose menu item has no
  * photograph of its own: the first hero slide, the About portrait, the
- * first featured project, the latest journal entry and the first Contact
- * photograph.
+ * first featured project, the latest journal entry and the Contact
+ * portrait (else the About portrait).
  */
 export const menuPhotosQuery = `{
   "home": *[_type == "heroSlide"] | order(order asc)[0]{ "image": image ${_imageAsset}, "alt": coalesce(image.alt, imageAlt), caption },
   "about": *[_type == "aboutPage"][0]{ "image": portrait ${_imageAsset} },
   "projects": *[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc)[0]{ title, "image": coalesce(coverImage, thumbnail) ${_imageAsset} },
   "journal": *[_type == "journalEntry"] | order(date desc)[0]{ title, "image": coverImage ${_imageAsset} },
-  "contact": *[_type == "contactPage"][0].instagramPhotos[0]{ "image": image ${_imageAsset} }
+  "contact": *[_type == "contactPage"][0]{ "image": portrait ${_imageAsset} }
 }`;
 
 // --------------- Site Settings ---------------
@@ -246,14 +246,7 @@ export const spotlightQuery = `*[_type == "spotlight"][0]{
 // --------------- Contact Page ---------------
 
 export const contactPageQuery = `*[_type == "contactPage"][0]{
-  instagramPhotos[]{
-    "id": _key,
-    "url": image.asset->url,
-    "lqip": image.asset->metadata.lqip,
-    "alt": image.alt,
-    "isDecorative": image.isDecorative,
-    permalink
-  },
+  "portrait": coalesce(portrait, *[_type == "aboutPage"][0].portrait) ${_imageAsset},
   "seo": seo ${_seo},
   seoTitle,
   seoDescription

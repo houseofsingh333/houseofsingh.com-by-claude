@@ -32,7 +32,7 @@ function buildMenuPhotos(items: NavItem[], d: MenuPhotoDefaults | null): Record<
     "/projects": d?.projects?.image ? { image: d.projects.image, caption: d.projects.title } : null,
     "/journal": d?.journal?.image ? { image: d.journal.image, caption: d.journal.title } : null,
     "/contact": d?.contact?.image
-      ? { image: d.contact.image }
+      ? { image: d.contact.image, caption: "Say hello" }
       : d?.about?.image
         ? { image: d.about.image }
         : null,
