@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import BlurUp, { blurUpImgProps } from "@/components/BlurUp";
+import BlurUp, { blurUpImgProps, developImgProps } from "@/components/BlurUp";
 import { sanityLoader } from "@/lib/sanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import ProjectsFiltersHorizontal from "./ProjectsFiltersHorizontal";
@@ -137,6 +137,7 @@ export default function ProjectsFilteredGrid({
                     sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                     loader={project.thumbnailSrc.startsWith("https://cdn.sanity.io/") ? sanityLoader : undefined}
                     {...blurUpImgProps(project.thumbnailLqip)}
+                    {...developImgProps}
                   />
                 )}
               </div>

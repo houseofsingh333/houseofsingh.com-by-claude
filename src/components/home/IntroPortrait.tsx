@@ -115,6 +115,8 @@ export default function IntroPortrait({
               context="body"
               alt={`${founderName} — ${roles.join(", ")}`}
               fill
+              // Has its own grey to colour reveal: no develop on top.
+              develop={false}
               className="object-cover [object-position:35%_20%]"
             />
           </div>

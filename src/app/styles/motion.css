@@ -127,6 +127,41 @@ html.js .blurup + img[data-blurup]:not([data-loaded]) {
     opacity: 0;
   }
 }
+
+/* ——— Photographs that develop ———
+   A content photograph (img[data-develop], set by SanityImage on every
+   image that is not priority) develops like a print the first time it is
+   in view: from a warm, pale, low contrast state to full tone, over
+   --dur-develop on --ease-slow. The pre paint script marks it
+   data-developed once it has loaded and entered view; until then the
+   animation waits, paused, on its first frame.
+   An animation, not a transition, so it never overrides a photo's own
+   hover transitions; it has no end frame, so it eases into whatever
+   filter the photo normally has (a grey photo develops into grey).
+   With a blur up preview both run together: the dissolve brings the photo
+   in, the develop brings its tone up.
+   Reduced motion and no JavaScript: full tone from the start. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js img[data-develop] {
+    animation: develop var(--dur-develop) var(--ease-slow) backwards paused;
+  }
+  html.js img[data-develop][data-developed] {
+    animation-play-state: running;
+  }
+  html.js .blurup + img[data-blurup][data-develop][data-loaded] {
+    animation:
+      blurup-in var(--dur-image) var(--ease-slow) backwards,
+      develop var(--dur-develop) var(--ease-slow) backwards paused;
+  }
+  html.js .blurup + img[data-blurup][data-develop][data-loaded][data-developed] {
+    animation-play-state: running;
+  }
+}
+@keyframes develop {
+  from {
+    filter: sepia(0.28) saturate(0.6) contrast(0.82) brightness(1.08);
+  }
+}
 /* A non filling photo gets a wrapper so the preview has a box to fill. */
 .blurup-wrap {
   position: relative;

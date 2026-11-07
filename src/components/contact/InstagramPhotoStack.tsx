@@ -2,7 +2,7 @@
 
 import { useState, type CSSProperties } from "react";
 import Image from "next/image";
-import BlurUp, { blurUpImgProps } from "@/components/BlurUp";
+import BlurUp, { blurUpImgProps, developImgProps } from "@/components/BlurUp";
 import { sanityLoader } from "@/lib/sanityImage";
 import type { InstagramPhoto } from "./InstagramPhotoPlate";
 
@@ -64,6 +64,7 @@ export default function InstagramPhotoStack({
           loading={eagerFirst && i === 0 ? "eager" : "lazy"}
           className="instagram-plate-img"
           {...blurUpImgProps(photo.lqip)}
+          {...developImgProps}
         />
       </span>
     ) : null,

@@ -31,6 +31,8 @@ export default function AboutPortrait({
         context="body"
         alt={alt}
         fill
+        // Has its own grey to colour reveal: no develop on top.
+        develop={false}
         className={`object-cover object-top ${
           saturated ? "grayscale-0 scale-100" : "grayscale scale-[1.03]"
         } ${prefersReducedMotion ? "" : "transition-all duration-(--dur-image) ease-(--ease-slow)"}`}

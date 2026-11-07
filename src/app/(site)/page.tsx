@@ -2,7 +2,7 @@ import CinematicHero from "@/components/home/CinematicHero";
 import IntroSection from "@/components/home/IntroSection";
 import ProjectsArchive from "@/components/home/ProjectsArchive";
 import SpotlightBillboard from "@/components/home/SpotlightBillboard";
-import JournalPreview from "@/components/home/JournalPreview";
+import JournalFilmstrip from "@/components/home/filmstrip/JournalFilmstrip";
 import SpotifyEmbed from "@/components/home/SpotifyEmbed";
 import StudioRedirect from "@/components/home/StudioRedirect";
 import { sanityFetch } from "@/sanity/fetch";
@@ -33,6 +33,7 @@ import type {
 import { devPlaceholder } from "@/lib/placeholders";
 import JsonLd from "@/components/JsonLd";
 import { buildProfilePageJsonLd } from "@/lib/structured-data";
+import { parseSanityDate } from "@/lib/dates";
 
 type SanityHomepageProject = {
   _id: string;
@@ -43,6 +44,13 @@ type SanityHomepageProject = {
   thumbnailAlt: string;
   excerpt: string;
 };
+
+/** The six latest journal entries, newest first (dates read as local dates). */
+function latestJournal(entries: JournalEntry[]): JournalEntry[] {
+  return [...entries]
+    .sort((a, b) => parseSanityDate(b.date).getTime() - parseSanityDate(a.date).getTime())
+    .slice(0, 6);
+}
 
 export default async function HomePage() {
   const [slides, intro, settings, featured, latest, journal, spotlight] =
@@ -98,7 +106,9 @@ export default async function HomePage() {
         <ProjectsArchive projects={homepageProjects} />
       )}
       {spotlight?.enabled && <SpotlightBillboard spotlight={spotlight} />}
-      {journalEntries.length > 0 && <JournalPreview entries={journalEntries} />}
+      {journalEntries.length > 0 && (
+        <JournalFilmstrip entries={latestJournal(journalEntries)} />
+      )}
       <SpotifyEmbed playlistUrl={spotifyUrl} />
       <StudioRedirect />
     </>

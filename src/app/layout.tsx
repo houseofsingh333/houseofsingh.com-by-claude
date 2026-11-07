@@ -109,17 +109,27 @@ export default function RootLayout({
         {/* Pre paint script. Scroll reveals start hidden only under the "js"
             class (and only when the visitor allows motion), so without
             JavaScript every reveal is simply visible; see "Scroll reveal" in
-            styles/motion.css. It also marks loaded blur up photos (BlurUp.tsx).
+            styles/motion.css. It also marks loaded blur up photos (BlurUp.tsx)
+            and photographs ready to develop.
             Harmless on routes outside the site, such as the Studio. */}
         <script
           dangerouslySetInnerHTML={{
-            // 1. "js": JavaScript is running (scroll reveals, blur up).
+            // 1. "js": JavaScript is running (scroll reveals, blur up,
+            //    developing photographs).
             // 2. Marks each blur up photo data-loaded when it loads or fails,
             //    from the first byte, so its preview can dissolve even before
             //    React has started. Capture phase, as load does not bubble.
             __html:
               'document.documentElement.classList.add("js");' +
-              'var m=function(e){var t=e.target;if(t&&t.tagName==="IMG"&&t.hasAttribute("data-blurup"))t.setAttribute("data-loaded","")};' +
+              // 4. Photographs that develop: an img[data-develop] is marked
+              //    data-developed once it has loaded and entered view. New
+              //    images (including after client navigation) are found by a
+              //    MutationObserver. See styles/motion.css.
+              'var v=new WeakSet(),d=function(i){if(v.has(i)&&i.complete&&i.naturalWidth)i.setAttribute("data-developed","")},' +
+              'o="IntersectionObserver"in window?new IntersectionObserver(function(s){s.forEach(function(e){if(e.isIntersecting){v.add(e.target);o.unobserve(e.target);d(e.target)}})},{rootMargin:"0px 0px -10% 0px"}):null,' +
+              'w=function(n){if(!o||n.nodeType!==1)return;if(n.tagName==="IMG"){if(n.hasAttribute("data-develop"))o.observe(n)}else n.querySelectorAll("img[data-develop]").forEach(function(i){o.observe(i)})};' +
+              'new MutationObserver(function(r){r.forEach(function(x){x.addedNodes.forEach(w)})}).observe(document.documentElement,{childList:true,subtree:true});' +
+              'var m=function(e){var t=e.target;if(!t||t.tagName!=="IMG")return;if(t.hasAttribute("data-blurup"))t.setAttribute("data-loaded","");if(t.hasAttribute("data-develop"))d(t)};' +
               'document.addEventListener("load",m,true);document.addEventListener("error",m,true);' +
               // 3. Safety net: once the page has loaded, any blur up photo
               //    already complete is marked too, so none can stay hidden.
