@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { projectFallbackDescription } from "@/lib/pageDescriptions";
 import { pageShareImages, routeShareImages } from "@/lib/share-metadata";
 import { alt as projectShareAlt } from "@/app/projects/[slug]/opengraph-image";
 import NotFoundResponse from "@/components/NotFoundResponse";
@@ -55,7 +56,6 @@ export async function generateStaticParams() {
   return devPlaceholder(projects, []).map((project) => ({ slug: project.slug }));
 }
 
-const DEFAULT_DESCRIPTION = "A project by Maninder Singh.";
 
 /** The homepage spotlight, which an upcoming project may use as its hero. */
 function getSpotlight() {
@@ -86,7 +86,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       cardAlt: projectShareAlt,
     });
     const description =
-      project.seo?.metaDescription || project.excerpt || DEFAULT_DESCRIPTION;
+      project.seo?.metaDescription || project.excerpt || projectFallbackDescription(project.title);
     const canonical = project.seo?.canonicalUrl || `/projects/${slug}`;
     const noIndex = project.seo?.noIndex === true;
     const author = project.author || "Maninder Singh";
@@ -128,12 +128,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const share = routeShareImages(`/projects/${slug}`, projectShareAlt);
   return {
     title: fallback.title,
-    description: fallback.excerpt || DEFAULT_DESCRIPTION,
+    description: fallback.excerpt || projectFallbackDescription(fallback.title),
     alternates: { canonical: `/projects/${slug}` },
     openGraph: {
       type: "article",
       title: fallback.title,
-      description: fallback.excerpt || DEFAULT_DESCRIPTION,
+      description: fallback.excerpt || projectFallbackDescription(fallback.title),
       url: `/projects/${slug}`,
         images: share.openGraph,
     },
@@ -141,7 +141,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
         images: share.twitter,
       title: fallback.title,
-      description: fallback.excerpt || DEFAULT_DESCRIPTION,
+      description: fallback.excerpt || projectFallbackDescription(fallback.title),
     },
   };
 }

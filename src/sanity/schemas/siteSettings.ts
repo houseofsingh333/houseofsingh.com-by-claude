@@ -161,11 +161,11 @@ export const siteSettings = defineType({
       rows: 3,
       group: "general",
       description:
-        "Site-wide fallback description for pages that don't set their own. Aim for ~160 characters.",
+        "Site-wide fallback description for pages that don't set their own. Aim for 120 to 155 characters.",
       validation: (rule) =>
         rule
-          .max(180)
-          .warning("Descriptions longer than ~160 characters are often truncated."),
+          .max(155)
+          .warning("Descriptions longer than 155 characters are often cut off in search results."),
     }),
     defineField({
       name: "organizationName",

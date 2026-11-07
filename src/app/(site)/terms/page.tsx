@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
+import { TERMS_UPDATED } from "@/lib/legalDates";
+import { TERMS_DESCRIPTION } from "@/lib/pageDescriptions";
 import { shareCard } from "@/lib/share-metadata";
 import LegalPage, { type LegalSection } from "@/components/legal/LegalPage";
 import { siteCopy, type CopyKey } from "@/lib/siteCopy";
@@ -9,8 +11,7 @@ import { siteSettingsQuery } from "@/sanity/queries";
 import type { SiteSettings } from "@/lib/types";
 
 const TITLE = "Terms of Use";
-const DESCRIPTION =
-  "The conditions for using the House of Singh website and its content.";
+const DESCRIPTION = TERMS_DESCRIPTION;
 
 export async function generateMetadata(
   _props: unknown,
@@ -146,5 +147,5 @@ export default async function TermsPage() {
   const settings = await sanityFetch<SiteSettings | null>({ query: siteSettingsQuery });
   const copy = siteCopy(settings);
   const sections = SECTIONS.map((section) => ({ ...section, short: copy[section.short] }));
-  return <LegalPage title="Terms of Use" updated="Last updated: March 2026" sections={sections} labels={{ contents: copy.legalContentsLabel, inShort: copy.legalShortPrefix }} />;
+  return <LegalPage title="Terms of Use" updated={TERMS_UPDATED.label} sections={sections} labels={{ contents: copy.legalContentsLabel, inShort: copy.legalShortPrefix }} />;
 }
