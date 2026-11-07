@@ -3,15 +3,9 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
-import type { JournalEntry } from "@/lib/placeholder-data";
-import { parseSanityDate } from "@/lib/dates";
-
-/* ── Date formatters ── */
-
-const fmtDay = (d: string) => parseSanityDate(d).getDate().toString();
-
-const fmtMonthYear = (d: string) =>
-  parseSanityDate(d).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+import type { JournalEntry } from "@/lib/types";
+import { formatDayOfMonth, formatShortMonthYear } from "@/lib/dates";
+import { useMediaQuery, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 /* ── Stack constants ── */
 
@@ -32,13 +26,13 @@ const WIDTH_STEP = 4; // px narrower per layer (2px per side)
 export default function JournalStack({ displayed }: { displayed: JournalEntry[] }) {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const reducedMotion = usePrefersReducedMotion();
+
   /* ── Mobile: scroll-linked stacked-state detection ── */
   useEffect(() => {
-    const isDesktop = window.matchMedia("(min-width: 1024px)");
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    );
-    if (isDesktop.matches || reducedMotion.matches) return;
+    if (isDesktop || reducedMotion) return;
+    const cards = cardRefs.current;
 
     let ticking = false;
 
@@ -68,8 +62,9 @@ export default function JournalStack({ displayed }: { displayed: JournalEntry[] 
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      cards.forEach((el) => el?.classList.remove("journal-card-stacked"));
     };
-  }, [displayed.length]);
+  }, [displayed.length, isDesktop, reducedMotion]);
 
   // ═══ MOBILE / TABLET (<lg): sticky stacked image cards ═══
   return (
@@ -126,10 +121,10 @@ export default function JournalStack({ displayed }: { displayed: JournalEntry[] 
               {/* Right: date */}
               <time className="flex flex-col items-end text-right shrink-0 text-white">
                 <span className="block text-3xl font-bold leading-none tracking-tight">
-                  {fmtDay(entry.date)}
+                  {formatDayOfMonth(entry.date)}
                 </span>
                 <span className="block text-[10px] tracking-widest uppercase mt-1 text-white/80">
-                  {fmtMonthYear(entry.date)}
+                  {formatShortMonthYear(entry.date)}
                 </span>
               </time>
             </div>

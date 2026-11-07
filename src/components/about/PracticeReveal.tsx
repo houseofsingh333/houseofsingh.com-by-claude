@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { useRevealOnScroll } from "@/hooks/useRevealOnScroll";
+import { useInView } from "@/hooks/useInView";
 import { revealProps } from "@/lib/reveal";
 
 /**
@@ -12,7 +12,7 @@ import { revealProps } from "@/lib/reveal";
  */
 export default function PracticeReveal({ children }: { children: ReactNode }) {
   const logoRef = useRef<HTMLDivElement>(null);
-  const revealed = useRevealOnScroll(logoRef, 0.25);
+  const revealed = useInView(logoRef, { threshold: 0.25 });
 
   return (
     <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">

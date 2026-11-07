@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, type RefObject } from "react";
+import type { RefObject } from "react";
+import { useInView } from "./useInView";
 import { usePrefersReducedMotion } from "./useMediaQuery";
 
 /**
@@ -19,33 +20,15 @@ import { usePrefersReducedMotion } from "./useMediaQuery";
  * part of the element enters it, so behaviour does not depend on the image's
  * height at all.
  *
- * Fires once, then disconnects. Under reduced motion it reports revealed
+ * Fires once (useInView). Under reduced motion it reports revealed
  * immediately so the portrait renders in full colour with no transition.
  *
  * @param ref the element to observe
  */
 export function useColourReveal(ref: RefObject<HTMLElement | null>) {
   const prefersReducedMotion = usePrefersReducedMotion();
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      // Middle 30% band of the viewport — matches the journal cards.
-      { rootMargin: "-35% 0px -35% 0px", threshold: 0 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [ref, prefersReducedMotion]);
+  // Middle 30% band of the viewport — matches the journal cards.
+  const inView = useInView(ref, { rootMargin: "-35% 0px -35% 0px" });
 
   return {
     /** True once the portrait should be shown in full colour. */

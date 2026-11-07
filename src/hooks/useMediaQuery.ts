@@ -24,6 +24,23 @@ export function useMediaQuery(query: string): boolean {
   );
 }
 
+const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
+
+/** The site's one reduced motion hook. False on the server. */
 export function usePrefersReducedMotion(): boolean {
-  return useMediaQuery("(prefers-reduced-motion: reduce)");
+  return useMediaQuery(REDUCED_MOTION);
+}
+
+/**
+ * The same queries read at this moment, for a decision made once at page
+ * load (the header intro). The hooks above report the server value (false)
+ * during that first moment and only update afterwards, which would be too
+ * late for a one time choice. Browser only.
+ */
+export function mediaMatchesNow(query: string): boolean {
+  return window.matchMedia(query).matches;
+}
+
+export function prefersReducedMotionNow(): boolean {
+  return mediaMatchesNow(REDUCED_MOTION);
 }

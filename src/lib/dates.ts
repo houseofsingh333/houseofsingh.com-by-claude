@@ -64,3 +64,70 @@ export function formatDateOnly(
   const parsed = parseDateOnly(value);
   return parsed ? parsed.toLocaleDateString(locale, options) : (value ?? "");
 }
+
+/*
+ * Display formatters for Sanity dates. Each accepts a date only value
+ * ("YYYY-MM-DD", parsed as a local date by parseSanityDate, so it never
+ * shifts a day) or a full timestamp. Missing values give "" (or null where
+ * noted); a value that is not a date is shown as it is rather than as
+ * "Invalid Date".
+ */
+
+/** A Sanity date as a valid local Date, or null. */
+function toValidDate(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const d = parseSanityDate(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function format(
+  value: string | null | undefined,
+  locale: string,
+  options: Intl.DateTimeFormatOptions,
+): string {
+  if (!value) return "";
+  const d = toValidDate(value);
+  return d ? d.toLocaleDateString(locale, options) : value;
+}
+
+/** "15 July 2025": journal entries, in the journal list and on the article. */
+export function formatEntryDate(value: string | null | undefined): string {
+  return format(value, "en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+
+/** "15/07/2025": the home page journal list on desktop. */
+export function formatNumericDate(value: string | null | undefined): string {
+  return format(value, "en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+/** "July 2025": Featured On rows. Null when there is no valid date. */
+export function formatMonthYear(value: string | null | undefined): string | null {
+  return toValidDate(value)
+    ? format(value, "en-US", { month: "long", year: "numeric" })
+    : null;
+}
+
+/** "Jul 2025": the home page journal cards on phone and tablet. */
+export function formatShortMonthYear(value: string | null | undefined): string {
+  return format(value, "en-US", { month: "short", year: "numeric" });
+}
+
+/** "15": the day of the month, for the home page journal cards. */
+export function formatDayOfMonth(value: string | null | undefined): string {
+  const d = toValidDate(value);
+  return d ? d.getDate().toString() : (value ?? "");
+}
+
+/** Short month names, January first, for the journal month filter. */
+export const MONTH_SHORT_LABELS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+] as const;
+
+/**
+ * A Sanity date as an ISO 8601 timestamp for structured data, or undefined
+ * when missing or invalid. Date only values are read as local dates.
+ */
+export function toIsoTimestamp(value: string | null | undefined): string | undefined {
+  return toValidDate(value)?.toISOString();
+}

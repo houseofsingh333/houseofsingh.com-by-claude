@@ -3,9 +3,14 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
-import type { JournalEntry } from "@/lib/placeholder-data";
-import { parseSanityDate } from "@/lib/dates";
-import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
+import type { JournalEntry } from "@/lib/types";
+import {
+  formatEntryDate,
+  MONTH_SHORT_LABELS,
+  parseSanityDate,
+} from "@/lib/dates";
+import { useMediaQuery, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
+import { useInView } from "@/hooks/useInView";
 
 type Props = {
   entries: JournalEntry[];
@@ -14,22 +19,9 @@ type Props = {
 };
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-const MONTH_LABELS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
 
 const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth() + 1;
-
-function formatDate(dateStr: string) {
-  const d = parseSanityDate(dateStr);
-  return d.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
 
 /** Find the most recent entry's year and month to use as initial selection. */
 function getMostRecentYearMonth(entries: JournalEntry[]): {
@@ -59,8 +51,14 @@ export default function JournalList({ entries, requested }: Props) {
 
   const [activeYear, setActiveYear] = useState<number>(resolved.year);
   const [activeMonth, setActiveMonth] = useState<number>(resolved.month);
-  const [isSticky, setIsSticky] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  // The filter bar is stuck once its sentinel has scrolled out of view.
+  const sentinelInView = useInView(sentinelRef, {
+    once: false,
+    initial: true,
+    rootMargin: "-1px 0px 0px 0px",
+  });
+  const isSticky = !sentinelInView;
   const gridRef = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
 
@@ -85,18 +83,6 @@ export default function JournalList({ entries, requested }: Props) {
     });
     return [...uniqueYears].sort((a, b) => b - a);
   }, [entries]);
-
-  /* Sticky timeline observer */
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsSticky(!entry.isIntersecting),
-      { threshold: 0, rootMargin: "-1px 0px 0px 0px" },
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, []);
 
   const monthsWithEntries = useMemo(() => {
     const map: Record<number, Set<number>> = {};
@@ -140,14 +126,13 @@ export default function JournalList({ entries, requested }: Props) {
     [entries, activeYear, activeMonth],
   );
 
-  /* Mobile: scroll-driven grayscale-to-color via IntersectionObserver */
+  /* Mobile: scroll-driven grayscale-to-color. Its own IntersectionObserver
+     (not useInView): one observer watches the whole list of cards and turns
+     each grey again as it leaves the band. */
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    if (mq.matches) return; // desktop — hover handles it
-
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    if (isDesktop) return; // desktop — hover handles it
+    const prefersReduced = reducedMotion;
 
     const grid = gridRef.current;
     if (!grid) return;
@@ -164,7 +149,10 @@ export default function JournalList({ entries, requested }: Props) {
           img.classList.add("grayscale-0");
         }
       });
-      return;
+      return () =>
+        cards.forEach((card) =>
+          card.querySelector("img")?.classList.remove("grayscale-0"),
+        );
     }
 
     // Start all cards in grayscale on mobile
@@ -194,8 +182,14 @@ export default function JournalList({ entries, requested }: Props) {
     );
 
     cards.forEach((card) => observer.observe(card));
-    return () => observer.disconnect();
-  }, [filtered]);
+    return () => {
+      observer.disconnect();
+      // Undo, so a change of screen size or motion setting starts clean.
+      cards.forEach((card) =>
+        card.querySelector("img")?.classList.remove("grayscale", "grayscale-0"),
+      );
+    };
+  }, [filtered, isDesktop, reducedMotion]);
 
   return (
     <div className="overflow-hidden">
@@ -300,7 +294,7 @@ export default function JournalList({ entries, requested }: Props) {
                           : "text-muted-foreground hover:text-foreground border-b border-transparent"
                   }`}
                 >
-                  {MONTH_LABELS[month - 1]}
+                  {MONTH_SHORT_LABELS[month - 1]}
                 </button>
               );
             })}
@@ -315,7 +309,7 @@ export default function JournalList({ entries, requested }: Props) {
             <p className="text-sm text-muted-foreground uppercase tracking-[0.2em]">
               {activeYear === -1
                 ? "Select a year to browse entries"
-                : `No entries for ${MONTH_LABELS[activeMonth - 1]} ${activeYear}`}
+                : `No entries for ${MONTH_SHORT_LABELS[activeMonth - 1]} ${activeYear}`}
             </p>
           </div>
         ) : (
@@ -347,7 +341,7 @@ export default function JournalList({ entries, requested }: Props) {
 
                 {/* Date */}
                 <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-2">
-                  {formatDate(entry.date)}
+                  {formatEntryDate(entry.date)}
                 </p>
 
                 {/* Title */}

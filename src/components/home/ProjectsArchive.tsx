@@ -6,7 +6,8 @@ import SanityImage from "@/components/SanityImage";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useDragToScroll } from "@/hooks/useDragToScroll";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
-import type { HomepageProject } from "@/lib/placeholder-data";
+import { useInView } from "@/hooks/useInView";
+import type { HomepageProject } from "@/lib/types";
 
 type Props = {
   projects: HomepageProject[];
@@ -158,10 +159,12 @@ export default function ProjectsArchive({ projects }: Props) {
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
-  // One-time nudge — subtle scroll hint, once per session, cancellable
+  // One-time nudge — subtle scroll hint, once per session, cancellable.
+  // Runs when the strip is 30% in view.
+  const stripInView = useInView(scrollRef, { threshold: 0.3 });
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el || prefersReducedMotion) return;
+    if (!el || !stripInView || prefersReducedMotion) return;
 
     const STORAGE_KEY = "projects-nudge-done";
     try {
@@ -171,7 +174,7 @@ export default function ProjectsArchive({ projects }: Props) {
     }
 
     let cancelled = false;
-    let nudgeRaf: number;
+    let nudgeRaf: number | undefined;
 
     const cancelNudge = () => {
       cancelled = true;
@@ -181,60 +184,50 @@ export default function ProjectsArchive({ projects }: Props) {
     const easeInOut = (t: number) =>
       t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
+    // Cancel on any user interaction
+    el.addEventListener("wheel", cancelNudge, { once: true });
+    el.addEventListener("touchstart", cancelNudge, { once: true });
+    el.addEventListener("mousedown", cancelNudge, { once: true });
 
-        try {
-          sessionStorage.setItem(STORAGE_KEY, "1");
-        } catch {
-          /* noop */
-        }
+    const duration = 650;
+    const distance = 14;
 
-        // Cancel on any user interaction
-        el.addEventListener("wheel", cancelNudge, { once: true });
-        el.addEventListener("touchstart", cancelNudge, { once: true });
-        el.addEventListener("mousedown", cancelNudge, { once: true });
-
-        const duration = 650;
-        const distance = 14;
-
-        const start = performance.now();
-        const animateOut = (now: number) => {
+    const start = performance.now();
+    const animateOut = (now: number) => {
+      if (cancelled) return;
+      const t = Math.min((now - start) / duration, 1);
+      el.scrollLeft = distance * easeInOut(t);
+      if (t < 1) {
+        nudgeRaf = requestAnimationFrame(animateOut);
+      } else {
+        const start2 = performance.now();
+        const animateBack = (now2: number) => {
           if (cancelled) return;
-          const t = Math.min((now - start) / duration, 1);
-          el.scrollLeft = distance * easeInOut(t);
-          if (t < 1) {
-            nudgeRaf = requestAnimationFrame(animateOut);
-          } else {
-            const start2 = performance.now();
-            const animateBack = (now2: number) => {
-              if (cancelled) return;
-              const t2 = Math.min((now2 - start2) / duration, 1);
-              el.scrollLeft = distance * (1 - easeInOut(t2));
-              if (t2 < 1) nudgeRaf = requestAnimationFrame(animateBack);
-            };
-            nudgeRaf = requestAnimationFrame(animateBack);
-          }
+          const t2 = Math.min((now2 - start2) / duration, 1);
+          el.scrollLeft = distance * (1 - easeInOut(t2));
+          if (t2 < 1) nudgeRaf = requestAnimationFrame(animateBack);
         };
+        nudgeRaf = requestAnimationFrame(animateBack);
+      }
+    };
 
-        setTimeout(() => {
-          if (!cancelled) nudgeRaf = requestAnimationFrame(animateOut);
-        }, 300);
-      },
-      { threshold: 0.3 },
-    );
+    const delay = setTimeout(() => {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, "1");
+      } catch {
+        /* noop */
+      }
+      if (!cancelled) nudgeRaf = requestAnimationFrame(animateOut);
+    }, 300);
 
-    observer.observe(el);
     return () => {
-      observer.disconnect();
+      clearTimeout(delay);
       if (nudgeRaf) cancelAnimationFrame(nudgeRaf);
       el.removeEventListener("wheel", cancelNudge);
       el.removeEventListener("touchstart", cancelNudge);
       el.removeEventListener("mousedown", cancelNudge);
     };
-  }, [prefersReducedMotion]);
+  }, [stripInView, prefersReducedMotion]);
 
   // Drag-to-scroll — desktop click-and-drag affordance.
   // Shared with the About Journey timeline via useDragToScroll so the two
