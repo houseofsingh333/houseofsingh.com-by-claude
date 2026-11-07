@@ -185,7 +185,7 @@ export default async function ProjectDetailPage({ params }: Props) {
         <ReadingProgress />
 
         {/* 1. Hero: cover, else thumbnail; upcoming: the spotlight image. */}
-        <ProjectHero image={hero.image} />
+        <ProjectHero image={hero.image} slug={project.slug} />
 
         {/* 2. Title block */}
         <ProjectTitle

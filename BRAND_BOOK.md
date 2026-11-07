@@ -194,6 +194,7 @@ Motion is calm and minimal. It supports the content, never performs for its own 
 | `--dur-hover` | 500ms | Hover and focus changes: colour, underline, a small nudge or zoom. Tailwind: `duration-(--dur-hover)`. |
 | `--dur-page` | 600ms | The page fade in on navigation, and content swapped by a click (form steps, filters). |
 | `--dur-develop` | 1400ms | A content photograph developing like a print the first time it is in view: from a warm, pale, low contrast state to full tone, on `--ease-slow`. It runs alongside the blur up dissolve, never on priority images (the hero's first slide, page covers), and not on photos with their own grey to colour reveal. Reduced motion and no JavaScript: full tone from the start. |
+| `--dur-plate` | 1400ms | One photograph crossfading to the next on a Projects page plate, on `--ease-slow`, every 8 s while nothing pauses it. Reduced motion: the plate does not cycle. |
 
 - Kept quick on purpose, for usability: focus rings appear at once, form error messages appear at once, and the menu and popup open in at most 500ms. Tap feedback on touch screens and anything that follows the scroll position stay immediate.
 - The earlier fast curve, `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`), is no longer the default. It remains only for the menu and popup opening.
@@ -263,7 +264,7 @@ The voice is the same calm, grounded, reflective voice used across the brand. (D
 
 **Feel:** Calm, editorial, crafted, grounded, timeless.
 
-**Motion:** Tokens in `src/app/styles/tokens.css`: `--ease-slow` `cubic-bezier(0.37, 0, 0.63, 1)` for reveals, fades and the page fade in; `--ease-soft-out` `cubic-bezier(0.33, 1, 0.68, 1)` for hover and focus; `--dur-reveal` 1400ms with a 12px rise, `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-page` 600ms, `--dur-develop` 1400ms (photographs developing to full tone). Focus rings, form errors and the menu and popup opening stay quick. Slow, gentle, minimal. Respect reduced motion. The 2.8s breathing brass dot is the reference.
+**Motion:** Tokens in `src/app/styles/tokens.css`: `--ease-slow` `cubic-bezier(0.37, 0, 0.63, 1)` for reveals, fades and the page fade in; `--ease-soft-out` `cubic-bezier(0.33, 1, 0.68, 1)` for hover and focus; `--dur-reveal` 1400ms with a 12px rise, `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-page` 600ms, `--dur-develop` 1400ms (photographs developing to full tone), `--dur-plate` 1400ms (a Projects plate crossfading to its next photograph). Focus rings, form errors and the menu and popup opening stay quick. Slow, gentle, minimal. Respect reduced motion. The 2.8s breathing brass dot is the reference.
 
 **The test:** Calm, considered, crafted, or loud, rushed, generic? Ship only the former.
 

@@ -75,6 +75,24 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  /*
+   * A project's own address on the Projects page, /projects?p=<slug>, is
+   * served by a cached page per project (projects/view/[slug]); the address
+   * bar keeps the friendly form.
+   */
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/projects",
+          has: [{ type: "query", key: "p", value: "(?<p>[a-z0-9-]+)" }],
+          destination: "/projects/view/:p",
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async headers() {
     return [
       { source: "/(.*)", headers: securityHeaders },

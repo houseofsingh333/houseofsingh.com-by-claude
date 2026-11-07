@@ -188,6 +188,12 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
           hint on the home page appears only once.
         </p>
         <p>
+          It also keeps one note in your browser&apos;s local storage: which
+          view of the Projects page you last chose, One by one or At a
+          glance, so the page opens the same way next time. It holds nothing
+          else, and clearing your browser&apos;s site data removes it.
+        </p>
+        <p>
           The Spotify player on the home page may set its own cookies, as
           described below.
         </p>
