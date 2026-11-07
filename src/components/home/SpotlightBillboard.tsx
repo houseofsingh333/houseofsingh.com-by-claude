@@ -1,141 +1,97 @@
-"use client";
-
-import { useRef } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
-import { usePrefersReducedMotion, useMediaQuery } from "@/hooks/useMediaQuery";
-import { useInView } from "@/hooks/useInView";
-import { revealProps } from "@/lib/reveal";
+import { hasImageAsset } from "@/lib/sanityImage";
 import type { SpotlightData } from "@/lib/types";
-
-type Props = {
-  spotlight: SpotlightData;
-};
+import ScrollProgress from "./ScrollProgress";
 
 const TITLE_ID = "spotlight-billboard-title";
 
-export default function SpotlightBillboard({ spotlight }: Props) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const prefersReduced = usePrefersReducedMotion();
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
-  // The text fades in, staggered, once the section is in view. CSS shows it
-  // immediately under reduced motion or without JavaScript (revealProps).
-  const revealed = useInView(sectionRef, { threshold: 0.15 });
-
-  if (!spotlight.image) return null;
-  if (
-    typeof spotlight.image === "object" &&
-    spotlight.image !== null &&
-    !("url" in spotlight.image && spotlight.image.url)
-  )
-    return null;
-
-  const isExternal =
-    spotlight.linkUrl?.startsWith("http://") ||
-    spotlight.linkUrl?.startsWith("https://");
+/**
+ * Chapter IV, the aperture: the spotlight band as a dark room. On desktop
+ * with motion allowed it pins for one screen of scrolling: the spotlight
+ * image is first seen through a narrow vertical slit, two charcoal panels
+ * slide apart to show the whole image, then the title, description, the
+ * brass "Upcoming" dot with the label and the link appear. Transforms and
+ * opacity only, driven by the same scroll progress as the exhibition (see
+ * "Aperture" in styles/home.css). Phones, reduced motion and no JavaScript:
+ * the open layout. All text comes from the spotlight's Sanity fields.
+ */
+export default function SpotlightBillboard({ spotlight }: { spotlight: SpotlightData }) {
+  if (!hasImageAsset(spotlight.image)) return null;
+  const isExternal = /^https?:\/\//.test(spotlight.linkUrl ?? "");
 
   return (
     <section
-      ref={sectionRef}
       aria-labelledby={spotlight.title ? TITLE_ID : undefined}
-      className="spotlight-section"
+      className="aperture"
     >
-      {/* ── Background image with cinematic filter ── */}
-      <div className="spotlight-img-wrap" aria-hidden="true">
-        <SanityImage
-          image={spotlight.image}
-          context="banner"
-          alt=""
-          priority={false}
-          fill
-          className={`spotlight-img${isDesktop && !prefersReduced ? " spotlight-kb" : ""}`}
-        />
-      </div>
+      <ScrollProgress
+        selector=".aperture"
+        media="(min-width: 1024px) and (prefers-reduced-motion: no-preference)"
+      />
+      <div className="aperture-stage px-6 md:px-16">
+        <div className="aperture-head">
+          <span aria-hidden="true" className="font-editorial italic text-[30px] leading-none text-accent">
+            IV
+          </span>
+          <span className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground-inverse">
+            In the studio now
+          </span>
+        </div>
 
-      {/* ── Gradient overlay ── */}
-      <div className="spotlight-gradient" aria-hidden="true" />
-
-      {/* ── Film grain texture ── */}
-      <div className="spotlight-grain" aria-hidden="true" />
-
-      {/* ── Content layer ── */}
-      <div className="spotlight-content">
-        <div className="spotlight-content-inner">
-          {/* Label with dash prefix */}
-          {spotlight.label && (
-            <p
-              className="spotlight-label"
-              {...revealProps({ revealed, delay: 0 })}
-            >
-              <span className="spotlight-label-dash" aria-hidden="true" />
-              {spotlight.label}
-            </p>
-          )}
-
-          {/* Title */}
-          {spotlight.title && (
-            <h2
-              id={TITLE_ID}
-              className="spotlight-title-el"
-              {...revealProps({ revealed, delay: 150 })}
-            >
-              {spotlight.title}
-            </h2>
-          )}
-
-          {/* Teaser */}
-          {spotlight.teaser && (
-            <p
-              className="spotlight-teaser"
-              {...revealProps({ revealed, delay: 300 })}
-            >
-              {spotlight.teaser}
-            </p>
-          )}
-
-          {/* CTA */}
-          {spotlight.linkText && spotlight.linkUrl && (
-            <div {...revealProps({ revealed, delay: 450 })}>
-              {isExternal ? (
+        <div className="aperture-grid">
+          <div className="aperture-text">
+            {spotlight.title && (
+              <h2 id={TITLE_ID} className="font-editorial font-normal text-[44px] md:text-[60px] lg:text-[72px] leading-[1.02] text-background text-balance">
+                {spotlight.title}
+              </h2>
+            )}
+            {spotlight.teaser && (
+              <p className="text-[17px] md:text-[18px] leading-[1.7] text-background max-w-[460px]">
+                {spotlight.teaser}
+              </p>
+            )}
+            {spotlight.label && (
+              <p className="flex items-center gap-2.5 text-[12px] tracking-[0.14em] uppercase text-muted-foreground-inverse">
+                <span className="upcoming-dot" aria-hidden="true" />
+                {spotlight.label}
+              </p>
+            )}
+            {spotlight.linkText && spotlight.linkUrl && (
+              isExternal ? (
                 <a
                   href={spotlight.linkUrl}
-                  className="spotlight-cta"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`${spotlight.linkText} (opens in new tab)`}
+                  className="aperture-link"
                 >
                   {spotlight.linkText}
-                  <span className="spotlight-cta-arrow" aria-hidden="true">
-                    &rarr;
-                  </span>
+                  <span className="sr-only"> (opens in a new tab)</span>
                 </a>
               ) : (
-                <Link
-                  href={spotlight.linkUrl}
-                  className="spotlight-cta"
-                  aria-label={spotlight.linkText}
-                >
+                <Link href={spotlight.linkUrl} className="aperture-link">
                   {spotlight.linkText}
-                  <span className="spotlight-cta-arrow" aria-hidden="true">
-                    &rarr;
-                  </span>
                 </Link>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+              )
+            )}
+          </div>
 
-      {/* ── Category tag (vertical, bottom right) ── */}
-      {spotlight.category && (
-        <div
-          className="spotlight-category"
-          {...revealProps({ revealed, rise: false, delay: 600 })}
-          aria-hidden="true"
-        >
-          {spotlight.category}
+          <div className="aperture-window">
+            <SanityImage
+              image={spotlight.image}
+              context="banner"
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 520px, 100vw"
+              className="object-cover"
+            />
+            <span className="aperture-shutter aperture-shutter-l" aria-hidden="true" />
+            <span className="aperture-shutter aperture-shutter-r" aria-hidden="true" />
+          </div>
         </div>
-      )}
+
+        <span className="aperture-hint" aria-hidden="true">Scroll to open</span>
+      </div>
     </section>
   );
 }

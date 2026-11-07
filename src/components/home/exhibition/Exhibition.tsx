@@ -4,7 +4,7 @@ import { hasImageAsset } from "@/lib/sanityImage";
 import { hotspotPosition } from "@/lib/projectHero";
 import { roman } from "@/lib/roman";
 import type { HomepageProject } from "@/lib/types";
-import ExhibitionProgress from "./ExhibitionProgress";
+import ScrollProgress from "../ScrollProgress";
 
 const ROOMS = 4;
 
@@ -15,7 +15,7 @@ const ROOMS = 4;
  * screen while its wall label gives way to a small canvas plate with
  * "Enter the project", then the next room. One progress value per room
  * (--p, 0 to 1) drives it: CSS scroll driven animation where supported,
- * ExhibitionProgress elsewhere; transforms and opacity only (see
+ * ScrollProgress elsewhere; transforms and opacity only (see
  * "Exhibition" in styles/home.css).
  *
  * Phones, tablets and reduced motion get the framed prints with their
@@ -26,7 +26,10 @@ export default function Exhibition({ projects }: { projects: HomepageProject[] }
   const n = rooms.length;
   return (
     <section aria-labelledby="chapter-work" className="exhibition" style={{ "--n": n } as React.CSSProperties}>
-      <ExhibitionProgress />
+      <ScrollProgress
+        selector=".exhibition-room"
+        media="(min-width: 1024px) and (prefers-reduced-motion: no-preference)"
+      />
       {rooms.map((project, i) => {
         const image = hasImageAsset(project.coverImage) ? project.coverImage : project.thumbnail;
         const href = `/projects/${project.slug}`;
