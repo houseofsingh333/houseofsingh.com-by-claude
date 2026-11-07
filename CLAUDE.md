@@ -29,7 +29,7 @@ Maninder is the founder and creative director. He is not a developer. This means
 
 - **Framework:** Next.js, App Router. Server components by default. Use client components only when interactivity genuinely requires it, and keep them small and leaf level.
 - **CMS:** Sanity. Project ID `31g7gu7n`, dataset `production`.
-- **Styling:** Tailwind CSS v4. Configuration lives in the `@theme` block in `globals.css`. There is no `tailwind.config` file. Do not add one. Do not introduce a different styling system.
+- **Styling:** Tailwind CSS v4. Configuration lives in the `@theme` block in `src/app/styles/tokens.css`; `globals.css` only imports the area stylesheets in `src/app/styles/` (tokens, base, layout and footer, home, about, journal, projects, contact, motion), and their order is the cascade order. There is no `tailwind.config` file. Do not add one. Do not introduce a different styling system.
 - **Hosting:** Vercel. Production deploys from `main`. All work happens on `feature/next-work`, is pushed there (creating a Vercel preview), and reaches production only through a pull request into `main` that Maninder merges after checking the preview. Never push directly to `main`. Old branches were deleted on 4 Nov 2026; only main and feature/next-work exist.
 - **Dependencies:** Use npm ci, never npm install.
 - **CI:** Every pull request must show the ci check green before merging.
@@ -88,7 +88,7 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 
 ### Motion
 - Calm and minimal. Soft fades and quiet reveals, never fast or springy.
-- Use the motion tokens in `globals.css`, never hard coded values: `--ease-slow` (`cubic-bezier(0.37, 0, 0.63, 1)`, a soft sine) for scroll reveals, fades, crossfades, image fade ins and the page fade in; `--ease-soft-out` (`cubic-bezier(0.33, 1, 0.68, 1)`) for hover and focus. Durations: `--dur-reveal` 1400ms with a 12px rise (`--rise-reveal`), `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-page` 600ms. Tailwind: `ease-(--ease-slow)`, `ease-(--ease-soft-out)`, `duration-(--dur-hover)`.
+- Use the motion tokens in `src/app/styles/tokens.css`, never hard coded values: `--ease-slow` (`cubic-bezier(0.37, 0, 0.63, 1)`, a soft sine) for scroll reveals, fades, crossfades, image fade ins and the page fade in; `--ease-soft-out` (`cubic-bezier(0.33, 1, 0.68, 1)`) for hover and focus. Durations: `--dur-reveal` 1400ms with a 12px rise (`--rise-reveal`), `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-page` 600ms. Tailwind: `ease-(--ease-slow)`, `ease-(--ease-soft-out)`, `duration-(--dur-hover)`.
 - Keep quick on purpose: focus rings and form error messages appear at once; the menu and popup open in at most 500ms. The old fast curve `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`) is no longer the default; it remains only for the menu and popup opening.
 - The 2.8s breathing brass dot is the reference for brand motion.
 - One well orchestrated reveal beats many scattered micro animations.

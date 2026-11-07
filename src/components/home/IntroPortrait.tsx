@@ -43,7 +43,7 @@ export default function IntroPortrait({
     const track = trackRef.current;
     if (!track) return;
 
-    // Must match the CSS vars in globals.css (.intro-collapse-track)
+    // Must match the CSS vars in styles/home.css (.intro-collapse-track)
     const FULL_VH = 72;
     const COMPACT_VH = 38;
     const STICKY_TOP = 80; // px — clears the fixed 68px header

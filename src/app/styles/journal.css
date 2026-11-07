@@ -1,0 +1,55 @@
+/* Journal: the stacked journal cards on phone and tablet.
+   Imported by globals.css, in the order listed there. */
+
+/* ——— Journal sticky stack — mobile / tablet ——— */
+
+@media (max-width: 1023px) {
+  .journal-section-header {
+    position: sticky;
+    top: 76px;
+    z-index: 10;
+    background: var(--background);
+    padding: 12px 0 16px;
+  }
+
+  .journal-stack-card {
+    position: sticky;
+    top: var(--stack-top);
+    width: var(--stack-width);
+    border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 4%, transparent);
+    transition: filter var(--dur-image) var(--ease-slow);
+  }
+
+  /* Tap / pressed state */
+  .journal-stack-link:active {
+    opacity: 0.92;
+    transition: opacity 150ms ease-out;
+  }
+
+  /* Grayscale when stacked */
+  .journal-card-stacked {
+    filter: grayscale(1);
+  }
+
+  /* Text shadow for readability over images */
+  .journal-card-text {
+    text-shadow: 0 1px 6px color-mix(in srgb, var(--foreground) 30%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal-stack-card {
+    position: relative;
+    top: auto;
+    width: 100%;
+    filter: none;
+    transition: none;
+    margin-bottom: 16px;
+  }
+
+  .journal-section-header {
+    position: relative;
+    top: auto;
+  }
+}

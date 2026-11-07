@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import type { JournalEntry } from "@/lib/types";
@@ -76,15 +76,17 @@ export default function JournalStack({ displayed }: { displayed: JournalEntry[] 
             cardRefs.current[i] = el;
           }}
           className="journal-stack-card"
+          // Sticky offset and width per card, applied by .journal-stack-card
+          // in journal.css (as variables, so reduced motion can unstack the
+          // cards without !important).
           style={{
-            position: "sticky",
-            top: `calc(${CARD_TOP}px + ${i * PEEK_VH}vh)`,
+            "--stack-top": `calc(${CARD_TOP}px + ${i * PEEK_VH}vh)`,
+            "--stack-width": `calc(100% - ${i * WIDTH_STEP}px)`,
             zIndex: displayed.length - i,
             height: `${CARD_VH}vh`,
-            width: `calc(100% - ${i * WIDTH_STEP}px)`,
             marginInline: "auto",
             marginBottom: i < displayed.length - 1 ? 14 : undefined,
-          }}
+          } as CSSProperties}
         >
           <Link
             href={`/journal/${entry.slug}`}

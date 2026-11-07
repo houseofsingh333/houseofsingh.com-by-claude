@@ -40,7 +40,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
 
       {/* Two-column layout on desktop (1024px+); stacked on tablet/mobile.
           Tablet (768–1023px) adds a scroll-driven image collapse via the
-          .intro-collapse-* classes in globals.css. */}
+          .intro-collapse-* classes in styles/home.css. */}
       <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-y-8 lg:gap-x-8 lg:gap-y-0 items-start">
         {/* Portrait + caption — left (the only client part of this section) */}
         <IntroPortrait portrait={portrait} founderName={founderName} roles={roles} />
@@ -100,7 +100,7 @@ export default function IntroSection({ data }: { data: HomeIntroData }) {
               <span
                 className="group-hover:border-foreground/40 transition-colors duration-(--dur-hover) ease-(--ease-soft-out)"
                 style={{
-                  borderBottom: "1px solid rgba(0, 0, 0, 0.2)",
+                  borderBottom: "1px solid color-mix(in srgb, var(--foreground) 20%, transparent)",
                   paddingBottom: "4px",
                 }}
               >

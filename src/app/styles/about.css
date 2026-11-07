@@ -1,0 +1,319 @@
+/* About: sticky portraits, Rapidfire, the Timeline, the Featured On panel.
+   Imported by globals.css, in the order listed there. */
+
+/* ——— Sticky portraits — opt-out under reduced motion ———
+   Sticky positioning is layout, not animation, but pinned elements can feel
+   disorienting for motion-sensitive users, so they release to normal flow.
+   Covers the About founder portrait and the homepage intro portrait, which
+   are both pinned on desktop via the Tailwind `lg:sticky` utility. (The
+   tablet-range pin on .intro-collapse-sticky already has its own opt-out
+   alongside the collapse rules further down.) */
+
+@media (prefers-reduced-motion: reduce) {
+  .about-portrait-sticky,
+  .intro-collapse-sticky {
+    position: static;
+  }
+}
+
+/* ——— Rapidfire accordion — editorial Q&A interaction ——— */
+
+.rapidfire-section {
+  --rf-num-w: 34px;
+  --rf-gap: 24px;
+}
+
+.rapidfire-item {
+  position: relative;
+  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent);
+}
+
+/* Animated underline — overlays the subtle divider, left-to-right reveal */
+.rapidfire-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background-color: var(--foreground);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+
+/* Desktop hover — line reveal matching contact-intent pattern */
+@media (hover: hover) {
+  .rapidfire-item:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.rapidfire-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 24px 0;
+  cursor: pointer;
+  text-align: left;
+  background: none;
+  border: none;
+}
+
+.rapidfire-btn:focus-visible {
+  outline: 1.5px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* Number index: (01), (02) ... */
+.rapidfire-number {
+  flex-shrink: 0;
+  min-width: var(--rf-num-w);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted-foreground);
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+
+/* Question text */
+.rapidfire-question {
+  flex: 1;
+  margin-left: var(--rf-gap);
+  font-family: var(--font-editorial);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--foreground);
+  transition: opacity 200ms ease;
+}
+
+/* Eye toggle container — stacks two SVGs for crossfade */
+.rapidfire-toggle {
+  flex-shrink: 0;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  margin-left: 16px;
+  color: var(--muted-foreground);
+}
+
+.rapidfire-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
+.rapidfire-eye {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 250ms ease;
+}
+
+/* Desktop hover (1024px+) — dim question, nudge number on closed items */
+@media (min-width: 1024px) {
+  .rapidfire-btn:not([data-open]):hover .rapidfire-question {
+    opacity: 0.6;
+  }
+
+  .rapidfire-btn:not([data-open]):hover .rapidfire-number {
+    transform: translateX(2px);
+  }
+}
+
+/* Answer panel — CSS grid height animation */
+.rapidfire-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 400ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.rapidfire-panel[data-open] {
+  grid-template-rows: 1fr;
+}
+
+.rapidfire-panel > div {
+  overflow: hidden;
+}
+
+/* Answer text — indented to align with question, not number */
+.rapidfire-answer {
+  padding-left: calc(var(--rf-num-w) + var(--rf-gap));
+  padding-top: 8px;
+  padding-bottom: 24px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--foreground);
+  opacity: 0.8;
+  max-width: 980px;
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  .rapidfire-section {
+    --rf-num-w: 28px;
+    --rf-gap: 16px;
+  }
+
+  .rapidfire-item::after {
+    display: none;
+  }
+
+  .rapidfire-btn {
+    padding: 20px 0;
+  }
+
+  .rapidfire-number {
+    font-size: 12px;
+  }
+
+  .rapidfire-question {
+    font-size: 16px;
+  }
+
+  .rapidfire-toggle {
+    width: 18px;
+    height: 18px;
+  }
+
+  .rapidfire-toggle svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .rapidfire-answer {
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: none;
+  }
+}
+
+/* Reduced motion: show items immediately, instant expand/collapse */
+@media (prefers-reduced-motion: reduce) {
+  .rapidfire-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .rapidfire-number,
+  .rapidfire-question,
+  .rapidfire-eye,
+  .rapidfire-panel {
+    transition: none;
+  }
+}
+
+/* ——— About: Featured On panel ———
+   Muted text inside the panel switches to the darker panel grey so labels
+   and dates keep 4.5:1 on the tinted background. */
+.featured-panel {
+  background-color: var(--featured-panel);
+  --muted-foreground: var(--muted-foreground-panel);
+}
+
+/* ——— Timeline (about/Timeline.tsx): edge fades, milestone text, the phone
+   scroll snap and scroll driven colour, reduced motion ——— */
+
+.edge-fade {
+  width: 120px;
+}
+
+/* Milestone text never fades: muted grey (4.57:1) when inactive,
+   charcoal on the milestone in focus. */
+.film-text {
+  color: var(--muted-foreground);
+  transition: color 0.3s ease;
+}
+.film-card[data-active] .film-text {
+  color: var(--foreground);
+}
+@media (max-width: 1023px) {
+  .edge-fade {
+    width: 60px;
+  }
+}
+
+/* ─── Mobile: scroll-snap + CSS scroll-driven animations ─── */
+@media (max-width: 767px) {
+  .timeline-scroll--mobile {
+    scroll-snap-type: x mandatory;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .film-card--mobile {
+    scroll-snap-align: center;
+  }
+  .film-card--mobile .film-frame {
+    will-change: filter, opacity;
+  }
+}
+
+/*
+ * CSS Scroll-Driven Animation (mobile only)
+ *
+ * Uses animation-timeline: view(inline) to track each card's
+ * horizontal position within the scroll container's viewport.
+ * As a card enters from either side, it starts grayscale/faded/scaled-down
+ * and transitions to full color/opacity/scale at the center,
+ * then fades back out as it exits the other side.
+ *
+ * Browser support: Chrome 115+, Edge 115+. For unsupported browsers
+ * (Safari, Firefox as of early 2026), the @supports fallback shows
+ * all cards at full color/scale with no animation.
+ */
+@media (max-width: 767px) {
+  @keyframes grayscale-to-color {
+    0% {
+      filter: grayscale(1);
+      opacity: 0.6;
+    }
+    50% {
+      filter: grayscale(0);
+      opacity: 1;
+    }
+    100% {
+      filter: grayscale(1);
+      opacity: 0.6;
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    .film-card--mobile .film-frame {
+      animation: grayscale-to-color linear both;
+      animation-timeline: view(inline);
+      animation-range: contain 0% contain 100%;
+    }
+  }
+
+  @supports not (animation-timeline: view()) {
+    .film-card--mobile .film-frame {
+      filter: grayscale(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* Reduced motion. !important is needed here: these override the inline
+   transitions on the cards and frames, and the filter and opacity the
+   timeline sets from script while scrolling. */
+@media (prefers-reduced-motion: reduce) {
+  .film-card {
+    transform: none !important;
+    transition: none !important;
+  }
+  .film-frame {
+    transition: opacity 0.15s ease !important;
+    filter: none !important;
+  }
+  .film-text {
+    transition: none;
+  }
+  .film-card--mobile .film-frame {
+    animation: none !important;
+    filter: grayscale(0) !important;
+    opacity: 1 !important;
+  }
+}

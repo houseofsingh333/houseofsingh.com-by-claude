@@ -1,0 +1,478 @@
+/* Home: hero slideshow, intro collapse, projects archive strip, spotlight billboard, grain.
+   Imported by globals.css, in the order listed there. */
+
+/* ——— Hero vignette — cinematic film still feel ——— */
+
+.hero-vignette {
+  background:
+    radial-gradient(ellipse at center, transparent 50%, color-mix(in srgb, var(--foreground) 30%, transparent) 100%),
+    linear-gradient(to top, color-mix(in srgb, var(--foreground) 35%, transparent) 0%, transparent 40%);
+}
+
+/* ——— Hero slideshow (CinematicHero), in CSS ———
+   Each slide is stacked. The active slide fades in over --hero-fade on
+   --ease-slow, on top of the slide it replaces, which stays fully visible
+   underneath (its zoom still running) until it is covered. The first slide
+   is shown at once. The Ken Burns zoom is a slow, linear drift between two
+   transforms the component sets per slide (--kb-from, --kb-to); it starts
+   when data-run is set and keeps its end position. */
+:root {
+  --hero-fade: 2000ms;
+  --hero-kb-duration: 12000ms;
+}
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.hero-slide[data-state="active"] {
+  opacity: 1;
+  z-index: 2;
+  transition: opacity var(--hero-fade) var(--ease-slow);
+}
+.hero-slide[data-state="leaving"] {
+  opacity: 1;
+  z-index: 1;
+}
+.hero-slide[data-first] {
+  transition: none;
+}
+.hero-kb {
+  position: absolute;
+  inset: 0;
+  transform: var(--kb-from);
+}
+.hero-kb[data-run] {
+  animation: heroKenBurns var(--hero-kb-duration) linear forwards;
+}
+@keyframes heroKenBurns {
+  from {
+    transform: var(--kb-from);
+  }
+  to {
+    transform: var(--kb-to);
+  }
+}
+/* Caption: fades out (0.6s), then the next one fades and rises 12px in. */
+.hero-caption {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 600ms var(--ease-slow),
+    transform 0s linear 600ms;
+}
+.hero-caption[data-visible] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 1200ms var(--ease-slow),
+    transform 1200ms var(--ease-slow);
+}
+.hero-caption[data-first] {
+  transition: none;
+}
+/* Without JavaScript the dots cannot work, so they take no space. */
+html:not(.js) .hero-dots {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide,
+  .hero-slide[data-state],
+  .hero-caption,
+  .hero-caption[data-visible] {
+    transition: none;
+  }
+  .hero-kb,
+  .hero-kb[data-run] {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* ——— Homepage intro — tablet-only scroll-driven image collapse ———
+   Active only between 768px and 1023px. The track reserves the scroll
+   distance; the sticky child pins below the header while JS shrinks the
+   frame from 72vh to 38vh, then releases. Desktop (1024px+) keeps the
+   two-column sticky layout; mobile (<768px) keeps the plain stack. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .intro-collapse-track {
+    --intro-img-full: 72svh;
+    --intro-img-compact: 38svh;
+    /* shrink distance + compact frame + caption allowance */
+    height: calc(
+      (var(--intro-img-full) - var(--intro-img-compact)) +
+        var(--intro-img-compact) + 40px
+    );
+  }
+
+  .intro-collapse-sticky {
+    position: sticky;
+    top: 80px; /* clears the fixed 68px header */
+  }
+
+  .intro-collapse-frame {
+    height: var(--intro-img-h, var(--intro-img-full));
+  }
+}
+
+/* Reduced motion: no shrink — fixed-height image, normal flow */
+@media (min-width: 768px) and (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  .intro-collapse-track {
+    height: auto;
+  }
+
+  .intro-collapse-sticky {
+    position: static;
+  }
+
+  .intro-collapse-frame {
+    height: 52vh;
+  }
+}
+
+/* ——— Cinematic grain overlay (shared across sections) ——— */
+
+.archive-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  mix-blend-mode: multiply;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .archive-grain {
+    display: none;
+  }
+}
+
+/* ——— Projects Archive — horizontal scroll strip ——— */
+
+/* Responsive gutters on the archive rail */
+.archive-scroll {
+  --archive-gutter: 24px;
+  --archive-gap: 20px;
+  padding-left: var(--archive-gutter);
+  padding-right: var(--archive-gutter);
+  scroll-padding-left: var(--archive-gutter);
+  scroll-padding-right: var(--archive-gutter);
+  scroll-snap-type: x mandatory;
+  gap: var(--archive-gap);
+  background-color: var(--background);
+}
+@media (min-width: 768px) {
+  .archive-scroll {
+    --archive-gutter: 64px;
+    --archive-gap: 20px;
+    scroll-snap-type: x proximity;
+  }
+}
+.archive-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.archive-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Card width: partial next-card reveal at every breakpoint */
+.archive-card {
+  width: calc((100vw - var(--archive-gutter) - var(--archive-gap)) / 1.15);
+}
+@media (min-width: 768px) {
+  .archive-card {
+    width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 2.2);
+  }
+}
+@media (min-width: 1024px) {
+  .archive-card {
+    width: calc((100vw - var(--archive-gutter) - 2 * var(--archive-gap)) / 2.25);
+  }
+}
+
+/* Tablet: taller cards — 90vh instead of 60vh */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .archive-card .max-h-\[60vh\] {
+    max-height: 90vh;
+  }
+}
+
+/* ——— Custom micro scrollbar (desktop only) ——— */
+
+.archive-scrollbar-track {
+  position: relative;
+  height: 2px;
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.section-archive:hover .archive-scrollbar-track {
+  opacity: 1;
+}
+
+.archive-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: color-mix(in srgb, var(--foreground) 15%, transparent);
+  border-radius: 9999px;
+  will-change: transform;
+}
+
+@media (max-width: 1023px) {
+  .archive-scrollbar-track {
+    display: none;
+  }
+}
+
+/* ——— Reduced motion: disable grain, blur, and archive transitions ——— */
+
+@media (prefers-reduced-motion: reduce) {
+  .archive-img-reduced {
+    transition: none;
+  }
+  .archive-scrollbar-track {
+    transition: none;
+  }
+}
+
+/* ── Spotlight Billboard — Cinematic Takeover ── */
+
+.spotlight-section {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* Background image with cinematic color grade */
+.spotlight-img-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.spotlight-img {
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.35) saturate(0.7);
+}
+
+/* Left-to-right gradient overlay */
+.spotlight-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--foreground) 85%, transparent) 0%,
+    color-mix(in srgb, var(--foreground) 50%, transparent) 40%,
+    transparent 75%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Film grain texture (CSS only) */
+.spotlight-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Content — left-aligned, vertically centered */
+.spotlight-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 1.5rem;
+}
+
+.spotlight-content-inner {
+  max-width: 600px;
+}
+
+/* Label with dash prefix */
+.spotlight-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+  margin-bottom: 24px;
+}
+
+.spotlight-label-dash {
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+/* Title — editorial serif */
+.spotlight-title-el {
+  font-family: var(--font-editorial);
+  font-size: clamp(42px, 6vw, 88px);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.05;
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+
+/* Teaser text */
+.spotlight-teaser {
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
+  max-width: 520px;
+  margin-bottom: 36px;
+}
+
+/* CTA link with arrow and animated underline */
+.spotlight-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  padding-bottom: 4px;
+}
+
+.spotlight-cta-arrow {
+  font-size: 16px;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+
+.spotlight-cta:hover .spotlight-cta-arrow {
+  transform: translateX(4px);
+}
+
+/* Underline: starts at 30%, expands to 100% on hover */
+.spotlight-cta::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  clip-path: inset(0 70% 0 0);
+  transition: clip-path var(--dur-hover) var(--ease-soft-out);
+}
+
+.spotlight-cta:hover::after {
+  clip-path: inset(0 0% 0 0);
+  transition: clip-path var(--dur-hover) var(--ease-soft-out);
+}
+
+.spotlight-cta:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 4px;
+}
+
+/* Category — vertical text, bottom right */
+.spotlight-category {
+  position: absolute;
+  right: 24px;
+  bottom: 48px;
+  z-index: 3;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Mobile adjustments (below 768px) ── */
+@media (max-width: 767px) {
+  .spotlight-content {
+    padding: 0 1.25rem;
+  }
+
+  .spotlight-teaser {
+    font-size: 14px;
+  }
+
+  .spotlight-category {
+    right: 16px;
+    bottom: 32px;
+    font-size: 10px;
+  }
+}
+
+/* ── Tablet+ (768px+): more breathing room ── */
+@media (min-width: 768px) {
+  .spotlight-content {
+    padding: 0 4rem;
+  }
+}
+
+/* ── Desktop (1280px+): generous padding ── */
+@media (min-width: 1280px) {
+  .spotlight-content {
+    padding: 0 5rem;
+  }
+
+  .spotlight-content-inner {
+    max-width: 700px;
+  }
+
+  .spotlight-teaser {
+    font-size: 16px;
+    max-width: 560px;
+  }
+}
+
+/* ── Ken Burns drift — desktop 1024px+ only ── */
+@keyframes kbSpotlight {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  50%       { transform: scale(1.03) translate(0.3%, 0.2%); }
+}
+
+@media (min-width: 1024px) {
+  .spotlight-kb {
+    animation: kbSpotlight 25s ease-in-out infinite;
+    will-change: transform;
+  }
+}
+
+@media (max-width: 1023px) {
+  .spotlight-kb {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-kb {
+    animation: none;
+  }
+
+  .spotlight-cta::after,
+  .spotlight-cta:hover::after {
+    transition: none;
+  }
+
+  .spotlight-cta-arrow {
+    transition: none;
+  }
+}

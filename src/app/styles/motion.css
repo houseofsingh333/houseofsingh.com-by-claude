@@ -1,0 +1,158 @@
+/* Motion: shared keyframes, page transitions, blur up and scroll reveals.
+   Imported by globals.css, in the order listed there. */
+
+/* ——— Keyframes ——— */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes editorialFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes editorialSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes projectsGridReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scrollPulse {
+  0%,
+  100% {
+    transform: translateY(-100%);
+  }
+  50% {
+    transform: translateY(300%);
+  }
+}
+
+/* ——— Page transitions (PageTransition, browser View Transitions) ———
+   The old page fades out and the new one fades in, over --dur-page on
+   --ease-slow. The rest of the document (header, footer) crossfades on the
+   same timing, so it reads as one calm change. Clicks pass through the
+   overlay. Reduced motion: no animation, the page changes at once. */
+::view-transition-old(.page),
+::view-transition-new(.page),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-page);
+  animation-timing-function: var(--ease-slow);
+}
+::view-transition-group(.page) {
+  animation: none;
+}
+::view-transition {
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}
+
+/* ——— Blur up ———
+   A photo's tiny blurred preview (BlurUp) sits under the photo. The photo is
+   visible by default: in the server HTML, with JavaScript off, and on any
+   photo without a preview. Only under the pre paint "js" class does a photo
+   with a preview start hidden; once it has loaded (data-loaded, set by the
+   pre paint script) it dissolves in over the preview, as an animation so it
+   never fights the photo's own hover transitions. Reduced motion: instant. */
+.blurup {
+  display: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+html.js .blurup {
+  display: block;
+}
+.blurup::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  filter: blur(18px);
+  transform: scale(1.12);
+}
+/* The photo paints above its preview (a fill photo is already positioned). */
+.blurup + img[data-blurup] {
+  position: relative;
+}
+html.js .blurup + img[data-blurup]:not([data-loaded]) {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .blurup + img[data-blurup][data-loaded] {
+    animation: blurup-in var(--dur-image) var(--ease-slow) backwards;
+  }
+}
+@keyframes blurup-in {
+  from {
+    opacity: 0;
+  }
+}
+/* A non filling photo gets a wrapper so the preview has a box to fill. */
+.blurup-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ——— Scroll reveal ———
+   Content that fades in on scroll (ScrollReveal, revealProps) is visible by
+   default: in the server HTML, with JavaScript off, and with reduced motion.
+   The hidden start state applies only when the pre paint script in the root
+   layout has marked <html class="js"> and the visitor allows motion. The
+   element then fades and rises into place once data-revealed is set.
+   In the components layer, so Tailwind utilities on the same element (for
+   example a card's own transition) still take precedence as before. */
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    html.js [data-reveal] {
+      transition:
+        opacity var(--dur-reveal) var(--ease-slow) var(--reveal-delay, 0ms),
+        transform var(--dur-reveal) var(--ease-slow) var(--reveal-delay, 0ms);
+    }
+    html.js [data-reveal]:not([data-revealed]) {
+      opacity: 0;
+      transform: translateY(var(--reveal-offset, var(--rise-reveal)));
+    }
+  }
+}
