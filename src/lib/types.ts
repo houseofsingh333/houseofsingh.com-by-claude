@@ -220,6 +220,14 @@ export type SpotlightData = {
   image: SanityImage;
 };
 
+/** A manual card in Chapter VII's Recent studio work row (Site Settings). */
+export type StudioWorkCard = {
+  _key?: string;
+  clientName?: string | null;
+  link?: string | null;
+  image?: SanityImage | null;
+};
+
 export type SiteSettings = {
   siteTitle: string;
   tagline: string;
@@ -230,8 +238,8 @@ export type SiteSettings = {
   listeningIntro?: string | null;
   listeningSleeve?: SanityImage | null;
   practiceLine?: string | null;
-  /** Hand picked studio case study slugs (Chapter VII). */
-  practiceCaseStudies?: string[] | null;
+  /** Chapter VII: up to three manual cards under Recent studio work. */
+  studioWorkCards?: StudioWorkCard[] | null;
   defaultMetaDescription?: string | null;
   organizationName?: string | null;
   founderName?: string | null;

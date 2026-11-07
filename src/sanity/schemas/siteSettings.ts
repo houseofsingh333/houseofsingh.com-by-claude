@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 import { imageAltFields } from "./imageFields";
 import { SITE_COPY_FIELDS } from "../../lib/siteCopy";
 
@@ -89,15 +89,53 @@ export const siteSettings = defineType({
       fields: imageAltFields,
     }),
     defineField({
-      name: "practiceCaseStudies",
-      title: "Recent studio work: hand picked case studies",
+      name: "studioWorkCards",
+      title: "Studio work cards",
       type: "array",
       group: "homepage",
       fieldset: "chapter7",
-      of: [{ type: "string" }],
       description:
-        "Optional. Up to three case study slugs from the House of Singh Studios site (the last part of each case study's address), in the order to show them. When empty, the three most recent case studies are shown.",
+        "Optional. Up to three cards shown under Recent studio work, in this order. With none, the row and its label are hidden.",
       validation: (rule) => rule.max(3),
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "studioWorkCard",
+          title: "Studio work card",
+          fields: [
+            defineField({
+              name: "image",
+              title: "Image",
+              type: "image",
+              options: { hotspot: true },
+              validation: (rule) => rule.required(),
+              fields: [
+                defineField({
+                  name: "alt",
+                  title: "Alt Text",
+                  type: "string",
+                  description: "Describe the image for screen readers. Required.",
+                  validation: (rule) => rule.required(),
+                }),
+              ],
+            }),
+            defineField({
+              name: "clientName",
+              title: "Client name",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "link",
+              title: "Link",
+              type: "url",
+              description: "The full address of the case study, for example https://studios.houseofsingh.com/... It opens in a new tab.",
+              validation: (rule) => rule.required().uri({ scheme: ["https", "http"] }),
+            }),
+          ],
+          preview: { select: { title: "clientName", subtitle: "link", media: "image" } },
+        }),
+      ],
     }),
 
     /* ——— 404 page ——— */

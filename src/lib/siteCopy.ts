@@ -77,13 +77,6 @@ export const SITE_COPY_FIELDS = [
     text: "You are leaving this site. Opens studios.houseofsingh.com in a new tab.",
   },
   { name: "practiceWorkLabel", title: "Recent work label", group: "homepage", fieldset: "chapter7", text: "Recent studio work" },
-  {
-    name: "practiceCaseStudyBase",
-    title: "Case study address",
-    group: "homepage",
-    fieldset: "chapter7",
-    text: "https://studios.houseofsingh.com/work/",
-  },
 
   { name: "codaCta", title: "Large link", group: "homepage", fieldset: "coda", text: "Start a project" },
   {
@@ -146,7 +139,7 @@ export const SITE_COPY_FIELDS = [
   { name: "privacyShortUse", title: "Privacy: How we use your information", group: "legal", fieldset: "privacy", text: "to reply to you, to send the newsletter you signed up for, and to make pages load faster. It is never sold, rented or shared for marketing.", multiline: true },
   { name: "privacyShortNewsletter", title: "Privacy: Leaving the newsletter", group: "legal", fieldset: "privacy", text: "ask through the contact page and you will be removed.", multiline: true },
   { name: "privacyShortCookies", title: "Privacy: Cookies and browser storage", group: "legal", fieldset: "privacy", text: "no cookies of our own and no tracking. Two small notes sit in session storage, and the Spotify player may set its own cookies.", multiline: true },
-  { name: "privacyShortThirdParties", title: "Privacy: Third party services", group: "legal", fieldset: "privacy", text: "Vercel hosts the site, Sanity stores its content and your submissions, Spotify plays the playlist, and the studio panel shows recent work from House of Singh Studios. Each has its own privacy policy.", multiline: true },
+  { name: "privacyShortThirdParties", title: "Privacy: Third party services", group: "legal", fieldset: "privacy", text: "Vercel hosts the site, Sanity stores its content and your submissions, and Spotify plays the playlist. Each has its own privacy policy.", multiline: true },
   { name: "privacyShortContact", title: "Privacy: Contact", group: "legal", fieldset: "privacy", text: "questions about this policy go through the contact page.", multiline: true },
   { name: "termsShortUse", title: "Terms: Use of this website", group: "legal", fieldset: "terms", text: "the site is for information and portfolio purposes. Browse freely, but do not scrape or copy it with automated tools.", multiline: true },
   { name: "termsShortProperty", title: "Terms: Intellectual property", group: "legal", fieldset: "terms", text: "the work on this site belongs to Maninder Singh / House of Singh. Ask before using any of it commercially.", multiline: true },

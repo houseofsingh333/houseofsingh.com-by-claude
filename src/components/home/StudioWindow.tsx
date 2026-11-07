@@ -1,6 +1,7 @@
 import SanityImage from "@/components/SanityImage";
 import type { SiteCopy } from "@/lib/siteCopy";
-import { fetchStudioWork } from "@/sanity/studioWork";
+import { hasImageAsset } from "@/lib/sanityImage";
+import type { StudioWorkCard } from "@/lib/types";
 
 const STUDIO_URL = "https://studios.houseofsingh.com";
 
@@ -18,20 +19,24 @@ function Arrow({ className }: { className?: string }) {
  * Chapter VII, the window into the studio (canvas frame "Window B1: a quiet
  * thumbnail row"). A still section: the numeral and label; the House of
  * Singh Studios logo in charcoal beside the studio line, the link out and
- * the leaving note; then, below a hairline, three recent case studies from
- * the studio's own Sanity, small and in greyscale, each coming into colour
- * on hover or focus and opening its case study in a new tab. If the
- * studio's data cannot be reached the row is hidden and the rest stays.
- * All text is editable in Site Settings, Homepage chapters, Chapter VII.
+ * the leaving note; then, below a hairline, up to three studio work cards,
+ * small and in greyscale, each coming into colour on hover or focus and
+ * opening its link in a new tab. The cards are this site's own content
+ * (Site Settings, Homepage chapters, Chapter VII, Studio work cards), shown
+ * in the order set there; with none filled in, the row and its label are
+ * hidden and the rest stays. All text is editable in that same section.
  */
-export default async function StudioWindow({
+export default function StudioWindow({
   copy,
-  caseStudies,
+  cards,
 }: {
   copy: SiteCopy;
-  caseStudies?: string[] | null;
+  cards?: StudioWorkCard[] | null;
 }) {
-  const work = await fetchStudioWork(caseStudies, copy.practiceCaseStudyBase);
+  // Only complete cards: an image, a client name and a link.
+  const work = (cards ?? [])
+    .filter((c) => hasImageAsset(c.image) && c.clientName?.trim() && c.link?.trim())
+    .slice(0, 3);
 
   return (
     <section aria-labelledby="chapter-practice" className="window px-6 md:px-16 section-py">
@@ -71,24 +76,24 @@ export default async function StudioWindow({
         </div>
       </div>
 
-      {work && (
+      {work.length > 0 && (
         <div className="window-work">
           <p className="window-work-label">{copy.practiceWorkLabel}</p>
           <ul className="window-work-list">
-            {work.map((w) => (
-              <li key={w.href}>
-                <a href={w.href} target="_blank" rel="noopener noreferrer" className="window-work-item">
+            {work.map((w, i) => (
+              <li key={w._key ?? i}>
+                <a href={w.link!.trim()} target="_blank" rel="noopener noreferrer" className="window-work-item">
                   <span className="window-thumb">
-                    {/* The colour photograph, and a greyscale copy over it
-                        that fades away on hover and focus. The client's name
-                        below names the link, so the images are decorative. */}
-                    <SanityImage image={{ url: w.image.url, lqip: w.image.lqip ?? undefined, isDecorative: true }} context="thumbnail" fill sizes="140px" develop={false} className="object-cover" />
+                    {/* The colour photograph (with its alt text), and a
+                        greyscale copy over it that fades away on hover and
+                        focus; the copy is hidden from screen readers. */}
+                    <SanityImage image={w.image} context="thumbnail" fill sizes="140px" develop={false} className="object-cover" />
                     <span aria-hidden="true" className="window-thumb-grey">
-                      <SanityImage image={{ url: w.image.url, lqip: w.image.lqip ?? undefined, isDecorative: true }} context="thumbnail" fill sizes="140px" develop={false} className="object-cover" />
+                      <SanityImage image={w.image} context="thumbnail" alt="" fill sizes="140px" develop={false} className="object-cover" />
                     </span>
                   </span>
                   <span className="window-work-name">
-                    {w.name}
+                    {w.clientName!.trim()}
                     <span className="sr-only"> (opens in a new tab)</span>
                   </span>
                 </a>

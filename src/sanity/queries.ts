@@ -54,7 +54,8 @@ export const menuPhotosQuery = `{
  */
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   ...,
-  "listeningSleeve": listeningSleeve ${_imageAsset}
+  "listeningSleeve": listeningSleeve ${_imageAsset},
+  "studioWorkCards": studioWorkCards[]{ _key, clientName, link, "image": image ${_imageAsset} }
 }`;
 
 // --------------- Page not found ---------------

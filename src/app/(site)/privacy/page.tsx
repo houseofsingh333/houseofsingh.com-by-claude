@@ -227,12 +227,6 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
             </a>
             .
           </li>
-          <li>
-            <strong className="text-foreground">House of Singh Studios</strong>: the
-            studio panel on the home page shows recent work from House of
-            Singh Studios, read from the studio&apos;s own Sanity content, with
-            its images loaded from Sanity.
-          </li>
         </ul>
         <p>
           Each of these services has its own privacy policy governing how
