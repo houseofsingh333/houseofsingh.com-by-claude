@@ -13,6 +13,21 @@
    The rules below are written for One by one; the "glance state" rules
    that follow each override them. */
 
+/* Where a project's photograph starts, just clear of the crest: the plate
+   on the Projects page and the hero on a project page share it, so the
+   plate grows into the hero without moving down the page and neither ever
+   covers the crest. Phone and tablet: the page's top space (128px), the
+   header row (44px) and its gap (1rem), 188px. Desktop: 176px at 1280
+   wide, in proportion with the page from 1024 to 1600 (as --px below). */
+:root {
+  --plate-top: calc(128px + 44px + 1rem);
+}
+@media (min-width: 1024px) {
+  :root {
+    --plate-top: max(176px, calc(176 * min(max(100vw, 1024px), 1600px) / 1280));
+  }
+}
+
 .mono {
   /* Clears the crest at the top of the page (State 1 of the header). */
   --mono-top: 128px;
@@ -579,7 +594,7 @@ html:not(.js) .mono-icon {
   /* Below the header, the work starts just clear of the crest. */
   .mono-one,
   .mono-glance {
-    margin-top: calc(max(176px, 176 * var(--px)) - 56 * var(--px) - 44px);
+    margin-top: calc(var(--plate-top) - 56 * var(--px) - 44px);
   }
   .mono-slide {
     grid-template-columns: 8.0882% 44.1176% 8.8235% 38.9706%;
