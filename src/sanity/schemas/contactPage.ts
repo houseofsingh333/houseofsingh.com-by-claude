@@ -1,31 +1,12 @@
 import { defineField, defineType } from "sanity";
 import { imageAltFields } from "./imageFields";
+import { httpsRule } from "./rules";
 
 export const contactPage = defineType({
   name: "contactPage",
   title: "Contact Page",
   type: "document",
   fields: [
-    defineField({
-      name: "heading",
-      title: "Page Heading",
-      type: "string",
-      description: "Main heading shown on the contact page.",
-    }),
-    defineField({
-      name: "subheading",
-      title: "Subheading",
-      type: "text",
-      rows: 2,
-      description: "Text shown below the heading.",
-    }),
-    defineField({
-      name: "reasons",
-      title: "Contact Reasons",
-      type: "array",
-      description: 'Options shown in Step 1 (e.g. "Project Query", "Collaboration", "Media").',
-      of: [{ type: "string" }],
-    }),
     defineField({
       name: "portrait",
       title: "Portrait",
@@ -64,7 +45,7 @@ export const contactPage = defineType({
               title: "Instagram Post URL",
               type: "url",
               description: "Link to the original Instagram post.",
-              validation: (rule) => rule.required(),
+              validation: (rule) => httpsRule(rule.required()),
             }),
           ],
           preview: {

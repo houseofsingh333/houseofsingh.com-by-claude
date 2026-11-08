@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { httpsRule } from "./rules";
 
 export const heroSlide = defineType({
   name: "heroSlide",
@@ -46,18 +47,22 @@ export const heroSlide = defineType({
       title: "Caption",
       type: "string",
       description: 'Overlay text shown on the slide, e.g. "House of Singh | Design Studio"',
+      validation: (rule) => rule.required().warning("The slide shows its caption; without one the place is left empty."),
     }),
     defineField({
       name: "internalLink",
       title: "Internal Link",
       type: "string",
       description: "Link to a page on this site, e.g. /about",
+      validation: (rule) =>
+        rule.custom((v) => (!v || /^\/(?!\/)/.test(String(v)) ? true : "An address on this site starts with /, for example /about")),
     }),
     defineField({
       name: "externalLink",
       title: "External Link",
       type: "url",
       description: "Link to an external site (opens in new tab)",
+      validation: (rule) => httpsRule(rule),
     }),
     defineField({
       name: "order",

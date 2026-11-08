@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { httpsRule } from "./rules";
 import { imageAltFields } from "./imageFields";
 import { ABOUT_COPY_FIELDS } from "../../lib/siteCopy";
 
@@ -66,7 +67,8 @@ export const aboutPage = defineType({
       type: "image",
       options: { hotspot: true },
       description:
-        "Founder portrait. Recommended: JPEG, minimum 2400 px long edge, portrait orientation (3:4).",
+        "Required. Founder portrait. Recommended: JPEG, minimum 2400 px long edge, portrait orientation (3:4).",
+      validation: (rule) => rule.required(),
       fields: imageAltFields,
     }),
     defineField({
@@ -134,6 +136,7 @@ export const aboutPage = defineType({
               title: "URL",
               type: "url",
               description: "Link to the feature or publication.",
+              validation: (rule) => httpsRule(rule),
             }),
             defineField({
               name: "logo",

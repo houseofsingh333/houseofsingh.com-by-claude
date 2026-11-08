@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { imageAltFields, captionField } from "./imageFields";
+import { SLUG_NOTE } from "./rules";
 
 const bodyMembers = [
   { type: "block" },
@@ -25,6 +26,7 @@ export const journalEntry = defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
+      description: SLUG_NOTE,
       options: { source: "title", maxLength: 96 },
       validation: (rule) => rule.required(),
     }),
@@ -47,7 +49,8 @@ export const journalEntry = defineType({
       type: "image",
       options: { hotspot: true },
       description:
-        "Recommended: JPEG, minimum 2400 px on the long edge. Avoid uploading raw/uncompressed exports.",
+        "Required: the Journal shows every entry with its photograph. Recommended: JPEG, minimum 2400 px on the long edge. Avoid uploading raw/uncompressed exports.",
+      validation: (rule) => rule.required(),
       fields: [...imageAltFields, captionField],
     }),
     defineField({

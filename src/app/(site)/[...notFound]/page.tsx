@@ -1,4 +1,5 @@
 import NotFoundResponse from "@/components/NotFoundResponse";
+import { followRedirect } from "@/lib/redirects";
 
 /*
  * Catches every URL no other route matches and serves the public site's
@@ -16,6 +17,9 @@ export function generateStaticParams(): { notFound: string[] }[] {
   return [];
 }
 
-export default function CatchAllNotFound() {
+export default async function CatchAllNotFound({ params }: { params: Promise<{ notFound: string[] }> }) {
+  // An old address with a Redirect in the Studio goes on to its new one.
+  const { notFound } = await params;
+  await followRedirect(`/${notFound.map((s) => decodeURIComponent(s)).join("/")}`);
   return <NotFoundResponse />;
 }
