@@ -230,6 +230,8 @@ export type StudioWorkCard = {
 
 export type SiteSettings = {
   siteTitle: string;
+  /** The line under the Journal heading; empty hides it. */
+  journalTagline?: string | null;
   tagline: string;
   footerText: string;
   spotifyPlaylistUrl?: string;

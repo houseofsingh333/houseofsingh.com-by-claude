@@ -304,6 +304,35 @@ export const journalFeedQuery = `*[_type == "journalEntry"] | order(date desc){
   "coverImage": coverImage ${_imageAsset}
 }`;
 
+/** A journal entry in full, as the Journal page shows it (body images with their URLs). */
+const _journalEntryFull = `{
+  _id, title, "slug": slug.current, date, excerpt,
+  "coverImage": coverImage ${_imageAsset},
+  "body": body[]{
+    ...,
+    _type == "image" => {
+      ...,
+      "url": asset->url,
+      "lqip": asset->metadata.lqip,
+      "width": asset->metadata.dimensions.width,
+      "height": asset->metadata.dimensions.height
+    }
+  }
+}`;
+
+/**
+ * Every entry, light: what the calendar needs (date, title, address and the
+ * cover for its photo circle). Newest first; entries on the same day in the
+ * order they were made, newest first.
+ */
+export const journalIndexQuery = `*[_type == "journalEntry" && defined(date) && defined(slug.current)] | order(date desc, _createdAt desc){
+  _id, title, "slug": slug.current, date,
+  "thumb": coverImage{ "url": asset->url, hotspot }
+}`;
+
+/** The entries of one month, in full ($from inclusive, $to exclusive, YYYY-MM-DD). */
+export const journalMonthQuery = `*[_type == "journalEntry" && defined(slug.current) && date >= $from && date < $to] | order(date desc, _createdAt desc) ${_journalEntryFull}`;
+
 export const journalBySlugQuery = `*[_type == "journalEntry" && slug.current == $slug][0]{
   _id, title, "slug": slug.current, date,
   "updatedAt": _updatedAt,
