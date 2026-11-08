@@ -130,7 +130,7 @@ export const project = defineType({
       title: "Homepage Order",
       type: "number",
       description:
-        "The order of projects on the homepage and the Projects page. Lower number appears first; projects without a number come after, newest first.",
+        "The order of projects on the homepage, the Projects page and the Next project link at the end of each project. Lower number appears first; projects without a number come after, newest first.",
     }),
     defineField({
       name: "isUpcoming",

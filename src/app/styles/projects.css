@@ -541,6 +541,29 @@ html:not(.js) .mono-icon {
   }
 }
 
+/* Short phone screens (under 700px tall): Enter the project and the arrows
+   with the counter share one line, so the photograph gains a row of
+   height. The arrows sit at the right end of the card's last line (placed
+   over it, not in the flow); taller phones keep the FINAL layout. */
+@media (max-width: 1023px) and (max-height: 699.98px) {
+  .mono-one-inner {
+    position: relative;
+  }
+  .mono-phone-nav {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-top: 0;
+    gap: 0.625rem;
+  }
+  .mono-phone-nav button {
+    width: 36px;
+  }
+  .mono-phone-nav button:last-child {
+    margin-right: -10px;
+  }
+}
+
 /* Desktop (V1a): the plate on the left, the caption column on the right,
    aligned to the plate's bottom. The plate is as large as fits beneath the
    header, never more than 480px wide. */
