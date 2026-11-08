@@ -2,6 +2,7 @@
 
 import { ViewTransition, useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { MonographProject } from "@/lib/projectsData";
 import Plate from "./Plate";
 import { attachSwipe, clearSwipeStyles, playMove, type SwipeTarget } from "./swipe";
@@ -18,6 +19,8 @@ type Props = {
   reduced: boolean;
   /** The project the page opened on (its plate and caption arrive). */
   firstIndex: number;
+  /** Leaving for a project page (Enter the project, or the photograph). */
+  onLeave: (slug: string) => void;
 };
 
 const PHONE = "(max-width: 1023px)";
@@ -50,14 +53,16 @@ function typing(target: EventTarget | null): boolean {
 /**
  * One by one (frame V1a on desktop, FINAL on phone): every project is in
  * the page, stacked in one place; the current one shows, the others wait
- * hidden (and inert). Desktop: the plate on the left, the caption column on
- * the right, aligned to the plate's bottom, with the counter, a progress
- * tick per project, the title, category and year, the excerpt, Enter the
- * project, and Previous and Next. Arrow keys move between projects. Phone:
+ * hidden (and inert). Desktop: the plate on the left (it opens the project),
+ * the caption column on the right, level with it, with the counter, the
+ * title, category and year, the excerpt, Enter the project, and Previous
+ * and Next; moving on crossfades the photograph in place as it develops.
+ * Arrow keys move between projects. Phone:
  * one card per screen, swiped between projects (styles/projects.css and
  * swipe.ts), with small arrows and the counter beneath.
  */
-export default function OneByOne({ projects, index, onGo, copy, active, arriving, reduced, firstIndex }: Props) {
+export default function OneByOne({ projects, index, onGo, copy, active, arriving, reduced, firstIndex, onLeave }: Props) {
+  const router = useRouter();
   const isPhone = useSyncExternalStore(subscribePhone, () => window.matchMedia(PHONE).matches, () => false);
   const hidden = useSyncExternalStore(subscribeHidden, () => document.hidden, () => false);
   const [paused, setPaused] = useState(false);
@@ -152,7 +157,15 @@ export default function OneByOne({ projects, index, onGo, copy, active, arriving
               inert={!isActive}
             >
               <ViewTransition name={`project-${p.slug}`} share="project-plate" default="none">
-                <div className="mono-plate-frame">
+                {/* Desktop: the photograph opens the project, like "Enter the project". */}
+                <div
+                  className="mono-plate-frame"
+                  onClick={(e) => {
+                    if (isPhone || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    onLeave(p.slug);
+                    router.push(`/projects/${p.slug}`);
+                  }}
+                >
                   <Plate
                     photos={p.plates}
                     active={isActive && active}
@@ -176,20 +189,6 @@ export default function OneByOne({ projects, index, onGo, copy, active, arriving
                     </button>
                   )}
                 </div>
-                <div className="mono-ticks">
-                  {projects.map((q, j) => (
-                    <button
-                      key={q.id}
-                      type="button"
-                      aria-label={`${copy.goTo} ${q.title}`}
-                      aria-current={j === i ? "true" : undefined}
-                      onClick={() => onGo(j)}
-                      style={{ "--t": j } as CSSProperties}
-                    >
-                      <span />
-                    </button>
-                  ))}
-                </div>
                 <h2 id={`mono-title-${p.slug}`} className="mono-title" style={{ "--i": 1 } as CSSProperties}>
                   {p.title}
                 </h2>
@@ -201,7 +200,7 @@ export default function OneByOne({ projects, index, onGo, copy, active, arriving
                     {p.excerpt}
                   </p>
                 )}
-                <Link href={`/projects/${p.slug}`} className="mono-enter" style={{ "--i": 4 } as CSSProperties}>
+                <Link href={`/projects/${p.slug}`} onClick={() => onLeave(p.slug)} className="mono-enter" style={{ "--i": 4 } as CSSProperties}>
                   {copy.enter}
                 </Link>
                 <div className="mono-nav" style={{ "--i": 5 } as CSSProperties}>
@@ -212,7 +211,7 @@ export default function OneByOne({ projects, index, onGo, copy, active, arriving
                     {copy.next} <span aria-hidden="true">&rarr;</span>
                   </button>
                   <span className="mono-next-title" aria-hidden="true">
-                    {copy.nextPrefix} {nextTitle}
+                    {nextTitle}
                   </span>
                 </div>
               </div>

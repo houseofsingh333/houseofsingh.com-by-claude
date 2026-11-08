@@ -4,7 +4,7 @@
 /* ═══ The Projects page: the monograph ═══
    Two views of the same work, both always in the page (Monograph.tsx):
    One by one (frame V1a on desktop, FINAL on phone) and At a glance
-   (frame G2). The stylesheet decides which shows:
+   (frame G1). The stylesheet decides which shows:
    · after the page comes to life, data-view on .mono;
    · before that, the view remembered in localStorage, put on <html> as
      data-projects-view by a script before the first paint (not on a
@@ -158,40 +158,49 @@
    or no JavaScript. */
 .mono[data-view="glance"] .mono-glance,
 html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-glance,
+html[data-projects-return] .mono:not([data-hydrated]) .mono-glance,
 html:not(.js) .mono .mono-glance {
   display: block;
 }
 .mono[data-view="glance"] .mono-one,
 html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-one,
+html[data-projects-return] .mono:not([data-hydrated]) .mono-one,
 html:not(.js) .mono .mono-one {
   display: none;
 }
 .mono[data-view="glance"] .mono-filter-trigger,
-html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-filter-trigger {
+html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-filter-trigger,
+html[data-projects-return] .mono:not([data-hydrated]) .mono-filter-trigger {
   display: inline-flex;
 }
 .mono[data-view="glance"] .mono-icon-grid,
-html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-icon-grid {
+html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-icon-grid,
+html[data-projects-return] .mono:not([data-hydrated]) .mono-icon-grid {
   display: none;
 }
 .mono[data-view="glance"] .mono-icon-single,
-html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-icon-single {
+html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-icon-single,
+html[data-projects-return] .mono:not([data-hydrated]) .mono-icon-single {
   display: block;
 }
 .mono[data-view="glance"] .mono-views button[data-v="one"],
-html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="one"] {
+html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="one"],
+html[data-projects-return] .mono:not([data-hydrated]) .mono-views button[data-v="one"] {
   color: var(--muted-foreground);
 }
 .mono[data-view="glance"] .mono-views button[data-v="one"]::after,
-html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="one"]::after {
+html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="one"]::after,
+html[data-projects-return] .mono:not([data-hydrated]) .mono-views button[data-v="one"]::after {
   transform: scaleX(0);
 }
 .mono[data-view="glance"] .mono-views button[data-v="glance"],
-html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="glance"] {
+html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="glance"],
+html[data-projects-return] .mono:not([data-hydrated]) .mono-views button[data-v="glance"] {
   color: var(--foreground);
 }
 .mono[data-view="glance"] .mono-views button[data-v="glance"]::after,
-html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="glance"]::after {
+html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="glance"]::after,
+html[data-projects-return] .mono:not([data-hydrated]) .mono-views button[data-v="glance"]::after {
   transform: scaleX(1);
 }
 .mono .mono-views button:hover::after,
@@ -323,40 +332,6 @@ html:not(.js) .mono-icon {
 }
 .mono-pause:hover {
   color: var(--foreground);
-}
-
-/* Progress: one tick per project, each a labelled button; the current one
-   taller and brass. Drawn from the bottom so they share a baseline. */
-.mono-ticks {
-  display: none;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  margin: 1rem 0 2rem -12px;
-}
-/* Each tick is a 24 by 32 button (a comfortable target) around a 1px line. */
-.mono-ticks button {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  width: 24px;
-  height: 32px;
-}
-.mono-ticks span {
-  display: block;
-  width: 1px;
-  height: 12px;
-  background: var(--muted-foreground);
-  transform-origin: bottom;
-  transition:
-    height var(--dur-hover) var(--ease-soft-out),
-    background-color var(--dur-hover) var(--ease-soft-out);
-}
-.mono-ticks button:hover span {
-  background: var(--foreground);
-}
-.mono-ticks button[aria-current] span {
-  height: 24px;
-  background: var(--accent);
 }
 
 .mono-title {
@@ -598,49 +573,158 @@ html:not(.js) .mono-icon {
   }
 }
 
-/* Desktop (V1a): the plate on the left, the caption column on the right,
-   aligned to the plate's bottom. The plate is as large as fits beneath the
-   header, never more than 480px wide. */
+/* Desktop (V1a): content 1088px wide at 1280 (85 percent of the page, at
+   most 1360px), the plate 480x600 starting 88px in, a 96px gap, the caption
+   column 424px wide, level with the plate top and bottom, its content
+   standing on the plate's lower edge (Previous and Next sit level with
+   it). Everything scales with the page from 1024 to 1600 wide (--px is one
+   frame pixel); the photograph starts just below the crest. */
 @media (min-width: 1024px) {
+  .mono {
+    --px: calc(min(max(100vw, 1024px), 1600px) / 1280);
+    max-width: none;
+    padding: calc(56 * var(--px)) max(7.5%, calc((100% - 1360px) / 2)) var(--section-space-lg);
+  }
+  .mono-head {
+    align-items: center;
+    min-height: 44px;
+    padding-bottom: 0;
+  }
+  .mono-heading {
+    font-weight: 400;
+    font-size: calc(28 * var(--px));
+  }
+  .mono-views {
+    gap: calc(24 * var(--px));
+  }
+  .mono-views button,
+  .mono-filter-trigger,
+  .mono-counter,
+  .mono-pause,
+  .mono-meta,
+  .mono-enter,
+  .mono-nav button {
+    font-size: calc(12 * var(--px));
+    letter-spacing: 0.12em;
+  }
+  .mono-filter-trigger span {
+    padding-bottom: 1px;
+    border-bottom: 1px solid var(--accent);
+  }
+  /* Below the header, the work starts just clear of the crest. */
+  .mono-one,
+  .mono-glance {
+    margin-top: calc(max(176px, 176 * var(--px)) - 56 * var(--px) - 44px);
+  }
   .mono-slide {
-    grid-template-columns: auto minmax(0, 24rem);
-    justify-content: start;
-    column-gap: clamp(4rem, 8vw, 8rem);
-    align-items: end;
+    grid-template-columns: 8.0882% 44.1176% 8.8235% 38.9706%;
+    row-gap: 0;
+    align-items: stretch;
   }
   .mono-plate-frame {
-    width: min(480px, max(360px, calc((100svh - var(--mono-top) - 168px) * 0.8)));
+    grid-column: 2;
+    width: 100%;
+    cursor: pointer;
+  }
+  .mono-caption {
+    grid-column: 4;
+    justify-content: flex-end;
+    align-items: stretch;
+    gap: calc(22 * var(--px));
+  }
+  .mono-caption > * {
+    margin: 0;
   }
   .mono-segments {
     display: none;
   }
   .mono-count,
-  .mono-ticks,
   .mono-nav {
     display: flex;
   }
+  .mono-count {
+    justify-content: space-between;
+  }
+  .mono-counter {
+    letter-spacing: 0.14em;
+  }
   .mono-title {
-    font-size: 2.75rem;
-    line-height: 1.08;
+    font-weight: 400;
+    font-size: calc(52 * var(--px));
+    line-height: 1.05;
   }
   .mono-excerpt {
     display: block;
+    min-height: 0;
+    font-size: calc(16 * var(--px));
+    line-height: 1.7;
     -webkit-line-clamp: none;
     line-clamp: none;
   }
   .mono-enter {
-    margin-top: 1.75rem;
+    align-self: flex-start;
+    padding: calc(12 * var(--px)) 0 calc(4 * var(--px));
+  }
+  .mono-enter::after {
+    bottom: 0;
+    background: var(--foreground);
+  }
+  .mono-nav {
+    align-items: center;
+    justify-content: flex-start;
+    gap: calc(32 * var(--px));
+    padding-top: calc(18 * var(--px));
+  }
+  .mono-nav button {
+    min-height: 0;
+    padding: calc(10 * var(--px)) 0;
+  }
+  /* The next project's title, inline after Next, only while Next is pointed at or focused. */
+  .mono-next-title {
+    position: static;
+    margin: 0;
+    font-size: calc(15 * var(--px));
   }
   .mono-phone-nav {
     display: none;
   }
-  /* Room for the "Next:" line beneath the hairline. */
-  .mono-caption {
-    padding-bottom: 1.75rem;
+
+  /* Previous and Next: the photograph crossfades in place and develops
+     (--dur-plate on --ease-slow) while the caption changes; nothing slides. */
+  .mono-slide,
+  .mono-slide[data-active] {
+    opacity: 1;
+  }
+  .mono-slide {
+    pointer-events: none;
+    transition: visibility 0s linear var(--dur-plate);
+  }
+  .mono-slide[data-active] {
+    pointer-events: auto;
+    transition: none;
+  }
+  .mono-slide .mono-plate-frame {
+    opacity: 0;
+    transition: opacity var(--dur-plate) var(--ease-slow);
+  }
+  .mono-slide[data-active] .mono-plate-frame {
+    opacity: 1;
+  }
+  .mono-slide .mono-caption {
+    opacity: 0;
+  }
+  .mono-slide[data-active] .mono-caption {
+    opacity: 1;
+    transition: opacity var(--dur-page) var(--ease-slow);
+  }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  html.js .mono-slide[data-active] .mono-plate {
+    animation: develop var(--dur-plate) var(--ease-slow) both;
   }
 }
 
-/* ——— At a glance (G2) ——— */
+/* ——— At a glance (G1; two columns on phone) ——— */
 
 .mono-grid {
   display: grid;
@@ -665,27 +749,40 @@ html:not(.js) .mono-icon {
   overflow: hidden;
   background: var(--secondary);
 }
+/* The cover, and on hover the project's other photographs, one at a time. */
+.mono-card-photo {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--dur-image) var(--ease-slow);
+}
+.mono-card-photo[data-shown] {
+  opacity: 1;
+}
 .mono-card-plate img {
-  transition: transform var(--dur-image) var(--ease-soft-out);
+  transition: transform var(--dur-image) var(--ease-slow);
+}
+.mono-card-caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.75rem;
 }
 .mono-card-title {
-  display: inline;
-  margin-top: 0.75rem;
+  position: relative;
   font-family: var(--font-editorial);
   font-size: 1rem;
-  line-height: 1.3;
+  line-height: 1.2;
   color: var(--foreground);
-  padding-bottom: 2px;
+  padding-bottom: 4px;
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
   transition: background-size var(--dur-image) var(--ease-soft-out);
 }
-.mono-card-plate + .mono-card-title {
-  display: inline-block;
-}
 .mono-card-meta {
   display: none;
-  margin-top: 0.5rem;
   color: var(--muted-foreground);
+  white-space: nowrap;
 }
 .mono-card-link:hover .mono-card-plate img,
 .mono-card-link:focus-visible .mono-card-plate img {
@@ -696,25 +793,77 @@ html:not(.js) .mono-icon {
   background-size: 100% 1px;
 }
 
-/* Desktop: three columns, the middle one set lower. The offset is a
-   position, not a transform, so the filter's glide can use transforms. */
+/* Back from a project: a brass line draws under its title, holds about two
+   seconds, then fades (Monograph removes the mark afterwards). */
+.mono-card[data-return] .mono-card-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mono-card[data-return] .mono-card-title::after {
+    animation: mono-mark 2600ms var(--ease-slow) 900ms both;
+  }
+}
+@keyframes mono-mark {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+  15% {
+    width: 100%;
+  }
+  80% {
+    width: 100%;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0;
+  }
+}
+
+/* Arriving after a switch (AtAGlance): plates in the first screen rise 12px
+   and develop in rhythm; plates further down develop as they come into view. */
+@media (prefers-reduced-motion: no-preference) {
+  .mono-card[data-arrive="pre"] {
+    opacity: 0;
+  }
+  .mono-card[data-arrive="rise"] {
+    animation: mono-rise var(--dur-reveal) var(--ease-slow) var(--arrive-delay, 0ms) both;
+  }
+  .mono-card[data-arrive="rise"] .mono-card-plate,
+  .mono-card[data-arrive="develop"] .mono-card-plate {
+    animation: develop var(--dur-develop) var(--ease-slow) var(--arrive-delay, 0ms) both;
+  }
+  .mono-card[data-arrive="wait"] .mono-card-plate {
+    filter: sepia(0.28) saturate(0.6) contrast(0.82) brightness(1.08);
+  }
+}
+
+/* Desktop (G1): three equal columns across the content width, every
+   photograph 4:5, the title in Playfair with the category in small
+   capitals on the same line. No staggering, no closing line. */
 @media (min-width: 1024px) {
   .mono-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    column-gap: clamp(2rem, 4vw, 4rem);
-    row-gap: 5rem;
-    padding-bottom: 6rem;
+    column-gap: 5.8824%;
+    row-gap: calc(68 * var(--px));
   }
-  .mono-card[data-col3="1"] {
-    position: relative;
-    top: 6rem;
+  .mono-card-caption {
+    padding-top: calc(14 * var(--px));
   }
   .mono-card-title {
-    margin-top: 1rem;
-    font-size: 1.25rem;
+    font-size: calc(24 * var(--px));
   }
   .mono-card-meta {
     display: block;
+    font-size: calc(11 * var(--px));
+    letter-spacing: 0.12em;
   }
 }
 
@@ -831,20 +980,16 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
     animation: mono-rise var(--dur-reveal) var(--ease-slow) both;
     animation-delay: calc(360ms + var(--i, 0) * 140ms);
   }
-  html.js .mono[data-arrive] .mono-slide[data-first] .mono-ticks {
-    animation: none;
-  }
-  html.js .mono[data-arrive] .mono-slide[data-first] .mono-ticks span {
-    animation: mono-tick var(--dur-image) var(--ease-slow) both;
-    animation-delay: calc(480ms + var(--t, 0) * 70ms);
-  }
-  html.js .mono[data-arrive] .mono-card {
+  /* Rows in the first screen rise in rhythm (G1: 120ms between items,
+     260ms between rows); the photographs develop as they come into view
+     (the site's develop effect). */
+  html.js .mono[data-arrive] .mono-card[data-early] {
     animation: mono-rise var(--dur-reveal) var(--ease-slow) both;
-    animation-delay: calc(240ms + min(var(--r2, 0), 4) * 180ms);
+    animation-delay: calc(var(--r2, 0) * 260ms + var(--c2, 0) * 120ms);
   }
   @media (min-width: 1024px) {
-    html.js .mono[data-arrive] .mono-card {
-      animation-delay: calc(240ms + min(var(--r3, 0), 4) * 180ms);
+    html.js .mono[data-arrive] .mono-card[data-early] {
+      animation-delay: calc(var(--r3, 0) * 260ms + var(--c3, 0) * 120ms);
     }
   }
 }
@@ -854,10 +999,24 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
     transform: translateY(var(--rise-reveal));
   }
 }
-@keyframes mono-tick {
-  from {
-    transform: scaleY(0);
-  }
+
+/* Switching views on desktop: the plate shrinks into its place in the grid,
+   or a grid photograph grows into the One by one plate (Monograph names the
+   two "mono-shared" for the transition); the rest of the page crossfades. */
+::view-transition-group(mono-shared) {
+  animation-duration: var(--dur-image);
+  animation-timing-function: var(--ease-slow);
+}
+::view-transition-old(mono-shared),
+::view-transition-new(mono-shared) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: var(--dur-image);
+  animation-timing-function: var(--ease-slow);
+}
+.mono[data-vt] .mono-one,
+.mono[data-vt] .mono-glance {
+  animation: none;
 }
 
 /* The plate growing into the project's hero (a shared view transition
@@ -882,7 +1041,7 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   .mono-veil-list,
   .mono-views button::after,
   .mono-filter-trigger svg,
-  .mono-ticks span {
+  .mono-card-photo {
     transition: none;
   }
   .mono-veil[data-open] .mono-veil-list {
