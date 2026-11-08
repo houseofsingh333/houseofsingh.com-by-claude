@@ -49,8 +49,8 @@ export default async function NotFound() {
   return (
     <section className="lost px-6 md:px-16 page-top-offset section-pb">
       <div className="lost-text">
-        <p className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground">{copy.notFoundLabel}</p>
-        <h1 className="font-editorial font-normal text-[40px] md:text-[60px] leading-[1.05] text-foreground">
+        <p className="type-label text-muted-foreground">{copy.notFoundLabel}</p>
+        <h1 className="font-editorial font-normal text-[length:min(clamp(40px,calc(31.24px_+_2.247vw),60px),15cqi)] leading-[1.05] text-foreground">
           {copy.notFoundHeading}
         </h1>
         <p className="max-w-[420px] text-[16px] md:text-[17px] leading-[1.7] text-muted-foreground">
@@ -59,7 +59,7 @@ export default async function NotFound() {
         <nav aria-label="Ways back" className="lost-ways">
           {ways.map((w) => (
             <Link key={w.href} href={w.href} className="lost-way hairline-host">
-              <span className="hairline font-editorial text-[22px] md:text-[24px] leading-[1.2]">{w.label}</span>
+              <span className="hairline font-editorial text-[length:clamp(22px,calc(21.12px_+_0.225vw),24px)] leading-[1.2]">{w.label}</span>
               {w.note && <span className="text-[13px] text-muted-foreground text-right">{w.note}</span>}
             </Link>
           ))}

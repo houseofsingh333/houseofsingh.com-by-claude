@@ -1,6 +1,7 @@
 import SanityImage from "@/components/SanityImage";
 import { parseSanityDate } from "@/lib/dates";
 import type { FeaturedOutlet } from "@/lib/types";
+import { keepLastWords } from "@/lib/keepLastWords";
 
 /** The year of a Sanity date, read as a local date. */
 function yearOf(date?: string): string | null {
@@ -44,7 +45,7 @@ export default function PressCuttings({ outlets }: { outlets: FeaturedOutlet[] }
               {outlet.name}
               {year && `, ${year}`}
             </span>
-            <span className="press-title hairline">{outlet.title || outlet.name}</span>
+            <span className="press-title hairline">{keepLastWords(outlet.title || outlet.name)}</span>
           </>
         );
         return (

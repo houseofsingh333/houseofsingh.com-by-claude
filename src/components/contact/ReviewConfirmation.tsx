@@ -41,17 +41,17 @@ export function ReviewScreen({
 
   return (
     <div className="w-full max-w-xl mx-auto editorial-slide-up">
-      <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
+      <p className="type-label text-muted-foreground mb-4">
         Review
       </p>
-      <h2 className="font-editorial text-3xl md:text-4xl lg:text-5xl font-light text-foreground mb-12 leading-[1.12]">
+      <h2 className="font-editorial text-[length:clamp(30px,calc(22.11px_+_2.022vw),48px)] font-light text-foreground mb-12 leading-[1.12]">
         Before you send.
       </h2>
 
       <div className="space-y-10">
         {Object.entries(sections).map(([section, items]) => (
           <div key={section}>
-            <h3 className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
+            <h3 className="type-label text-muted-foreground mb-4">
               {sectionLabels[section] || section}
             </h3>
             <div className="space-y-0">
@@ -108,14 +108,14 @@ export function ReviewScreen({
   );
 }
 
-export function ConfirmationScreen() {
+export function ConfirmationScreen({ heading, line }: { heading: string; line: string }) {
   return (
     <div className="w-full max-w-xl mx-auto editorial-slide-up">
-      <h1 className="font-editorial text-4xl md:text-5xl lg:text-6xl font-light text-foreground mb-6 leading-[1.08]">
-        Thank you for reaching out.
-      </h1>
+      <h2 className="font-editorial text-[length:clamp(36px,calc(25.48px_+_2.697vw),60px)] font-light text-foreground mb-6 leading-[1.08]">
+        {heading}
+      </h2>
       <p className="text-muted-foreground text-lg mb-14 leading-relaxed">
-        I&apos;ll be in touch shortly.
+        {line}
       </p>
       <div className="flex flex-wrap gap-4">
         <Link

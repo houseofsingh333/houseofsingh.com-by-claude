@@ -32,10 +32,10 @@ export default function SpotlightBillboard({ spotlight, copy }: { spotlight: Spo
       />
       <div className="aperture-stage px-6 md:px-16">
         <div className="aperture-head">
-          <span aria-hidden="true" className="font-editorial italic text-[30px] leading-none text-accent">
+          <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
             IV
           </span>
-          <span className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground-inverse">
+          <span className="type-label text-muted-foreground-inverse">
             {copy.studioNowLabel}
           </span>
         </div>
@@ -43,7 +43,7 @@ export default function SpotlightBillboard({ spotlight, copy }: { spotlight: Spo
         <div className="aperture-grid">
           <div className="aperture-text">
             {spotlight.title && (
-              <h2 id={TITLE_ID} className="font-editorial font-normal text-[44px] md:text-[60px] lg:text-[72px] leading-[1.02] text-background text-balance">
+              <h2 id={TITLE_ID} className="font-editorial font-normal text-[length:clamp(44px,calc(31.73px_+_3.146vw),72px)] leading-[1.02] text-background text-balance">
                 {spotlight.title}
               </h2>
             )}
@@ -53,7 +53,7 @@ export default function SpotlightBillboard({ spotlight, copy }: { spotlight: Spo
               </p>
             )}
             {spotlight.label && (
-              <p className="flex items-center gap-2.5 text-[12px] tracking-[0.14em] uppercase text-muted-foreground-inverse">
+              <p className="flex items-center gap-2.5 type-label text-muted-foreground-inverse">
                 <span className="upcoming-dot" aria-hidden="true" />
                 {spotlight.label}
               </p>

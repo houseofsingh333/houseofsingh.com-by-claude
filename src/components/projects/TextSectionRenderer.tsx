@@ -1,5 +1,5 @@
 import { PortableText } from "@portabletext/react";
-import { proseComponents } from "@/components/proseComponents";
+import { proseComponents, storyProseComponents } from "@/components/proseComponents";
 import type { TextSectionBlock } from "@/lib/types";
 import { PAGE_COLUMN, READING_COLUMN, STORY_HEADING, STORY_TEXT } from "./story";
 
@@ -13,7 +13,8 @@ export default function TextSectionRenderer({ section }: Props) {
           <h2 className={`${STORY_HEADING} mb-8`}>{section.heading}</h2>
         )}
         <div className={STORY_TEXT}>
-          <PortableText value={section.body} components={proseComponents} />
+          {/* Under its own h2 its headings are h3; without one they sit directly under the page title, so h2. */}
+          <PortableText value={section.body} components={section.heading ? proseComponents : storyProseComponents} />
         </div>
       </div>
     </div>

@@ -303,6 +303,7 @@ export const spotlightQuery = `*[_type == "spotlight"][0]{
 export const contactPageQuery = `*[_type == "contactPage"][0]{
   "portrait": coalesce(portrait, *[_type == "aboutPage"][0].portrait) ${_imageAsset},
   portraitCaption,
+  form,
   "seo": seo ${_seo},
   seoTitle,
   seoDescription

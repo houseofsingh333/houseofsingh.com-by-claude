@@ -10,6 +10,18 @@ import { revealProps } from "@/lib/reveal";
  * once in view; CSS shows both at once under reduced motion or without
  * JavaScript (revealProps). The text is rendered on the server and passed in.
  */
+/**
+ * The logo at the size it is shown (260px, twice that for sharp screens). A
+ * Sanity image is asked for at that size in a modern format: the original
+ * upload can be thousands of pixels wide (the live one is 3750 by 3750).
+ */
+function logoSource(logo?: string | null): { src: string; srcSet?: string } {
+  if (!logo) return { src: "/images/hos-logo.svg" };
+  if (!logo.startsWith("https://cdn.sanity.io/") || /\.svg($|\?)/.test(logo)) return { src: logo };
+  const at = (w: number) => `${logo}${logo.includes("?") ? "&" : "?"}w=${w}&auto=format&q=80`;
+  return { src: at(520), srcSet: `${at(260)} 1x, ${at(520)} 2x` };
+}
+
 export default function PracticeReveal({
   logo,
   children,
@@ -23,15 +35,15 @@ export default function PracticeReveal({
 
   return (
     <div ref={ref} className="flex flex-col items-center gap-6 text-center">
-      <span aria-hidden="true" className="font-editorial italic text-[30px] leading-none text-accent">
+      <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
         III
       </span>
       <div {...revealProps({ revealed, rise: false })}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- SVG logo: next/image adds nothing for vector files. */}
-        <img src={logo || "/images/hos-logo.svg"} alt="House of Singh" width={260} height={260} className="w-[200px] md:w-[260px] h-auto" />
+        {/* eslint-disable-next-line @next/next/no-img-element -- a logo at a fixed size: an SVG, or a Sanity image asked for at that size. */}
+        <img {...logoSource(logo)} alt="House of Singh" width={260} height={260} className="w-[200px] md:w-[260px] h-auto" />
       </div>
       <div
-        className="about-practice-text max-w-[640px] font-editorial text-[21px] md:text-[26px] leading-[1.45] text-foreground"
+        className="about-practice-text max-w-[640px] font-editorial text-[length:clamp(21px,calc(18.81px_+_0.562vw),26px)] leading-[1.45] text-foreground"
         {...revealProps({ revealed, delay: 400 })}
       >
         {children}

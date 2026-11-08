@@ -4,8 +4,8 @@ import { proseParts } from "@/lib/proseBlocks";
 
 /** Headings inside rich text: Playfair, sized for a section within a page. */
 const HEADING = "font-editorial font-normal text-foreground leading-[1.2] text-balance mt-10 mb-5 first:mt-0";
-const H2 = `${HEADING} text-[26px] md:text-[32px]`;
-const H3 = `${HEADING} text-[22px] md:text-[26px]`;
+const H2 = `${HEADING} text-[length:clamp(26px,calc(23.37px_+_0.674vw),32px)]`;
+const H3 = `${HEADING} text-[length:clamp(22px,calc(20.25px_+_0.449vw),26px)]`;
 
 /**
  * Shared PortableText renderer: each paragraph gets an explicit bottom margin
@@ -51,7 +51,7 @@ function makeProse(level: 2 | 3): PortableTextComponents {
       h3: ({ children }) => <Sub className={H3}>{children}</Sub>,
       h4: ({ children }) => (level === 2 ? <h3 className={H3}>{children}</h3> : <h4 className={H3}>{children}</h4>),
       blockquote: ({ children }) => (
-        <blockquote className="my-8 font-editorial italic text-[22px] md:text-[26px] leading-[1.4] text-foreground">
+        <blockquote className="my-8 font-editorial text-[length:clamp(22px,calc(20.25px_+_0.449vw),26px)] leading-[1.4] text-foreground">
           {children}
         </blockquote>
       ),

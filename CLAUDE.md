@@ -70,14 +70,16 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 - Muted grey `#76706B` (`--muted-foreground` is `hsl(30 5% 44%)`), captions, labels, secondary text. This value meets WCAG AA (4.57:1) on the canvas; the earlier `hsl(30 5% 50%)` failed at 3.65:1. Do not lighten it without re-checking contrast, and do not fade it with opacity variants (`/40`, `/60` and so on) for readable text; hierarchy comes from size, letter spacing and uppercase labels.
 - Muted grey, inverse `#A8A39F` (`--muted-foreground-inverse` is `hsl(30 5% 64%)`), secondary text on the dark charcoal band. 6.56:1 on charcoal.
 - Border hairline `hsl(40 10% 88%)` (`--border`).
-- Antique brass `#A8895C` (`--accent`), the single accent, used rarely (the pulsing upcoming dot, a hairline, a hover, one point of emphasis). Always use the token, never the raw hex. It is 3.07:1 on the canvas, so use it for text only at 28px or larger (the italic chapter numerals), never for smaller text.
+- Antique brass `#A8895C` (`--accent`), the single accent, used rarely (the pulsing upcoming dot, a hairline, a hover, one point of emphasis). Always use the token, never the raw hex. It is 3.07:1 on the canvas, so use it for text only at 28px or larger (the chapter numerals), never for smaller text.
 - Error brick `#9B4B3B` (`--error` is `hsl(10 45% 42%)`), for error messages and invalid field hairlines only. 5.67:1 on the canvas. Never use Tailwind's default reds.
 - Do not introduce colors outside this palette without updating `BRAND_BOOK.md` first.
 
 ### Type
 - Display and headings: Playfair Display via `--font-editorial`.
 - Body and interface: Instrument Sans, live on every page (regular 400 and medium 500), self hosted from `public/fonts` through next/font in `src/app/layout.tsx` (`--font-instrument`, with a size adjusted Arial fallback so nothing shifts). The Studio keeps its own font.
-- Labels and eyebrows: uppercase, small (11px to 13px), wide letter spacing (0.1em to 0.2em), muted grey.
+- Labels and eyebrows: one style everywhere, the label token (`--type-label-size` 12px, `--type-label-leading` 1.5, `--type-label-tracking` 0.12em, uppercase, regular; the `type-label` class in components). Muted grey at rest, charcoal with the drawn hairline when active. Never a one off label size; a label never wraps.
+- Playfair italic only for Maninder's quote beside his portrait (About, chapter I). Everything else is regular Playfair.
+- Display sizes and headings are fluid (`clamp()` from the 390 value to the 1280 value); headings and statements balance their lines, paragraphs avoid a lone last word. The full type scale is in `BRAND_BOOK.md` (2.2).
 - Headings are natural or sentence case, never all caps. All caps is for small labels only.
 - Never use Inter, Roboto, Arial, or default system fonts as the brand body face in finished work. Generic fonts are the look we exist to avoid.
 

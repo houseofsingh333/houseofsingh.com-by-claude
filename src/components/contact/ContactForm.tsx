@@ -11,12 +11,15 @@ import { useContactForm } from "./useContactForm";
 import SanityImage from "@/components/SanityImage";
 import type { SanityImage as SanityImageData } from "@/lib/types";
 import HoneypotField from "@/components/HoneypotField";
+import type { ContactFormCopy } from "@/lib/contact-form-data";
 
 type Props = {
   /** Maninder's portrait: the Contact portrait, else the About portrait. */
   portrait: SanityImageData | null;
   /** The portrait's caption (Contact Page, Portrait caption). */
   caption: string;
+  /** The words of the form, from Sanity with today's wording as default. */
+  copy: ContactFormCopy;
 };
 
 /** The portrait beside the form (and after it on phones). */
@@ -33,14 +36,14 @@ function ContactPortrait({ image, caption }: { image: SanityImageData; caption: 
           className="object-cover object-top"
         />
       </div>
-      <figcaption className="text-[12px] tracking-[0.12em] uppercase text-muted-foreground">
+      <figcaption className="type-label text-muted-foreground">
         {caption}
       </figcaption>
     </figure>
   );
 }
 
-export default function ContactForm({ portrait, caption }: Props) {
+export default function ContactForm({ portrait, caption, copy }: Props) {
   const {
     formData,
     currentStep,
@@ -63,7 +66,7 @@ export default function ContactForm({ portrait, caption }: Props) {
     clearDraft,
     honeypot,
     setHoneypot,
-  } = useContactForm();
+  } = useContactForm(copy);
 
   const aside = portrait ? <ContactPortrait image={portrait} caption={caption} /> : undefined;
 
@@ -71,7 +74,7 @@ export default function ContactForm({ portrait, caption }: Props) {
   if (phase === "done") {
     return (
       <TwoColumnLayout aside={aside}>
-        <ConfirmationScreen />
+        <ConfirmationScreen heading={copy.thankYouHeading} line={copy.thankYouLine} />
       </TwoColumnLayout>
     );
   }
@@ -110,7 +113,7 @@ export default function ContactForm({ portrait, caption }: Props) {
         <div className="min-h-[50vh] flex flex-col justify-center max-w-lg">
           <div key={currentStep} className="editorial-slide-up">
             {/* Question */}
-            <h2 className="font-editorial text-[1.75rem] sm:text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-[1.15] sm:leading-[1.12] mb-5 tracking-[-0.01em] text-balance">
+            <h2 className="font-editorial text-[length:clamp(28px,calc(19.24px_+_2.247vw),48px)] font-light text-foreground leading-[1.15] sm:leading-[1.12] mb-5 tracking-[-0.01em] text-balance">
               {currentStepDef?.question}
             </h2>
 
@@ -136,7 +139,7 @@ export default function ContactForm({ portrait, caption }: Props) {
             {currentStep > 0 && hasDraft && (
               <button
                 onClick={clearDraft}
-                className="contact-btn hairline mt-8 text-xs tracking-[0.08em] text-muted-foreground"
+                className="contact-btn hairline mt-8 type-label text-muted-foreground"
               >
                 Clear saved progress
               </button>

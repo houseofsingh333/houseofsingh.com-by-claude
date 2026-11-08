@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { RapidFireItem } from "@/lib/types";
+import { keepLastWords } from "@/lib/keepLastWords";
 
 /** Eye closed: a lowered lid with lashes. */
 function EyeClosed() {
@@ -68,7 +69,7 @@ export default function Conversation({ items, replyName }: { items: RapidFireIte
                 <span aria-hidden="true" className="convo-dot" />
                 {replyName}
               </p>
-              <p className="convo-reply">{item.answer}</p>
+              <p className="convo-reply">{keepLastWords(item.answer)}</p>
             </div>
           </li>
         );

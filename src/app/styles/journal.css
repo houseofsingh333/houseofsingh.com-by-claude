@@ -20,7 +20,7 @@
 
 .jr {
   /* Clears the crest at the top of the page (State 1 of the header). */
-  --jr-top: 128px;
+  --jr-top: var(--head-top);
   --jr-gutter: 1.5rem;
   /* Where things stop under the fixed 68px header once the page scrolls. */
   --jr-stick: 68px;
@@ -52,7 +52,7 @@
 .jr-heading {
   font-family: var(--font-editorial);
   font-weight: 300;
-  font-size: 1.875rem;
+  font-size: clamp(30px, calc(18.61px + 2.921vw), 56px);
   line-height: 1;
   color: var(--foreground);
 }
@@ -123,8 +123,11 @@
   line-height: 1;
 }
 .jr-month-year {
-  font-size: 0.8125rem;
-  letter-spacing: 0.08em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
   color: var(--muted-foreground);
 }
 .jr-month-arrows {
@@ -156,8 +159,11 @@
 }
 .jr-weekday {
   padding-bottom: 0.375rem;
-  font-size: 0.625rem;
-  letter-spacing: 0.1em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
   color: var(--muted-foreground);
 }
 .jr-day {
@@ -215,6 +221,24 @@
 }
 
 /* The year, zoomed out: twelve tiny months, each day a point, each entry a dot. */
+/* The year's sheets share one place and crossfade (--dur-page) when the
+   year turns; reduced motion: at once. */
+.jr-year {
+  display: grid;
+}
+.jr-year-sheet {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--dur-page) var(--ease-slow),
+    visibility 0s linear var(--dur-page);
+}
+.jr-year-sheet[data-shown] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-page) var(--ease-slow);
+}
 .jr-year-title {
   margin-bottom: 1.5rem;
   font-family: var(--font-editorial);
@@ -235,8 +259,11 @@
   color: var(--foreground);
 }
 .jr-mini-name {
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
 .jr-mini.is-empty .jr-mini-name {
@@ -299,7 +326,7 @@
 }
 .jr-entry-day {
   font-family: var(--font-editorial);
-  font-size: 2.5rem;
+  font-size: clamp(40px, calc(34.74px + 1.348vw), 52px);
   line-height: 0.9;
   color: var(--foreground);
   transition: color var(--dur-hover) var(--ease-soft-out);
@@ -308,15 +335,17 @@
   color: var(--accent);
 }
 .jr-entry-my {
-  font-size: 0.6875rem;
-  letter-spacing: 0.12em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
 .jr-entry-title {
   font-family: var(--font-editorial);
   font-weight: 300;
-  font-size: 1.5rem;
+  font-size: clamp(24px, calc(21.37px + 0.674vw), 30px);
   line-height: 1.15;
   color: var(--foreground);
 }
@@ -358,8 +387,10 @@
   align-items: center;
   align-self: flex-start;
   min-height: 44px;
-  font-size: 0.6875rem;
-  letter-spacing: 0.16em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
   transition: color var(--dur-hover) var(--ease-soft-out);
@@ -380,13 +411,25 @@ html.js .jr-room {
   display: block;
   min-height: 100svh;
 }
+/* The tail is an empty box (the room, the hidden link): hidden as a box, so
+   when the next month pushes it down nothing counts as having moved; the
+   link inside stays visible to the keyboard. */
+html.js .jr-tail {
+  visibility: hidden;
+}
+html.js .jr-tail .jr-more {
+  visibility: visible;
+}
 html.js .jr-more[data-more="older"]:not(:focus-visible) {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  /* 24px, fully clipped: invisible, yet never an undersized target. */
+  width: 24px;
+  height: 24px;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+  /* Hidden, it is no pointer target (keyboard focus shows it in full). */
+  pointer-events: none;
 }
 .jr-empty {
   padding-block: 4rem;
@@ -485,13 +528,13 @@ html.js .jr-more[data-more="older"]:not(:focus-visible) {
   .jr-head {
     padding-bottom: 3.5rem;
   }
-  .jr-heading {
-    font-size: 3.5rem;
-  }
   .jr-years-row {
     gap: 1.375rem;
-    font-size: 0.8125rem;
-    letter-spacing: 0.08em;
+    font-size: var(--type-label-size);
+    white-space: nowrap;
+    line-height: var(--type-label-leading);
+    letter-spacing: var(--type-label-tracking);
+    text-transform: uppercase;
   }
   .jr-body {
     display: grid;
@@ -526,6 +569,7 @@ html.js .jr-more[data-more="older"]:not(:focus-visible) {
   }
   .jr-entries {
     gap: 2.5rem;
+    container-type: inline-size;
   }
   /* Each entry fills one view when its text is short; longer ones extend. */
   .jr-entry {
@@ -535,15 +579,6 @@ html.js .jr-more[data-more="older"]:not(:focus-visible) {
   }
   .jr-entry-date time {
     gap: 0.875rem;
-  }
-  .jr-entry-day {
-    font-size: 3.25rem;
-  }
-  .jr-entry-my {
-    font-size: 0.75rem;
-  }
-  .jr-entry-title {
-    font-size: 1.875rem;
   }
   /* The text sits beside the photograph, along its lower edge; a longer
      text simply runs on below it, the photograph staying at the top. */
@@ -568,6 +603,18 @@ html.js .jr-more[data-more="older"]:not(:focus-visible) {
   }
   .jr-note {
     font-size: 1rem;
+  }
+  /* A narrow entries column (from 1024 to about 1180 wide) has no room
+     for the text beside the 340px photograph: it runs below it instead,
+     never squeezed into a sliver. At 1280 and wider nothing changes. */
+  @container (max-width: 600px) {
+    .jr-entry-body[data-photo] {
+      grid-template-columns: 340px;
+      row-gap: 1.25rem;
+    }
+    .jr-entry-text {
+      align-self: start;
+    }
   }
 }
 
@@ -602,6 +649,8 @@ html:not(.js) .jr-toggle svg {
   .jr-rail[data-open] .jr-fold,
   .jr-month,
   .jr-year,
+  .jr-year-sheet,
+  .jr-year-sheet[data-shown],
   .jr-circle img {
     transition: none;
   }

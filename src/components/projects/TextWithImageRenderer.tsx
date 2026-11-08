@@ -1,5 +1,5 @@
 import { PortableText } from "@portabletext/react";
-import { proseComponents } from "@/components/proseComponents";
+import { storyProseComponents } from "@/components/proseComponents";
 import AspectImage from "./AspectImage";
 import Caption from "./Caption";
 import { hasImageAsset } from "@/lib/sanityImage";
@@ -16,7 +16,7 @@ export default function TextWithImageRenderer({ section }: Props) {
     return (
       <div className={`project-section ${PAGE_COLUMN}`}>
         <div className={`${READING_COLUMN} ${STORY_TEXT}`}>
-          <PortableText value={section.body} components={proseComponents} />
+          <PortableText value={section.body} components={storyProseComponents} />
         </div>
       </div>
     );
@@ -34,7 +34,7 @@ export default function TextWithImageRenderer({ section }: Props) {
             imageLeft ? "md:order-2" : "md:order-1"
           }`}
         >
-          <PortableText value={section.body} components={proseComponents} />
+          <PortableText value={section.body} components={storyProseComponents} />
         </div>
       </div>
     </div>

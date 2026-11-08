@@ -41,10 +41,10 @@ export default function StudioWindow({
   return (
     <section aria-labelledby="chapter-practice" className="window px-6 md:px-16 section-py">
       <div className="flex items-baseline gap-4">
-        <span aria-hidden="true" className="font-editorial italic text-[30px] leading-none text-accent">
+        <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
           VII
         </span>
-        <h2 id="chapter-practice" className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground font-normal">
+        <h2 id="chapter-practice" className="type-label text-muted-foreground">
           {copy.practiceLabel}
         </h2>
       </div>
@@ -61,7 +61,7 @@ export default function StudioWindow({
           className="window-logo"
         />
         <div className="window-text">
-          <p className="font-editorial text-[24px] md:text-[30px] leading-[1.35] text-foreground max-w-[560px]">
+          <p className="font-editorial text-[length:clamp(24px,calc(21.37px_+_0.674vw),30px)] leading-[1.35] text-foreground max-w-[560px]">
             {copy.practiceLine}
           </p>
           <a href={STUDIO_URL} target="_blank" rel="noopener noreferrer" className="window-link">

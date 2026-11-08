@@ -27,7 +27,7 @@ type Props = {
 export type MenuCopy = Pick<SiteCopy, "menuClose" | "menuInstagram" | "menuNewsletter" | "menuTimeLabel">;
 
 const SMALL_LINK =
-  "text-[12px] tracking-[0.12em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) py-2";
+  "type-label text-muted-foreground hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) py-2";
 
 /**
  * The menu as an index room: a full screen canvas with the pages in large
@@ -85,9 +85,6 @@ export default function NavOverlay({
         <button type="button" onClick={onClose} aria-label={`${copy.menuClose} menu`} className="menu-close">
           {copy.menuClose}
         </button>
-        <span aria-hidden="true" className="menu-wordmark">
-          House of Singh
-        </span>
         <span aria-hidden="true" />
       </div>
 
@@ -170,7 +167,7 @@ export default function NavOverlay({
             {copy.menuNewsletter}
           </button>
         </div>
-        <p className="text-[12px] tracking-[0.12em] uppercase text-muted-foreground">
+        <p className="type-label text-muted-foreground">
           {copy.menuTimeLabel} <TorontoTime />
         </p>
       </div>

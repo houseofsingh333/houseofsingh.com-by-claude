@@ -51,12 +51,27 @@
   line-height: 1.75;
   color: var(--foreground);
 }
+/* The one italic on the site: Maninder's quote beside his portrait. Its face
+   is declared here only and loads when the quote is drawn (a preload hint
+   travelled with Next's background prefetch of this page and fetched the
+   font on other pages too); until it arrives the quote is set in the
+   regular Playfair already on the page, so the line breaks barely move. */
+@font-face {
+  font-family: "Playfair Display Italic";
+  src: url("/fonts/playfair-display-latin-wght-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+}
+.about-quote {
+  font-family: "Playfair Display Italic", var(--font-editorial);
+  font-style: italic;
+}
 .about-pull {
   max-width: 760px;
   margin-block: 16px;
   font-family: var(--font-editorial);
-  font-style: italic;
-  font-size: 28px;
+  font-size: clamp(28px, calc(22.74px + 1.348vw), 40px);
   line-height: 1.3;
   color: var(--foreground);
 }
@@ -65,7 +80,6 @@
     font-size: 19px;
   }
   .about-pull {
-    font-size: 40px;
     line-height: 1.28;
   }
 }
@@ -131,8 +145,10 @@
   color: var(--foreground);
 }
 .press-meta {
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
@@ -182,7 +198,7 @@ a.press-cutting:hover .press-mat {
 .walk-year {
   display: grid;
   font-family: var(--font-editorial);
-  font-size: 72px;
+  font-size: clamp(72px, calc(50.97px + 5.393vw), 120px);
   line-height: 1.05;
   letter-spacing: -0.02em;
 }
@@ -207,7 +223,7 @@ a.press-cutting:hover .press-mat {
 .walk-title {
   font-family: var(--font-editorial);
   font-weight: 400;
-  font-size: 24px;
+  font-size: clamp(24px, calc(21.37px + 0.674vw), 30px);
   line-height: 1.2;
   color: var(--foreground);
 }
@@ -263,8 +279,10 @@ a.press-cutting:hover .press-mat {
   background: var(--accent);
 }
 .walk-hint {
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
@@ -273,12 +291,6 @@ a.press-cutting:hover .press-mat {
     gap: 72px;
     padding-inline: 64px;
     scroll-padding-inline: 64px;
-  }
-  .walk-year {
-    font-size: 120px;
-  }
-  .walk-title {
-    font-size: 30px;
   }
   .walk-end {
     width: max(0px, calc(100vw - 420px - 200px));
@@ -346,8 +358,10 @@ html:not(.js) .convo-eye {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
@@ -361,7 +375,7 @@ html:not(.js) .convo-eye {
 .convo-reply {
   max-width: 680px;
   font-family: var(--font-editorial);
-  font-size: 22px;
+  font-size: clamp(22px, calc(20.25px + 0.449vw), 26px);
   line-height: 1.45;
   color: var(--foreground);
 }
@@ -371,9 +385,6 @@ html:not(.js) .convo-eye {
   }
   .convo-a {
     padding-left: 64px;
-  }
-  .convo-reply {
-    font-size: 26px;
   }
 }
 @media (prefers-reduced-motion: no-preference) {

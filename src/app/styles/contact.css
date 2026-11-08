@@ -74,8 +74,10 @@
 /* Primary button — filled, site-consistent */
 .contact-btn-primary {
   padding: 0.75rem 1.5rem;                  /* px-6 py-3 */
-  font-size: 0.8125rem;                     /* ~13px, matches site text-sm */
-  letter-spacing: 0.1em;                    /* tracking-widest */
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);                     /* ~13px, matches site text-sm */
+  letter-spacing: var(--type-label-tracking);                    /* tracking-widest */
   text-transform: uppercase;
   background-color: var(--foreground);
   color: var(--background);
@@ -96,8 +98,10 @@
   align-items: flex-end;
   min-height: 44px;
   padding: 0 0 4px;
-  font-size: 0.8125rem;
-  letter-spacing: 0.1em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--foreground);
 }
@@ -110,8 +114,10 @@
 /* Secondary button — outlined, site-consistent */
 .contact-btn-secondary {
   padding: 0.75rem 1.25rem;                 /* px-5 py-3 */
-  font-size: 0.8125rem;
-  letter-spacing: 0.1em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
   border: 1px solid var(--border);
@@ -125,8 +131,10 @@
 /* Ghost button — text only, minimal */
 .contact-btn-ghost {
   padding: 0.75rem 1.25rem;
-  font-size: 0.8125rem;
-  letter-spacing: 0.1em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }

@@ -36,7 +36,7 @@ export default function IntroSection({ data, copy }: { data: HomeIntroData; copy
         <div className="flex flex-col gap-7 md:gap-8">
           <span
             aria-hidden="true"
-            className="font-editorial italic text-[30px] leading-none text-accent"
+            className="font-editorial text-[30px] leading-none text-accent"
           >
             II
           </span>
@@ -45,7 +45,7 @@ export default function IntroSection({ data, copy }: { data: HomeIntroData; copy
           </h2>
           <LineReveal
             text={first}
-            className="font-editorial font-normal text-[34px] md:text-[44px] lg:text-[52px] leading-[1.15] text-foreground max-w-[620px] text-balance"
+            className="font-editorial font-normal text-[length:clamp(34px,calc(26.11px_+_2.022vw),52px)] leading-[1.15] text-foreground max-w-[620px] text-balance"
           />
           {reading.map((p, i) => (
             <p
@@ -57,7 +57,7 @@ export default function IntroSection({ data, copy }: { data: HomeIntroData; copy
           ))}
           <Link
             href="/about"
-            className="hairline self-start pb-1 text-[13px] tracking-[0.12em] uppercase text-foreground"
+            className="hairline self-start pb-1 type-label text-foreground"
           >
             {copy.artistLink}
           </Link>

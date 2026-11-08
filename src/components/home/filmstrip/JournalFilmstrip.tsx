@@ -54,16 +54,16 @@ export default function JournalFilmstrip({
         <div className="flex items-end justify-between gap-6 border-b border-border pb-4 md:pb-6">
           <div className="flex flex-col gap-4">
             <div className="flex items-baseline gap-4">
-              <span aria-hidden="true" className="font-editorial italic text-[30px] leading-none text-accent">
+              <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
                 V
               </span>
-              <span className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground">
+              <span className="type-label text-muted-foreground">
                 {label}
               </span>
             </div>
             <h2
               id="journal-strip-title"
-              className="font-editorial font-normal text-[32px] md:text-[44px] leading-[1.1] text-foreground"
+              className="font-editorial font-normal text-[length:clamp(32px,calc(26.74px_+_1.348vw),44px)] leading-[1.1] text-foreground"
             >
               Journal
             </h2>
@@ -90,7 +90,7 @@ export default function JournalFilmstrip({
             )}
             <Link
               href="/journal"
-              className="hairline pb-1 text-[12px] md:text-[13px] tracking-[0.12em] uppercase text-muted-foreground"
+              className="hairline pb-1 type-label text-muted-foreground"
             >
               Read the journal
             </Link>
