@@ -1,7 +1,7 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
-import ProjectsIndex from "@/components/projects/ProjectsIndex";
+import ProjectsMonograph from "@/components/projects/monograph/ProjectsMonograph";
 import { PROJECTS_DESCRIPTION, PROJECTS_TITLE } from "@/lib/pageDescriptions";
 
 const TITLE = PROJECTS_TITLE;
@@ -21,7 +21,11 @@ export async function generateMetadata(
   };
 }
 
-/** All projects. Each category has its own cached page (category/[category]). */
+/**
+ * The Projects page, the monograph. A cached page: each project's address
+ * (/projects?p=slug) is served by view/[slug], each category by
+ * category/[category], both cached too.
+ */
 export default function ProjectsPage() {
-  return <ProjectsIndex />;
+  return <ProjectsMonograph />;
 }

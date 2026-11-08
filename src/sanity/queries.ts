@@ -159,11 +159,37 @@ export const latestProjectsQuery = `*[_type == "project"] | order(_createdAt des
 
 // --------------- Projects ---------------
 
-export const projectsListQuery = `*[_type == "project"] | order(title asc){
-  _id, title, "slug": slug.current, category,
+/**
+ * The order of projects everywhere outside the homepage's own list: the
+ * homepage's (Homepage Order, lowest first), then projects without an
+ * order value, newest first (published date, else when the project was
+ * created). Used by the Projects page and by "Next project".
+ */
+const _projectOrder = "order(defined(homepageOrder) desc, homepageOrder asc, coalesce(publishedAt, _createdAt) desc)";
+
+/**
+ * Every project for the Projects page. "plates" are the photographs that
+ * take turns on its plate: the project's Plate photographs when set,
+ * otherwise the cover and the first images of its content sections (the
+ * page keeps the first four). "sectionImages" gathers those images in the
+ * order the sections appear.
+ *
+ * In the projects' order (_projectOrder).
+ */
+export const projectsListQuery = `*[_type == "project"] | ${_projectOrder}{
+  _id, title, "slug": slug.current, category, year, role,
   "thumbnail": thumbnail ${_imageAsset},
   "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt,
-  isUpcoming
+  isUpcoming,
+  "plates": plates[0...4] ${_imageAsset},
+  "cover": coverImage ${_imageAsset},
+  "sectionImages": contentSections[]{
+    "list": select(
+      defined(image.asset) => [image],
+      defined(images) => images[defined(asset)],
+      []
+    )
+  }.list[][0...8] ${_imageAsset}
 }`;
 
 export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug][0]{
@@ -247,7 +273,7 @@ export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug
 }`;
 
 // Every project in the order of the projects page, for "Next project".
-export const projectLinksQuery = `*[_type == "project"] | order(title asc){
+export const projectLinksQuery = `*[_type == "project"] | ${_projectOrder}{
   title, "slug": slug.current, isUpcoming,
   "coverImage": coverImage ${_imageAsset},
   "thumbnail": thumbnail ${_imageAsset}

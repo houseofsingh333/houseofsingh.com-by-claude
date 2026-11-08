@@ -44,6 +44,7 @@
   --dur-hover: 500ms; /* hover and focus changes */
   --dur-page: 600ms; /* page fade in, content swapped by a click */
   --dur-develop: 1400ms; /* a photograph developing to full tone */
+  --dur-plate: 1400ms; /* one photograph crossfading to the next on a Projects plate */
   --dur-menu: 500ms; /* the menu and the newsletter note opening (the longest allowed) */
   --dur-record-turn: 3600ms; /* one slow, steady turn of the home page record */
 

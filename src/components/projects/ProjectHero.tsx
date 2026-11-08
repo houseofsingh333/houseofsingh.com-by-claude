@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import SanityImage from "@/components/SanityImage";
 import { hotspotPosition } from "@/lib/projectHero";
 import type { SanityImageAsset } from "@/lib/sanityImage";
@@ -9,13 +10,19 @@ import type { SanityImageAsset } from "@/lib/sanityImage";
  * with priority (it is the page's largest paint) and blurred up from its
  * preview. With no image, the same frame in the quiet canvas tone: never
  * placeholder art. The frame's size is fixed, so nothing moves as it loads.
+ *
+ * Entering a project from the Projects page, its plate grows into this
+ * photograph: both carry the same view transition name (project-<slug>),
+ * so the browser morphs one into the other (styles/projects.css).
  */
 export default function ProjectHero({
   image,
+  slug,
 }: {
   image: SanityImageAsset | null;
+  slug?: string;
 }) {
-  return (
+  const frame = (
     <div className="relative mt-[68px] w-full overflow-hidden bg-secondary aspect-[4/5] md:aspect-video md:max-h-[calc(100svh-68px)]">
       {image && (
         <SanityImage
@@ -29,5 +36,11 @@ export default function ProjectHero({
         />
       )}
     </div>
+  );
+  if (!slug) return frame;
+  return (
+    <ViewTransition name={`project-${slug}`} share="project-plate" default="none">
+      {frame}
+    </ViewTransition>
   );
 }
