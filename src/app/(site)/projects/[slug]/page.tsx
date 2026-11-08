@@ -191,7 +191,11 @@ export default async function ProjectDetailPage({ params }: Props) {
       project.year ? String(project.year) : null,
       project.role?.trim() || null,
     ].filter((m): m is string => !!m);
-    const allProjectsHref = `/projects?p=${project.slug}`;
+    // The Projects page opened at this project (its plate is where the hero
+    // shrinks back to). The internal address, because a link inside the site
+    // does not translate ?p= (next.config.ts rewrites only full loads);
+    // the page then shows /projects?p=<slug> in the address bar.
+    const allProjectsHref = `/projects/view/${project.slug}`;
     const photographs = project.photographs?.filter((p) => p?.url) ?? [];
 
     return (
