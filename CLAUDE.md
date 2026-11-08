@@ -76,7 +76,7 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 
 ### Type
 - Display and headings: Playfair Display via `--font-editorial`.
-- Body and interface: Instrument Sans is the intended body font. The site may still be on a system stack; if so, the upgrade to Instrument Sans is a known, approved target.
+- Body and interface: Instrument Sans, live on every page (regular 400 and medium 500), self hosted from `public/fonts` through next/font in `src/app/layout.tsx` (`--font-instrument`, with a size adjusted Arial fallback so nothing shifts). The Studio keeps its own font.
 - Labels and eyebrows: uppercase, small (11px to 13px), wide letter spacing (0.1em to 0.2em), muted grey.
 - Headings are natural or sentence case, never all caps. All caps is for small labels only.
 - Never use Inter, Roboto, Arial, or default system fonts as the brand body face in finished work. Generic fonts are the look we exist to avoid.

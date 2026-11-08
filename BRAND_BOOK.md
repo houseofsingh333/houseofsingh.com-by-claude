@@ -75,7 +75,7 @@ Two typefaces, both from Google Fonts. One elegant serif for display, one quiet 
 - One display weight and one or two body weights. Avoid a wide spread of weights, which reads busy.
 - Never use Inter, Roboto, Arial, or default system fonts in produced brand material. They signal the generic, defaulted look the brand exists to avoid.
 
-**Implementation note.** The site currently sets display type via `--font-editorial` (Playfair Display, with Georgia and serif as fallback). Body type currently runs on a system font stack and should be upgraded to Instrument Sans to match this brand book. This is a deliberate, separate change to make when ready.
+**Implementation note.** Both faces are live and self hosted from `public/fonts` through next/font (`src/app/layout.tsx`): Playfair Display as `--font-editorial` for display, and Instrument Sans (regular 400 and medium 500) as `--font-instrument`, the body and interface face on every page (the Sanity Studio keeps its own). Each has a size adjusted fallback (Times New Roman, Arial) used only for the moment before the font arrives, so nothing moves when it does. Strong text uses medium, never a synthesised bold.
 
 **The real type scale (from the live site).** These are the actual values in use, to be treated as the reference. Sizes are not yet centralized as tokens; when we tokenize them, these are the source values.
 
@@ -256,7 +256,7 @@ The voice is the same calm, grounded, reflective voice used across the brand. (D
 
 **Palette:** Canvas `#F9F7F5` (`--background`) · Charcoal `#1A1A1A` (`--foreground`) · Muted grey `#76706B` (`--muted-foreground`, `hsl(30 5% 44%)` — meets WCAG AA, do not lighten) · Border `hsl(40 10% 88%)` (`--border`) · Antique brass `#A8895C` (`--accent`) · Error brick `#9B4B3B` (`--error`, `hsl(10 45% 42%)`, error text only) · White `#FFFFFF`
 
-**Type:** Playfair Display via `--font-editorial` (display) · Instrument Sans (body and interface, to be wired in). Display hero `clamp(42px, 6vw, 88px)`, body 16px at 1.7 line height, labels 11px to 13px uppercase with 0.1em to 0.2em tracking.
+**Type:** Playfair Display via `--font-editorial` (display) · Instrument Sans (body and interface, live, regular and medium). Display hero `clamp(42px, 6vw, 88px)`, body 16px at 1.7 line height, labels 11px to 13px uppercase with 0.1em to 0.2em tracking.
 
 **Spacing:** Section rhythm `--section-space-sm/md/lg`. Desktop large is 144px, the airy signature.
 

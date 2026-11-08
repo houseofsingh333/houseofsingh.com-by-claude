@@ -76,6 +76,7 @@
   --color-error: var(--error);
   --color-border: var(--border);
   --font-editorial: var(--font-playfair), Georgia, serif;
+  --font-sans: var(--font-instrument), Arial, sans-serif;
   --animate-fade-in: fadeIn 0.3s ease-out;
   --animate-editorial-fade-in: editorialFadeIn var(--dur-reveal) var(--ease-slow) both;
 }
