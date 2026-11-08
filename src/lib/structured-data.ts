@@ -252,6 +252,27 @@ export function buildProfilePageJsonLd(): Json {
   };
 }
 
+// ——— Authors ———
+
+/**
+ * The author field as Person nodes. A field naming several people
+ * ("Maninder Singh, Simranjeet Singh") becomes one Person each, and
+ * Maninder is always the site's own Person by its @id, so search engines
+ * and language models never see him as a second, unnamed entity.
+ */
+function authorNodes(raw?: string | null): Json | Json[] {
+  const names = (raw?.trim() || DEFAULTS.founderName)
+    .split(/\s*(?:,|&|\band\b)\s*/i)
+    .map((n) => n.trim())
+    .filter(Boolean);
+  const nodes = names.map((name) =>
+    name.toLowerCase() === DEFAULTS.founderName.toLowerCase()
+      ? { "@type": "Person", "@id": PERSON_ID, name }
+      : { "@type": "Person", name },
+  );
+  return nodes.length === 1 ? nodes[0] : nodes;
+}
+
 // ——— Journal entry: BlogPosting (Article subtype) ———
 
 export function buildArticleJsonLd(
@@ -260,8 +281,6 @@ export function buildArticleJsonLd(
 ): Json {
   const datePublished = toIsoTimestamp(entry.date);
   const dateModified = toIsoTimestamp(entry.updatedAt) ?? datePublished;
-  const author = entry.author?.trim() || DEFAULTS.founderName;
-
   return {
     "@context": "https://schema.org",
     ...compact({
@@ -271,7 +290,7 @@ export function buildArticleJsonLd(
       image: imageUrl(entry.coverImage),
       datePublished,
       dateModified,
-      author: compact({ "@type": "Person", name: author }),
+      author: authorNodes(entry.author),
       publisher: publisherNode(settings),
       mainEntityOfPage: `${SITE_URL}/journal/${entry.slug}`,
     }),
@@ -284,8 +303,6 @@ export function buildCreativeWorkJsonLd(
   project: ProjectDetail,
   settings?: SiteSettings | null,
 ): Json {
-  const author = project.author?.trim() || DEFAULTS.founderName;
-
   return {
     "@context": "https://schema.org",
     ...compact({
@@ -293,10 +310,11 @@ export function buildCreativeWorkJsonLd(
       name: project.title,
       description: project.excerpt,
       genre: project.category,
-      image: imageUrl(project.coverImage),
+      // The cover, else the thumbnail, else the first photograph: every project has an image.
+      image: imageUrl(project.coverImage) ?? imageUrl(project.thumbnail) ?? imageUrl(project.photographs?.[0]),
       dateCreated: toIsoTimestamp(project.publishedAt),
       dateModified: toIsoTimestamp(project.updatedAt),
-      author: compact({ "@type": "Person", name: author }),
+      author: authorNodes(project.author),
       publisher: publisherNode(settings),
       url: `${SITE_URL}/projects/${project.slug}`,
     }),

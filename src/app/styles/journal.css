@@ -418,6 +418,8 @@ html.js .jr-more[data-more="older"]:not(:focus-visible) {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+  /* Hidden, it is no pointer target (keyboard focus shows it in full). */
+  pointer-events: none;
 }
 .jr-empty {
   padding-block: 4rem;

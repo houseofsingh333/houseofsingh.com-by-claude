@@ -1,4 +1,3 @@
-import { preload } from "react-dom";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import Header from "@/components/layout/Header";
@@ -88,15 +87,9 @@ export default async function SiteLayout({
   const copy = siteCopy(settings);
   const menuPhotos = buildMenuPhotos(navItems, menuDefaults, copy.artistCaption);
 
-  // Intro video preload, desktop only. The intro overlay is skipped below
-  // 1024px, so without this media condition mobile downloaded 126 KiB it
-  // never plays. React's preload() emits exactly one <link> in the <head>;
-  // a JSX <link> here was emitted twice.
-  preload("/images/HOS_Logo_Animation.mp4", {
-    as: "video",
-    type: "video/mp4",
-    media: "(min-width: 1024px)",
-  });
+  // No preload hint for the intro video: browsers do not support
+  // <link rel=preload as=video>, so it was ignored and only logged a console
+  // warning on every page. The intro's own <video preload="auto"> loads it.
 
   return (
     <>
