@@ -411,10 +411,20 @@ html.js .jr-room {
   display: block;
   min-height: 100svh;
 }
+/* The tail is an empty box (the room, the hidden link): hidden as a box, so
+   when the next month pushes it down nothing counts as having moved; the
+   link inside stays visible to the keyboard. */
+html.js .jr-tail {
+  visibility: hidden;
+}
+html.js .jr-tail .jr-more {
+  visibility: visible;
+}
 html.js .jr-more[data-more="older"]:not(:focus-visible) {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  /* 24px, fully clipped: invisible, yet never an undersized target. */
+  width: 24px;
+  height: 24px;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;

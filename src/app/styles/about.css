@@ -52,9 +52,10 @@
   color: var(--foreground);
 }
 /* The one italic on the site: Maninder's quote beside his portrait. Its face
-   is loaded here only (preloaded by about/page.tsx); until it arrives the
-   quote is set in the regular Playfair already on the page, so the line
-   breaks barely move when it does. */
+   is declared here only and loads when the quote is drawn (a preload hint
+   travelled with Next's background prefetch of this page and fetched the
+   font on other pages too); until it arrives the quote is set in the
+   regular Playfair already on the page, so the line breaks barely move. */
 @font-face {
   font-family: "Playfair Display Italic";
   src: url("/fonts/playfair-display-latin-wght-italic.woff2") format("woff2");

@@ -24,8 +24,8 @@ const SEO_DEFAULTS = {
 };
 
 /* Playfair regular only: the italic is used for one line on the whole site
-   (the About quote), so it is declared and preloaded on the About page alone
-   (styles/about.css, about/page.tsx) instead of loading on every page. */
+   (the About quote), so it is declared in styles/about.css and loads on the
+   About page alone instead of on every page. */
 const playfair = localFont({
   src: [
     {
