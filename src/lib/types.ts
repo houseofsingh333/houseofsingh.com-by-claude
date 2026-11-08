@@ -178,6 +178,11 @@ export type ProjectDetail = {
   title: string;
   slug: string;
   category: string;
+  role?: string | null;
+  /** Story text: placed between the Photographs automatically (lib/projectStory.ts). */
+  story?: PortableTextBlock[] | null;
+  /** Photographs with their shape and Layout. */
+  photographs?: import("@/lib/projectStory").StoryPhoto[] | null;
   excerpt?: string;
   shortIntro?: string;
   year?: number | null;
@@ -316,6 +321,9 @@ export type ProjectLink = {
   title: string;
   slug: string;
   isUpcoming?: boolean;
+  category?: string | null;
+  /** The first of its Photographs (the cover when no cover is set). */
+  photo?: SanityImageAsset | null;
   coverImage?: SanityImageAsset | null;
   thumbnail?: SanityImageAsset | null;
 };

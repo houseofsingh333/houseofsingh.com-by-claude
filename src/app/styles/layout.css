@@ -40,15 +40,6 @@
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--foreground);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.14em;
-  text-decoration-color: transparent;
-  transition: text-decoration-color var(--dur-hover) var(--ease-soft-out);
-}
-
-.footer-cta-link:hover {
-  text-decoration-color: var(--foreground);
 }
 
 .footer-cta-subtitle {
@@ -110,11 +101,6 @@ html:not(.js) .footer-time {
   text-transform: uppercase;
   color: var(--muted-foreground);
   line-height: 2.8;
-  transition: color var(--dur-hover) var(--ease-soft-out);
-}
-
-.footer-nav-link:hover {
-  color: var(--foreground);
 }
 
 /* Newsletter */
@@ -216,13 +202,7 @@ html:not(.js) .footer-time {
   color: var(--muted-foreground);
 }
 
-.footer-bottom-link {
-  transition: color var(--dur-hover) var(--ease-soft-out);
-}
 
-.footer-bottom-link:hover {
-  color: var(--foreground);
-}
 
 @media (min-width: 768px) {
   .footer-main {
@@ -348,8 +328,7 @@ html:not(.js) .footer-time {
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
 
-.menu-link[data-active],
-.menu-link:hover {
+.menu-link[data-active] {
   color: var(--foreground);
 }
 
@@ -536,9 +515,6 @@ html:not(.js) .footer-time {
   color: var(--muted-foreground);
 }
 
-.note-later:hover {
-  color: var(--foreground);
-}
 
 @media (min-width: 768px) {
   .note-card {
@@ -592,9 +568,6 @@ html:not(.js) .footer-time {
   transition: border-color var(--dur-hover) var(--ease-soft-out);
 }
 
-.lost-way:hover {
-  border-bottom-color: var(--foreground);
-}
 
 .lost-photo {
   position: relative;

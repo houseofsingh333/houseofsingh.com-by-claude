@@ -14,6 +14,7 @@ import {
   type JournalEntryFull,
   type JournalMonth,
 } from "@/lib/journalRoom";
+import Crossfade from "@/components/Crossfade";
 import Calendar, { dayKey } from "./Calendar";
 import Entry from "./Entry";
 
@@ -363,6 +364,7 @@ export default function JournalRoom({ index, months, opening, target, headingSlu
               return (
                 <a
                   key={y}
+                  className="hairline"
                   href={monthHref(newest.year, newest.month)}
                   aria-current={y === calYear ? "true" : undefined}
                   onClick={(e) => onYear(e, y)}
@@ -386,7 +388,7 @@ export default function JournalRoom({ index, months, opening, target, headingSlu
             aria-label={`${monthName}, ${open ? "close the calendar" : "open the calendar"}`}
             onClick={() => setOpen((o) => !o)}
           >
-            <span className="jr-toggle-month">{monthName}</span>
+            <Crossfade className="jr-toggle-month" value={monthName} />
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
               {[2, 8, 14].flatMap((y) => [2, 8, 14].map((x) => <circle key={`${x}-${y}`} cx={x} cy={y} r="1.3" />))}
             </svg>
@@ -412,7 +414,7 @@ export default function JournalRoom({ index, months, opening, target, headingSlu
 
         <div ref={entriesRef} className="jr-entries">
           {newer && (
-            <a className="jr-more" data-more="newer" href={monthHref(newer.year, newer.month)} onClick={(e) => {
+            <a className="jr-more hairline" data-more="newer" href={monthHref(newer.year, newer.month)} onClick={(e) => {
               if (!isPlainClick(e)) return;
               e.preventDefault();
               void extend("newer");
@@ -432,7 +434,7 @@ export default function JournalRoom({ index, months, opening, target, headingSlu
           {scrollScript && <script dangerouslySetInnerHTML={{ __html: scrollScript }} />}
           {older && (
             <div className="jr-tail">
-              <a className="jr-more" data-more="older" href={monthHref(older.year, older.month)} onClick={(e) => {
+              <a className="jr-more hairline" data-more="older" href={monthHref(older.year, older.month)} onClick={(e) => {
                 if (!isPlainClick(e)) return;
                 e.preventDefault();
                 void extend("older");

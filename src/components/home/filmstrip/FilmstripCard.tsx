@@ -23,7 +23,7 @@ export default function FilmstripCard({
       href={`/journal/${entry.slug}`}
       draggable={false}
       data-filmstrip-card={copy ? "copy" : "real"}
-      className="block shrink-0 w-[260px] md:w-[300px] outline-none focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+      className="block shrink-0 w-[260px] md:w-[300px]"
       {...(copy ? { "aria-hidden": true, inert: true, tabIndex: -1 } : {})}
     >
       <div className="relative aspect-[4/5] overflow-hidden bg-secondary">

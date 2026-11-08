@@ -158,7 +158,7 @@ export default function NewsletterNote({ isOpen, onClose, copy }: Props) {
             <button type="submit" disabled={status === "loading"} className="note-subscribe">
               {status === "loading" ? `${copy.newsletterSubscribe}…` : copy.newsletterSubscribe}
             </button>
-            <button type="button" onClick={onClose} className="note-later">
+            <button type="button" onClick={onClose} className="note-later hairline">
               {copy.newsletterNotNow}
             </button>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type MouseEvent } from "react";
+import Crossfade from "@/components/Crossfade";
 import { isPlainClick } from "@/lib/journalLinks";
 import {
   MONTH_NAMES,
@@ -91,10 +92,13 @@ export default function Calendar({ year, month, zoomYear, byDay, months, years, 
             aria-label={`${name}, show the whole year`}
             onClick={(e) => plain(e, onZoomOut)}
           >
-            {/* Fresh for each month, so a new month's name arrives rather than slides. */}
-            <span key={monthKey(year, month)} className="jr-month-label">
-              <span className="jr-month-word">{MONTH_NAMES[month - 1]}</span>
-              <span className="jr-month-year">{year}</span>
+            {/* The month's name and year crossfade as the month turns. */}
+            <span className="jr-month-label">
+              <Crossfade className="jr-month-word" value={MONTH_NAMES[month - 1]} />
+              {/* Fresh for each month: it moves with the name's width, so it arrives rather than slides. */}
+              <span key={monthKey(year, month)} className="jr-month-year">
+                {year}
+              </span>
             </span>
           </a>
           <span className="jr-month-arrows">
@@ -207,17 +211,17 @@ export default function Calendar({ year, month, zoomYear, byDay, months, years, 
                   <li key={mn}>
                     {m ? (
                       <a
-                        className="jr-mini"
+                        className="jr-mini hairline-host"
                         href={monthHref(y, mi + 1)}
                         aria-label={`${mn} ${y}, ${count} ${count === 1 ? "entry" : "entries"}`}
                         onClick={(e) => plain(e, () => onMonth(m))}
                       >
-                        <span className="jr-mini-name">{mn.slice(0, 3)}</span>
+                        <span className="jr-mini-name hairline">{mn.slice(0, 3)}</span>
                         {dots}
                       </a>
                     ) : (
                       <span className="jr-mini is-empty">
-                        <span className="jr-mini-name">{mn.slice(0, 3)}</span>
+                        <span className="jr-mini-name hairline">{mn.slice(0, 3)}</span>
                         {dots}
                       </span>
                     )}

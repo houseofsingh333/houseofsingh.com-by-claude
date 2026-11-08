@@ -1,5 +1,6 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
-import { imageAltFields } from "./imageFields";
+import { captionField, imageAltFields } from "./imageFields";
+import { PROJECT_CATEGORIES, SLUG_NOTE } from "./rules";
 
 export const project = defineType({
   name: "project",
@@ -16,6 +17,7 @@ export const project = defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
+      description: SLUG_NOTE,
       options: { source: "title" },
       validation: (rule) => rule.required(),
     }),
@@ -23,7 +25,13 @@ export const project = defineType({
       name: "category",
       title: "Category",
       type: "string",
-      description: "e.g. Photography, Design, Collaborations",
+      description: `Required. One or more of: ${PROJECT_CATEGORIES.join(", ")}, separated by commas (for example "Photography, Collaborations"). The Projects page filters by these.`,
+      validation: (rule) =>
+        rule.required().custom((value) => {
+          const parts = String(value ?? "").split(",").map((c) => c.trim()).filter(Boolean);
+          const unknown = parts.filter((c) => !(PROJECT_CATEGORIES as readonly string[]).includes(c));
+          return unknown.length ? `Not a category: ${unknown.join(", ")}. Use ${PROJECT_CATEGORIES.join(", ")}.` : true;
+        }),
     }),
     defineField({
       name: "year",
@@ -48,6 +56,14 @@ export const project = defineType({
       type: "image",
       options: { hotspot: true },
       description: "Card image. Recommended: JPEG, min 1600px wide, 4:3 ratio.",
+      validation: (rule) =>
+        rule
+          .custom((value, context) => {
+            const doc = context.document as { coverImage?: { asset?: unknown }; photographs?: unknown[] } | undefined;
+            if ((value as { asset?: unknown } | undefined)?.asset || doc?.coverImage?.asset || doc?.photographs?.length) return true;
+            return "Add a thumbnail (or a cover, or Photographs): the Projects page and the homepage need a photograph.";
+          })
+          .warning(),
       fields: imageAltFields,
     }),
     defineField({
@@ -92,7 +108,60 @@ export const project = defineType({
       title: "Excerpt",
       type: "text",
       rows: 3,
+      validation: (rule) => rule.required().warning("The Projects page shows it beside the title; without it the space stays empty."),
       description: "Short summary shown in project grid cards.",
+    }),
+    defineField({
+      name: "photographs",
+      title: "Photographs",
+      type: "array",
+      description:
+        "Drag to reorder. Layout is chosen automatically from each photograph's shape: a landscape stands alone across the page, two portraits or squares become a pair, three a row, and a single portrait between landscapes sits to one side with the next paragraph of the story beside it. Change the Layout only when you want to. The first photograph is the cover and hero when no cover is set; the first four take turns on the Projects page when no plate photographs are set.",
+      of: [
+        defineArrayMember({
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            ...imageAltFields,
+            captionField,
+            defineField({
+              name: "layout",
+              title: "Layout",
+              type: "string",
+              initialValue: "auto",
+              description: "Auto chooses from the photograph's shape.",
+              options: {
+                layout: "dropdown",
+                list: [
+                  { title: "Auto", value: "auto" },
+                  { title: "Full width", value: "fullWidth" },
+                  { title: "Full bleed", value: "fullBleed" },
+                  { title: "Half", value: "half" },
+                  { title: "Offset left", value: "offsetLeft" },
+                  { title: "Offset right", value: "offsetRight" },
+                  { title: "Start a new row", value: "newRow" },
+                ],
+              },
+            }),
+          ],
+          preview: {
+            select: { media: "asset", alt: "alt", caption: "caption", layout: "layout", w: "asset.metadata.dimensions.width", h: "asset.metadata.dimensions.height", file: "asset.originalFilename" },
+            prepare({ media, alt, caption, layout, w, h, file }) {
+              const shape = w && h ? (w / h > 1.05 ? "Landscape" : w / h < 0.95 ? "Portrait" : "Square") : "";
+              const lay = !layout || layout === "auto" ? "Auto" : String(layout).replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
+              return { media, title: file || alt || "Photograph", subtitle: [shape, lay, caption].filter(Boolean).join(", ") };
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: "story",
+      title: "Story text",
+      type: "array",
+      of: [defineArrayMember({ type: "block" })],
+      description:
+        "The story, paragraph by paragraph. With Photographs set, the paragraphs are placed between the photographs automatically (one after every two groups, never two in a row). A heading stays with the paragraph after it.",
     }),
     defineField({
       name: "contentSections",

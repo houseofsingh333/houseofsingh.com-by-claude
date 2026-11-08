@@ -73,20 +73,13 @@
   justify-content: center;
   min-height: 44px;
   color: var(--muted-foreground);
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 5px;
-  transition:
-    color var(--dur-hover) var(--ease-soft-out),
-    text-decoration-color var(--dur-hover) var(--ease-soft-out);
-}
-.jr-years-row a:hover {
-  color: var(--foreground);
+  /* The hairline sits just under the year (and spans only the year on phone). */
+  background-position: 0 calc(100% - 12px);
+  background-origin: content-box;
+  background-clip: content-box;
 }
 .jr-years-row a[aria-current] {
   color: var(--foreground);
-  text-decoration-color: currentColor;
 }
 
 /* ——— The calendar ——— */
@@ -246,9 +239,6 @@
   letter-spacing: 0.08em;
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
-a.jr-mini:hover .jr-mini-name {
-  color: var(--muted-foreground);
-}
 .jr-mini.is-empty .jr-mini-name {
   color: var(--muted-foreground);
 }
@@ -374,9 +364,6 @@ a.jr-mini:hover .jr-mini-name {
   color: var(--muted-foreground);
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
-.jr-more:hover {
-  color: var(--foreground);
-}
 /* With JavaScript the months load by themselves: the link to the next older
    month shows only to a keyboard user on it, and room is kept below for that
    month so the footer never jumps as it arrives. Without JavaScript it is a
@@ -426,6 +413,7 @@ html.js .jr-more[data-more="older"]:not(:focus-visible) {
   .jr-years-row a {
     flex: none;
     width: 44px;
+    padding-inline: 6px;
     scroll-snap-align: start;
   }
   .jr-rail {

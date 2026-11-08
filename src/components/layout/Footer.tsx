@@ -22,7 +22,7 @@ export default function Footer({ copy }: { copy: Pick<SiteCopy, "codaCta" | "cod
       <div className="footer-main">
         <div className="footer-top">
           <div className="footer-cta">
-            <Link href="/contact" className="footer-cta-link">
+            <Link href="/contact" className="footer-cta-link hairline">
               {copy.codaCta}
             </Link>
             <p className="footer-cta-subtitle">{copy.codaLine}</p>
@@ -36,7 +36,7 @@ export default function Footer({ copy }: { copy: Pick<SiteCopy, "codaCta" | "cod
         <div className="footer-grid">
           <nav aria-label="Footer" className="footer-nav">
             {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href} className="footer-nav-link">
+              <Link key={link.href} href={link.href} className="footer-nav-link hairline">
                 {link.label}
               </Link>
             ))}
@@ -47,10 +47,10 @@ export default function Footer({ copy }: { copy: Pick<SiteCopy, "codaCta" | "cod
 
       <div className="footer-bottom">
         <span className="footer-bottom-copyright">&copy; 2026 House of Singh</span>
-        <Link href="/privacy" className="footer-bottom-link">
+        <Link href="/privacy" className="footer-bottom-link hairline">
           Privacy
         </Link>
-        <Link href="/terms" className="footer-bottom-link">
+        <Link href="/terms" className="footer-bottom-link hairline">
           Terms
         </Link>
       </div>

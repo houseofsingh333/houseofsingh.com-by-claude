@@ -57,7 +57,7 @@ export default function IntroSection({ data, copy }: { data: HomeIntroData; copy
           ))}
           <Link
             href="/about"
-            className="self-start text-[13px] tracking-[0.12em] uppercase text-foreground border-b border-foreground pb-1 transition-colors duration-(--dur-hover) ease-(--ease-soft-out) hover:text-muted-foreground hover:border-muted-foreground"
+            className="hairline self-start pb-1 text-[13px] tracking-[0.12em] uppercase text-foreground"
           >
             {copy.artistLink}
           </Link>

@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { linkRule } from "./rules";
 
 export const spotlight = defineType({
   name: "spotlight",
@@ -69,8 +70,8 @@ export const spotlight = defineType({
       name: "linkUrl",
       title: "Link URL",
       type: "string",
-      description: "Internal path like /projects/my-project or external URL",
-      validation: (rule) => rule.required(),
+      description: "An address on this site starting with / (like /projects/my-project) or a full https:// address.",
+      validation: (rule) => linkRule(rule.required()),
     }),
     defineField({
       name: "category",

@@ -6,8 +6,8 @@ import { journalEntry } from "./journalEntry";
 import { navigation } from "./navigation";
 import { newsletterSubscriber } from "./newsletterSubscriber";
 import { project } from "./project";
-import { projectCategory } from "./projectCategory";
 import { projectInterest } from "./projectInterest";
+import { redirect } from "./redirect";
 import {
   textSection,
   fullWidthImage,
@@ -36,7 +36,7 @@ export const schemaTypes = [
   navigation,
   newsletterSubscriber,
   project,
-  projectCategory,
+  redirect,
   projectInterest,
   siteSettings,
   spotlight,

@@ -70,10 +70,6 @@
 }
 
 /* Focus-visible for keyboard navigation — calm ring */
-.contact-btn:focus-visible {
-  outline: 1.5px solid var(--foreground);
-  outline-offset: 3px;
-}
 
 /* Primary button — filled, site-consistent */
 .contact-btn-primary {
@@ -104,17 +100,10 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--foreground);
-  border-bottom: 1px solid var(--foreground);
-}
-
-.contact-btn-quiet:hover {
-  color: var(--muted-foreground);
-  border-bottom-color: var(--muted-foreground);
 }
 
 .contact-btn-quiet:disabled {
   color: var(--muted-foreground);
-  border-bottom-color: var(--border);
   cursor: not-allowed;
 }
 
@@ -142,9 +131,6 @@
   color: var(--muted-foreground);
 }
 
-.contact-btn-ghost:hover {
-  color: var(--muted-foreground);
-}
 
 /* Arrow nudge on hover */
 .contact-btn-arrow {
@@ -164,10 +150,6 @@
   transition: background-color var(--dur-hover) var(--ease-soft-out), color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
 }
 
-.contact-option:focus-visible {
-  outline: 1.5px solid var(--foreground);
-  outline-offset: 3px;
-}
 
 /* ——— Intent options — editorial divider-line interaction ——— */
 

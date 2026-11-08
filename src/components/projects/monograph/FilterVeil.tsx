@@ -58,6 +58,7 @@ export default function FilterVeil({ open, triggerRef, categories, current, allW
                 ref={isCurrent ? currentRef : undefined}
                 href={categoryHref(c.slug ? c.label : null)}
                 aria-current={isCurrent ? "true" : undefined}
+                className="hairline"
                 scroll={false}
                 onClick={(e) => {
                   if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;

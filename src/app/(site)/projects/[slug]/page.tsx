@@ -3,6 +3,7 @@ import { projectFallbackDescription } from "@/lib/pageDescriptions";
 import { pageShareImages, routeShareImages } from "@/lib/share-metadata";
 import { alt as projectShareAlt } from "@/app/projects/[slug]/opengraph-image";
 import NotFoundResponse from "@/components/NotFoundResponse";
+import { followRedirect } from "@/lib/redirects";
 import { toIsoTimestamp } from "@/lib/dates";
 import { sanityFetch } from "@/sanity/fetch";
 import { devPlaceholder } from "@/lib/placeholders";
@@ -20,14 +21,18 @@ import type {
   SiteSettings,
   SpotlightLink,
 } from "@/lib/types";
-import ScrollReveal from "@/components/ScrollReveal";
 import { projectHeroImage } from "@/lib/projectHero";
 import ProjectHero from "@/components/projects/ProjectHero";
 import ProjectTitle from "@/components/projects/ProjectTitle";
-import NextProject from "@/components/projects/NextProject";
+import ProjectHead from "@/components/projects/page/ProjectHead";
+import ProjectFlow from "@/components/projects/page/ProjectFlow";
+import ProjectNext from "@/components/projects/page/ProjectNext";
+import { PortableText } from "@portabletext/react";
+import { storyProseComponents } from "@/components/proseComponents";
+import { siteCopy } from "@/lib/siteCopy";
+import { splitCategories } from "@/lib/projectsData";
 import {
   PAGE_COLUMN,
-  READING_COLUMN,
   STORY_TEXT,
 } from "@/components/projects/story";
 import ReadingProgress from "@/components/ReadingProgress";
@@ -177,29 +182,59 @@ export default async function ProjectDetailPage({ params }: Props) {
     const hero = projectHeroImage(project, spotlight);
     const next = nextProject(links, project.slug);
     const intro = project.shortIntro?.trim();
+    const copy = siteCopy(settings);
+    const at = links?.findIndex((l) => l.slug === project.slug) ?? -1;
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const counter = links && at >= 0 ? `${pad(at + 1)} / ${pad(links.length)}` : null;
+    const meta = [
+      ...splitCategories(project.category),
+      project.year ? String(project.year) : null,
+      project.role?.trim() || null,
+    ].filter((m): m is string => !!m);
+    // The Projects page opened at this project (its plate is where the hero
+    // shrinks back to). The internal address, because a link inside the site
+    // does not translate ?p= (next.config.ts rewrites only full loads);
+    // the page then shows /projects?p=<slug> in the address bar.
+    const allProjectsHref = `/projects/view/${project.slug}`;
+    const photographs = project.photographs?.filter((p) => p?.url) ?? [];
 
     return (
-      <article className="section-pb-lg">
+      <article className="pp section-pb-lg">
         <JsonLd data={creativeWorkJsonLd} />
         <JsonLd data={breadcrumbJsonLd} />
         <ReadingProgress />
 
-        {/* 1. Hero: cover, else thumbnail; upcoming: the spotlight image. */}
+        {/* 1. Hero: cover, else the first photograph, else the thumbnail; upcoming: the spotlight image. */}
         <ProjectHero image={hero.image} slug={project.slug} />
 
-        {/* 2. Title block */}
-        <ProjectTitle
+        {/* 2. All projects, and the title block (like the One by one caption). */}
+        <ProjectHead
           title={project.title}
-          category={project.category}
-          year={project.year}
+          counter={counter}
+          meta={meta}
           isUpcoming={project.isUpcoming}
+          excerpt={project.excerpt}
+          allProjectsHref={allProjectsHref}
+          allProjectsLabel={copy.projectAllProjects}
         />
 
-        {/* 3. Story: the intro, then the editor's blocks in their order. */}
+        {/* 3. The story: the intro, then the Photographs with the story text
+            placed between them automatically, then any content sections. */}
         {intro && (
-          <ScrollReveal className={`${PAGE_COLUMN} pt-12 md:pt-16`}>
-            <p className={`${READING_COLUMN} ${STORY_TEXT}`}>{intro}</p>
-          </ScrollReveal>
+          <div className="pp-col pp-item">
+            <p className={`pp-story ${STORY_TEXT}`}>{intro}</p>
+          </div>
+        )}
+        {photographs.length > 0 ? (
+          <ProjectFlow title={project.title} photographs={photographs} story={project.story} />
+        ) : (
+          project.story && project.story.length > 0 ? (
+            <div className="pp-col pp-item">
+              <div className="pp-story pp-text">
+                <PortableText value={project.story} components={storyProseComponents} />
+              </div>
+            </div>
+          ) : null
         )}
         {project.contentSections && project.contentSections.length > 0 && (
           <div className="pt-(--section-space-md)">
@@ -213,7 +248,15 @@ export default async function ProjectDetailPage({ params }: Props) {
         )}
 
         {/* 5. Next project, wrapping from the last to the first. */}
-        {next && <NextProject project={next} />}
+        {next && (
+          <ProjectNext
+            next={next}
+            label={copy.projectNextLabel}
+            allProjectsHref={allProjectsHref}
+            allProjectsLabel={copy.projectAllProjects}
+            startLabel={copy.projectStartLabel}
+          />
+        )}
       </article>
     );
   }
@@ -222,7 +265,10 @@ export default async function ProjectDetailPage({ params }: Props) {
   // thrown above (ISR keeps the last good page), so reaching this point means
   // Sanity answered and the slug does not exist.
   const fallback = devPlaceholder(projects, []).find((p) => p.slug === slug);
-  if (!fallback) return <NotFoundResponse />;
+  if (!fallback) {
+    await followRedirect(`/projects/${slug}`);
+    return <NotFoundResponse />;
+  }
 
   const fallbackCreativeWorkJsonLd = buildCreativeWorkJsonLd(fallback, settings);
   const fallbackBreadcrumbJsonLd = buildBreadcrumbJsonLd([

@@ -202,3 +202,101 @@ html.js .blurup + img[data-blurup]:not([data-loaded]) {
     transition-delay: calc(var(--line, 0) * 160ms);
   }
 }
+
+/* ——— One micro interaction: the hairline ———
+   Every text link and quiet button answers the same way: a 1px line in
+   its own colour draws from left to right on hover and keyboard focus
+   (--dur-hover on --ease-soft-out). It is a background, so it follows text
+   across lines and takes no room. .hairline on the element itself;
+   .hairline-host on a larger link whose words carry .hairline (the line
+   sits under the words only). .hairline-rest keeps a faint line at rest,
+   for links inside running text, which must look like links before they
+   are pointed at. aria-current or data-current keeps the line drawn. */
+.hairline {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size var(--dur-hover) var(--ease-soft-out);
+}
+.hairline-rest {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor), linear-gradient(var(--border), var(--border));
+  background-repeat: no-repeat;
+  background-position: 0 100%, 0 100%;
+  background-size: 0% 1px, 100% 1px;
+  transition: background-size var(--dur-hover) var(--ease-soft-out);
+}
+.hairline:hover,
+.hairline:focus-visible,
+.hairline[aria-current]:not([aria-current="false"]),
+.hairline[data-current],
+.hairline[aria-pressed="true"],
+.hairline-host:hover .hairline,
+.hairline-host:focus-visible .hairline,
+.hairline-host[aria-current]:not([aria-current="false"]) .hairline {
+  background-size: 100% 1px;
+}
+.hairline-rest:hover,
+.hairline-rest:focus-visible {
+  background-size: 100% 1px, 100% 1px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hairline,
+  .hairline-rest {
+    transition: none;
+  }
+}
+
+/* ——— One calm focus ring ———
+   Keyboard focus everywhere: a 1px line in the element's own colour, set a
+   little away from it. Never shown for a mouse click (focus-visible). */
+:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* ——— Numbers that change crossfade (components/Crossfade.tsx) ——— */
+.xfade {
+  position: relative;
+  display: inline-grid;
+  font-variant-numeric: tabular-nums;
+}
+.xfade > span {
+  grid-area: 1 / 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .xfade > .xfade-in {
+    animation: xfade-in var(--dur-hover) var(--ease-slow) both;
+  }
+  .xfade > .xfade-out {
+    animation: xfade-out var(--dur-hover) var(--ease-slow) both;
+  }
+}
+/* The old value floats where it was, so it never holds the box open. */
+.xfade > .xfade-out {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.xfade > .xfade-out::before {
+  content: attr(data-text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .xfade > .xfade-out {
+    display: none;
+  }
+}
+@keyframes xfade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes xfade-out {
+  to {
+    opacity: 0;
+  }
+}

@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { linkRule } from "./rules";
 import { captionField, imageAltFields } from "./imageFields";
 
 export const navigation = defineType({
@@ -24,7 +25,8 @@ export const navigation = defineType({
               name: "href",
               title: "Link",
               type: "string",
-              validation: (rule) => rule.required(),
+              description: "An address on this site starting with / (for example /journal) or a full https:// address.",
+              validation: (rule) => linkRule(rule.required()),
             }),
             defineField({
               name: "external",

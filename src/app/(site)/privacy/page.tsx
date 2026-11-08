@@ -164,7 +164,7 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
       <>
         <p>
           To be removed from the newsletter, send a message through the{" "}
-          <Link href="/contact" className="text-foreground underline underline-offset-4">
+          <Link href="/contact" className="text-foreground hairline-rest">
             contact page
           </Link>{" "}
           at houseofsingh.com/contact asking to unsubscribe, and you will
@@ -228,7 +228,7 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
               href="https://www.spotify.com/legal/privacy-policy/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-foreground underline underline-offset-4"
+              className="text-foreground hairline-rest"
             >
               Spotify privacy policy
             </a>
@@ -252,7 +252,7 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
         <p>
           If you have questions about this privacy policy or how your data
           is handled, please reach out through the{" "}
-          <Link href="/contact" className="text-foreground underline underline-offset-4">
+          <Link href="/contact" className="text-foreground hairline-rest">
             contact page
           </Link>
           .

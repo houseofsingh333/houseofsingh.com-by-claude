@@ -75,7 +75,7 @@ export function ReviewScreen({
                     </div>
                     <button
                       onClick={() => onEdit(index)}
-                      className="contact-btn ml-4 text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 flex-shrink-0"
+                      className="contact-btn hairline ml-4 text-muted-foreground opacity-0 group-hover:opacity-100 focus-visible:opacity-100 flex-shrink-0"
                       aria-label={`Edit ${step.question}`}
                     >
                       <Pencil className="w-3.5 h-3.5" />

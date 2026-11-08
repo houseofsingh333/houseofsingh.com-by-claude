@@ -41,6 +41,19 @@ const playfair = localFont({
   preload: true,
 });
 
+/** Instrument Sans: the body and interface face (regular and medium), self hosted, with a size adjusted Arial fallback so nothing moves when it loads. */
+const instrument = localFont({
+  src: [
+    { path: "../../public/fonts/instrument-sans-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/instrument-sans-latin-500-normal.woff2", weight: "500", style: "normal" },
+  ],
+  display: "swap",
+  variable: "--font-instrument",
+  adjustFontFallback: "Arial",
+  fallback: ["Arial", "Helvetica", "sans-serif"],
+  preload: true,
+});
+
 export const viewport: Viewport = {
   themeColor: "#F9F7F5",
 };
@@ -104,7 +117,7 @@ export default function RootLayout({
   return (
     // suppressHydrationWarning: the script below adds the "js" class to
     // <html> before React hydrates, which is intended.
-    <html lang="en" className={playfair.variable} suppressHydrationWarning>
+    <html lang="en" className={`${playfair.variable} ${instrument.variable}`} suppressHydrationWarning>
       <head>
         {/* Pre paint script. Scroll reveals start hidden only under the "js"
             class (and only when the visitor allows motion), so without

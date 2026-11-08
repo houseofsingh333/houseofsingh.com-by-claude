@@ -92,6 +92,15 @@ export default function Monograph({ projects, categories, copy, startIndex, init
   /** At a glance's scroll when a photograph there opened One by one. */
   const fromGlance = useRef<number | null>(null);
 
+  // Arriving at the internal address of a project (/projects/view/<slug>,
+  // the "All projects" link on a project page): show its public address.
+  useEffect(() => {
+    if (location.pathname.startsWith("/projects/view/")) {
+      window.history.replaceState(window.history.state, "", `/projects?p=${projects[startIndex]?.slug ?? ""}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Back from a project reached from At a glance: At a glance again, where
   // the reader was, and a brass line under that project's title. The trail
   // is in sessionStorage, which the server cannot see, so it is read once
@@ -261,10 +270,10 @@ export default function Monograph({ projects, categories, copy, startIndex, init
             onClose={() => setFilterOpen(false)}
           />
           <div className="mono-views" role="group" aria-label={`${copy.viewOne}, ${copy.viewGlance}`}>
-            <button type="button" data-v="one" aria-pressed={view === "one"} onClick={() => switchView("one")}>
+            <button type="button" className="hairline" data-v="one" aria-pressed={view === "one"} onClick={() => switchView("one")}>
               {copy.viewOne}
             </button>
-            <button type="button" data-v="glance" aria-pressed={view === "glance"} onClick={() => switchView("glance")}>
+            <button type="button" className="hairline" data-v="glance" aria-pressed={view === "glance"} onClick={() => switchView("glance")}>
               {copy.viewGlance}
             </button>
           </div>

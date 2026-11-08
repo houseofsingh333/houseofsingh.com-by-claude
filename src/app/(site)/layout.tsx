@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PageTransition from "@/components/PageTransition";
+import GlideScroll from "@/components/GlideScroll";
 import { sanityFetch } from "@/sanity/fetch";
 import {
   menuPhotosQuery,
@@ -129,6 +130,7 @@ export default async function SiteLayout({
             newsletterThanksText: copy.newsletterThanksText,
           }}
         />
+        <GlideScroll />
         <main id="main-content" className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>

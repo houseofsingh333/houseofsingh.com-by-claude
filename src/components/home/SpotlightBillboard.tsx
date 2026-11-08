@@ -64,13 +64,13 @@ export default function SpotlightBillboard({ spotlight, copy }: { spotlight: Spo
                   href={spotlight.linkUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="aperture-link"
+                  className="aperture-link hairline"
                 >
                   {spotlight.linkText}
                   <span className="sr-only"> (opens in a new tab)</span>
                 </a>
               ) : (
-                <Link href={spotlight.linkUrl} className="aperture-link">
+                <Link href={spotlight.linkUrl} className="aperture-link hairline">
                   {spotlight.linkText}
                 </Link>
               )

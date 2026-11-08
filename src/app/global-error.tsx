@@ -12,7 +12,7 @@ const CANVAS = "#F9F7F5";
 const CHARCOAL = "hsl(30 10% 12%)";
 const MUTED = "hsl(30 5% 44%)"; // --muted-foreground, #76706B
 const HAIRLINE = "hsl(40 10% 88%)"; // --border
-const BODY_FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+const BODY_FONT = '"Instrument Sans", Arial, sans-serif';
 
 const linkStyle = {
   display: "inline-block",
@@ -45,6 +45,18 @@ export default function GlobalError({
     <html lang="en">
       <head>
         <style>{`
+          @font-face {
+            font-family: "Instrument Sans";
+            src: url("/fonts/instrument-sans-latin-400-normal.woff2") format("woff2");
+            font-weight: 400;
+            font-display: swap;
+          }
+          @font-face {
+            font-family: "Instrument Sans";
+            src: url("/fonts/instrument-sans-latin-500-normal.woff2") format("woff2");
+            font-weight: 500;
+            font-display: swap;
+          }
           @font-face {
             font-family: "Playfair Display";
             src: url("/fonts/playfair-display-latin-wght-normal.woff2") format("woff2");

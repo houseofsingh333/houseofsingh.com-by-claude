@@ -136,7 +136,7 @@ export default function ContactForm({ portrait, caption }: Props) {
             {currentStep > 0 && hasDraft && (
               <button
                 onClick={clearDraft}
-                className="contact-btn mt-8 text-xs tracking-[0.08em] text-muted-foreground hover:text-foreground"
+                className="contact-btn hairline mt-8 text-xs tracking-[0.08em] text-muted-foreground"
               >
                 Clear saved progress
               </button>
@@ -160,7 +160,7 @@ export default function ContactForm({ portrait, caption }: Props) {
               {isSkippable && (
                 <button
                   onClick={handleNext}
-                  className="contact-btn contact-btn-ghost"
+                  className="contact-btn contact-btn-ghost hairline"
                 >
                   Skip
                 </button>

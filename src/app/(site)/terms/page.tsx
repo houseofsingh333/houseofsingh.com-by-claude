@@ -69,7 +69,7 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
           site for commercial purposes without prior written consent. If
           you would like to use or license any work, please get in touch
           through the{" "}
-          <Link href="/contact" className="text-foreground underline underline-offset-4">
+          <Link href="/contact" className="text-foreground hairline-rest">
             contact page
           </Link>
           .

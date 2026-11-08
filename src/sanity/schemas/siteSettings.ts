@@ -1,6 +1,7 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { imageAltFields } from "./imageFields";
 import { SITE_COPY_FIELDS } from "../../lib/siteCopy";
+import { httpsRule } from "./rules";
 
 /*
  * Site Settings, in tabs: General (title, SEO, social), Homepage chapters
@@ -77,6 +78,7 @@ export const siteSettings = defineType({
       type: "url",
       group: "homepage",
       fieldset: "chapter6",
+      validation: (rule) => httpsRule(rule),
       description:
         "The embed URL for your Spotify playlist (e.g. https://open.spotify.com/embed/playlist/...)",
     }),
@@ -133,7 +135,7 @@ export const siteSettings = defineType({
               title: "Link",
               type: "url",
               description: "The full address of the case study, for example https://studios.houseofsingh.com/... It opens in a new tab.",
-              validation: (rule) => rule.required().uri({ scheme: ["https", "http"] }),
+              validation: (rule) => httpsRule(rule.required()),
             }),
           ],
           preview: { select: { title: "clientName", subtitle: "link", media: "image" } },
@@ -197,7 +199,7 @@ export const siteSettings = defineType({
       title: "Social Profiles",
       type: "array",
       group: "general",
-      of: [{ type: "url" }],
+      of: [{ type: "url", validation: (rule) => httpsRule(rule) }],
       description:
         "Full URLs to official social profiles (Instagram, etc.). Output as sameAs links in structured data.",
     }),
