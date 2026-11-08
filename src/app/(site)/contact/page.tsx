@@ -5,11 +5,14 @@ import { contactPageQuery } from "@/sanity/queries";
 import type { SanityImage, Seo } from "@/lib/types";
 import { fullTitle, pageTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
+import { resolveContactFormCopy, type ContactFormCopyInput } from "@/lib/contact-form-data";
 
 type ContactPageData = {
   /** The contact portrait, else the About portrait (contactPageQuery). */
   portrait?: SanityImage | null;
   portraitCaption?: string | null;
+  /** The words of the form (Contact Page, Contact form); empty keeps today's. */
+  form?: ContactFormCopyInput;
   seo?: Seo | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
@@ -46,6 +49,10 @@ export default async function ContactPage() {
   const data = await sanityFetch<ContactPageData>({ query: contactPageQuery });
 
   return (
-    <ContactForm portrait={data?.portrait ?? null} caption={data?.portraitCaption?.trim() || "Maninder Singh, Toronto"} />
+    <ContactForm
+      portrait={data?.portrait ?? null}
+      caption={data?.portraitCaption?.trim() || "Maninder Singh, Toronto"}
+      copy={resolveContactFormCopy(data?.form)}
+    />
   );
 }

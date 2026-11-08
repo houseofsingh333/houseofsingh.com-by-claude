@@ -108,14 +108,14 @@ export function ReviewScreen({
   );
 }
 
-export function ConfirmationScreen() {
+export function ConfirmationScreen({ heading, line }: { heading: string; line: string }) {
   return (
     <div className="w-full max-w-xl mx-auto editorial-slide-up">
-      <h1 className="font-editorial text-[length:clamp(36px,calc(25.48px_+_2.697vw),60px)] font-light text-foreground mb-6 leading-[1.08]">
-        Thank you for reaching out.
-      </h1>
+      <h2 className="font-editorial text-[length:clamp(36px,calc(25.48px_+_2.697vw),60px)] font-light text-foreground mb-6 leading-[1.08]">
+        {heading}
+      </h2>
       <p className="text-muted-foreground text-lg mb-14 leading-relaxed">
-        I&apos;ll be in touch shortly.
+        {line}
       </p>
       <div className="flex flex-wrap gap-4">
         <Link

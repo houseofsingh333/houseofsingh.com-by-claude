@@ -11,12 +11,15 @@ import { useContactForm } from "./useContactForm";
 import SanityImage from "@/components/SanityImage";
 import type { SanityImage as SanityImageData } from "@/lib/types";
 import HoneypotField from "@/components/HoneypotField";
+import type { ContactFormCopy } from "@/lib/contact-form-data";
 
 type Props = {
   /** Maninder's portrait: the Contact portrait, else the About portrait. */
   portrait: SanityImageData | null;
   /** The portrait's caption (Contact Page, Portrait caption). */
   caption: string;
+  /** The words of the form, from Sanity with today's wording as default. */
+  copy: ContactFormCopy;
 };
 
 /** The portrait beside the form (and after it on phones). */
@@ -40,7 +43,7 @@ function ContactPortrait({ image, caption }: { image: SanityImageData; caption: 
   );
 }
 
-export default function ContactForm({ portrait, caption }: Props) {
+export default function ContactForm({ portrait, caption, copy }: Props) {
   const {
     formData,
     currentStep,
@@ -63,7 +66,7 @@ export default function ContactForm({ portrait, caption }: Props) {
     clearDraft,
     honeypot,
     setHoneypot,
-  } = useContactForm();
+  } = useContactForm(copy);
 
   const aside = portrait ? <ContactPortrait image={portrait} caption={caption} /> : undefined;
 
@@ -71,7 +74,7 @@ export default function ContactForm({ portrait, caption }: Props) {
   if (phase === "done") {
     return (
       <TwoColumnLayout aside={aside}>
-        <ConfirmationScreen />
+        <ConfirmationScreen heading={copy.thankYouHeading} line={copy.thankYouLine} />
       </TwoColumnLayout>
     );
   }

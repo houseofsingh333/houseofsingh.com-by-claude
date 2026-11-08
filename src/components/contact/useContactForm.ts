@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   type ContactFormData,
+  type ContactFormCopy,
   emptyFormData,
   buildSteps,
   STORAGE_KEY,
@@ -11,7 +12,7 @@ import { HONEYPOT_FIELD } from "@/lib/spam-protection";
 
 type Phase = "form" | "review" | "done";
 
-export function useContactForm() {
+export function useContactForm(copy: ContactFormCopy) {
   const [formData, setFormData] = useState<ContactFormData>(() => {
     if (typeof window === "undefined") return emptyFormData;
     try {
@@ -59,8 +60,8 @@ export function useContactForm() {
   }, [formData, phase]);
 
   const steps = useMemo(
-    () => buildSteps(formData.intent),
-    [formData.intent],
+    () => buildSteps(formData.intent, copy),
+    [formData.intent, copy],
   );
   const currentStepDef = steps[currentStep];
   const currentValue = currentStepDef ? formData[currentStepDef.field] : "";
