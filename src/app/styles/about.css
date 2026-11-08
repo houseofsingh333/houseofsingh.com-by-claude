@@ -51,6 +51,21 @@
   line-height: 1.75;
   color: var(--foreground);
 }
+/* The one italic on the site: Maninder's quote beside his portrait. Its face
+   is loaded here only (preloaded by about/page.tsx); until it arrives the
+   quote is set in the regular Playfair already on the page, so the line
+   breaks barely move when it does. */
+@font-face {
+  font-family: "Playfair Display Italic";
+  src: url("/fonts/playfair-display-latin-wght-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+}
+.about-quote {
+  font-family: "Playfair Display Italic", var(--font-editorial);
+  font-style: italic;
+}
 .about-pull {
   max-width: 760px;
   margin-block: 16px;

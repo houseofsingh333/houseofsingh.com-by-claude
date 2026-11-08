@@ -23,15 +23,14 @@ const SEO_DEFAULTS = {
   sameAs: ["https://www.instagram.com/houseofsingh"],
 };
 
+/* Playfair regular only: the italic is used for one line on the whole site
+   (the About quote), so it is declared and preloaded on the About page alone
+   (styles/about.css, about/page.tsx) instead of loading on every page. */
 const playfair = localFont({
   src: [
     {
       path: "../../public/fonts/playfair-display-latin-wght-normal.woff2",
       style: "normal",
-    },
-    {
-      path: "../../public/fonts/playfair-display-latin-wght-italic.woff2",
-      style: "italic",
     },
   ],
   display: "swap",

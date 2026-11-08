@@ -111,9 +111,13 @@ html.js .blurup + img[data-blurup]:not([data-loaded]) {
     animation: blurup-in var(--dur-image) var(--ease-slow) backwards;
   }
 }
+/* From 1%, not 0: identical to the eye, but the browser counts the photo as
+   painted the moment it has loaded, instead of when the fade ends (a fully
+   transparent first frame held back the page's largest paint by the whole
+   --dur-image on every photograph led page). */
 @keyframes blurup-in {
   from {
-    opacity: 0;
+    opacity: 0.01;
   }
 }
 

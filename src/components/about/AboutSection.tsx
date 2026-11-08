@@ -74,7 +74,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         <div className="about-opening-text">
           <ChapterMark numeral="I" />
           {introQuote && (
-            <blockquote className="font-editorial italic text-[length:clamp(30px,calc(22.11px_+_2.022vw),48px)] leading-[1.2] text-foreground">
+            <blockquote className="about-quote text-[length:clamp(30px,calc(22.11px_+_2.022vw),48px)] leading-[1.2] text-foreground">
               &ldquo;{keepLastWords(introQuote)}&rdquo;
             </blockquote>
           )}

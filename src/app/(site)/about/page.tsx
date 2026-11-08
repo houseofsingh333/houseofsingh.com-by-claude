@@ -8,6 +8,7 @@ import { fallbackAboutPage } from "@/lib/placeholder-data";
 import type { AboutPageData } from "@/lib/types";
 import JsonLd from "@/components/JsonLd";
 import ReadingProgress from "@/components/ReadingProgress";
+import { preload } from "react-dom";
 import { buildFaqJsonLd } from "@/lib/structured-data";
 import { fullTitle, pageTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
@@ -40,6 +41,8 @@ export async function generateMetadata(
 }
 
 export default async function AboutPage() {
+  // The italic face for Maninder's quote (styles/about.css): this page only.
+  preload("/fonts/playfair-display-latin-wght-italic.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
   const data = await sanityFetch<AboutPageData | null>({
     query: aboutPageQuery,
   });
