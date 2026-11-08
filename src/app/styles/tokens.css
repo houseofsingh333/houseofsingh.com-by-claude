@@ -52,6 +52,16 @@
   --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --editorial-duration: 1200ms;
 
+  /* ——— Type scale (BRAND_BOOK.md, Typography) ———
+     The one small label: every uppercase label, control, category,
+     counter, date, eyebrow and meta line on the site, taken from
+     "In Toronto it is" in the footer. Never a one off size. Colour is set
+     where it is used: muted grey at rest, charcoal when active. A label
+     never wraps: a row of labels wraps between them, never inside one. */
+  --type-label-size: 12px;
+  --type-label-leading: 1.5;
+  --type-label-tracking: 0.12em;
+
   /* Section spacing scale — consistent vertical rhythm */
   --section-space-sm: 4rem;   /* 64px — page header bottoms, tight sections */
   --section-space-md: 5rem;   /* 80px — standard section rhythm */
@@ -63,6 +73,33 @@
     --section-space-sm: 6rem;   /* 96px */
     --section-space-md: 9rem;   /* 144px */
     --section-space-lg: 9rem;   /* 144px */
+  }
+}
+
+/* ——— Below the crest ———
+   A page's header row (Projects: "Projects", the filter, the views; the
+   Journal: its heading and years) starts below the crest's lowest drawn
+   point with a calm gap, never level with it: --head-top. A project's photograph starts below that row: --plate-top,
+   shared by the plate and the grid on the Projects page and the hero on a
+   project page, so the plate grows into the hero without moving down the
+   page and nothing ever covers the crest.
+   Phone (crest drawn to 89px): the row at 128px, the plate at 188px (the
+   row, 44px, and its 1rem gap). From 768px the crest is full size and
+   drawn to 155px, at every width (it does not scale): the row at 180px;
+   the plate 44px plus a 1rem gap below it on tablets, 44px plus 76px (in
+   proportion with the page, as --px) on desktop: 300px at 1280. */
+:root {
+  --head-top: 128px;
+  --plate-top: calc(var(--head-top) + 44px + 1rem);
+}
+@media (min-width: 768px) {
+  :root {
+    --head-top: 180px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --plate-top: calc(var(--head-top) + 44px + 76 * min(max(100vw, 1024px), 1600px) / 1280);
   }
 }
 
@@ -79,4 +116,14 @@
   --font-sans: var(--font-instrument), Arial, sans-serif;
   --animate-fade-in: fadeIn 0.3s ease-out;
   --animate-editorial-fade-in: editorialFadeIn var(--dur-reveal) var(--ease-slow) both;
+}
+
+/* The small label as a class for components (className="type-label"). */
+@utility type-label {
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  font-weight: 400;
+  white-space: nowrap;
 }

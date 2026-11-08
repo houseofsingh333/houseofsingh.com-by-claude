@@ -42,7 +42,7 @@ export const SITE_COPY_FIELDS = [
   { name: "listeningHeading", title: "Heading", group: "homepage", fieldset: "chapter6", text: "On my turntable" },
   {
     name: "listeningNote",
-    title: "Playlist note (italic)",
+    title: "Playlist note",
     group: "homepage",
     fieldset: "chapter6",
     text: "This playlist showcases the music that keeps me inspired and in sync with my work.",

@@ -152,8 +152,10 @@ html:not(.js) .hero-progress {
 .aperture-link {
   align-self: flex-start;
   margin-top: 8px;
-  font-size: 13px;
-  letter-spacing: 0.12em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--background);
   padding-bottom: 4px;
@@ -232,8 +234,10 @@ html:not(.js) .hero-progress {
     left: 50%;
     bottom: 56px;
     transform: translateX(-50%);
-    font-size: 12px;
-    letter-spacing: 0.14em;
+    font-size: var(--type-label-size);
+    white-space: nowrap;
+    line-height: var(--type-label-leading);
+    letter-spacing: var(--type-label-tracking);
     text-transform: uppercase;
     color: var(--muted-foreground-inverse);
     opacity: calc(1 - var(--g) * 3);
@@ -285,8 +289,10 @@ html:not(.js) .hero-progress {
 .exhibition-skip {
   align-self: flex-end;
   margin-right: 24px;
-  font-size: 12px;
-  letter-spacing: 0.12em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
   border-bottom: 1px solid var(--border);
@@ -614,10 +620,10 @@ html:not(.js) .hero-progress {
   background: var(--background);
   border: 1px solid var(--border);
   color: var(--foreground);
-  font-size: 11px;
-  letter-spacing: 0.14em;
+  font-size: var(--type-label-size);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
-  line-height: 1.4;
+  line-height: var(--type-label-leading);
   white-space: nowrap;
 }
 .record-player {
@@ -630,8 +636,10 @@ html:not(.js) .hero-progress {
   position: absolute;
   left: 20px;
   top: 20px;
-  font-size: 11px;
-  letter-spacing: 0.2em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   /* The darker panel grey: plain muted grey falls short of AA on --secondary. */
   color: var(--muted-foreground-panel);
@@ -697,8 +705,10 @@ html:not(.js) .hero-progress {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
-  letter-spacing: 0.12em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
 }
 .window-link-arrow {
@@ -735,8 +745,10 @@ html:not(.js) .hero-progress {
   border-top: 1px solid var(--border);
 }
 .window-work-label {
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }

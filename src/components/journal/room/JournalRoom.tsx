@@ -83,6 +83,13 @@ export default function JournalRoom({ index, months, opening, target, headingSlu
 
   const currentDay = current ? bySlug.get(current) : undefined;
   const shown = currentDay ? dateParts(currentDay.date) : { year: months[0]?.year ?? 0, month: months[0]?.month ?? 1 };
+  // Zoomed out to a year, the year follows the reading: scrolling from
+  // 2026 into 2025 turns the twelve months to 2025 (Calendar crossfades it).
+  const [readYear, setReadYear] = useState(shown.year);
+  if (readYear !== shown.year) {
+    setReadYear(shown.year);
+    if (zoom !== null) setZoom(shown.year);
+  }
   const calYear = zoom ?? shown.year;
 
   /** Fetch a month in full (once), or null if it cannot be had. */

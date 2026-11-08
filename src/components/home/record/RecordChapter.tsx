@@ -46,23 +46,23 @@ export default function RecordChapter({ playlistUrl, sleeve, copy }: Props) {
 
   return (
     <section aria-labelledby="chapter-listening" className="px-6 md:px-16 section-py">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,600px)] gap-14 lg:gap-24 items-center">
-        <div className="flex flex-col gap-7 max-w-[560px]">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(22rem,1fr)_minmax(0,600px)] gap-14 lg:gap-24 items-center">
+        <div className="@container flex flex-col gap-7 max-w-[560px]">
           <div className="flex items-baseline gap-4">
-            <span aria-hidden="true" className="font-editorial italic text-[30px] leading-none text-accent">
+            <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
               VI
             </span>
-            <span className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground">
+            <span className="type-label text-muted-foreground">
               {copy.listeningLabel}
             </span>
           </div>
           <h2
             id="chapter-listening"
-            className="font-editorial font-normal text-[36px] md:text-[44px] lg:text-[52px] leading-[1.1] text-foreground"
+            className="font-editorial font-normal text-[length:min(clamp(36px,calc(28.99px_+_1.798vw),52px),13.5cqi)] leading-[1.1] text-foreground"
           >
             {copy.listeningHeading}
           </h2>
-          <p className="font-editorial italic text-[20px] md:text-[22px] leading-[1.5] text-foreground">
+          <p className="font-editorial text-[length:clamp(20px,calc(19.12px_+_0.225vw),22px)] leading-[1.5] text-foreground">
             {copy.listeningNote}
           </p>
           <p className="text-[16px] md:text-[17px] leading-[1.7] text-muted-foreground max-w-[480px]">
@@ -97,7 +97,7 @@ export default function RecordChapter({ playlistUrl, sleeve, copy }: Props) {
           </div>
 
           <div className="flex flex-col gap-3">
-            <p className="text-[12px] tracking-[0.14em] uppercase text-muted-foreground">
+            <p className="type-label text-muted-foreground">
               {copy.listeningPlayerLabel}
             </p>
             <RecordPlayer embedSrc={embedSrc} recordId={RECORD_ID} title={copy.listeningPlayerLabel} />

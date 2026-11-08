@@ -30,7 +30,7 @@ export default function ProjectTitle({
         {title}
       </h1>
       {(labels.length > 0 || isUpcoming) && (
-        <p className="mt-6 md:mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+        <p className="mt-6 md:mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 type-label text-muted-foreground">
           {labels.map((label) => (
             <span key={label}>{label}</span>
           ))}

@@ -43,7 +43,6 @@
 }
 .legal-short {
   font-family: var(--font-editorial);
-  font-style: italic;
   font-size: 19px;
   line-height: 1.5;
   color: var(--foreground);

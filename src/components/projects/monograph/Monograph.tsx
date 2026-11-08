@@ -250,7 +250,8 @@ export default function Monograph({ projects, categories, copy, startIndex, init
           <button
             ref={triggerRef}
             type="button"
-            className="mono-filter-trigger"
+            className="mono-filter-trigger hairline"
+            data-current=""
             aria-expanded={filterOpen}
             aria-controls="projects-filter"
             onClick={() => setFilterOpen((o) => !o)}

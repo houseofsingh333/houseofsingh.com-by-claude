@@ -70,27 +70,37 @@ Two typefaces, both from Google Fonts. One elegant serif for display, one quiet 
 
 **Type principles.**
 - Body text runs small and calm, with generous line height (1.6 to 1.7) for an unhurried reading rhythm.
-- Labels and eyebrows are uppercase, small, with wide letter spacing (0.1em to 0.2em), in muted grey.
+- Labels and eyebrows use the one label style below: 12px, uppercase, 0.12em letter spacing, in muted grey.
 - Headings are sentence case or natural case, never all caps. All caps is reserved for small labels only.
 - One display weight and one or two body weights. Avoid a wide spread of weights, which reads busy.
 - Never use Inter, Roboto, Arial, or default system fonts in produced brand material. They signal the generic, defaulted look the brand exists to avoid.
 
 **Implementation note.** Both faces are live and self hosted from `public/fonts` through next/font (`src/app/layout.tsx`): Playfair Display as `--font-editorial` for display, and Instrument Sans (regular 400 and medium 500) as `--font-instrument`, the body and interface face on every page (the Sanity Studio keeps its own). Each has a size adjusted fallback (Times New Roman, Arial) used only for the moment before the font arrives, so nothing moves when it does. Strong text uses medium, never a synthesised bold.
 
-**The real type scale (from the live site).** These are the actual values in use, to be treated as the reference. Sizes are not yet centralized as tokens; when we tokenize them, these are the source values.
+**The type scale.** These are the sizes in use, measured on the site at a phone (390 wide) and at desktop (1280 wide). Display sizes and headings are fluid: each is a `clamp()` that equals the phone value at 390 and the desktop value at 1280 and scales smoothly between them, never jumping at a breakpoint. Do not add a size outside this scale.
 
-| Role | Size | Weight | Line height | Letter spacing | Family |
-|------|------|--------|-------------|----------------|--------|
-| Display, hero (spotlight title) | `clamp(42px, 6vw, 88px)` | 300 | 1.05 | -0.01em | Editorial |
-| Display, section CTA heading | `clamp(28px, 3.5vw, 44px)` | inherited | — | — | Editorial |
-| Heading, question (rapidfire) | 18px (16px mobile) | 500 | — | — | Editorial |
-| Body, reading | 16px | 400 | 1.7 (1.6 mobile) | — | Body |
-| Body, teaser | 15px to 16px | 400 | 1.7 | — | Body |
-| Label, eyebrow, button | 13px | 400 to 500 | — | 0.1em to 0.15em | Body, uppercase |
-| Label, small (spotlight) | 11px | 400 | 1.4 | 0.2em | Body, uppercase |
-| Caption, legal, meta | 11px | 400 | — | 0.04em to 0.08em | Body, uppercase |
+| Role | Phone 390 | Desktop 1280 | Weight | Line height | Family |
+|------|-----------|--------------|--------|-------------|--------|
+| Display, footer statement ("Start a project") | 52px | 120px (to 136px) | 400 | 0.98 | Playfair |
+| Display, project title | 42px | 88px | 400 | 0.98 | Playfair |
+| Page heading (Journal, legal pages, 404) | 30 to 40px | 56 to 60px | 300 to 400 | 1.0 to 1.05 | Playfair |
+| Section heading (homepage chapters, contact) | 36px | 52px | 400 | 1.1 | Playfair |
+| Quote (About) | 28 to 30px | 40 to 48px | 400 | 1.2 to 1.3 | Playfair |
+| Title in a sequence (One by one, Journal entry) | 24 to 28px | 30 to 52px | 300 to 400 | 1.05 to 1.15 | Playfair |
+| Numerals (chapter, entry date, footer clock) | 30 to 40px | 30 to 56px | 400 | 0.9 to 1.0 | Playfair |
+| Body, reading | 16 to 17px | 17 to 18px | 400 | 1.7 to 1.75 | Instrument Sans |
+| Body, note | 15px | 16px | 400 | 1.7 | Instrument Sans |
+| **Label** | **12px** | **12px** | **400** | **1.5** | **Instrument Sans, uppercase, 0.12em** |
+
+**The label: one style, every small label.** Every small uppercase label on the site uses one token, taken from "In Toronto it is" in the footer: 12px, line height 1.5, letter spacing 0.12em, uppercase, regular weight (`--type-label-size`, `--type-label-leading`, `--type-label-tracking` in `src/app/styles/tokens.css`; the `type-label` class in components). That covers view switches, filters, categories, counters, dates, eyebrows, meta lines under titles, "Enter the project", "Next project", the Journal's month and weekday letters, footer labels and the menu's small links. Colour is set where it is used: muted grey at rest, charcoal when active, with the drawn hairline beneath an active control. A label never wraps: a row of labels wraps between them, never inside one. Never set a one off label size.
+
+**Italic in one place only.** Playfair italic is used for one line on the whole site: Maninder's quote beside his portrait in About, chapter I. Everything else in Playfair is regular, including pull quotes, chapter numerals, the playlist note and the next project preview. Do not introduce italic anywhere else.
+
+**Line breaks.** Headings, quotes and short statements balance their lines (`text-wrap: balance`), so none ends on one or two words; paragraphs avoid a lone last word (`text-wrap: pretty`); statements longer than balancing can handle keep their last two words together (`keepLastWords`). Reading columns stay about 60 to 75 characters wide; single line statements may run wider. No text may overflow or be clipped at any width from 375 to 1600. A heading whose column can be narrower than its size needs is capped to that column (`cqi`), so it never leaves a word on its own line.
 
 ### 2.3 Spacing and layout
+
+**Below the crest.** Nothing ever covers the crest or sits level with it. A page's header row (the Projects heading, filter and views; the Journal heading and years) starts below the crest's lowest drawn point with a calm gap: 128px on phones (crest drawn to 89px), 180px from 768px (crest drawn to 155px). A project's photograph (the Projects plate and grid, a project's hero) starts below that row, at `--plate-top`: 188px on phones, 240px on tablets, 300px at 1280. Both values live in `src/app/styles/tokens.css`.
 
 The brand is generous and airy. Whitespace is not empty space, it is the product. It is what makes the work feel considered and lets the photography breathe.
 
@@ -206,7 +216,7 @@ Motion is calm and minimal. It supports the content, never performs for its own 
 - **Buttons and links.** Quiet and typographic. Often a simple label with a hairline or a subtle hover, rather than a heavy filled shape. The brass may appear as a restrained hover or underline accent.
 - **Forms.** Clean, generous, calm. Comfortable field spacing, clear muted labels, gentle focus states. No visual noise.
 - **Cards.** Let the image and a small caption do the work. Avoid borders, heavy shadows, or busy chrome. Space separates content, not boxes.
-- **Labels and eyebrows.** Uppercase, small, wide letter spacing, muted grey. The consistent signal of category and metadata across the brand.
+- **Labels and eyebrows.** The one label style (12px, uppercase, 0.12em, muted grey; charcoal with a hairline when active). The consistent signal of category and metadata across the brand.
 - **Hairlines.** Thin rules, used sparingly, are a quiet way to divide content. Keep them light.
 
 ### 4.4 Consistency rules
@@ -256,7 +266,7 @@ The voice is the same calm, grounded, reflective voice used across the brand. (D
 
 **Palette:** Canvas `#F9F7F5` (`--background`) · Charcoal `#1A1A1A` (`--foreground`) · Muted grey `#76706B` (`--muted-foreground`, `hsl(30 5% 44%)` — meets WCAG AA, do not lighten) · Border `hsl(40 10% 88%)` (`--border`) · Antique brass `#A8895C` (`--accent`) · Error brick `#9B4B3B` (`--error`, `hsl(10 45% 42%)`, error text only) · White `#FFFFFF`
 
-**Type:** Playfair Display via `--font-editorial` (display) · Instrument Sans (body and interface, live, regular and medium). Display hero `clamp(42px, 6vw, 88px)`, body 16px at 1.7 line height, labels 11px to 13px uppercase with 0.1em to 0.2em tracking.
+**Type:** Playfair Display via `--font-editorial` (display, regular; italic only for the About quote) · Instrument Sans (body and interface, regular and medium). Fluid display and headings with `clamp()`, body 16 to 18px at 1.7, one label style: 12px uppercase, 0.12em, `--type-label-*`.
 
 **Spacing:** Section rhythm `--section-space-sm/md/lg`. Desktop large is 144px, the airy signature.
 

@@ -45,8 +45,8 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
           >
             <div className="exhibition-stage">
               <div className="exhibition-head px-6 md:px-16" aria-hidden={i > 0 ? true : undefined}>
-                <span className="font-editorial italic text-[30px] leading-none text-accent">III</span>
-                <h2 id={i === 0 ? "chapter-work" : undefined} className="font-editorial font-normal text-[30px] md:text-[36px] leading-[1.1] text-foreground">
+                <span className="font-editorial text-[30px] leading-none text-accent">III</span>
+                <h2 id={i === 0 ? "chapter-work" : undefined} className="font-editorial font-normal text-[length:clamp(30px,calc(27.37px_+_0.674vw),36px)] leading-[1.1] text-foreground">
                   {copy.workHeading}
                 </h2>
               </div>
@@ -82,20 +82,20 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
                     {project.title}
                   </Link>
                 </h3>
-                {meta && <p className="text-[13px] text-muted-foreground">{meta}</p>}
+                {meta && <p className="type-label text-muted-foreground">{meta}</p>}
                 {project.excerpt && (
                   <p className="mt-2 text-[14px] leading-[1.6] text-foreground">{project.excerpt}</p>
                 )}
-                <Link href={href} className="exhibition-label-enter mt-3 self-start text-[12px] tracking-[0.12em] uppercase text-foreground border-b border-foreground pb-1">
+                <Link href={href} className="exhibition-label-enter mt-3 self-start type-label text-foreground border-b border-foreground pb-1">
                   {copy.workEnterLink}
                 </Link>
               </div>
 
               <div className="exhibition-plate" aria-hidden="true">
-                <span className="text-[12px] tracking-[0.12em] uppercase text-muted-foreground">{count}</span>
+                <span className="type-label text-muted-foreground">{count}</span>
                 <p className="font-editorial text-[44px] leading-[1.05] text-foreground">{project.title}</p>
                 {project.excerpt && <p className="text-[15px] leading-[1.6] text-foreground">{project.excerpt}</p>}
-                <Link href={href} tabIndex={-1} className="self-start mt-1.5 text-[12px] tracking-[0.12em] uppercase text-foreground border-b border-foreground pb-1">
+                <Link href={href} tabIndex={-1} className="self-start mt-1.5 type-label text-foreground border-b border-foreground pb-1">
                   {copy.workEnterLink}
                 </Link>
               </div>

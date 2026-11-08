@@ -30,7 +30,7 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`contact-intent-option w-full text-left py-5 md:py-6 font-editorial text-[26px] md:text-[32px] leading-[1.2]${
+            className={`contact-intent-option w-full text-left py-5 md:py-6 font-editorial text-[length:clamp(26px,calc(23.37px_+_0.674vw),32px)] leading-[1.2]${
               value === option ? " is-selected" : ""
             }`}
           >
@@ -70,7 +70,7 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`contact-option w-full text-left px-5 py-4 border-b border-border font-editorial text-[24px] md:text-[28px] leading-[1.25] ${
+            className={`contact-option w-full text-left px-5 py-4 border-b border-border font-editorial text-[length:clamp(24px,calc(22.25px_+_0.449vw),28px)] leading-[1.25] ${
               value === option
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground"

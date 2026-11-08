@@ -16,7 +16,7 @@ export default function HeroStill({ slide }: { slide: HeroSlide }) {
       <div className="hero-vignette absolute inset-0 pointer-events-none" />
       {slide.caption && (
         <div className="absolute bottom-8 left-5 md:bottom-10 md:left-8 z-10">
-          <p className="text-xs tracking-[0.15em] uppercase text-white/70">
+          <p className="type-label text-white/70">
             {slide.caption}
           </p>
         </div>

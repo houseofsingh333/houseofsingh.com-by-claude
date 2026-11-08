@@ -10,6 +10,7 @@ import Conversation from "./Conversation";
 import JourneyWalk from "./JourneyWalk";
 import PracticeReveal from "./PracticeReveal";
 import PressCuttings from "./PressCuttings";
+import { keepLastWords } from "@/lib/keepLastWords";
 
 /*
  * The About page in six chapters:
@@ -33,11 +34,11 @@ function rolesLine(roles: string[]): string {
 function ChapterMark({ numeral, label, children }: { numeral: string; label?: string; children?: ReactNode }) {
   return (
     <div className="flex items-baseline gap-4">
-      <span aria-hidden="true" className="font-editorial italic text-[30px] leading-none text-accent">
+      <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
         {numeral}
       </span>
       {label && (
-        <span className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground">{label}</span>
+        <span className="type-label text-muted-foreground">{label}</span>
       )}
       {children}
     </div>
@@ -73,8 +74,8 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         <div className="about-opening-text">
           <ChapterMark numeral="I" />
           {introQuote && (
-            <blockquote className="font-editorial italic text-[30px] md:text-[40px] lg:text-[48px] leading-[1.2] text-foreground">
-              &ldquo;{introQuote}&rdquo;
+            <blockquote className="font-editorial italic text-[length:clamp(30px,calc(22.11px_+_2.022vw),48px)] leading-[1.2] text-foreground">
+              &ldquo;{keepLastWords(introQuote)}&rdquo;
             </blockquote>
           )}
           <div className="flex flex-col gap-1.5 border-t border-border pt-5">
@@ -89,7 +90,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       {/* ——— II · The story ——— */}
       <section aria-labelledby="about-story" className="about-story px-6 md:px-16 section-py">
         <ChapterMark numeral="II">
-          <h2 id="about-story" className="text-[13px] tracking-[0.14em] uppercase text-muted-foreground font-normal">
+          <h2 id="about-story" className="type-label text-muted-foreground">
             {copy.aboutStoryLabel}
           </h2>
         </ChapterMark>
@@ -102,7 +103,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
                   </div>
                 ) : item.kind === "quote" ? (
                   <p key={i} className="about-pull">
-                    {item.text}
+                    {keepLastWords(item.text)}
                   </p>
                 ) : (
                   <p key={i} className="about-story-p">
@@ -141,7 +142,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         <section aria-labelledby="about-print" className="px-6 md:px-16 section-py">
           <div className="about-chapter-head">
             <ChapterMark numeral="IV">
-              <h2 id="about-print" className="font-editorial font-normal text-[30px] md:text-[36px] leading-[1.15] text-foreground">
+              <h2 id="about-print" className="font-editorial font-normal text-[length:clamp(30px,calc(27.37px_+_0.674vw),36px)] leading-[1.15] text-foreground">
                 {copy.aboutPrintHeading}
               </h2>
             </ChapterMark>
@@ -156,7 +157,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
           <div className="px-6 md:px-16">
             <div className="about-chapter-head">
               <ChapterMark numeral="V" label={copy.aboutJourneyLabel} />
-              <h2 id="about-journey" className="font-editorial font-normal text-[30px] md:text-[40px] leading-[1.1] text-foreground">
+              <h2 id="about-journey" className="font-editorial font-normal text-[length:clamp(30px,calc(25.62px_+_1.124vw),40px)] leading-[1.1] text-foreground">
                 {copy.aboutJourneyHeading}
               </h2>
             </div>
@@ -170,7 +171,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         <section aria-labelledby="about-conversation" className="about-conversation px-6 md:px-16 section-py-lg">
           <div className="flex flex-col gap-5">
             <ChapterMark numeral="VI" label={copy.aboutConversationLabel} />
-            <h2 id="about-conversation" className="font-editorial font-normal text-[30px] md:text-[40px] leading-[1.1] text-foreground">
+            <h2 id="about-conversation" className="font-editorial font-normal text-[length:clamp(30px,calc(25.62px_+_1.124vw),40px)] leading-[1.1] text-foreground">
               {copy.aboutConversationHeading}
             </h2>
           </div>

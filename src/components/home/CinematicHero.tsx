@@ -108,7 +108,7 @@ export default function CinematicHero({ slides, labels }: Props) {
       <div className="absolute bottom-6 left-5 md:bottom-8 md:left-8 z-10 flex flex-col gap-2.5">
         {slide.caption && (
           <p
-            className="hero-caption text-[12px] md:text-[13px] tracking-[0.14em] uppercase text-white"
+            className="hero-caption type-label text-white"
             data-visible={showCaption ? "" : undefined}
             data-first={isFirstSlide ? "" : undefined}
           >
@@ -130,14 +130,14 @@ export default function CinematicHero({ slides, labels }: Props) {
             <button
               type="button"
               onClick={() => goToSlide((current - 1 + slides.length) % slides.length)}
-              className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-[12px] focus-visible:tracking-[0.14em] focus-visible:uppercase focus-visible:text-white"
+              className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:type-label focus-visible:text-white"
             >
               {labels.previous}
             </button>
             <button
               type="button"
               onClick={() => goToSlide((current + 1) % slides.length)}
-              className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-[12px] focus-visible:tracking-[0.14em] focus-visible:uppercase focus-visible:text-white"
+              className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:type-label focus-visible:text-white"
             >
               {labels.next}
             </button>
@@ -148,7 +148,7 @@ export default function CinematicHero({ slides, labels }: Props) {
       {/* ——— Scroll indicator — right side ——— */}
       {introComplete && (
         <div className="absolute bottom-6 right-5 md:bottom-8 md:right-8 z-10 hidden md:flex flex-col items-center gap-2">
-          <span className="text-[10px] tracking-widest uppercase text-white/40">
+          <span className="type-label text-white/40">
             Scroll
           </span>
           <div className="w-px h-8 bg-white/20 relative overflow-hidden">

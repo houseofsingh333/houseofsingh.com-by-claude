@@ -26,7 +26,7 @@ export default function LegalContents({ items, label }: { items: { id: string; t
 
   return (
     <nav aria-label={label} className="legal-contents">
-      <p className="text-[12px] tracking-[0.14em] uppercase text-muted-foreground">{label}</p>
+      <p className="type-label text-muted-foreground">{label}</p>
       <ul>
         {items.map((item) => (
           <li key={item.id}>

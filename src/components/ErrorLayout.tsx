@@ -18,11 +18,11 @@ export default function ErrorLayout({
 }) {
   return (
     <section className="mx-auto max-w-7xl px-6 md:px-16 page-top-offset section-pb-lg">
-      <p className="text-xs tracking-[0.25em] uppercase text-muted-foreground mb-4">
+      <p className="type-label text-muted-foreground mb-4">
         {label}
       </p>
       <div className="w-full h-px bg-border mb-8 md:mb-10" />
-      <h1 className="font-editorial text-3xl md:text-5xl lg:text-6xl font-light text-foreground leading-none">
+      <h1 className="font-editorial text-[length:clamp(30px,calc(16.85px_+_3.371vw),60px)] font-light text-foreground leading-none">
         {title}
       </h1>
       <p className="mt-8 max-w-md text-sm md:text-[15px] text-muted-foreground leading-[1.8]">
@@ -37,4 +37,4 @@ export default function ErrorLayout({
 
 /** Quiet typographic link style: uppercase label over a hairline. */
 export const errorLinkClass =
-  "hairline inline-block pb-1 text-xs tracking-[0.15em] uppercase text-foreground bg-transparent cursor-pointer";
+  "hairline inline-block pb-1 type-label text-foreground bg-transparent cursor-pointer";

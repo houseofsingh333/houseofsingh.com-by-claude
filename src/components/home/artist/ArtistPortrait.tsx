@@ -43,7 +43,7 @@ export default function ArtistPortrait({
           />
         </div>
       </div>
-      <figcaption className="text-[12px] tracking-[0.1em] uppercase text-muted-foreground">
+      <figcaption className="type-label text-muted-foreground">
         {caption}
       </figcaption>
     </figure>

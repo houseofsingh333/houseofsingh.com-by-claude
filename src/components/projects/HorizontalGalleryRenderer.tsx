@@ -69,7 +69,7 @@ export default function HorizontalGalleryRenderer({ section }: Props) {
         ))}
       </div>
       <p
-        className="mx-auto max-w-6xl px-6 md:px-16 mt-3 text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
+        className="mx-auto max-w-6xl px-6 md:px-16 mt-3 type-label text-muted-foreground"
         aria-hidden="true"
       >
         Scroll →

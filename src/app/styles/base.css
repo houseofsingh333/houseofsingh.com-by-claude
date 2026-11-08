@@ -28,6 +28,36 @@ body {
   font-feature-settings: "kern" 1, "liga" 1;
 }
 
+/* ——— Line breaks (BRAND_BOOK.md, Typography) ———
+   Headings, quotes and short statements balance their lines, so none ends
+   on one or two words; paragraphs avoid a lone last word. */
+h1,
+h2,
+h3,
+h4,
+blockquote,
+figcaption,
+.text-statement,
+p.font-editorial,
+.legal-short,
+.about-pull,
+.convo-reply,
+.press-title {
+  text-wrap: balance;
+}
+/* Balancing stops above six lines: on narrow screens a long statement
+   avoids a lone last word instead. */
+@media (max-width: 767px) {
+  .about-pull {
+    text-wrap: pretty;
+  }
+}
+p,
+li,
+dd {
+  text-wrap: pretty;
+}
+
 /* ——— Page top offset — clears the State 1 crest on subpages ——— */
 
 .page-top-offset {

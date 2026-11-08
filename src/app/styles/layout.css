@@ -30,20 +30,26 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  /* "Start a project" is about 6.2 times its size wide: capped to the
+     column (cqi) it always sits on one line, 120px at 1280 and 52px on
+     phones as designed, smaller only where the column is narrower. */
+  container-type: inline-size;
 }
 
 .footer-cta-link {
   align-self: flex-start;
   font-family: var(--font-editorial);
   font-weight: 400;
-  font-size: clamp(52px, 9.4vw, 136px);
+  font-size: min(clamp(52px, 9.4vw, 136px), 16cqi);
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--foreground);
 }
 
 .footer-cta-subtitle {
-  max-width: 460px;
+  /* One line on desktop; on narrower screens it wraps into even lines. */
+  max-width: 34em;
+  text-wrap: balance;
   font-size: 16px;
   line-height: 1.7;
   color: var(--muted-foreground);
@@ -56,15 +62,17 @@
 }
 
 .footer-time-label {
-  font-size: 12px;
-  letter-spacing: 0.12em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
 
 .footer-time-value {
   font-family: var(--font-editorial);
-  font-size: 40px;
+  font-size: clamp(40px, calc(32.99px + 1.798vw), 56px);
   line-height: 1;
   color: var(--foreground);
 }
@@ -96,8 +104,9 @@ html:not(.js) .footer-time {
 }
 
 .footer-nav-link {
-  font-size: 14px;
-  letter-spacing: 0.1em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
   line-height: 2.8;
@@ -107,9 +116,10 @@ html:not(.js) .footer-time {
 
 .footer-nl-label {
   display: block;
-  font-size: 14px;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--type-label-tracking);
   color: var(--muted-foreground);
   line-height: 2.8;
 }
@@ -171,9 +181,11 @@ html:not(.js) .footer-time {
 }
 
 .footer-nl-thanks {
-  font-size: 12px;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--type-label-tracking);
   color: var(--muted-foreground);
 }
 
@@ -196,8 +208,10 @@ html:not(.js) .footer-time {
 
 .footer-bottom-copyright,
 .footer-bottom-link {
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
@@ -227,9 +241,6 @@ html:not(.js) .footer-time {
   .footer-top {
     grid-template-columns: minmax(0, 1fr) 280px;
     gap: 80px;
-  }
-  .footer-time-value {
-    font-size: 56px;
   }
   .footer-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -292,18 +303,13 @@ html:not(.js) .footer-time {
 .menu-close {
   min-height: 44px;
   padding: 0;
-  font-size: 13px;
-  letter-spacing: 0.14em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--foreground);
   border-bottom: 1px solid var(--foreground);
-}
-
-.menu-wordmark {
-  font-family: var(--font-editorial);
-  font-size: 14px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
 }
 
 .menu-body {
@@ -337,7 +343,6 @@ html:not(.js) .footer-time {
   width: 48px;
   flex-shrink: 0;
   font-family: var(--font-editorial);
-  font-style: italic;
   font-size: 28px;
   line-height: 1;
   color: var(--accent);
@@ -345,7 +350,7 @@ html:not(.js) .footer-time {
 
 .menu-label {
   font-family: var(--font-editorial);
-  font-size: 40px;
+  font-size: clamp(40px, calc(29.48px + 2.697vw), 64px);
   line-height: 1.1;
 }
 
@@ -367,9 +372,6 @@ html:not(.js) .footer-time {
   .menu-room {
     padding: 24px 32px 32px;
   }
-  .menu-label {
-    font-size: 52px;
-  }
 }
 
 @media (min-width: 1024px) {
@@ -377,15 +379,9 @@ html:not(.js) .footer-time {
     gap: 32px;
     padding: 40px 96px 48px;
   }
-  .menu-wordmark {
-    font-size: 16px;
-  }
   .menu-body {
     grid-template-columns: minmax(0, 1fr) 420px;
     gap: 96px;
-  }
-  .menu-label {
-    font-size: 64px;
   }
   .menu-photo {
     justify-self: end;
@@ -414,8 +410,10 @@ html:not(.js) .footer-time {
   }
   .menu-photo-caption {
     min-height: 1.5em;
-    font-size: 12px;
-    letter-spacing: 0.12em;
+    font-size: var(--type-label-size);
+    white-space: nowrap;
+    line-height: var(--type-label-leading);
+    letter-spacing: var(--type-label-tracking);
     text-transform: uppercase;
     color: var(--muted-foreground);
   }
@@ -485,8 +483,10 @@ html:not(.js) .footer-time {
 .note-subscribe,
 .note-later {
   min-height: 44px;
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   cursor: pointer;
   transition: color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
@@ -547,6 +547,9 @@ html:not(.js) .footer-time {
   display: flex;
   flex-direction: column;
   gap: 26px;
+  /* The heading is capped to this column (cqi), so a narrow column never
+     leaves one word on its own line. */
+  container-type: inline-size;
 }
 
 .lost-ways {

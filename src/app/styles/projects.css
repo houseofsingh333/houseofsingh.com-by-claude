@@ -13,24 +13,9 @@
    The rules below are written for One by one; the "glance state" rules
    that follow each override them. */
 
-/* Where a project's photograph starts, just clear of the crest: the plate
-   on the Projects page and the hero on a project page share it, so the
-   plate grows into the hero without moving down the page and neither ever
-   covers the crest. Phone and tablet: the page's top space (128px), the
-   header row (44px) and its gap (1rem), 188px. Desktop: 176px at 1280
-   wide, in proportion with the page from 1024 to 1600 (as --px below). */
-:root {
-  --plate-top: calc(128px + 44px + 1rem);
-}
-@media (min-width: 1024px) {
-  :root {
-    --plate-top: max(176px, calc(176 * min(max(100vw, 1024px), 1600px) / 1280));
-  }
-}
-
 .mono {
   /* Clears the crest at the top of the page (State 1 of the header). */
-  --mono-top: 128px;
+  --mono-top: var(--head-top);
   --mono-gutter: 1.5rem;
   margin-inline: auto;
   width: 100%;
@@ -40,11 +25,6 @@
 @media (min-width: 768px) {
   .mono {
     --mono-gutter: 4rem;
-  }
-}
-@media (min-width: 1024px) {
-  .mono {
-    --mono-top: 200px;
   }
 }
 
@@ -90,8 +70,10 @@
 .mono-enter,
 .mono-nav button,
 .mono-card-meta {
-  font-size: 0.6875rem;
-  letter-spacing: 0.16em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
 }
 
@@ -364,7 +346,7 @@ html:not(.js) .mono-icon {
 }
 
 /* Previous and Next on a hairline; hovering or focusing Next shows the
-   next project's title in grey italic (placed, so nothing moves). */
+   next project's title in grey (placed, so nothing moves). */
 .mono-nav {
   position: relative;
   display: none;
@@ -386,7 +368,6 @@ html:not(.js) .mono-icon {
   right: 0;
   margin-top: 0.25rem;
   font-family: var(--font-editorial);
-  font-style: italic;
   font-size: 0.9375rem;
   color: var(--muted-foreground);
   white-space: nowrap;
@@ -563,7 +544,7 @@ html:not(.js) .mono-icon {
   .mono {
     --px: calc(min(max(100vw, 1024px), 1600px) / 1280);
     max-width: none;
-    padding: calc(56 * var(--px)) max(7.5%, calc((100% - 1360px) / 2)) var(--section-space-lg);
+    padding: var(--head-top) max(7.5%, calc((100% - 1360px) / 2)) var(--section-space-lg);
   }
   .mono-head {
     align-items: center;
@@ -584,26 +565,30 @@ html:not(.js) .mono-icon {
   .mono-meta,
   .mono-enter,
   .mono-nav button {
-    font-size: calc(12 * var(--px));
-    letter-spacing: 0.12em;
+    font-size: var(--type-label-size);
+    white-space: nowrap;
+    line-height: var(--type-label-leading);
+    letter-spacing: var(--type-label-tracking);
+    text-transform: uppercase;
   }
-  .mono-filter-trigger span {
-    padding-bottom: 1px;
-    border-bottom: 1px solid var(--accent);
-  }
-  /* Below the header, the work starts just clear of the crest. */
+  /* Below the header row, the work starts at --plate-top. */
   .mono-one,
   .mono-glance {
-    margin-top: calc(var(--plate-top) - 56 * var(--px) - 44px);
+    margin-top: calc(var(--plate-top) - var(--head-top) - 44px);
   }
   .mono-slide {
     grid-template-columns: 8.0882% 44.1176% 8.8235% 38.9706%;
     row-gap: 0;
     align-items: stretch;
   }
+  /* The whole card fits the first screen: the plate is 480x600 at 1280
+     (in proportion with the page) unless the screen below --plate-top is
+     shorter, when it shrinks in proportion (still 4:5), standing next to
+     its caption with the same gap, its lower edge 40px above the fold. */
   .mono-plate-frame {
     grid-column: 2;
-    width: 100%;
+    justify-self: end;
+    width: min(100%, calc((100svh - var(--plate-top) - 40px) * 0.8));
     cursor: pointer;
   }
   .mono-caption {
@@ -626,7 +611,7 @@ html:not(.js) .mono-icon {
     justify-content: space-between;
   }
   .mono-counter {
-    letter-spacing: 0.14em;
+    letter-spacing: var(--type-label-tracking);
   }
   .mono-title {
     font-weight: 400;
@@ -740,13 +725,15 @@ html:not(.js) .mono-icon {
 }
 .mono-card-caption {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.25rem 1rem;
   padding-top: 0.75rem;
 }
 .mono-card-title {
   position: relative;
+  flex: none;
   font-family: var(--font-editorial);
   font-size: 1rem;
   line-height: 1.2;
@@ -758,7 +745,6 @@ html:not(.js) .mono-icon {
 .mono-card-meta {
   display: none;
   color: var(--muted-foreground);
-  white-space: nowrap;
 }
 .mono-card-link:hover .mono-card-plate img,
 .mono-card-link:focus-visible .mono-card-plate img {
@@ -838,8 +824,11 @@ html:not(.js) .mono-icon {
   }
   .mono-card-meta {
     display: block;
-    font-size: calc(11 * var(--px));
-    letter-spacing: 0.12em;
+    font-size: var(--type-label-size);
+    white-space: nowrap;
+    line-height: var(--type-label-leading);
+    letter-spacing: var(--type-label-tracking);
+    text-transform: uppercase;
   }
 }
 
@@ -929,8 +918,10 @@ html:not(.js) .mono-veil-list {
 }
 html:not(.js) .mono-veil-list a {
   font-family: inherit;
-  font-size: 0.6875rem;
-  letter-spacing: 0.16em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   min-height: 44px;
 }
@@ -1112,8 +1103,10 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   gap: 0.5rem;
   margin-top: 1.25rem;
   padding: 0.5rem 0 0.25rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
@@ -1130,15 +1123,18 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   gap: 0.875rem;
 }
 .pp-counter {
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
   font-variant-numeric: tabular-nums;
   color: var(--muted-foreground);
 }
 .pp-title {
   font-family: var(--font-editorial);
   font-weight: 400;
-  font-size: clamp(42px, 10vw, 56px);
+  font-size: clamp(42px, calc(21.84px + 5.169vw), 88px);
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--foreground);
@@ -1149,8 +1145,10 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem 1.5rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
@@ -1176,9 +1174,6 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   }
   .pp-head-main {
     gap: 1rem;
-  }
-  .pp-title {
-    font-size: 5.5rem;
   }
   .pp-excerpt {
     font-size: 1.125rem;
@@ -1310,13 +1305,15 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
 .pp-next-label,
 .pp-next-meta,
 .pp-next-links {
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
 .pp-next-label {
-  letter-spacing: 0.14em;
+  letter-spacing: var(--type-label-tracking);
 }
 .pp-next-title {
   font-family: var(--font-editorial);

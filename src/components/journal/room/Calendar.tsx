@@ -185,10 +185,11 @@ export default function Calendar({ year, month, zoomYear, byDay, months, years, 
         </div>
       </div>
 
-      {/* ——— The year: every year is in the page (links to every month); the one zoomed to shows ——— */}
+      {/* ——— The year: every year is in the page (links to every month); the one zoomed to shows,
+          and the sheets crossfade when the year turns (styles/journal.css) ——— */}
       <div className="jr-year" inert={mode !== "year"}>
         {years.map((y) => (
-          <div key={y} className="jr-year-sheet" hidden={y !== sheetYear}>
+          <div key={y} className="jr-year-sheet" data-shown={y === sheetYear ? "" : undefined} inert={y !== sheetYear}>
             <p className="jr-year-title">{y}</p>
             <ul className="jr-minis" role="list" aria-label={`${y}, months with entries`}>
               {MONTH_NAMES.map((mn, mi) => {
