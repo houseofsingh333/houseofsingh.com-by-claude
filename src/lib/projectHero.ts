@@ -6,6 +6,8 @@ export type HeroSource = "spotlight" | "cover" | "thumbnail" | "none";
 type ProjectImages = {
   slug: string;
   isUpcoming?: boolean;
+  /** The project's Photographs: the first stands in for a missing cover. */
+  photographs?: SanityImageAsset[] | null;
   coverImage?: SanityImageAsset | null;
   thumbnail?: SanityImageAsset | null;
 };
@@ -45,6 +47,10 @@ export function projectHeroImage(
   }
   if (hasImageAsset(project.coverImage)) {
     return { image: project.coverImage as SanityImageAsset, source: "cover" };
+  }
+  const first = project.photographs?.[0];
+  if (first?.url) {
+    return { image: first, source: "cover" };
   }
   if (hasImageAsset(project.thumbnail)) {
     return { image: project.thumbnail as SanityImageAsset, source: "thumbnail" };

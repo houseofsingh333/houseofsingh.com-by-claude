@@ -50,6 +50,7 @@ type RawProject = {
   thumbnail?: RawImage | string;
   thumbnailAlt?: string | null;
   plates?: RawImage[] | null;
+  photos?: RawImage[] | null;
   cover?: RawImage;
   sectionImages?: RawImage[] | null;
 };
@@ -74,12 +75,13 @@ function toPhoto(image: RawImage, title: string): PlatePhoto | null {
 
 /**
  * The plate's photographs: the project's own Plate photographs when set,
- * otherwise the cover and then the first images of its content sections;
+ * otherwise its first four Photographs, otherwise the cover and then the
+ * first images of its content sections;
  * repeats removed, at most four. The thumbnail stands in when there is
  * nothing else.
  */
 function platesOf(p: RawProject): PlatePhoto[] {
-  const chosen = p.plates?.length ? p.plates : [p.cover, ...(p.sectionImages ?? [])];
+  const chosen = p.plates?.length ? p.plates : p.photos?.length ? p.photos : [p.cover, ...(p.sectionImages ?? [])];
   const seen = new Set<string>();
   const out: PlatePhoto[] = [];
   for (const image of chosen) {

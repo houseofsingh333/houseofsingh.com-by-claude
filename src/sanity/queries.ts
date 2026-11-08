@@ -182,6 +182,7 @@ export const projectsListQuery = `*[_type == "project"] | ${_projectOrder}{
   "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt,
   isUpcoming,
   "plates": plates[0...4] ${_imageAsset},
+  "photos": photographs[0...4] ${_imageAsset},
   "cover": coverImage ${_imageAsset},
   "sectionImages": contentSections[]{
     "list": select(
@@ -192,9 +193,19 @@ export const projectsListQuery = `*[_type == "project"] | ${_projectOrder}{
   }.list[][0...8] ${_imageAsset}
 }`;
 
+/** A project's Photographs with their shape and Layout (lib/projectStory.ts). */
+const _storyPhoto = `{
+  _key, layout, alt, caption, isDecorative, hotspot, crop,
+  "url": asset->url,
+  "lqip": asset->metadata.lqip,
+  "width": asset->metadata.dimensions.width,
+  "height": asset->metadata.dimensions.height
+}`;
+
 export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug][0]{
   _id, title, "slug": slug.current, category,
-  year,
+  year, role, story,
+  "photographs": photographs[defined(asset)] ${_storyPhoto},
   excerpt,
   shortIntro,
   isUpcoming,
@@ -274,7 +285,8 @@ export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug
 
 // Every project in the order of the projects page, for "Next project".
 export const projectLinksQuery = `*[_type == "project"] | ${_projectOrder}{
-  title, "slug": slug.current, isUpcoming,
+  title, "slug": slug.current, isUpcoming, category,
+  "photo": photographs[0] ${_imageAsset},
   "coverImage": coverImage ${_imageAsset},
   "thumbnail": thumbnail ${_imageAsset}
 }`;
@@ -295,6 +307,11 @@ export const contactPageQuery = `*[_type == "contactPage"][0]{
   seoTitle,
   seoDescription
 }`;
+
+// --------------- Redirects ---------------
+
+/** An old address that leads somewhere else (checked before any 404). */
+export const redirectQuery = `*[_type == "redirect" && from in $paths][0]{ to, permanent }`;
 
 // --------------- Journal ---------------
 

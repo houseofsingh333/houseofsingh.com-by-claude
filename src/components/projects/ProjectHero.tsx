@@ -5,7 +5,8 @@ import type { SanityImageAsset } from "@/lib/sanityImage";
 
 /**
  * The full width photograph that opens a project page, directly under the
- * fixed 68px header: 4:5 on phone, about 16:9 from 768px (never taller than
+ * fixed 68px header: 4:5 on phone, 16:9 from 768px, 16:7 from 1024px (1280
+ * by 560, frame "Zamana, refined"; never taller than
  * the screen below the header). Cropped around the image's hotspot, loaded
  * with priority (it is the page's largest paint) and blurred up from its
  * preview. With no image, the same frame in the quiet canvas tone: never
@@ -23,7 +24,7 @@ export default function ProjectHero({
   slug?: string;
 }) {
   const frame = (
-    <div className="relative mt-[68px] w-full overflow-hidden bg-secondary aspect-[4/5] md:aspect-video md:max-h-[calc(100svh-68px)]">
+    <div className="relative mt-[68px] w-full overflow-hidden bg-secondary aspect-[4/5] md:aspect-video lg:aspect-[16/7] md:max-h-[calc(100svh-68px)]">
       {image && (
         <SanityImage
           image={image}

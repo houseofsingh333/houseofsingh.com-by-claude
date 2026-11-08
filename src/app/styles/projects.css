@@ -1059,3 +1059,283 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
     transform: scale(1.15);
   }
 }
+
+/* ═══ The project page (frames "Zamana, refined", "The journey",
+   "Automatic layout") ═══
+   One content width, 1088px at 1280 (96px either side), the title block
+   like the One by one caption, the story in a 640px column, photographs in
+   groups with the same generous space between every group, and the next
+   project as a large plate at the end. */
+
+.pp {
+  --pp-gutter: 1.5rem;
+  --pp-space: 4rem;
+}
+@media (min-width: 768px) {
+  .pp {
+    --pp-gutter: 4rem;
+  }
+}
+@media (min-width: 1024px) {
+  .pp {
+    --pp-space: 7.5rem;
+  }
+}
+@media (min-width: 1280px) {
+  .pp {
+    --pp-gutter: 6rem;
+  }
+}
+.pp-col {
+  width: min(68rem, calc(100% - 2 * var(--pp-gutter)));
+  margin-inline: auto;
+}
+
+/* All projects, beneath the hero */
+.pp-back {
+  display: inline-flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding: 0.5rem 0 0.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* The title block: counter, title, small capitals; the excerpt beside it */
+.pp-head {
+  display: grid;
+  gap: 1.5rem;
+  padding-top: 2.5rem;
+}
+.pp-head-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.pp-counter {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+.pp-title {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: clamp(42px, 10vw, 56px);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+.pp-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.pp-upcoming {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.pp-excerpt {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--foreground);
+}
+@media (min-width: 1024px) {
+  .pp-back {
+    margin-top: 2rem;
+  }
+  .pp-head {
+    grid-template-columns: minmax(0, 1fr) 26.5rem;
+    column-gap: 6rem;
+    align-items: end;
+    padding-top: 5.5rem;
+  }
+  .pp-head-main {
+    gap: 1rem;
+  }
+  .pp-title {
+    font-size: 5.5rem;
+  }
+  .pp-excerpt {
+    font-size: 1.125rem;
+  }
+}
+/* It rises in once the hero has settled. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .pp-head-main,
+  html.js .pp-excerpt {
+    animation: mono-rise var(--dur-reveal) var(--ease-slow) 700ms both;
+  }
+  html.js .pp-excerpt {
+    animation-delay: 900ms;
+  }
+}
+
+/* The story: one 640px column, 18px at 1.75 */
+.pp-item {
+  margin-top: var(--pp-space);
+}
+.pp-story {
+  max-width: 640px;
+  margin-inline: auto;
+}
+.pp-text {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--foreground);
+}
+@media (min-width: 768px) {
+  .pp-text,
+  p.pp-story {
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+}
+
+/* Photographs, in groups */
+.pp-photo {
+  margin: 0;
+}
+.pp-photo-frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--secondary);
+}
+.pp-caption {
+  margin-top: 0.875rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
+}
+.pp-group {
+  display: grid;
+  gap: 1rem;
+}
+.pp-pair {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.pp-half {
+  max-width: calc(50% - 1rem);
+}
+.pp-beside .pp-text > :last-child {
+  margin-bottom: 0;
+}
+@media (min-width: 1024px) {
+  .pp-group {
+    gap: 2rem;
+  }
+  .pp-three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  /* A single portrait to one side (420px), the next paragraph beside it. */
+  .pp-single {
+    grid-template-columns: minmax(0, 1fr) 26.25rem;
+    column-gap: 6rem;
+    align-items: end;
+  }
+  .pp-single[data-align="right"] > .pp-photo {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .pp-single[data-align="right"] > .pp-beside {
+    grid-column: 1;
+    grid-row: 1;
+    padding-bottom: 0.5rem;
+  }
+  .pp-single[data-align="left"] {
+    grid-template-columns: 26.25rem minmax(0, 1fr);
+  }
+  .pp-single[data-align="left"] > .pp-beside {
+    padding-bottom: 0.5rem;
+  }
+}
+@media (max-width: 1023px) {
+  .pp-single > .pp-beside {
+    margin-top: 1.5rem;
+  }
+}
+.pp-bleed .pp-photo-frame {
+  width: 100%;
+}
+
+/* The ending: the next project as a large plate */
+.pp-next {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: calc(var(--pp-space) + 2.5rem);
+  padding-top: 3rem;
+  border-top: 1px solid var(--border);
+}
+.pp-next-plate {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--secondary);
+}
+.pp-next-plate img {
+  transition: transform var(--dur-image) var(--ease-slow);
+}
+.pp-next-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+.pp-next-label,
+.pp-next-meta,
+.pp-next-links {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.pp-next-label {
+  letter-spacing: 0.14em;
+}
+.pp-next-title {
+  font-family: var(--font-editorial);
+  font-size: clamp(40px, 9vw, 64px);
+  line-height: 1;
+  color: var(--foreground);
+  padding-bottom: 4px;
+}
+.pp-next-links {
+  display: flex;
+  gap: 1.75rem;
+  margin-top: 1.5rem;
+  color: var(--foreground);
+}
+/* Pointing at the photograph or the title: both answer. */
+.pp-next:has(.pp-next-plate:hover, .pp-next-title:hover, .pp-next-title:focus-visible) .pp-next-plate img {
+  transform: scale(1.03);
+}
+.pp-next:has(.pp-next-plate:hover) .pp-next-title {
+  background-size: 100% 1px;
+}
+@media (min-width: 1024px) {
+  .pp-next {
+    grid-template-columns: 30rem minmax(0, 1fr);
+    column-gap: 6rem;
+    align-items: end;
+    padding-top: 4.5rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pp-next-plate img {
+    transition: none;
+  }
+  .pp-next:has(.pp-next-plate:hover, .pp-next-title:hover, .pp-next-title:focus-visible) .pp-next-plate img {
+    transform: none;
+  }
+}
