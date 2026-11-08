@@ -156,13 +156,7 @@ html:not(.js) .hero-progress {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--background);
-  border-bottom: 1px solid var(--background);
   padding-bottom: 4px;
-  transition: color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
-}
-.aperture-link:hover {
-  color: var(--muted-foreground-inverse);
-  border-color: var(--muted-foreground-inverse);
 }
 .aperture-window {
   position: relative;
@@ -777,10 +771,6 @@ html:not(.js) .hero-progress {
   font-size: 12px;
   line-height: 1.4;
   color: var(--muted-foreground);
-}
-.window-work-item:focus-visible {
-  outline: 1px solid var(--foreground);
-  outline-offset: 4px;
 }
 @media (min-width: 1024px) {
   .window-main {

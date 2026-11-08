@@ -4,6 +4,7 @@ import { ViewTransition, useCallback, useEffect, useLayoutEffect, useRef, useSta
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { MonographProject } from "@/lib/projectsData";
+import Crossfade from "@/components/Crossfade";
 import Plate from "./Plate";
 import { attachSwipe, clearSwipeStyles, playMove, type SwipeTarget } from "./swipe";
 import type { ProjectsCopy } from "./types";
@@ -184,7 +185,7 @@ export default function OneByOne({ projects, index, onGo, copy, active, arriving
                     {pad(i + 1)} / {pad(n)}
                   </span>
                   {isActive && cycles && (
-                    <button type="button" className="mono-pause" onClick={() => setPaused((v) => !v)}>
+                    <button type="button" className="mono-pause hairline" onClick={() => setPaused((v) => !v)}>
                       {paused ? copy.play : copy.pause}
                     </button>
                   )}
@@ -200,14 +201,14 @@ export default function OneByOne({ projects, index, onGo, copy, active, arriving
                     {p.excerpt}
                   </p>
                 )}
-                <Link href={`/projects/${p.slug}`} onClick={() => onLeave(p.slug)} className="mono-enter" style={{ "--i": 4 } as CSSProperties}>
+                <Link href={`/projects/${p.slug}`} onClick={() => onLeave(p.slug)} className="mono-enter hairline" style={{ "--i": 4 } as CSSProperties}>
                   {copy.enter}
                 </Link>
                 <div className="mono-nav" style={{ "--i": 5 } as CSSProperties}>
-                  <button type="button" onClick={() => go(-1)}>
+                  <button type="button" className="hairline" onClick={() => go(-1)}>
                     <span aria-hidden="true">&larr;</span> {copy.previous}
                   </button>
-                  <button type="button" className="mono-next" onClick={() => go(1)}>
+                  <button type="button" className="mono-next hairline" onClick={() => go(1)}>
                     {copy.next} <span aria-hidden="true">&rarr;</span>
                   </button>
                   <span className="mono-next-title" aria-hidden="true">
@@ -225,9 +226,7 @@ export default function OneByOne({ projects, index, onGo, copy, active, arriving
         <button type="button" aria-label={copy.previousProject} onClick={() => phoneMove(-1)}>
           <span aria-hidden="true">&larr;</span>
         </button>
-        <span className="mono-counter">
-          {pad(index + 1)} / {pad(n)}
-        </span>
+        <Crossfade className="mono-counter" value={`${pad(index + 1)} / ${pad(n)}`} />
         <button type="button" aria-label={copy.nextProject} onClick={() => phoneMove(1)}>
           <span aria-hidden="true">&rarr;</span>
         </button>

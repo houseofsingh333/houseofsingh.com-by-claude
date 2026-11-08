@@ -58,8 +58,8 @@ export default async function NotFound() {
         </p>
         <nav aria-label="Ways back" className="lost-ways">
           {ways.map((w) => (
-            <Link key={w.href} href={w.href} className="lost-way">
-              <span className="font-editorial text-[22px] md:text-[24px] leading-[1.2]">{w.label}</span>
+            <Link key={w.href} href={w.href} className="lost-way hairline-host">
+              <span className="hairline font-editorial text-[22px] md:text-[24px] leading-[1.2]">{w.label}</span>
               {w.note && <span className="text-[13px] text-muted-foreground text-right">{w.note}</span>}
             </Link>
           ))}

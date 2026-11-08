@@ -37,4 +37,4 @@ export default function ErrorLayout({
 
 /** Quiet typographic link style: uppercase label over a hairline. */
 export const errorLinkClass =
-  "inline-block pb-1 text-xs tracking-[0.15em] uppercase text-foreground border-b border-border hover:border-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) motion-reduce:transition-none bg-transparent cursor-pointer";
+  "hairline inline-block pb-1 text-xs tracking-[0.15em] uppercase text-foreground bg-transparent cursor-pointer";

@@ -261,10 +261,10 @@ export default function Monograph({ projects, categories, copy, startIndex, init
             onClose={() => setFilterOpen(false)}
           />
           <div className="mono-views" role="group" aria-label={`${copy.viewOne}, ${copy.viewGlance}`}>
-            <button type="button" data-v="one" aria-pressed={view === "one"} onClick={() => switchView("one")}>
+            <button type="button" className="hairline" data-v="one" aria-pressed={view === "one"} onClick={() => switchView("one")}>
               {copy.viewOne}
             </button>
-            <button type="button" data-v="glance" aria-pressed={view === "glance"} onClick={() => switchView("glance")}>
+            <button type="button" className="hairline" data-v="glance" aria-pressed={view === "glance"} onClick={() => switchView("glance")}>
               {copy.viewGlance}
             </button>
           </div>

@@ -78,7 +78,7 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
 
               <div className="exhibition-label">
                 <h3 className="font-editorial font-normal text-[24px] leading-[1.2] text-foreground">
-                  <Link href={href} className="hover:text-muted-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out)">
+                  <Link href={href} className="hairline">
                     {project.title}
                   </Link>
                 </h3>

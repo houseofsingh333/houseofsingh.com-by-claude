@@ -25,7 +25,6 @@
   color: var(--muted-foreground);
   transition: color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
 }
-.legal-contents-link:hover,
 .legal-contents-link[aria-current] {
   color: var(--foreground);
   border-left-color: var(--foreground);

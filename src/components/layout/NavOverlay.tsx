@@ -103,12 +103,12 @@ export default function NavOverlay({
                 onFocus={() => setHovered(i)}
                 aria-current={i === current ? "page" : undefined}
                 data-active={i === active ? "" : undefined}
-                className="menu-link"
+                className="menu-link hairline-host"
               >
                 <span aria-hidden="true" className="menu-num">
                   {roman(i + 1)}
                 </span>
-                <span className="menu-label">{item.label}</span>
+                <span className="menu-label hairline">{item.label}</span>
               </Link>
             </li>
           ))}

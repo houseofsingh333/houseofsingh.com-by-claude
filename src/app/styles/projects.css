@@ -90,25 +90,11 @@
   color: var(--muted-foreground);
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
-.mono-views button::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 10px;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--dur-hover) var(--ease-soft-out);
-}
-.mono-views button:hover,
+
 .mono-views button[data-v="one"] {
   color: var(--foreground);
 }
-.mono-views button[data-v="one"]::after {
-  transform: scaleX(1);
-}
+
 
 .mono-filter-trigger {
   display: none;
@@ -188,24 +174,24 @@ html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mon
 html[data-projects-return] .mono:not([data-hydrated]) .mono-views button[data-v="one"] {
   color: var(--muted-foreground);
 }
-.mono[data-view="glance"] .mono-views button[data-v="one"]::after,
-html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="one"]::after,
-html[data-projects-return] .mono:not([data-hydrated]) .mono-views button[data-v="one"]::after {
-  transform: scaleX(0);
+.mono[data-view="glance"] .mono-views button[data-v="one"],
+html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="one"],
+html[data-projects-return] .mono:not([data-hydrated]) .mono-views button[data-v="one"] {
+  background-size: 0% 1px;
 }
 .mono[data-view="glance"] .mono-views button[data-v="glance"],
 html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="glance"],
 html[data-projects-return] .mono:not([data-hydrated]) .mono-views button[data-v="glance"] {
   color: var(--foreground);
 }
-.mono[data-view="glance"] .mono-views button[data-v="glance"]::after,
-html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="glance"]::after,
-html[data-projects-return] .mono:not([data-hydrated]) .mono-views button[data-v="glance"]::after {
-  transform: scaleX(1);
+.mono[data-view="glance"] .mono-views button[data-v="glance"],
+html[data-projects-view="glance"] .mono:not([data-hydrated], [data-forced]) .mono-views button[data-v="glance"],
+html[data-projects-return] .mono:not([data-hydrated]) .mono-views button[data-v="glance"] {
+  background-size: 100% 1px;
 }
-.mono .mono-views button:hover::after,
-.mono .mono-views button:focus-visible::after {
-  transform: scaleX(1);
+.mono .mono-views button:hover,
+.mono .mono-views button:focus-visible {
+  background-size: 100% 1px;
 }
 
 /* Without JavaScript the view controls cannot work, so they are not shown;
@@ -330,9 +316,7 @@ html:not(.js) .mono-icon {
   color: var(--muted-foreground);
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
-.mono-pause:hover {
-  color: var(--foreground);
-}
+
 
 .mono-title {
   font-family: var(--font-editorial);
@@ -363,20 +347,6 @@ html:not(.js) .mono-icon {
   padding-block: 0.875rem;
   color: var(--foreground);
 }
-.mono-enter::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0.5rem;
-  height: 1px;
-  background: var(--border);
-  transition: background-color var(--dur-hover) var(--ease-soft-out);
-}
-.mono-enter:hover::after,
-.mono-enter:focus-visible::after {
-  background: var(--accent);
-}
 
 /* Previous and Next on a hairline; hovering or focusing Next shows the
    next project's title in grey italic (placed, so nothing moves). */
@@ -394,9 +364,7 @@ html:not(.js) .mono-icon {
   color: var(--foreground);
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
-.mono-nav button:hover {
-  color: var(--muted-foreground);
-}
+
 .mono-next-title {
   position: absolute;
   top: 100%;
@@ -478,10 +446,7 @@ html:not(.js) .mono-icon {
     margin-top: 0.5rem;
     padding-block: 0;
   }
-  .mono-enter::after {
-    bottom: 0.375rem;
-  }
-  .mono-phone-nav {
+    .mono-phone-nav {
     margin-top: 0.5rem;
   }
 }
@@ -665,11 +630,7 @@ html:not(.js) .mono-icon {
     align-self: flex-start;
     padding: calc(12 * var(--px)) 0 calc(4 * var(--px));
   }
-  .mono-enter::after {
-    bottom: 0;
-    background: var(--foreground);
-  }
-  .mono-nav {
+    .mono-nav {
     align-items: center;
     justify-content: flex-start;
     gap: calc(32 * var(--px));
@@ -921,9 +882,7 @@ html:not(.js) .mono-icon {
   white-space: nowrap;
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
-.mono-veil-list a:hover {
-  color: var(--muted-foreground);
-}
+
 .mono-veil-list a[aria-current]::before {
   content: "";
   display: block;
@@ -1039,7 +998,6 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
 @media (prefers-reduced-motion: reduce) {
   .mono-card-plate img,
   .mono-veil-list,
-  .mono-views button::after,
   .mono-filter-trigger svg,
   .mono-card-photo {
     transition: none;

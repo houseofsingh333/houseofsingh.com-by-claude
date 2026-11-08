@@ -75,7 +75,7 @@ export default function JournalFilmstrip({
                 onClick={togglePaused}
                 aria-pressed={userPaused}
                 aria-label="Pause the moving journal strip"
-                className="flex h-9 w-9 items-center justify-center border border-border text-muted-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) hover:border-foreground hover:text-foreground focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-foreground relative after:absolute after:left-1/2 after:top-1/2 after:h-11 after:w-11 after:-translate-x-1/2 after:-translate-y-1/2 after:content-['']"
+                className="flex h-9 w-9 items-center justify-center border border-border text-muted-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) hover:border-foreground hover:text-foreground relative after:absolute after:left-1/2 after:top-1/2 after:h-11 after:w-11 after:-translate-x-1/2 after:-translate-y-1/2 after:content-['']"
               >
                 {userPaused ? (
                   <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
@@ -90,7 +90,7 @@ export default function JournalFilmstrip({
             )}
             <Link
               href="/journal"
-              className="text-[12px] md:text-[13px] tracking-[0.12em] uppercase text-muted-foreground border-b border-border pb-1 transition-colors duration-(--dur-hover) ease-(--ease-soft-out) hover:text-foreground hover:border-foreground"
+              className="hairline pb-1 text-[12px] md:text-[13px] tracking-[0.12em] uppercase text-muted-foreground"
             >
               Read the journal
             </Link>

@@ -44,13 +44,13 @@ export default function PressCuttings({ outlets }: { outlets: FeaturedOutlet[] }
               {outlet.name}
               {year && `, ${year}`}
             </span>
-            <span className="press-title">{outlet.title || outlet.name}</span>
+            <span className="press-title hairline">{outlet.title || outlet.name}</span>
           </>
         );
         return (
           <li key={(outlet.title || "") + outlet.name}>
             {outlet.url ? (
-              <a href={outlet.url} target="_blank" rel="noopener noreferrer" className="press-cutting group">
+              <a href={outlet.url} target="_blank" rel="noopener noreferrer" className="press-cutting hairline-host group">
                 {body}
                 <span className="sr-only"> (opens in a new tab)</span>
               </a>

@@ -142,17 +142,6 @@
   line-height: 1.3;
   color: var(--foreground);
 }
-a.press-cutting .press-title {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-  text-decoration-color: transparent;
-  transition: text-decoration-color var(--dur-hover) var(--ease-soft-out);
-}
-a.press-cutting:hover .press-title,
-a.press-cutting:focus-visible .press-title {
-  text-decoration-color: var(--foreground);
-}
 a.press-cutting .press-mat {
   transition: transform var(--dur-hover) var(--ease-soft-out);
 }
@@ -176,10 +165,6 @@ a.press-cutting:hover .press-mat {
 }
 .walk-row::-webkit-scrollbar {
   display: none;
-}
-.walk-row:focus-visible {
-  outline: 1px solid var(--foreground);
-  outline-offset: 4px;
 }
 .walk-card {
   flex: 0 0 auto;

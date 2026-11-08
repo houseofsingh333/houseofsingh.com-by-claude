@@ -130,14 +130,14 @@ export default function CinematicHero({ slides, labels }: Props) {
             <button
               type="button"
               onClick={() => goToSlide((current - 1 + slides.length) % slides.length)}
-              className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-[12px] focus-visible:tracking-[0.14em] focus-visible:uppercase focus-visible:text-white focus-visible:outline-1 focus-visible:outline-white"
+              className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-[12px] focus-visible:tracking-[0.14em] focus-visible:uppercase focus-visible:text-white"
             >
               {labels.previous}
             </button>
             <button
               type="button"
               onClick={() => goToSlide((current + 1) % slides.length)}
-              className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-[12px] focus-visible:tracking-[0.14em] focus-visible:uppercase focus-visible:text-white focus-visible:outline-1 focus-visible:outline-white"
+              className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-[12px] focus-visible:tracking-[0.14em] focus-visible:uppercase focus-visible:text-white"
             >
               {labels.next}
             </button>

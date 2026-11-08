@@ -43,7 +43,7 @@ export default function HorizontalGalleryRenderer({ section }: Props) {
         tabIndex={0}
         role="region"
         aria-label="Image gallery — scroll horizontally"
-        className="hos-hscroll flex gap-4 md:gap-6 overflow-x-auto px-6 md:px-16 pb-4 snap-x snap-mandatory focus:outline-none focus-visible:ring-1 focus-visible:ring-border"
+        className="hos-hscroll flex gap-4 md:gap-6 overflow-x-auto px-6 md:px-16 pb-4 snap-x snap-mandatory"
       >
         {images.map((img, i) => (
           <figure

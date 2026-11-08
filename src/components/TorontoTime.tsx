@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import Crossfade from "@/components/Crossfade";
 
 const format = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Toronto",
@@ -37,7 +38,7 @@ export default function TorontoTime({ className = "" }: { className?: string }) 
   const time = useSyncExternalStore(subscribe, torontoNow, () => null);
   return (
     <span className={`toronto-time ${className}`}>
-      {time ?? <span className="invisible">12:00 pm</span>}
+      {time ? <Crossfade value={time} /> : <span className="invisible">12:00 pm</span>}
     </span>
   );
 }
