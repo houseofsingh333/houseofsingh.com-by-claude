@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
  * A number or short label that crossfades when it changes (counters, the
  * Toronto time, the journal's month): the old value fades out while the
  * new one fades in, in the same place (styles/motion.css, .xfade). Screen
- * readers only ever hear the current value. Reduced motion: it simply
+ * readers, find in page and checks only ever see the current value. Reduced motion: it simply
  * changes.
  */
 export default function Crossfade({ value, className }: { value: string; className?: string }) {
@@ -26,9 +26,8 @@ export default function Crossfade({ value, className }: { value: string; classNa
   return (
     <span className={`xfade${className ? ` ${className}` : ""}`}>
       {previous !== null && (
-        <span key={`out-${turn}`} className="xfade-out" aria-hidden="true">
-          {previous}
-        </span>
+        // The old value is drawn by CSS (::before), not page text: nothing reads or measures it as it fades.
+        <span key={`out-${turn}`} className="xfade-out" data-text={previous} aria-hidden="true" />
       )}
       <span key={`in-${turn}`} className={turn ? "xfade-in" : undefined}>
         {shown}

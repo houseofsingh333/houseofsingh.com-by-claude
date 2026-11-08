@@ -1,6 +1,6 @@
 import { PortableText, type PortableTextBlock } from "@portabletext/react";
 import SanityImage from "@/components/SanityImage";
-import { proseComponents } from "@/components/proseComponents";
+import { storyProseComponents } from "@/components/proseComponents";
 import { hotspotPosition } from "@/lib/projectHero";
 import { groupPhotos, storyUnits, weaveStory, type PhotoGroup, type StoryPhoto } from "@/lib/projectStory";
 
@@ -41,7 +41,7 @@ function Photo({ photo, kind, title }: { photo: StoryPhoto; kind: PhotoGroup["ki
 function Text({ blocks }: { blocks: PortableTextBlock[] }) {
   return (
     <div className="pp-text">
-      <PortableText value={blocks} components={proseComponents} />
+      <PortableText value={blocks} components={storyProseComponents} />
     </div>
   );
 }

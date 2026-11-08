@@ -28,7 +28,7 @@ import ProjectHead from "@/components/projects/page/ProjectHead";
 import ProjectFlow from "@/components/projects/page/ProjectFlow";
 import ProjectNext from "@/components/projects/page/ProjectNext";
 import { PortableText } from "@portabletext/react";
-import { proseComponents } from "@/components/proseComponents";
+import { storyProseComponents } from "@/components/proseComponents";
 import { siteCopy } from "@/lib/siteCopy";
 import { splitCategories } from "@/lib/projectsData";
 import {
@@ -231,7 +231,7 @@ export default async function ProjectDetailPage({ params }: Props) {
           project.story && project.story.length > 0 ? (
             <div className="pp-col pp-item">
               <div className="pp-story pp-text">
-                <PortableText value={project.story} components={proseComponents} />
+                <PortableText value={project.story} components={storyProseComponents} />
               </div>
             </div>
           ) : null

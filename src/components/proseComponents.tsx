@@ -16,37 +16,51 @@ const H3 = `${HEADING} text-[22px] md:text-[26px]`;
  * rich text is rendered (about, project text blocks) rather than relying on
  * fragile descendant selectors like [&>p].
  */
-export const proseComponents: PortableTextComponents = {
-  block: {
-    normal: ({ children, value }) => {
-      const parts = proseParts(value);
-      if (parts.length === 1 && parts[0].kind === "paragraph" && parts[0].block === value) {
-        return <p className="mb-6 last:mb-0">{children}</p>;
-      }
-      return (
-        <>
-          {parts.map((part, i) =>
-            part.kind === "heading" ? (
-              <h3 key={i} className={H3}>
-                {part.text}
-              </h3>
-            ) : (
-              <Fragment key={i}>
-                <PortableText value={[part.block]} components={proseComponents} />
-              </Fragment>
-            ),
-          )}
-        </>
-      );
+/**
+ * The renderer, with headings inside the text at a given level: h3 within a
+ * section that has its own h2 (the default), h2 where the text sits directly
+ * under the page title (a project's story), so the outline never skips a level.
+ */
+function makeProse(level: 2 | 3): PortableTextComponents {
+  const Sub = level === 2 ? "h2" : "h3";
+  const components: PortableTextComponents = {
+    block: {
+      normal: ({ children, value }) => {
+        const parts = proseParts(value);
+        if (parts.length === 1 && parts[0].kind === "paragraph" && parts[0].block === value) {
+          return <p className="mb-6 last:mb-0">{children}</p>;
+        }
+        return (
+          <>
+            {parts.map((part, i) =>
+              part.kind === "heading" ? (
+                <Sub key={i} className={H3}>
+                  {part.text}
+                </Sub>
+              ) : (
+                <Fragment key={i}>
+                  <PortableText value={[part.block]} components={components} />
+                </Fragment>
+              ),
+            )}
+          </>
+        );
+      },
+      h1: ({ children }) => <h2 className={H2}>{children}</h2>,
+      h2: ({ children }) => <h2 className={H2}>{children}</h2>,
+      h3: ({ children }) => <Sub className={H3}>{children}</Sub>,
+      h4: ({ children }) => (level === 2 ? <h3 className={H3}>{children}</h3> : <h4 className={H3}>{children}</h4>),
+      blockquote: ({ children }) => (
+        <blockquote className="my-8 font-editorial italic text-[22px] md:text-[26px] leading-[1.4] text-foreground">
+          {children}
+        </blockquote>
+      ),
     },
-    h1: ({ children }) => <h2 className={H2}>{children}</h2>,
-    h2: ({ children }) => <h2 className={H2}>{children}</h2>,
-    h3: ({ children }) => <h3 className={H3}>{children}</h3>,
-    h4: ({ children }) => <h4 className={H3}>{children}</h4>,
-    blockquote: ({ children }) => (
-      <blockquote className="my-8 font-editorial italic text-[22px] md:text-[26px] leading-[1.4] text-foreground">
-        {children}
-      </blockquote>
-    ),
-  },
-};
+  };
+  return components;
+}
+
+export const proseComponents = makeProse(3);
+
+/** For text directly under the page title, with no section heading above it (a project's story). */
+export const storyProseComponents = makeProse(2);

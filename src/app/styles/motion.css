@@ -282,6 +282,9 @@ html.js .blurup + img[data-blurup]:not([data-loaded]) {
   white-space: nowrap;
   pointer-events: none;
 }
+.xfade > .xfade-out::before {
+  content: attr(data-text);
+}
 @media (prefers-reduced-motion: reduce) {
   .xfade > .xfade-out {
     display: none;
