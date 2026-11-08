@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
+import { flushSync } from "react-dom";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import { categoryHref } from "@/lib/projectCategories";
 import type { MonographCategory, MonographProject } from "@/lib/projectsData";
@@ -8,7 +9,7 @@ import { durationMs } from "./motion";
 import OneByOne from "./OneByOne";
 import AtAGlance from "./AtAGlance";
 import FilterVeil from "./FilterVeil";
-import { VIEW_STORAGE_KEY, type MonographView, type ProjectsCopy } from "./types";
+import { RETURN_STORAGE_KEY, VIEW_STORAGE_KEY, type MonographView, type ProjectsCopy, type ReturnTrail } from "./types";
 
 type Props = {
   projects: MonographProject[];
@@ -45,6 +46,24 @@ function storeView(view: MonographView) {
 
 /** How long the arrival choreography may run before it is switched off. */
 const ARRIVAL_MS = 3200;
+/** How long the brass line under a returned to project stays (it fades in CSS). */
+const RETURN_MARK_MS = 4000;
+/** A return trail older than this is not a return. */
+const RETURN_FRESH_MS = 30 * 60 * 1000;
+const DESKTOP = "(min-width: 1024px)";
+/** The name the plate carries while it moves between the views. */
+const SHARED = "mono-shared";
+
+/** The trail left on the way to a project from At a glance, if this visit is the way back. */
+function readReturn(): ReturnTrail | null {
+  try {
+    const t = JSON.parse(sessionStorage.getItem(RETURN_STORAGE_KEY) ?? "null") as ReturnTrail | null;
+    if (!t || Date.now() - t.at > RETURN_FRESH_MS || t.href !== location.pathname + location.search) return null;
+    return t;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * The Projects page in the browser. Both views are always in the page;
@@ -64,8 +83,57 @@ export default function Monograph({ projects, categories, copy, startIndex, init
   const [filterOpen, setFilterOpen] = useState(false);
   const [arriving, setArriving] = useState(true);
   const [fading, setFading] = useState(false);
+  const [arrival, setArrival] = useState(0);
+  const [sharedSlug, setSharedSlug] = useState<string | null>(null);
+  const [returnSlug, setReturnSlug] = useState<string | null>(null);
+  const [vt, setVt] = useState(false);
   const rootRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  /** At a glance's scroll when a photograph there opened One by one. */
+  const fromGlance = useRef<number | null>(null);
+
+  // Back from a project reached from At a glance: At a glance again, where
+  // the reader was, and a brass line under that project's title. The trail
+  // is in sessionStorage, which the server cannot see, so it is read once
+  // the page is in the browser (before it paints; the pre paint script has
+  // already shown At a glance for a full page load).
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useLayoutEffect(() => {
+    const trail = readReturn();
+    if (!trail) return;
+    try {
+      sessionStorage.removeItem(RETURN_STORAGE_KEY);
+    } catch {}
+    setChosen("glance");
+    storeView("glance");
+    setFilter(trail.filter);
+    setReturnSlug(trail.slug);
+    setArrival((a) => a + 1);
+    window.history.replaceState(window.history.state, "", categoryHref(filterLabel(categories, trail.filter)));
+    document.documentElement.removeAttribute("data-projects-return");
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: trail.scroll, behavior: "instant" });
+      const card = document.querySelector<HTMLElement>(`.mono-card[data-slug="${CSS.escape(trail.slug)}"]`);
+      const r = card?.getBoundingClientRect();
+      if (r && (r.bottom < 0 || r.top > window.innerHeight)) card!.scrollIntoView({ block: "center", behavior: "instant" });
+    });
+    const t = window.setTimeout(() => setReturnSlug(null), RETURN_MARK_MS);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  /** Leaving for a project page: if the way here began in At a glance, leave a trail back. */
+  const onLeave = useCallback(
+    (slug: string) => {
+      if (fromGlance.current === null) return;
+      const trail: ReturnTrail = { slug, scroll: fromGlance.current, filter, href: location.pathname + location.search, at: Date.now() };
+      try {
+        sessionStorage.setItem(RETURN_STORAGE_KEY, JSON.stringify(trail));
+      } catch {}
+    },
+    [filter],
+  );
 
   // The arrival plays once, for the view shown on load.
   useEffect(() => {
@@ -87,21 +155,52 @@ export default function Monograph({ projects, categories, copy, startIndex, init
     [projects, showAddress],
   );
 
-  /** Switch views: the old one fades out, the new one fades in (--dur-page). */
+  /**
+   * Switch views. Desktop: the current plate shrinks into its place in the
+   * grid (or a grid photograph grows into the One by one plate) as a shared
+   * element, while the rest of the page crossfades (View Transitions; the
+   * grid's plates then arrive). Phone, reduced motion or no View
+   * Transitions: the old view fades out, the new one fades in (--dur-page).
+   */
   const switchView = useCallback(
-    (next: MonographView, openAt?: number) => {
+    (next: MonographView, openAt?: number, card?: HTMLElement) => {
       setArriving(false);
       setFilterOpen(false);
+      if (next === view && openAt === undefined) return;
+      const i = openAt ?? index;
+      const slug = projects[i].slug;
+      if (next === "one") fromGlance.current = card ? window.scrollY : null;
       const apply = () => {
         setChosen(next);
         storeView(next);
         if (openAt !== undefined) setIndex(openAt);
-        const i = openAt ?? index;
-        showAddress(next === "one" ? `/projects?p=${projects[i].slug}` : categoryHref(filterLabel(categories, filter)));
+        showAddress(next === "one" ? `/projects?p=${slug}` : categoryHref(filterLabel(categories, filter)));
         setFading(false);
+        if (next === "glance") {
+          setSharedSlug(slug);
+          setArrival((a) => a + 1);
+        }
         if (openAt !== undefined) rootRef.current?.scrollIntoView({ block: "start", behavior: "instant" });
       };
-      if (next === view && openAt === undefined) return;
+      const plateOf = (s: string) => document.querySelector<HTMLElement>(`.mono-slide[data-slug="${CSS.escape(s)}"] .mono-plate-frame`);
+      const cardOf = (s: string) => document.querySelector<HTMLElement>(`.mono-card[data-slug="${CSS.escape(s)}"] .mono-card-plate`);
+      const from = next === "one" ? card?.querySelector<HTMLElement>(".mono-card-plate") : plateOf(slug);
+      const canShare = !reduced && !!document.startViewTransition && window.matchMedia(DESKTOP).matches && !!from;
+      if (canShare) {
+        from!.style.viewTransitionName = SHARED;
+        setVt(true);
+        const t = document.startViewTransition(() => {
+          flushSync(apply);
+          from!.style.viewTransitionName = "";
+          const to = next === "one" ? plateOf(slug) : cardOf(slug);
+          if (to && to.offsetParent !== null) to.style.viewTransitionName = SHARED;
+        });
+        void t.finished.finally(() => {
+          document.querySelectorAll<HTMLElement>(".mono-plate-frame, .mono-card-plate").forEach((el) => (el.style.viewTransitionName = ""));
+          setVt(false);
+        });
+        return;
+      }
       if (reduced) return apply();
       setFading(true);
       const half = durationMs("--dur-page", 600) / 2;
@@ -132,6 +231,7 @@ export default function Monograph({ projects, categories, copy, startIndex, init
       data-switched={chosen ? "" : undefined}
       data-arrive={arriving && !reduced ? "" : undefined}
       data-fading={fading ? "" : undefined}
+      data-vt={vt ? "" : undefined}
     >
       <header className="mono-head">
         <h1 id="projects-title" className="mono-heading">
@@ -199,6 +299,7 @@ export default function Monograph({ projects, categories, copy, startIndex, init
           arriving={arriving}
           reduced={reduced}
           firstIndex={startIndex}
+          onLeave={onLeave}
         />
       </div>
       <div className="mono-glance" inert={hydrated && view !== "glance"}>
@@ -206,7 +307,10 @@ export default function Monograph({ projects, categories, copy, startIndex, init
           projects={projects}
           filter={filter}
           reduced={reduced}
-          onOpen={(i) => switchView("one", i)}
+          onOpen={(i, card) => switchView("one", i, card)}
+          arrival={arrival}
+          sharedSlug={sharedSlug}
+          returnSlug={returnSlug}
         />
       </div>
     </section>

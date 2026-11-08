@@ -98,12 +98,10 @@ export const SITE_COPY_FIELDS = [
   { name: "projectsEnter", title: "Project link", group: "projects", text: "Enter the project" },
   { name: "projectsPrevious", title: "Previous", group: "projects", text: "Previous" },
   { name: "projectsNext", title: "Next", group: "projects", text: "Next" },
-  { name: "projectsNextPrefix", title: "Next title prefix", group: "projects", text: "Next:" },
   { name: "projectsPause", title: "Pause", group: "projects", text: "Pause" },
   { name: "projectsPlay", title: "Play", group: "projects", text: "Play" },
   { name: "projectsPreviousProject", title: "Phone arrow, previous (read by screen readers)", group: "projects", text: "Previous project" },
   { name: "projectsNextProject", title: "Phone arrow, next (read by screen readers)", group: "projects", text: "Next project" },
-  { name: "projectsGoTo", title: "Progress tick (read by screen readers, before the title)", group: "projects", text: "Go to" },
   { name: "projectsUpcoming", title: "Upcoming label", group: "projects", text: "Upcoming" },
 
   // ——— Menu ———

@@ -4,7 +4,7 @@ import { siteCopy } from "@/lib/siteCopy";
 import { categoriesOf, loadMonographProjects } from "@/lib/projectsData";
 import type { SiteSettings } from "@/lib/types";
 import Monograph from "./Monograph";
-import { VIEW_STORAGE_KEY, type ProjectsCopy } from "./types";
+import { RETURN_STORAGE_KEY, VIEW_STORAGE_KEY, type ProjectsCopy } from "./types";
 
 /*
  * The Projects page, the monograph: two views of the same work, One by one
@@ -21,6 +21,14 @@ import { VIEW_STORAGE_KEY, type ProjectsCopy } from "./types";
  * frame and nothing moves when the page comes to life.
  */
 const VIEW_SCRIPT = `try{if(localStorage.getItem(${JSON.stringify(VIEW_STORAGE_KEY)})==="glance"){document.documentElement.setAttribute("data-projects-view","glance")}else{document.documentElement.removeAttribute("data-projects-view")}}catch(e){}`;
+
+/**
+ * Before the page paints: on the way back from a project opened from At a
+ * glance (a fresh trail in sessionStorage for this very address), show At
+ * a glance at once, whatever the address would otherwise open. Monograph
+ * then restores the scroll and marks the project.
+ */
+const RETURN_SCRIPT = `try{var t=JSON.parse(sessionStorage.getItem(${JSON.stringify(RETURN_STORAGE_KEY)})||"null");if(t&&Date.now()-t.at<18e5&&t.href===location.pathname+location.search){document.documentElement.setAttribute("data-projects-return","");document.documentElement.setAttribute("data-projects-view","glance")}}catch(e){}`;
 
 export default async function ProjectsMonograph({
   initialSlug,
@@ -46,12 +54,10 @@ export default async function ProjectsMonograph({
     enter: copy.projectsEnter,
     previous: copy.projectsPrevious,
     next: copy.projectsNext,
-    nextPrefix: copy.projectsNextPrefix,
     pause: copy.projectsPause,
     play: copy.projectsPlay,
     previousProject: copy.projectsPreviousProject,
     nextProject: copy.projectsNextProject,
-    goTo: copy.projectsGoTo,
     upcoming: copy.projectsUpcoming,
   };
   const startIndex = Math.max(0, initialSlug ? projects.findIndex((p) => p.slug === initialSlug) : 0);
@@ -62,6 +68,7 @@ export default async function ProjectsMonograph({
       {/* A shared project link opens One by one, a category At a glance,
           whatever the visitor last chose; otherwise their choice applies. */}
       {!forcedView && <script dangerouslySetInnerHTML={{ __html: VIEW_SCRIPT }} />}
+      <script dangerouslySetInnerHTML={{ __html: RETURN_SCRIPT }} />
       <Monograph
         projects={projects}
         categories={categoriesOf(projects)}

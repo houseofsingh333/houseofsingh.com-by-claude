@@ -11,3 +11,610 @@
 .filmstrip-viewport::-webkit-scrollbar {
   display: none;
 }
+
+/* ═══ The Journal page: the calendar and the reading room ═══
+   Frames "J4 desktop" and "Phone B" (components/journal/room). Desktop: the
+   calendar stays still in a left column while the entries scroll on the
+   right. Phone: one line stays at the top (the month in view and a 3x3 dot
+   icon) and unfolds the month's calendar. */
+
+.jr {
+  /* Clears the crest at the top of the page (State 1 of the header). */
+  --jr-top: 128px;
+  --jr-gutter: 1.5rem;
+  /* Where things stop under the fixed 68px header once the page scrolls. */
+  --jr-stick: 68px;
+  margin-inline: auto;
+  width: 100%;
+  max-width: 80rem;
+  padding: var(--jr-top) var(--jr-gutter) var(--section-space-lg);
+}
+@media (min-width: 768px) {
+  .jr {
+    --jr-gutter: 4rem;
+  }
+}
+@media (min-width: 1024px) {
+  .jr {
+    --jr-top: 200px;
+  }
+}
+
+/* ——— Header: "Journal", its line, the years ——— */
+
+.jr-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+.jr-heading {
+  font-family: var(--font-editorial);
+  font-weight: 300;
+  font-size: 1.875rem;
+  line-height: 1;
+  color: var(--foreground);
+}
+.jr-tagline {
+  margin-top: 0.625rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+}
+.jr-years-row {
+  display: flex;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+.jr-years-row a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  color: var(--muted-foreground);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  transition:
+    color var(--dur-hover) var(--ease-soft-out),
+    text-decoration-color var(--dur-hover) var(--ease-soft-out);
+}
+.jr-years-row a:hover {
+  color: var(--foreground);
+}
+.jr-years-row a[aria-current] {
+  color: var(--foreground);
+  text-decoration-color: currentColor;
+}
+
+/* ——— The calendar ——— */
+
+.jr-calendar {
+  display: grid;
+}
+.jr-month,
+.jr-year {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--dur-page) var(--ease-slow),
+    visibility 0s linear var(--dur-page);
+}
+.jr-calendar[data-mode="month"] .jr-year,
+.jr-calendar[data-mode="year"] .jr-month {
+  opacity: 0;
+  visibility: hidden;
+}
+.jr-calendar[data-mode="month"] .jr-month,
+.jr-calendar[data-mode="year"] .jr-year {
+  transition: opacity var(--dur-page) var(--ease-slow);
+}
+.jr-month-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.jr-month-name {
+  color: var(--foreground);
+}
+.jr-month-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.jr-month-word {
+  font-family: var(--font-editorial);
+  font-size: 2.75rem;
+  line-height: 1;
+}
+.jr-month-year {
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+}
+.jr-month-arrows {
+  display: flex;
+}
+.jr-month-arrows > * {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 1rem;
+  color: var(--foreground);
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+.jr-month-arrows a:hover {
+  color: var(--muted-foreground);
+}
+.jr-month-arrows .is-off {
+  visibility: hidden;
+}
+
+.jr-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  row-gap: 2px;
+  text-align: center;
+  padding-bottom: 0.75rem;
+}
+.jr-weekday {
+  padding-bottom: 0.375rem;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--muted-foreground);
+}
+.jr-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+.jr-day.has {
+  color: var(--foreground);
+}
+/* A day with an entry: its photograph as a circle, the date on a veil. */
+.jr-circle {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--secondary);
+  outline: 1px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color var(--dur-hover) var(--ease-soft-out);
+}
+.jr-day[aria-current] .jr-circle {
+  outline-color: var(--accent);
+}
+.jr-circle img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--dur-plate) var(--ease-slow);
+}
+.jr-circle img[data-shown] {
+  opacity: 1;
+}
+.jr-circle-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--foreground) 38%, transparent);
+  color: var(--background);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* The year, zoomed out: twelve tiny months, each day a point, each entry a dot. */
+.jr-year-title {
+  margin-bottom: 1.5rem;
+  font-family: var(--font-editorial);
+  font-size: 2.75rem;
+  line-height: 1;
+  color: var(--foreground);
+}
+.jr-minis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 1.375rem;
+  row-gap: 1.5rem;
+}
+.jr-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--foreground);
+}
+.jr-mini-name {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+a.jr-mini:hover .jr-mini-name {
+  color: var(--muted-foreground);
+}
+.jr-mini.is-empty .jr-mini-name {
+  color: var(--muted-foreground);
+}
+.jr-mini-days {
+  display: grid;
+  grid-template-columns: repeat(7, 8px);
+  gap: 3px;
+}
+.jr-mini-days span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 8px;
+  height: 8px;
+}
+.jr-mini-days .d::after {
+  content: "";
+  display: block;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--border);
+}
+.jr-mini-days .d[data-entry]::after {
+  width: 5px;
+  height: 5px;
+  background: var(--foreground);
+}
+.jr-mini-days .d[data-current]::after {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+}
+
+/* ——— The entries ——— */
+
+.jr-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  /* Months added above keep the reader in place (JournalRoom does it). */
+  overflow-anchor: none;
+}
+.jr-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  /* Clear the fixed header and the phone's month line. */
+  scroll-margin-top: calc(var(--jr-stick) + 66px);
+}
+.jr-entry:focus {
+  outline: none;
+}
+.jr-entry-date time {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.jr-entry-day {
+  font-family: var(--font-editorial);
+  font-size: 2.5rem;
+  line-height: 0.9;
+  color: var(--foreground);
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+.jr-entry[data-current] .jr-entry-day {
+  color: var(--accent);
+}
+.jr-entry-my {
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.jr-entry-title {
+  font-family: var(--font-editorial);
+  font-weight: 300;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  color: var(--foreground);
+}
+.jr-entry-photo {
+  position: relative;
+  margin: 0.25rem 0 0;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--secondary);
+}
+.jr-entry-text {
+  margin-top: 1rem;
+}
+.jr-note {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--foreground);
+}
+.jr-text {
+  margin-top: 0.75rem;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--foreground);
+}
+.jr-text p {
+  margin-bottom: 1rem;
+}
+.jr-text-figure {
+  margin: 1.5rem 0;
+}
+.jr-text-figure figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+.jr-more {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 44px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+.jr-more:hover {
+  color: var(--foreground);
+}
+/* With JavaScript the months load by themselves: the link to the next older
+   month shows only to a keyboard user on it, and room is kept below for that
+   month so the footer never jumps as it arrives. Without JavaScript it is a
+   plain link and there is no room to keep. */
+/* A plain block after the last entry, so the hidden link inside it stays
+   right there (the next month loads as the reader nears it). */
+.jr-tail {
+  position: relative;
+}
+.jr-room {
+  display: none;
+}
+html.js .jr-room {
+  display: block;
+  min-height: 100svh;
+}
+html.js .jr-more[data-more="older"]:not(:focus-visible) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.jr-empty {
+  padding-block: 4rem;
+  color: var(--muted-foreground);
+}
+
+/* ——— Phone (Phone B): the month line stays at the top and unfolds the calendar ——— */
+
+@media (max-width: 1023px) {
+  .jr-years {
+    /* Exactly three years show; older ones are a sideways swipe away. */
+    width: 132px;
+    flex: none;
+  }
+  .jr-years-row {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .jr-years-row::-webkit-scrollbar {
+    display: none;
+  }
+  .jr-years-row a {
+    flex: none;
+    width: 44px;
+    scroll-snap-align: start;
+  }
+  .jr-rail {
+    position: sticky;
+    top: var(--jr-stick);
+    z-index: 20;
+    margin-inline: calc(-1 * var(--jr-gutter));
+    padding-inline: var(--jr-gutter);
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
+  }
+  .jr-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 52px;
+    color: var(--foreground);
+  }
+  .jr-toggle-month {
+    font-family: var(--font-editorial);
+    font-size: 1.25rem;
+  }
+  .jr-toggle svg {
+    transition: color var(--dur-hover) var(--ease-soft-out);
+  }
+  .jr-rail[data-open] .jr-toggle svg {
+    color: var(--accent);
+  }
+  /* The calendar unfolds over the entries (it never pushes them down, so
+     the entry in view stays the entry in view). */
+  .jr-fold {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding-inline: var(--jr-gutter);
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition:
+      grid-template-rows var(--dur-page) var(--ease-soft-out),
+      visibility 0s linear var(--dur-page);
+  }
+  .jr-rail[data-open] .jr-fold {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition: grid-template-rows var(--dur-page) var(--ease-soft-out);
+  }
+  .jr-fold-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+  /* On phone the calendar is the month of days only. */
+  .jr-month-head,
+  .jr-year {
+    display: none;
+  }
+  .jr-entries {
+    padding-top: 1.5rem;
+  }
+}
+
+/* ——— Desktop (J4): the calendar in a still left column ——— */
+
+@media (min-width: 1024px) {
+  .jr-head {
+    padding-bottom: 3.5rem;
+  }
+  .jr-heading {
+    font-size: 3.5rem;
+  }
+  .jr-years-row {
+    gap: 1.375rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+  }
+  .jr-body {
+    display: grid;
+    grid-template-columns: minmax(0, 26.875rem) minmax(0, 1fr);
+    column-gap: clamp(3rem, 6vw, 4.625rem);
+    align-items: start;
+  }
+  .jr-rail {
+    position: sticky;
+    top: calc(var(--jr-stick) + 2rem);
+  }
+  .jr-toggle {
+    display: none;
+  }
+  .jr-grid {
+    padding-bottom: 0;
+  }
+  .jr-weekday {
+    padding-bottom: 0.625rem;
+    font-size: 0.6875rem;
+  }
+  .jr-day {
+    height: 54px;
+    font-size: 0.8125rem;
+  }
+  .jr-circle {
+    width: 42px;
+    height: 42px;
+  }
+  .jr-circle-num {
+    font-size: 0.8125rem;
+  }
+  .jr-entries {
+    gap: 2.5rem;
+  }
+  /* Each entry fills one view when its text is short; longer ones extend. */
+  .jr-entry {
+    min-height: calc(100svh - var(--jr-stick) - 2rem - 2.5rem);
+    gap: 0.875rem;
+    scroll-margin-top: calc(var(--jr-stick) + 2rem);
+  }
+  .jr-entry-date time {
+    gap: 0.875rem;
+  }
+  .jr-entry-day {
+    font-size: 3.25rem;
+  }
+  .jr-entry-my {
+    font-size: 0.75rem;
+  }
+  .jr-entry-title {
+    font-size: 1.875rem;
+  }
+  /* The text sits beside the photograph, along its lower edge; a longer
+     text simply runs on below it, the photograph staying at the top. */
+  .jr-entry-body[data-photo] {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    column-gap: 2rem;
+    margin-top: 0.375rem;
+  }
+  .jr-entry-photo {
+    align-self: start;
+    margin: 0;
+    width: 340px;
+  }
+  .jr-entry-text {
+    align-self: end;
+    margin-top: 0;
+    padding-bottom: 0.25rem;
+  }
+  .jr-entry-body:not([data-photo]) .jr-entry-text {
+    max-width: 34rem;
+  }
+  .jr-note {
+    font-size: 1rem;
+  }
+}
+
+/* Entries settle gently into view on desktop (JournalRoom): when scrolling
+   stops with an entry nearly in place, it eases the last few pixels. Not
+   CSS scroll snapping: with entries a whole view tall, its pull reached so
+   far that small scrolls were taken back. */
+
+/* ——— Without JavaScript: the calendar is plain links, always open ——— */
+
+html:not(.js) .jr-rail {
+  position: static;
+}
+html:not(.js) .jr-fold {
+  position: static;
+  padding-inline: 0;
+  border-bottom: 0;
+  grid-template-rows: 1fr;
+  visibility: visible;
+}
+html:not(.js) .jr-toggle {
+  pointer-events: none;
+}
+html:not(.js) .jr-toggle svg {
+  display: none;
+}
+
+/* ——— Reduced motion: the calendar folds and zooms at once ——— */
+
+@media (prefers-reduced-motion: reduce) {
+  .jr-fold,
+  .jr-rail[data-open] .jr-fold,
+  .jr-month,
+  .jr-year,
+  .jr-circle img {
+    transition: none;
+  }
+}

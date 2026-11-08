@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import { categorySlug } from "@/lib/projectCategories";
@@ -13,12 +13,24 @@ type Props = {
   /** The category slug shown (null: all work). */
   filter: string | null;
   reduced: boolean;
-  /** Open a project One by one (a plain click on its plate). */
-  onOpen: (index: number) => void;
+  /** Open a project One by one (a plain click on its photograph). */
+  onOpen: (index: number, card: HTMLElement) => void;
+  /** Changes each time the view arrives (page load or a switch): the plates arrive again. */
+  arrival: number;
+  /** The plate that grows into its place (shared element): it does not arrive. */
+  sharedSlug: string | null;
+  /** Back from this project's page: a brass line draws under its title, holds, then fades. */
+  returnSlug: string | null;
 };
 
 /** How long plates that leave take to fade out before the rest move up. */
 const LEAVE_MS = 500;
+/** The flipbook: a pause before it starts, then each photograph holds this long. */
+const FLIP_DELAY_MS = 500;
+const FLIP_MS = 1600;
+/** Arrival rhythm: between items in a row, and between rows. */
+const ITEM_MS = 120;
+const ROW_MS = 260;
 
 function matches(p: MonographProject, filter: string | null): boolean {
   return !filter || p.categories.some((c) => categorySlug(c) === filter);
@@ -30,22 +42,26 @@ function plainClick(e: MouseEvent): boolean {
 }
 
 /**
- * At a glance (frame G2 on desktop, two columns on phone): every project as
- * a 4:5 plate with its title and category, three columns with the middle
- * one set lower. Each plate is a real link to its project page (so it is in
- * the server HTML and works without JavaScript); a plain click opens the
- * project One by one instead.
+ * At a glance (frame G1, "the full experience"; two columns on phone): every
+ * project as a 4:5 photograph in three equal columns, its title in Playfair
+ * with the category in small capitals on the same line. Each photograph is
+ * a real link to its project page (in the server HTML, works without
+ * JavaScript); a plain click grows it into the One by one plate instead.
  *
- * Filtering: the plates that leave fade out, then the ones that stay glide
- * from where they were to where they now belong (measured before and after,
- * moved with transforms only), and any that join fade in. Reduced motion:
- * the grid simply changes.
+ * Arrival (each time the view comes in): the plates in the first screen
+ * rise 12px and develop, left to right, row by row; rows further down only
+ * develop as they scroll into view. Hover or keyboard focus: the photograph
+ * eases closer and the title's hairline draws; after a moment its
+ * photographs follow one another like a slow flipbook until the pointer
+ * leaves. Filtering: plates that leave fade out, the rest glide to their
+ * new places. Reduced motion: none of it moves; everything at full tone.
  */
-export default function AtAGlance({ projects, filter, reduced, onOpen }: Props) {
-  // The filter the grid is laid out for; it follows `filter` once any
-  // leaving plates have faded.
+export default function AtAGlance({ projects, filter, reduced, onOpen, arrival, sharedSlug, returnSlug }: Props) {
   const [laidOut, setLaidOut] = useState(filter);
-  const [leaving, setLeaving] = useState<string | null>(null);
+  // The filter being changed to, while the plates that leave fade (null: not changing).
+  const [leaving, setLeaving] = useState<{ to: string | null } | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [flip, setFlip] = useState(0);
   const cardRefs = useRef(new Map<string, HTMLElement>());
   const before = useRef<Map<string, DOMRect> | null>(null);
 
@@ -54,7 +70,7 @@ export default function AtAGlance({ projects, filter, reduced, onOpen }: Props) 
   if (asked !== filter) {
     setAsked(filter);
     if (reduced) setLaidOut(filter);
-    else setLeaving(filter);
+    else setLeaving({ to: filter });
   }
 
   useLayoutEffect(() => {
@@ -71,8 +87,8 @@ export default function AtAGlance({ projects, filter, reduced, onOpen }: Props) 
     return () => window.clearTimeout(t);
   }, [leaving, filter]);
 
-  // After the new layout: each plate that stayed starts where it was and
-  // glides to its new place; plates that join fade in.
+  // After the new layout: each plate that stayed glides from where it was;
+  // plates that join fade in.
   useLayoutEffect(() => {
     const rects = before.current;
     before.current = null;
@@ -94,14 +110,75 @@ export default function AtAGlance({ projects, filter, reduced, onOpen }: Props) 
     });
   }, [laidOut]);
 
+  // Arrival: plates in the first screen rise and develop in rhythm; the
+  // rest wait and develop as they come into view.
+  useLayoutEffect(() => {
+    if (!arrival || reduced) return;
+    const cards = [...cardRefs.current.entries()].filter(([, el]) => el.offsetParent !== null);
+    if (!cards.length) return;
+    const fold = window.innerHeight;
+    const topOf = (el: HTMLElement) => Math.round(el.getBoundingClientRect().top);
+    const rows = [...new Set(cards.map(([, el]) => topOf(el)))].sort((a, b) => a - b);
+    const io = new IntersectionObserver(
+      (list) => {
+        for (const x of list) {
+          if (!x.isIntersecting) continue;
+          (x.target as HTMLElement).dataset.arrive = "develop";
+          io.unobserve(x.target);
+        }
+      },
+      { rootMargin: "0px 0px -10% 0px" },
+    );
+    const frames: number[] = [];
+    for (const [id, el] of cards) {
+      delete el.dataset.arrive;
+      if (projects.find((p) => p.id === id)?.slug === sharedSlug) continue;
+      const top = topOf(el);
+      if (top < fold) {
+        const col = cards.filter(([, other]) => topOf(other) === top && other.getBoundingClientRect().left < el.getBoundingClientRect().left).length;
+        el.style.setProperty("--arrive-delay", `${rows.indexOf(top) * ROW_MS + col * ITEM_MS}ms`);
+        el.dataset.arrive = "pre";
+        frames.push(requestAnimationFrame(() => (el.dataset.arrive = "rise")));
+      } else {
+        el.dataset.arrive = "wait";
+        io.observe(el);
+      }
+    }
+    return () => {
+      io.disconnect();
+      frames.forEach(cancelAnimationFrame);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arrival]);
+
+  // The flipbook: after a moment, the hovered project's photographs take
+  // turns, looping until the pointer leaves (the cover then returns).
+  const hoveredProject = projects.find((p) => p.id === hovered);
+  const count = hoveredProject?.plates.length ?? 0;
+  const flips = !reduced && count > 1;
+  useEffect(() => {
+    if (!flips) return;
+    let t = window.setTimeout(function step() {
+      setFlip((f) => (f + 1) % count);
+      t = window.setTimeout(step, FLIP_MS);
+    }, FLIP_DELAY_MS);
+    return () => window.clearTimeout(t);
+  }, [flips, count, hovered]);
+
+  const point = (id: string | null) => {
+    setHovered(id);
+    setFlip(0);
+  };
+
   let shown = 0;
   return (
     <ul className="mono-grid" role="list">
       {projects.map((p, i) => {
         const inGrid = matches(p, laidOut);
-        const fading = leaving !== null && inGrid && !matches(p, leaving);
+        const fading = leaving !== null && inGrid && !matches(p, leaving.to);
         const at = inGrid ? shown++ : -1;
-        const photo = p.plates[0];
+        const isHovered = hovered === p.id;
+        const active = isHovered && flips ? flip : 0;
         return (
           <li
             key={p.id}
@@ -111,36 +188,53 @@ export default function AtAGlance({ projects, filter, reduced, onOpen }: Props) 
             }}
             className="mono-card"
             hidden={!inGrid}
+            data-slug={p.slug}
             data-leaving={fading ? "" : undefined}
-            data-col3={at >= 0 ? at % 3 : undefined}
-            style={{ "--r3": Math.floor(at / 3), "--r2": Math.floor(at / 2) } as CSSProperties}
+            data-return={returnSlug === p.slug ? "" : undefined}
+            data-early={at >= 0 && at < 6 ? "" : undefined}
+            style={{ "--r2": Math.floor(at / 2), "--c2": at % 2, "--r3": Math.floor(at / 3), "--c3": at % 3 } as CSSProperties}
           >
             <Link
               href={`/projects/${p.slug}`}
               className="mono-card-link"
+              onPointerEnter={(e) => e.pointerType === "mouse" && point(p.id)}
+              onPointerLeave={(e) => e.pointerType === "mouse" && point(null)}
+              onFocus={(e) => e.currentTarget.matches(":focus-visible") && point(p.id)}
+              onBlur={() => point(null)}
               onClick={(e) => {
                 if (!plainClick(e)) return;
                 e.preventDefault();
-                onOpen(i);
+                point(null);
+                onOpen(i, e.currentTarget.closest(".mono-card") as HTMLElement);
               }}
             >
-              <span className="mono-card-plate">
-                {photo ? (
-                  <SanityImage
-                    image={{ url: photo.url, lqip: photo.lqip ?? undefined }}
-                    context="body"
-                    alt={photo.alt || undefined}
-                    fill
-                    sizes="(min-width: 1024px) 30vw, 50vw"
-                    className="object-cover"
-                    objectPosition={photoPosition(photo)}
-                  />
+              <span className="mono-card-plate" data-hovered={isHovered ? "" : undefined}>
+                {p.plates.length ? (
+                  p.plates.map((photo, k) =>
+                    // The cover always; the others only once the flipbook needs them.
+                    k === 0 || (isHovered && flips) ? (
+                      <span key={photo.url + k} className="mono-card-photo" data-shown={k === active ? "" : undefined}>
+                        <SanityImage
+                          image={{ url: photo.url, lqip: photo.lqip ?? undefined }}
+                          context="body"
+                          alt={k === 0 ? photo.alt || undefined : ""}
+                          fill
+                          develop={k === 0}
+                          sizes="(min-width: 1024px) 30vw, 50vw"
+                          className="object-cover"
+                          objectPosition={photoPosition(photo)}
+                        />
+                      </span>
+                    ) : null,
+                  )
                 ) : (
                   <span className="mono-plate-empty" aria-hidden="true" />
                 )}
               </span>
-              <span className="mono-card-title">{p.title}</span>
-              {p.categories.length > 0 && <span className="mono-card-meta">{p.categories.join(", ")}</span>}
+              <span className="mono-card-caption">
+                <span className="mono-card-title">{p.title}</span>
+                {p.categories.length > 0 && <span className="mono-card-meta">{p.categories.join(", ")}</span>}
+              </span>
             </Link>
           </li>
         );

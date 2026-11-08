@@ -100,7 +100,7 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
           tabIndex={showState1 ? 0 : -1}
           aria-label="House of Singh, home"
           className="absolute top-[32px] left-1/2 -translate-x-1/2"
-          style={{ pointerEvents: "auto" }}
+          style={{ pointerEvents: showState1 ? "auto" : "none" }}
         >
           <div
             className="text-foreground w-[104px] h-[104px] md:w-[225px] md:h-[225px] -mt-6 md:-mt-[51px]"
@@ -119,7 +119,9 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
         </Link>
 
         {/* Dot menu — left, top edge at 32px rail.
-            z-10 + pointer-events:auto — same fix as toggle (see comment there). */}
+            z-10 + pointer-events:auto — same fix as toggle (see comment there).
+            Only while State 1 shows: once it fades, the crest and this dot
+            must not catch taps on the page beneath them. */}
         <button
           ref={menuButton1Ref}
           onClick={() => setMenuOpen(true)}
@@ -128,7 +130,7 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
           aria-controls={SITE_MENU_ID}
           tabIndex={showState1 ? 0 : -1}
           className="absolute top-[32px] left-5 md:left-8 z-10 min-h-[44px] min-w-[44px] p-0 flex items-center gap-2 group"
-          style={{ pointerEvents: "auto" }}
+          style={{ pointerEvents: showState1 ? "auto" : "none" }}
         >
           <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
           <span className="text-xs tracking-widest uppercase text-foreground transition-all duration-(--dur-hover) ease-(--ease-soft-out) opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0">

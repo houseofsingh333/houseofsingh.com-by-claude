@@ -5,9 +5,10 @@ import { SITE_COPY_FIELDS } from "../../lib/siteCopy";
 /*
  * Site Settings, in tabs: General (title, SEO, social), Homepage chapters
  * (one section per chapter, I to VII, and the Coda), Menu, 404 page,
- * Newsletter card, and Privacy and Terms. Every text field on the chapter
- * tabs is optional: when empty, the text shown in its description is used
- * (lib/siteCopy.ts holds that text, and these fields are made from it).
+ * Newsletter card, Privacy and Terms, Projects page and Journal page. Every
+ * text field on the chapter tabs is optional: when empty, the text shown in
+ * its description is used (lib/siteCopy.ts holds that text, and these fields
+ * are made from it). The Journal page's line is the exception: empty hides it.
  */
 
 const textFields = SITE_COPY_FIELDS.map((f) =>
@@ -34,6 +35,7 @@ export const siteSettings = defineType({
     { name: "newsletter", title: "Newsletter card" },
     { name: "legal", title: "Privacy and Terms" },
     { name: "projects", title: "Projects page" },
+    { name: "journal", title: "Journal page" },
   ],
   fieldsets: [
     { name: "chapter1", title: "Chapter I, the hero", options: { collapsible: true, collapsed: true } },
@@ -153,6 +155,14 @@ export const siteSettings = defineType({
 
     /* ——— Every text: generated from lib/siteCopy.ts ——— */
     ...textFields,
+    defineField({
+      name: "journalTagline",
+      title: "Line under Journal",
+      type: "string",
+      group: "journal",
+      description:
+        "Optional. The short line under the Journal heading, for example: A diary in photographs. Leave empty to hide it.",
+    }),
 
     /* ——— Global SEO defaults ——— */
     defineField({
