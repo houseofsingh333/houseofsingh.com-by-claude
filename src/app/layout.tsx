@@ -92,8 +92,11 @@ export async function generateMetadata(): Promise<Metadata> {
       creator: "@houseofsingh",
       site: "@houseofsingh",
     },
-    // Favicon is auto-detected from app/favicon.ico (Next.js convention).
-    // No apple-touch-icon asset exists, so none is referenced.
+    // Favicon and Apple touch icon are auto-detected from app/favicon.ico and
+    // app/apple-icon.png (Next.js convention: the <link> tags are declared for
+    // us). A copy of the touch icon at public/apple-touch-icon.png answers
+    // devices that ask for that address without reading the page; the 192 and
+    // 512 icons are listed in public/site.webmanifest.
     manifest: "/site.webmanifest",
     // Only emit a verification tag when a real code is set in the CMS.
     ...(verification ? { verification: { google: verification } } : {}),
