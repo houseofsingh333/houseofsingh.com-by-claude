@@ -126,7 +126,9 @@ export default function IntroOverlay({
           onEnded={onDismiss}
           onError={onDismiss}
           onStalled={onDismiss}
-          className="w-full h-auto object-cover"
+          width={1280}
+          height={720}
+          className="w-full h-auto aspect-video object-cover"
         >
           <source
             src="/images/HOS_Logo_Animation.mp4"
