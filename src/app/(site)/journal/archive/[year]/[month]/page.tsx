@@ -2,16 +2,17 @@ import type { Metadata, ResolvingMetadata } from "next";
 import { permanentRedirect } from "next/navigation";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
-import JournalList from "@/components/journal/JournalList";
+import JournalPage from "@/components/journal/room/JournalPage";
 import NotFoundResponse from "@/components/NotFoundResponse";
 import { journalMonthHref, loadJournalEntries, monthsWithEntries } from "@/lib/journalArchive";
 import { journalMonthDescription, monthName } from "@/lib/pageDescriptions";
 
 /*
  * One month of the journal, at its own cached address with its own
- * canonical. Months with entries are built ahead; any other valid month is
- * built on first visit and cached. A month with no entries still shows the
- * journal (with its "No entries" note) but is kept out of search results.
+ * canonical: the Journal page opened at that month. Months with entries are
+ * built ahead; any other valid month is built on first visit and cached,
+ * opens at the nearest older month with entries, and is kept out of search
+ * results.
  */
 
 type Params = { year: string; month: string };
@@ -56,6 +57,5 @@ export default async function JournalMonthPage({ params }: { params: Promise<Par
   // One address per month: /journal/archive/2025/07 goes on to .../2025/7.
   const canonical = journalMonthHref(when.year, when.month);
   if (`/journal/archive/${raw.year}/${raw.month}` !== canonical) permanentRedirect(canonical);
-  const entries = await loadJournalEntries();
-  return <JournalList entries={entries} requested={when} />;
+  return <JournalPage at={{ kind: "month", year: when.year, month: when.month }} />;
 }
