@@ -564,6 +564,40 @@ html:not(.js) .mono-icon {
   }
 }
 
+/* Phones held sideways (under 1024px wide, wider than tall): a stacked
+   card cannot fit, so the card sits side by side as on desktop. The
+   photograph is 4:5 and as tall as the screen below the page header
+   allows; the caption sits beside it, aligned to its bottom, with Enter
+   the project and the arrows on one line (the short screen rule above).
+   The whole card fits the screen, as it does in portrait. */
+@media (max-width: 1023px) and (orientation: landscape) {
+  .mono-one-inner {
+    display: block;
+    position: relative;
+    max-height: none;
+  }
+  .mono-stage {
+    grid-template-rows: auto;
+  }
+  .mono-slide {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 2rem;
+    row-gap: 0;
+    align-items: end;
+  }
+  .mono-plate-frame {
+    flex: none;
+    width: auto;
+    min-height: 0;
+    height: max(10rem, calc(100svh - var(--mono-top) - 44px - 1rem - 0.75rem));
+    aspect-ratio: 4 / 5;
+  }
+  .mono-title {
+    font-size: 1.5rem;
+  }
+}
+
 /* Desktop (V1a): the plate on the left, the caption column on the right,
    aligned to the plate's bottom. The plate is as large as fits beneath the
    header, never more than 480px wide. */
