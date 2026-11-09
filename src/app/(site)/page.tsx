@@ -4,7 +4,7 @@ import Exhibition from "@/components/home/exhibition/Exhibition";
 import SpotlightBillboard from "@/components/home/SpotlightBillboard";
 import JournalFilmstrip from "@/components/home/filmstrip/JournalFilmstrip";
 import RecordChapter from "@/components/home/record/RecordChapter";
-import StudioWindow from "@/components/home/StudioWindow";
+import PracticeChapter from "@/components/home/practice/PracticeChapter";
 import { siteCopy } from "@/lib/siteCopy";
 import { sanityFetch } from "@/sanity/fetch";
 import {
@@ -113,7 +113,7 @@ export default async function HomePage() {
         <JournalFilmstrip entries={latestJournal(journalEntries)} label={copy.notebookLabel} />
       )}
       <RecordChapter playlistUrl={spotifyUrl} sleeve={settings?.listeningSleeve} copy={copy} />
-      <StudioWindow copy={copy} cards={settings?.studioWorkCards} />
+      <PracticeChapter copy={copy} cards={settings?.studioWorkCards} />
     </>
   );
 }
