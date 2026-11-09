@@ -683,152 +683,287 @@ html:not(.js) .hero-progress {
   }
 }
 
-/* ——— Window (StudioWindow), Chapter VII ———
-   A still section (canvas "Window B1"). The visit link's hairline draws
-   from left to right and its arrow eases forward on hover and keyboard
-   focus; each studio thumbnail comes into colour (its greyscale copy fades
-   away). Transforms and opacity only; reduced motion: at once. */
-.window {
+/* ——— Practice (components/home/practice), Chapter VII ———
+   Canvas "Homepage Journal: three options", page "Practice section":
+   "Call to action 1, outlined, fills on hover" (desktop) and "FINAL
+   phone". The panel widths, zoom and service fade follow data-active and
+   data-on (PracticePanels.tsx). The panel row has a fixed height, so
+   nothing moves when the photographs load. 900ms for the widths is the
+   frame's own timing (approved for this chapter); the rest uses the
+   motion tokens. Reduced motion: everything changes at once, no zoom. */
+.practice {
+  --practice-flex-dur: 900ms;
+  --practice-cap-gap: 14px;
+  --practice-cap-line: 21px;
   display: flex;
   flex-direction: column;
-  gap: 48px;
 }
-.window-main {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 32px;
-  align-items: center;
+.practice-sign {
+  display: flex;
+  flex-direction: column;
+  margin-top: 18px;
 }
-.window-logo {
+.practice-logo {
   display: block;
-  width: min(240px, 70%);
+  width: 150px;
   height: auto;
 }
-.window-text {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
+.practice-line {
+  margin-top: 24px;
+  max-width: 560px;
+  font-size: clamp(26px, calc(24.25px + 0.449vw), 30px);
+  line-height: 1.3;
 }
-.window-link {
-  align-self: flex-start;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding-top: 12px;
-  color: var(--foreground);
+.practice-business {
+  margin-top: 14px;
+  max-width: 420px;
+  font-size: 16px;
+  line-height: 1.6;
 }
-.window-link-label {
+.practice-work {
+  margin-top: 28px;
+}
+.practice-action {
+  margin-top: 30px;
+}
+
+/* The call to action: outlined; charcoal fills it from the left on hover,
+   keyboard focus or a press on a touch screen, and the arrow is replaced
+   by a second gliding in from the bottom left. */
+.practice-cta {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-size: var(--type-label-size);
+  gap: 14px;
+  padding: 18px 24px;
+  border: 1px solid var(--foreground);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--foreground);
   white-space: nowrap;
-  line-height: var(--type-label-leading);
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
+  transition: color var(--dur-hover) var(--ease-soft-out);
 }
-.window-link-arrow {
-  transition: transform var(--dur-hover) var(--ease-soft-out);
-}
-.window-link-line {
-  position: relative;
-  display: block;
-  height: 1px;
-  background: var(--border);
-}
-.window-link-line::after {
-  content: "";
+.practice-cta-fill {
   position: absolute;
   inset: 0;
+  z-index: -1;
   background: var(--foreground);
   transform: scaleX(0);
   transform-origin: left center;
+  transition: transform var(--dur-page) var(--ease-slow);
+}
+.practice-cta-arrows {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  overflow: hidden;
+}
+.practice-cta-arrow {
+  position: absolute;
+  inset: 0;
   transition: transform var(--dur-hover) var(--ease-soft-out);
 }
-.window-link:hover .window-link-line::after,
-.window-link:focus-visible .window-link-line::after {
+.practice-cta-arrow-in {
+  transform: translate(-14px, 14px);
+  transition-delay: 80ms;
+}
+.practice-cta:focus-visible,
+.practice-cta[data-pressed] {
+  color: var(--background);
+}
+.practice-cta:focus-visible .practice-cta-fill,
+.practice-cta[data-pressed] .practice-cta-fill {
   transform: scaleX(1);
 }
-.window-link:hover .window-link-arrow,
-.window-link:focus-visible .window-link-arrow {
-  transform: translate(3px, -3px);
+.practice-cta:focus-visible .practice-cta-arrow-out,
+.practice-cta[data-pressed] .practice-cta-arrow-out {
+  transform: translate(14px, -14px);
 }
-.window-work {
+.practice-cta:focus-visible .practice-cta-arrow-in,
+.practice-cta[data-pressed] .practice-cta-arrow-in {
+  transform: none;
+}
+@media (hover: hover) {
+  .practice-cta:hover {
+    color: var(--background);
+  }
+  .practice-cta:hover .practice-cta-fill {
+    transform: scaleX(1);
+  }
+  .practice-cta:hover .practice-cta-arrow-out {
+    transform: translate(14px, -14px);
+  }
+  .practice-cta:hover .practice-cta-arrow-in {
+    transform: none;
+  }
+}
+
+/* The panels. */
+.practice-panels {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-}
-.window-work-label {
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  line-height: var(--type-label-leading);
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-}
-.window-work-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-.window-work-item {
-  display: flex;
-  flex-direction: column;
   gap: 8px;
+  height: 400px;
 }
-.window-thumb {
+.practice-panel {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--foreground);
+  transition: flex-grow var(--practice-flex-dur) var(--ease-slow);
+}
+.practice-photo {
   position: relative;
   display: block;
-  aspect-ratio: 140 / 100;
+  flex: 1;
   overflow: hidden;
   background: var(--secondary);
 }
-.window-thumb-grey {
+.practice-photo-zoom {
   position: absolute;
   inset: 0;
-  filter: grayscale(1);
-  transition: opacity var(--dur-hover) var(--ease-soft-out);
+  transition: transform var(--practice-flex-dur) var(--ease-slow);
 }
-.window-work-item:hover .window-thumb-grey,
-.window-work-item:focus-visible .window-thumb-grey {
-  opacity: 0;
+.practice-cap,
+.practice-shown {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
 }
-.window-work-name {
-  font-size: 12px;
-  line-height: 1.4;
+.practice-client {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: var(--practice-cap-line);
+  text-overflow: clip;
+}
+.practice-service {
+  flex: none;
   color: var(--muted-foreground);
 }
-@media (min-width: 1024px) {
-  .window-main {
-    grid-template-columns: 380px minmax(0, 1fr);
-    gap: 72px;
+.practice-shown {
+  margin-top: var(--practice-cap-gap);
+}
+
+@media (max-width: 1023.98px) {
+  /* Phone: the first (or the chosen) panel is wide, the others narrow;
+     each panel's own caption is read by screen readers only, and the open
+     one's shows beneath the row. */
+  .practice-panel {
+    flex-grow: 0.5;
   }
-  .window-logo {
-    width: 340px;
+  .practice-panel[data-on],
+  .practice-panels:not([data-active]) .practice-panel:first-child,
+  .practice-panels[data-count="1"] .practice-panel {
+    flex-grow: 2.4;
   }
-  .window-work {
-    flex-direction: row;
-    align-items: flex-end;
-    gap: 28px;
-  }
-  .window-work-label {
-    min-width: 150px;
-    padding-bottom: 6px;
-  }
-  .window-work-list {
-    display: flex;
-    gap: 28px;
-  }
-  .window-work-item {
-    width: 140px;
+  .practice-panel .practice-cap {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
+
+@media (min-width: 1024px) {
+  /* Desktop: label at the top left; the logo, the lines and the call to
+     action at the bottom left, level with the photographs; the panels on
+     the right with their captions beneath. */
+  .practice {
+    display: grid;
+    grid-template-columns: 380px minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto auto;
+    grid-template-areas:
+      "label work"
+      ". work"
+      "sign work"
+      "action work";
+    column-gap: 88px;
+  }
+  .practice[data-panels="0"] {
+    grid-template-columns: minmax(0, 560px);
+    grid-template-rows: auto auto auto;
+    grid-template-areas: "label" "sign" "action";
+  }
+  .practice-label {
+    grid-area: label;
+  }
+  .practice-sign {
+    grid-area: sign;
+    margin-top: 28px;
+  }
+  .practice-logo {
+    width: 200px;
+  }
+  .practice-line {
+    margin-top: 26px;
+    font-size: 32px;
+  }
+  .practice-action {
+    grid-area: action;
+    margin-top: 26px;
+  }
+  .practice:not([data-panels="0"]) .practice-action {
+    /* Level with the bottom of the photographs, above the captions. */
+    padding-bottom: calc(var(--practice-cap-gap) + var(--practice-cap-line));
+  }
+  .practice-work {
+    grid-area: work;
+    margin-top: 0;
+  }
+  .practice-panels {
+    gap: 12px;
+    height: clamp(440px, 41.875vw, 600px);
+  }
+  .practice-cap {
+    margin-top: var(--practice-cap-gap);
+    overflow: hidden;
+  }
+  .practice-cap .practice-client {
+    flex: none;
+  }
+  .practice-cap .practice-service {
+    /* Hidden at rest and squeezed to nothing, so it never cuts the client
+       name short; there is room for both once the panel opens. */
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity var(--dur-page) var(--ease-slow);
+  }
+  .practice-panel[data-on] .practice-service {
+    opacity: 1;
+  }
+  .practice-panels[data-active] .practice-panel {
+    flex-grow: 0.55;
+  }
+  .practice-panels[data-active] .practice-panel[data-on] {
+    flex-grow: 1.9;
+  }
+  .practice-panel[data-on] .practice-photo-zoom {
+    transform: scale(1.03);
+  }
+  .practice-shown {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .window-link-arrow,
-  .window-link-line::after,
-  .window-thumb-grey {
+  .practice-panel,
+  .practice-photo-zoom,
+  .practice-cap .practice-service,
+  .practice-cta,
+  .practice-cta-fill,
+  .practice-cta-arrow {
     transition: none;
+  }
+  .practice-panel[data-on] .practice-photo-zoom {
+    transform: none;
   }
 }
