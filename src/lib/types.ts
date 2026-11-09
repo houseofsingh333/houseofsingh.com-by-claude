@@ -225,10 +225,12 @@ export type SpotlightData = {
   image: SanityImage;
 };
 
-/** A manual card in Chapter VII's Recent studio work row (Site Settings). */
+/** A studio work panel in Chapter VII, the practice (Site Settings, Studio work panels). */
 export type StudioWorkCard = {
   _key?: string;
   clientName?: string | null;
+  /** "Brand identity": shown beside the client name when the panel opens. */
+  service?: string | null;
   link?: string | null;
   image?: SanityImage | null;
 };
@@ -245,7 +247,7 @@ export type SiteSettings = {
   listeningIntro?: string | null;
   listeningSleeve?: SanityImage | null;
   practiceLine?: string | null;
-  /** Chapter VII: up to three manual cards under Recent studio work. */
+  /** Chapter VII: up to three studio work panels beside the studio line. */
   studioWorkCards?: StudioWorkCard[] | null;
   defaultMetaDescription?: string | null;
   organizationName?: string | null;

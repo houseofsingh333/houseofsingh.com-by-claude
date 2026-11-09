@@ -95,23 +95,24 @@ export const siteSettings = defineType({
     }),
     defineField({
       name: "studioWorkCards",
-      title: "Studio work cards",
+      title: "Studio work panels",
       type: "array",
       group: "homepage",
       fieldset: "chapter7",
       description:
-        "Optional. Up to three cards shown under Recent studio work, in this order. With none, the row and its label are hidden.",
+        "Optional. Up to three tall photographs beside the studio line, in this order; each opens its own link in a new tab. With two, two show; with none, the photographs are hidden and the rest of the chapter stays.",
       validation: (rule) => rule.max(3),
       of: [
         defineArrayMember({
           type: "object",
           name: "studioWorkCard",
-          title: "Studio work card",
+          title: "Studio work panel",
           fields: [
             defineField({
               name: "image",
-              title: "Image",
+              title: "Photograph",
               type: "image",
+              description: "Shown tall and cropped to fit: set the hotspot on what must stay in view.",
               options: { hotspot: true },
               validation: (rule) => rule.required(),
               fields: [
@@ -131,14 +132,21 @@ export const siteSettings = defineType({
               validation: (rule) => rule.required(),
             }),
             defineField({
+              name: "service",
+              title: "Service",
+              type: "string",
+              description: "For example Brand identity. Shown beside the client name when the panel is opened.",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
               name: "link",
               title: "Link",
               type: "url",
-              description: "The full address of the case study, for example https://studios.houseofsingh.com/... It opens in a new tab.",
+              description: "Any full https:// address, for example a case study on https://studios.houseofsingh.com/... It opens in a new tab.",
               validation: (rule) => httpsRule(rule.required()),
             }),
           ],
-          preview: { select: { title: "clientName", subtitle: "link", media: "image" } },
+          preview: { select: { title: "clientName", subtitle: "service", media: "image" } },
         }),
       ],
     }),
