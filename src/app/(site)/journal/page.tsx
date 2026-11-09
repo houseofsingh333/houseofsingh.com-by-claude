@@ -3,6 +3,12 @@ import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
 import JournalPage from "@/components/journal/room/JournalPage";
 import { JOURNAL_DESCRIPTION, JOURNAL_TITLE } from "@/lib/pageDescriptions";
+import JsonLd from "@/components/JsonLd";
+import { loadJournalIndex } from "@/lib/journalData";
+import { sanityFetch } from "@/sanity/fetch";
+import { siteSettingsQuery } from "@/sanity/queries";
+import { buildJournalJsonLd } from "@/lib/structured-data";
+import type { SiteSettings } from "@/lib/types";
 
 export async function generateMetadata(
   _props: unknown,
@@ -25,6 +31,17 @@ export async function generateMetadata(
  * same page opened elsewhere, at its own cached address. Old addresses
  * with ?year=&month= are sent to the month (next.config.ts).
  */
-export default function Journal() {
-  return <JournalPage at={{ kind: "latest" }} />;
+export default async function Journal() {
+  // The same fetches the page itself makes (shared, cached).
+  const [index, settings] = await Promise.all([
+    loadJournalIndex(),
+    sanityFetch<SiteSettings | null>({ query: siteSettingsQuery }),
+  ]);
+  const jsonLd = buildJournalJsonLd(index.slice(0, 20), { title: JOURNAL_TITLE, description: JOURNAL_DESCRIPTION }, settings);
+  return (
+    <>
+      <JsonLd data={jsonLd} />
+      <JournalPage at={{ kind: "latest" }} />
+    </>
+  );
 }

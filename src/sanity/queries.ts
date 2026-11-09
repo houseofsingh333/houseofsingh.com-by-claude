@@ -362,3 +362,26 @@ export const journalBySlugQuery = `*[_type == "journalEntry" && slug.current == 
   seoTitle,
   seoDescription
 }`;
+
+// --------------- llms.txt and llms-full.txt ---------------
+
+/**
+ * The text of the site for language models (app/llms.txt, app/llms-full.txt):
+ * About, every project in the Projects page's order, and the twenty most
+ * recent journal entries. Pages kept out of search results are left out.
+ */
+export const llmsQuery = `{
+  "about": *[_type == "aboutPage"][0]{
+    founderName, founderRoles, introQuote, founderBio, bioPullQuote, monikerText,
+    milestones[]{ year, title, text },
+    featuredOn[]{ name, title, date, description, url },
+    rapidFire[]{ question, answer }
+  },
+  "projects": *[_type == "project" && seo.noIndex != true] | ${_projectOrder}{
+    title, "slug": slug.current, category, year, role, excerpt, shortIntro, isUpcoming, story,
+    contentSections[]{ _type, heading, body, text, quote, attribution, stickyText }
+  },
+  "entries": *[_type == "journalEntry" && seo.noIndex != true] | order(date desc)[0...20]{
+    title, "slug": slug.current, date, excerpt, author, body
+  }
+}`;

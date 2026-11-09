@@ -8,9 +8,20 @@ import { fallbackAboutPage } from "@/lib/placeholder-data";
 import type { AboutPageData } from "@/lib/types";
 import JsonLd from "@/components/JsonLd";
 import ReadingProgress from "@/components/ReadingProgress";
-import { buildFaqJsonLd } from "@/lib/structured-data";
+import { buildAboutPageJsonLd, buildFaqJsonLd } from "@/lib/structured-data";
 import { fullTitle, pageTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
+
+/** The page's search title and description (Sanity, else these defaults). */
+function aboutCopy(data: AboutPageData | null) {
+  return {
+    rawTitle: data?.seo?.metaTitle ?? data?.seoTitle ?? "About Maninder Singh",
+    description:
+      data?.seo?.metaDescription ??
+      data?.seoDescription ??
+      "Learn about the story, values, and vision behind House of Singh.",
+  };
+}
 
 export async function generateMetadata(
   _props: unknown,
@@ -21,12 +32,7 @@ export async function generateMetadata(
   });
 
   const noIndex = data?.seo?.noIndex === true;
-  const rawTitle =
-    data?.seo?.metaTitle ?? data?.seoTitle ?? "About Maninder Singh";
-  const description =
-    data?.seo?.metaDescription ??
-    data?.seoDescription ??
-    "Learn about the story, values, and vision behind House of Singh.";
+  const { rawTitle, description } = aboutCopy(data);
 
   return {
     title: pageTitle(rawTitle),
@@ -48,9 +54,12 @@ export default async function AboutPage() {
   const about = data ?? devPlaceholder<AboutPageData | null>(fallbackAboutPage, null);
   if (!about) notFound();
   const faqJsonLd = buildFaqJsonLd(about.rapidFire);
+  const { rawTitle, description } = aboutCopy(data);
+  const aboutJsonLd = buildAboutPageJsonLd({ title: fullTitle(rawTitle), description });
 
   return (
     <>
+      <JsonLd data={aboutJsonLd} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <ReadingProgress />
       <h1 className="sr-only">About Maninder Singh</h1>

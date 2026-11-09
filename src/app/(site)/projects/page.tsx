@@ -3,6 +3,9 @@ import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
 import ProjectsMonograph from "@/components/projects/monograph/ProjectsMonograph";
 import { PROJECTS_DESCRIPTION, PROJECTS_TITLE } from "@/lib/pageDescriptions";
+import JsonLd from "@/components/JsonLd";
+import { loadMonographProjects } from "@/lib/projectsData";
+import { buildProjectsJsonLd } from "@/lib/structured-data";
 
 const TITLE = PROJECTS_TITLE;
 const DESCRIPTION = PROJECTS_DESCRIPTION;
@@ -26,6 +29,13 @@ export async function generateMetadata(
  * (/projects?p=slug) is served by view/[slug], each category by
  * category/[category], both cached too.
  */
-export default function ProjectsPage() {
-  return <ProjectsMonograph />;
+export default async function ProjectsPage() {
+  // The same list the page shows, in the same order (shared, cached fetch).
+  const projects = await loadMonographProjects();
+  return (
+    <>
+      <JsonLd data={buildProjectsJsonLd(projects, { title: TITLE, description: DESCRIPTION })} />
+      <ProjectsMonograph />
+    </>
+  );
 }

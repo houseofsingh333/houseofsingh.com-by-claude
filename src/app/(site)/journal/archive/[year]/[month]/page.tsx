@@ -6,6 +6,10 @@ import JournalPage from "@/components/journal/room/JournalPage";
 import NotFoundResponse from "@/components/NotFoundResponse";
 import { journalMonthHref, loadJournalEntries, monthsWithEntries } from "@/lib/journalArchive";
 import { journalMonthDescription, monthName } from "@/lib/pageDescriptions";
+import JsonLd from "@/components/JsonLd";
+import { loadJournalIndex } from "@/lib/journalData";
+import { monthKey, monthKeyOf } from "@/lib/journalRoom";
+import { buildBreadcrumbJsonLd, buildJournalMonthJsonLd } from "@/lib/structured-data";
 
 /*
  * One month of the journal, at its own cached address with its own
@@ -57,5 +61,21 @@ export default async function JournalMonthPage({ params }: { params: Promise<Par
   // One address per month: /journal/archive/2025/07 goes on to .../2025/7.
   const canonical = journalMonthHref(when.year, when.month);
   if (`/journal/archive/${raw.year}/${raw.month}` !== canonical) permanentRedirect(canonical);
-  return <JournalPage at={{ kind: "month", year: when.year, month: when.month }} />;
+  const key = monthKey(when.year, when.month);
+  const entries = (await loadJournalIndex()).filter((d) => monthKeyOf(d.date) === key);
+  const title = `Journal, ${monthName(when.year, when.month)}`;
+  const description = journalMonthDescription(when.year, when.month);
+  return (
+    <>
+      <JsonLd data={buildJournalMonthJsonLd(canonical, { title, description }, entries)} />
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Journal", path: "/journal" },
+          { name: monthName(when.year, when.month), path: canonical },
+        ])}
+      />
+      <JournalPage at={{ kind: "month", year: when.year, month: when.month }} />
+    </>
+  );
 }

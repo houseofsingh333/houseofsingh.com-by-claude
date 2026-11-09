@@ -42,7 +42,7 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html lang="en">
+    <html lang="en-CA">
       <head>
         <style>{`
           @font-face {
