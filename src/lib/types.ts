@@ -249,6 +249,8 @@ export type SiteSettings = {
   practiceLine?: string | null;
   /** Chapter VII: up to three studio work panels beside the studio line. */
   studioWorkCards?: StudioWorkCard[] | null;
+  /** The closing section's "Book a call" address (https only). */
+  codaBookUrl?: string | null;
   defaultMetaDescription?: string | null;
   organizationName?: string | null;
   founderName?: string | null;

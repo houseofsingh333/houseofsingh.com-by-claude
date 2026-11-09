@@ -6,6 +6,7 @@ import PageTransition from "@/components/PageTransition";
 import GlideScroll from "@/components/GlideScroll";
 import HomeFullLoad from "@/components/HomeFullLoad";
 import SmoothAnchors from "@/components/SmoothAnchors";
+import { bookingUrl } from "@/lib/booking";
 import { sanityFetch } from "@/sanity/fetch";
 import {
   menuPhotosQuery,
@@ -133,15 +134,17 @@ export default async function SiteLayout({
         </main>
         <Footer
           copy={{
-            codaCta: copy.codaCta,
-            codaLine: copy.codaLine,
+            codaInvite: copy.codaInvite,
             codaTimeLabel: copy.codaTimeLabel,
+            codaBookLabel: copy.codaBookLabel,
+            codaWriteLabel: copy.codaWriteLabel,
             codaPagesLabel: copy.codaPagesLabel,
             codaNewsletterLabel: copy.codaNewsletterLabel,
             codaNewsletterPlaceholder: copy.codaNewsletterPlaceholder,
             codaNewsletterThanks: copy.codaNewsletterThanks,
             menuInstagram: copy.menuInstagram,
           }}
+          bookUrl={bookingUrl(settings?.codaBookUrl)}
         />
       </IntroProvider>
       <SpeedInsights />

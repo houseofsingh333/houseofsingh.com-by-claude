@@ -2,6 +2,7 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 import { imageAltFields } from "./imageFields";
 import { SITE_COPY_FIELDS } from "../../lib/siteCopy";
 import { httpsRule } from "./rules";
+import { BOOKING_URL } from "../../lib/booking";
 
 /*
  * Site Settings, in tabs: General (title, SEO, social), Homepage chapters
@@ -92,6 +93,15 @@ export const siteSettings = defineType({
       description:
         "Optional. A square image for the record sleeve. When empty, a plain sleeve with the crest is shown.",
       fields: imageAltFields,
+    }),
+    defineField({
+      name: "codaBookUrl",
+      title: "Booking address (the button above the footer)",
+      type: "url",
+      group: "homepage",
+      fieldset: "coda",
+      description: `Optional. A full https:// address, opened in a new tab. When empty: ${BOOKING_URL}`,
+      validation: (rule) => httpsRule(rule),
     }),
     defineField({
       name: "studioWorkCards",

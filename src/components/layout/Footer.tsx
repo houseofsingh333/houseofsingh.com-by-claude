@@ -1,4 +1,5 @@
 import Link from "next/link";
+import OutlineCta from "@/components/OutlineCta";
 import TorontoTime from "@/components/TorontoTime";
 import type { SiteCopy } from "@/lib/siteCopy";
 import FooterNewsletter from "./FooterNewsletter";
@@ -15,9 +16,10 @@ const INSTAGRAM = "https://www.instagram.com/houseofsingh";
 
 export type FooterCopy = Pick<
   SiteCopy,
-  | "codaCta"
-  | "codaLine"
+  | "codaInvite"
   | "codaTimeLabel"
+  | "codaBookLabel"
+  | "codaWriteLabel"
   | "codaPagesLabel"
   | "codaNewsletterLabel"
   | "codaNewsletterPlaceholder"
@@ -26,28 +28,35 @@ export type FooterCopy = Pick<
 >;
 
 /**
- * The coda (canvas "Footer", frames FINAL desktop and FINAL phone):
- * "Start a project" and the time in Toronto, the only Playfair; under a
- * hairline, "Pages" and the page names (one row on desktop, two columns on
+ * The coda. Above the footer, on every page, the closing section (canvas
+ * "Closing section", frame "A, chosen: a quiet invitation, Toronto time,
+ * book a call"): the invitation in Playfair on the left; on the right the
+ * time in Toronto, "Book a call" (the outlined call to action, opening the
+ * booking address in a new tab) and a quiet link to the Contact page.
+ * Then the footer (canvas "Footer", frames FINAL desktop and FINAL phone),
+ * unchanged: under a hairline, "Pages" and the page names (one row on desktop, two columns on
  * phone, where Instagram joins them) and the newsletter; the legal line,
  * the smallest text on the site, right aligned on desktop and at the very
  * bottom on phone. Every link draws the shared hairline.
  */
-export default function Footer({ copy }: { copy: FooterCopy }) {
+export default function Footer({ copy, bookUrl }: { copy: FooterCopy; bookUrl: string }) {
   return (
     <footer className="footer-wrap">
       <div className="footer-main">
         <div className="footer-top">
-          <div className="footer-cta">
-            <Link href="/contact" className="footer-cta-link hairline">
-              {copy.codaCta}
-            </Link>
-            <p className="footer-cta-subtitle">{copy.codaLine}</p>
+          <p className="footer-invite">{copy.codaInvite}</p>
+          <div className="footer-reach">
+            <p className="footer-time">
+              <span className="footer-time-label">{copy.codaTimeLabel}</span>
+              <TorontoTime className="footer-time-value" />
+            </p>
+            <div className="footer-actions">
+              <OutlineCta href={bookUrl} label={copy.codaBookLabel} className="footer-book" />
+              <Link href="/contact" className="footer-write hairline">
+                {copy.codaWriteLabel}
+              </Link>
+            </div>
           </div>
-          <p className="footer-time">
-            <span className="footer-time-label">{copy.codaTimeLabel}</span>
-            <TorontoTime className="footer-time-value" />
-          </p>
         </div>
 
         <div className="footer-grid">

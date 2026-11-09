@@ -16,15 +16,16 @@ function Arrow({ className }: { className: string }) {
 const PRESS_MS = 900;
 
 /**
- * The call to action, "Visit House of Singh Studios": a 1px charcoal
- * outlined button in the label style. On hover and keyboard focus,
- * charcoal fills it from left to right and the text turns canvas; the
- * arrow slips out to the top right while a second glides in from the
- * bottom left (styles/home.css, Practice). A press on a touch screen
- * plays the fill briefly (data-pressed), since a touch has no hover.
- * Opens the studio site in a new tab.
+ * The outlined call to action, shared by Chapter VII ("Visit House of
+ * Singh Studios") and the closing section above the footer ("Book a
+ * call"): a 1px charcoal outline in the label style. On hover and keyboard
+ * focus, charcoal fills it from left to right and the text turns canvas;
+ * the arrow slips out to the top right while a second glides in from the
+ * bottom left (styles/motion.css, "The outlined call to action"). A press
+ * on a touch screen plays the fill briefly (data-pressed), since a touch
+ * has no hover. Opens its address in a new tab.
  */
-export default function PracticeCta({ href, label }: { href: string; label: string }) {
+export default function OutlineCta({ href, label, className }: { href: string; label: string; className?: string }) {
   const [pressed, setPressed] = useState(false);
   const timer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(timer.current), []);
@@ -34,7 +35,7 @@ export default function PracticeCta({ href, label }: { href: string; label: stri
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="practice-cta type-label"
+      className={`outline-cta type-label${className ? ` ${className}` : ""}`}
       data-pressed={pressed ? "" : undefined}
       onPointerDown={(e) => {
         if (e.pointerType === "mouse") return;
@@ -43,14 +44,14 @@ export default function PracticeCta({ href, label }: { href: string; label: stri
         timer.current = window.setTimeout(() => setPressed(false), PRESS_MS);
       }}
     >
-      <span aria-hidden="true" className="practice-cta-fill" />
-      <span className="practice-cta-text">
+      <span aria-hidden="true" className="outline-cta-fill" />
+      <span className="outline-cta-text">
         {label}
         <span className="sr-only"> (opens in a new tab)</span>
       </span>
-      <span aria-hidden="true" className="practice-cta-arrows">
-        <Arrow className="practice-cta-arrow practice-cta-arrow-out" />
-        <Arrow className="practice-cta-arrow practice-cta-arrow-in" />
+      <span aria-hidden="true" className="outline-cta-arrows">
+        <Arrow className="outline-cta-arrow outline-cta-arrow-out" />
+        <Arrow className="outline-cta-arrow outline-cta-arrow-in" />
       </span>
     </a>
   );
