@@ -511,13 +511,16 @@ a.press-cutting:hover .press-mat {
   }
 }
 
-/* ——— VI · In conversation ——— */
+/* ——— VI · In conversation ———
+   The heading beside the questions only from 1280px, so that below it the
+   replies have the full width. Replies run to the site's reading measure
+   (about 75 characters at their size), not a narrower fixed width. */
 .about-conversation {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 40px;
 }
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .about-conversation {
     grid-template-columns: 320px minmax(0, 1fr);
     gap: 96px;
@@ -587,7 +590,8 @@ html:not(.js) .convo-eye {
   background: var(--accent);
 }
 .convo-reply {
-  max-width: 680px;
+  max-width: 38em;
+  text-wrap: pretty;
   font-family: var(--font-editorial);
   font-size: clamp(22px, calc(20.25px + 0.449vw), 26px);
   line-height: 1.45;
@@ -596,9 +600,6 @@ html:not(.js) .convo-eye {
 @media (min-width: 768px) {
   .convo-q {
     font-size: 18px;
-  }
-  .convo-a {
-    padding-left: 64px;
   }
 }
 @media (prefers-reduced-motion: no-preference) {
