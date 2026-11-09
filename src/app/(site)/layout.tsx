@@ -4,6 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import PageTransition from "@/components/PageTransition";
 import GlideScroll from "@/components/GlideScroll";
+import HomeFullLoad from "@/components/HomeFullLoad";
 import { sanityFetch } from "@/sanity/fetch";
 import {
   menuPhotosQuery,
@@ -124,6 +125,7 @@ export default async function SiteLayout({
           }}
         />
         <GlideScroll />
+      <HomeFullLoad />
         <main id="main-content" className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>

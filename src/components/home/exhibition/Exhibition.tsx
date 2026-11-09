@@ -86,7 +86,7 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
                 {project.excerpt && (
                   <p className="mt-2 text-[14px] leading-[1.6] text-foreground">{project.excerpt}</p>
                 )}
-                <Link href={href} className="exhibition-label-enter mt-3 self-start type-label text-foreground border-b border-foreground pb-1">
+                <Link href={href} className="exhibition-label-enter mt-3 type-label text-foreground border-b border-foreground pb-1">
                   {copy.workEnterLink}
                 </Link>
               </div>
