@@ -1,3 +1,4 @@
+import { countedInput } from "../components/CountedInput";
 import { defineField, defineType } from "sanity";
 import { httpsRule } from "./rules";
 import { imageAltFields } from "./imageFields";
@@ -203,18 +204,31 @@ export const aboutPage = defineType({
               name: "year",
               title: "Year",
               type: "string",
-              validation: (rule) => rule.required(),
+              description: "Four digits, for example 2024. The Journey lists milestones newest first; within a year, in the order set here.",
+              validation: (rule) =>
+                rule.required().regex(/^\d{4}$/, { name: "four digit year" }).error("The year must be exactly four digits, for example 2024."),
             }),
             defineField({
               name: "title",
               title: "Title",
               type: "string",
-              validation: (rule) => rule.required(),
+              description: "At most 30 characters, so it fits one line.",
+              components: { input: countedInput(30, 26) },
+              validation: (rule) => [
+                rule.required().max(30).error("At most 30 characters, so the title fits one line."),
+                rule.max(26).warning("Close to the 30 character limit."),
+              ],
             }),
             defineField({
               name: "text",
               title: "Description",
               type: "string",
+              description: "At most 75 characters, shown under the title when the milestone is on the reading line.",
+              components: { input: countedInput(75, 66) },
+              validation: (rule) => [
+                rule.max(75).error("At most 75 characters, so the description fits two lines."),
+                rule.max(66).warning("Close to the 75 character limit."),
+              ],
             }),
             defineField({
               name: "image",
