@@ -244,8 +244,6 @@ export type SiteSettings = {
   spotifyPlaylistUrl?: string;
   listeningHeading?: string | null;
   listeningNote?: string | null;
-  listeningIntro?: string | null;
-  listeningSleeve?: SanityImage | null;
   practiceLine?: string | null;
   /** Chapter VII: up to three studio work panels beside the studio line. */
   studioWorkCards?: StudioWorkCard[] | null;

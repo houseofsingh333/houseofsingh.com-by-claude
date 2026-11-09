@@ -529,37 +529,120 @@ html:not(.js) .hero-progress {
   }
 }
 
-/* ——— Record (home/record), Chapter VI ———
-   A square sleeve with a vinyl disc peeking out from behind it. The disc
-   turns slowly, one turn per --dur-record-turn, only while the playlist
-   plays: RecordPlayer sets data-playing on .record from Spotify's playback
-   events. Paused, it stops where it is. Reduced motion: it never turns.
-   The sleeve is 64% of the width and square, so the record is 100:64. */
+/* ——— Turntable (home/record), Chapter VI ———
+   Canvas "On my turntable", frame "A with C". Text on the left (about
+   400px), on the right the sleeve with the record behind it and the
+   compact player beneath; one column on phones.
+   The record has three places (RecordPlayer sets the attributes): inside
+   the sleeve (no JavaScript, or not yet seen); data-arrived, a peek of a
+   quarter of the record; data-playing, out past half its width, turning
+   one turn per --dur-record-turn. Paused (data-settling) it stops turning
+   at once and slides back after 0.7s. The slide is the frame's 1200ms on
+   --ease-slow (approved for this chapter). Reduced motion: places change
+   at once and it never turns. */
+.turntable {
+  --sleeve: 228px;
+  --disc: 210px;
+  --out: 0.53;
+  --turntable-slide: 1200ms;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 48px;
+}
+.turntable-text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 400px;
+}
+.turntable-heading {
+  font-size: clamp(36px, calc(28.99px + 1.798vw), 52px);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+.turntable-note {
+  font-size: clamp(20px, calc(19.12px + 0.225vw), 22px);
+  line-height: 1.4;
+  text-wrap: balance;
+}
+.turntable-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
 .record {
+  --inside: calc((var(--sleeve) - var(--disc)) / 2);
+  --x: 0px;
   position: relative;
-  width: 100%;
-  aspect-ratio: 100 / 64;
+  width: var(--sleeve);
+  height: var(--sleeve);
+}
+.record[data-arrived] {
+  --x: calc(var(--inside) + var(--disc) * 0.25);
+}
+.record[data-playing] {
+  --x: calc(var(--inside) + var(--disc) * var(--out));
 }
 .record-sleeve {
   position: absolute;
   z-index: 1;
-  left: 0;
-  top: 0;
-  width: 64%;
-  aspect-ratio: 1;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(var(--sleeve) * 0.079);
   background: var(--secondary);
   box-shadow:
-    0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent),
-    0 12px 32px color-mix(in srgb, var(--foreground) 10%, transparent);
+    0 1px 2px color-mix(in srgb, var(--foreground) 6%, transparent),
+    0 18px 40px color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+.record-sleeve-top,
+.record-sleeve-genres {
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--muted-foreground-panel);
+}
+.record-sleeve-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  white-space: nowrap;
+}
+.record-sleeve-genres {
+  white-space: pre-line;
+}
+.record-sleeve-title {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--font-editorial);
+  font-size: calc(var(--sleeve) * 0.129);
+  line-height: 1.02;
+  white-space: pre-line;
+  color: var(--foreground);
+}
+.record-sleeve-rule {
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
 }
 .record-disc {
   position: absolute;
-  left: 40%;
-  top: 3.125%;
-  width: 60%;
+  left: var(--inside);
+  top: var(--inside);
+  width: var(--disc);
   aspect-ratio: 1;
   border-radius: 50%;
   box-shadow: 0 10px 28px color-mix(in srgb, var(--foreground) 14%, transparent);
+  transform: translateX(var(--x));
+  transition: transform var(--turntable-slide) var(--ease-slow);
+}
+/* Paused: stop turning at once, then slide back. */
+.record[data-settling]:not([data-playing]) .record-disc {
+  transition-delay: 700ms;
 }
 .record-spin {
   position: absolute;
@@ -586,7 +669,7 @@ html:not(.js) .hero-progress {
 }
 .record-label {
   position: absolute;
-  inset: 31%;
+  inset: 32%;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -611,31 +694,36 @@ html:not(.js) .hero-progress {
   mask: url(/images/hos-logo.svg) center / contain no-repeat;
 }
 .record-label-crest {
-  width: 72%;
+  width: 78%;
   aspect-ratio: 1;
   color: var(--foreground);
 }
-.record-sleeve-crest {
-  position: absolute;
-  inset: 26%;
-  color: var(--muted-foreground);
+@media (min-width: 640px) {
+  .turntable {
+    --sleeve: 300px;
+    --disc: 270px;
+    --out: 0.56;
+  }
 }
-/* The tag hangs from the sleeve's lower edge, so it covers little of it. */
-.record-tag {
-  position: absolute;
-  z-index: 1;
-  left: 16px;
-  bottom: 0;
-  transform: translateY(50%);
-  padding: 6px 10px;
-  background: var(--background);
-  border: 1px solid var(--border);
-  color: var(--foreground);
-  font-size: var(--type-label-size);
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
-  line-height: var(--type-label-leading);
-  white-space: nowrap;
+@media (min-width: 1024px) {
+  .turntable {
+    --sleeve: 380px;
+    --disc: 340px;
+    grid-template-columns: 400px minmax(0, 1fr);
+    column-gap: 96px;
+    align-items: center;
+  }
+  .turntable-text {
+    max-width: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .record-disc {
+    transition: none;
+  }
+  .record-spin {
+    animation: none;
+  }
 }
 /* Focus returns here after a tap into the player (RecordPlayer's safety
    net): no ring, as the visitor did not move it. */
@@ -677,12 +765,6 @@ html:not(.js) .hero-progress {
   height: 100%;
   border: 0;
 }
-@media (prefers-reduced-motion: reduce) {
-  .record-spin {
-    animation: none;
-  }
-}
-
 /* ——— Practice (components/home/practice), Chapter VII ———
    Canvas "Homepage Journal: three options", page "Practice section":
    "Call to action 1, outlined, fills on hover" (desktop) and "FINAL

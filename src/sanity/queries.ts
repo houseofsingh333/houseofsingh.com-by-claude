@@ -54,7 +54,6 @@ export const menuPhotosQuery = `{
  */
 export const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   ...,
-  "listeningSleeve": listeningSleeve ${_imageAsset},
   "studioWorkCards": studioWorkCards[]{ _key, clientName, service, link, "image": image ${_imageAsset} }
 }`;
 

@@ -112,7 +112,7 @@ export default async function HomePage() {
       {journalEntries.length > 0 && (
         <JournalFilmstrip entries={latestJournal(journalEntries)} label={copy.notebookLabel} />
       )}
-      <RecordChapter playlistUrl={spotifyUrl} sleeve={settings?.listeningSleeve} copy={copy} />
+      <RecordChapter playlistUrl={spotifyUrl} copy={copy} />
       <PracticeChapter copy={copy} cards={settings?.studioWorkCards} />
     </>
   );

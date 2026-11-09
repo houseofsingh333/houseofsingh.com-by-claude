@@ -81,18 +81,7 @@ export const siteSettings = defineType({
       fieldset: "chapter6",
       validation: (rule) => httpsRule(rule),
       description:
-        "The embed URL for your Spotify playlist (e.g. https://open.spotify.com/embed/playlist/...)",
-    }),
-    defineField({
-      name: "listeningSleeve",
-      title: "Record sleeve",
-      type: "image",
-      group: "homepage",
-      fieldset: "chapter6",
-      options: { hotspot: true },
-      description:
-        "Optional. A square image for the record sleeve. When empty, a plain sleeve with the crest is shown.",
-      fields: imageAltFields,
+        "Your Spotify playlist's address (https://open.spotify.com/playlist/... or its embed address). Shown as the compact player.",
     }),
     defineField({
       name: "codaBookUrl",
