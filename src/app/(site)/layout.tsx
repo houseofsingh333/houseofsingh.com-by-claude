@@ -129,7 +129,18 @@ export default async function SiteLayout({
         <main id="main-content" className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>
-        <Footer copy={{ codaCta: copy.codaCta, codaLine: copy.codaLine, codaTimeLabel: copy.codaTimeLabel }} />
+        <Footer
+          copy={{
+            codaCta: copy.codaCta,
+            codaLine: copy.codaLine,
+            codaTimeLabel: copy.codaTimeLabel,
+            codaPagesLabel: copy.codaPagesLabel,
+            codaNewsletterLabel: copy.codaNewsletterLabel,
+            codaNewsletterPlaceholder: copy.codaNewsletterPlaceholder,
+            codaNewsletterThanks: copy.codaNewsletterThanks,
+            menuInstagram: copy.menuInstagram,
+          }}
+        />
       </IntroProvider>
       <SpeedInsights />
     </>

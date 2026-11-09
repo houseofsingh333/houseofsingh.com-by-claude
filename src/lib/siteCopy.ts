@@ -87,6 +87,16 @@ export const SITE_COPY_FIELDS = [
     text: "Let’s talk about a project, collaboration or an idea you may have",
   },
   { name: "codaTimeLabel", title: "Time label", group: "homepage", fieldset: "coda", text: "In Toronto it is" },
+  { name: "codaPagesLabel", title: "Label over the page links", group: "homepage", fieldset: "coda", text: "Pages" },
+  { name: "codaNewsletterLabel", title: "Newsletter label", group: "homepage", fieldset: "coda", text: "Newsletter" },
+  { name: "codaNewsletterPlaceholder", title: "Newsletter field, faint text inside it", group: "homepage", fieldset: "coda", text: "Your email address" },
+  {
+    name: "codaNewsletterThanks",
+    title: "Newsletter, after signing up (beside the postmark)",
+    group: "homepage",
+    fieldset: "coda",
+    text: "Received. The next letter will find you.",
+  },
 
   // ——— Projects page ———
   { name: "projectsHeading", title: "Heading", group: "projects", text: "Projects" },
