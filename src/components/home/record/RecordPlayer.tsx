@@ -79,66 +79,61 @@ type Props = {
 };
 
 /**
- * The Spotify player under the record. It mounts once the chapter nears
- * the viewport (the embed is heavy) and never depends on Spotify's iFrame
- * API: the normal Spotify iframe is shown straight away. Meanwhile the API
- * loads, and builds its own player out of sight; only if that player is
- * ready within API_TIMEOUT_MS, and the visitor has not started using the
- * normal one, does it take the normal player's place. Its playback events
- * then set data-playing on the record: the disc turns while Spotify plays
- * and stops when it pauses.
+ * The Spotify player under the record, driving the disc: it turns while the
+ * music plays and stops when it pauses.
  *
- * Safety net, when the API never takes over (blocked, slow, or the visitor
- * pressed play first): the disc starts turning when focus moves into the
- * normal player (the visitor clicked it) and stops when the section leaves
- * the viewport; if the player still has focus when the section returns,
- * the disc turns again. Reduced motion: the disc never turns (CSS).
+ * The player area mounts well before the chapter is in view (the embed is
+ * heavy), and Spotify's iFrame API builds its player there; the area shows
+ * its quiet placeholder until that player is ready, so the visitor never
+ * starts a player that is about to be replaced. Its playback events then
+ * set data-playing on the record. Only if the API is refused, fails, or is
+ * not ready within API_TIMEOUT_MS does the ordinary Spotify iframe take its
+ * place: the site never depends on the API to play music.
+ *
+ * Safety net, with the ordinary iframe (no play or pause signal reaches the
+ * page from it): each tap into the player toggles the disc (focus is handed
+ * back to the page after a tap, so the next tap is seen too; a keyboard
+ * visitor tabbing in keeps their focus and the disc simply starts); the
+ * disc stops when the tab is hidden or the section leaves the screen, and
+ * it never turns more than BACKUP_MAX_MS without a confirming tap.
+ * Reduced motion: the disc never turns (CSS).
  */
+/** The safety net never turns the disc longer than this without a new tap. */
+const BACKUP_MAX_MS = 30000;
+
 export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
   const holderRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
   const plainRef = useRef<HTMLIFrameElement>(null);
-  const inView = useInView(holderRef, { rootMargin: "200px" });
-  // True once the API's player has taken over from the normal one.
+  // Mount early, so the API's player is usually ready by the time it is seen.
+  const inView = useInView(holderRef, { rootMargin: "1200px 0px" });
+  // The API's player is ready and shown.
   const [handedOver, setHandedOver] = useState(false);
+  // The API was refused, failed or ran out of time: the ordinary iframe.
+  const [fallback, setFallback] = useState(false);
   const uri = toUri(embedSrc);
+  // The ordinary iframe: the API failed, or there is no Spotify address for it.
+  const plain = fallback || (inView && !uri);
 
+  // The API's player.
   useEffect(() => {
     const mount = mountRef.current;
+    if (!inView || !mount) return;
     // Without a Spotify address there is nothing for the API to control.
-    if (!inView || !mount || !uri) return;
+    if (!uri) return;
     const record = document.getElementById(recordId);
-    let stopped = false; // unmounted, out of time, or the visitor began
+    let stopped = false;
     let handed = false;
     let controller: Controller | null = null;
     const giveUp = () => {
-      if (handed) return;
+      if (handed || stopped) return;
       stopped = true;
       controller?.destroy();
       controller = null;
       mount.replaceChildren();
+      setFallback(true);
     };
     const deadline = window.setTimeout(giveUp, API_TIMEOUT_MS);
-    // The section in view or not, for the safety net below.
-    let inSection = true;
-    const playerFocused = () => !!plainRef.current && document.activeElement === plainRef.current;
-    const section = holderRef.current?.closest("section") ?? null;
-    const sectionObserver = new IntersectionObserver((entries) => {
-      inSection = entries.some((e) => e.isIntersecting);
-      if (handed) return;
-      if (!inSection) record?.removeAttribute("data-playing");
-      else if (playerFocused()) record?.setAttribute("data-playing", "");
-    });
-    if (section) sectionObserver.observe(section);
-    // Focus moving into the normal player means the visitor is using it:
-    // never swap it out from under them, and (the safety net) turn the disc.
-    const onBlur = () =>
-      window.setTimeout(() => {
-        if (!playerFocused()) return;
-        giveUp();
-        if (!handed && inSection) record?.setAttribute("data-playing", "");
-      }, 0);
-    window.addEventListener("blur", onBlur);
 
     // The API replaces this element with its own iframe; React never
     // renders into the mount, so the swap cannot upset it.
@@ -170,8 +165,6 @@ export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
     return () => {
       stopped = true;
       window.clearTimeout(deadline);
-      window.removeEventListener("blur", onBlur);
-      sectionObserver.disconnect();
       controller?.destroy();
       mount.replaceChildren();
       record?.removeAttribute("data-playing");
@@ -179,15 +172,71 @@ export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
     };
   }, [inView, uri, recordId, title]);
 
+  // The safety net, only with the ordinary iframe.
+  useEffect(() => {
+    if (!plain) return;
+    const record = document.getElementById(recordId);
+    const section = holderRef.current?.closest("section") ?? null;
+    let inSection = true;
+    let lastKey = 0;
+    let cap = 0;
+    const stop = () => {
+      window.clearTimeout(cap);
+      record?.removeAttribute("data-playing");
+    };
+    const start = () => {
+      if (!inSection || document.hidden) return;
+      record?.setAttribute("data-playing", "");
+      window.clearTimeout(cap);
+      cap = window.setTimeout(stop, BACKUP_MAX_MS);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Tab") lastKey = performance.now();
+    };
+    // Focus moving into the player: a tap (or a keyboard visitor tabbing in).
+    const onBlur = () =>
+      window.setTimeout(() => {
+        const frame = plainRef.current;
+        if (!frame || document.activeElement !== frame) return;
+        const byKeyboard = performance.now() - lastKey < 800;
+        if (byKeyboard) return start();
+        if (record?.hasAttribute("data-playing")) stop();
+        else start();
+        // Hand focus back to the page once the tap has landed, so the next
+        // tap into the player is seen as well.
+        window.setTimeout(() => {
+          if (document.activeElement === frame) holderRef.current?.focus({ preventScroll: true });
+        }, 400);
+      }, 0);
+    const onVisibility = () => {
+      if (document.hidden) stop();
+    };
+    const observer = new IntersectionObserver((entries) => {
+      inSection = entries.some((e) => e.isIntersecting);
+      if (!inSection) stop();
+    });
+    if (section) observer.observe(section);
+    window.addEventListener("keydown", onKey, true);
+    window.addEventListener("blur", onBlur);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("keydown", onKey, true);
+      window.removeEventListener("blur", onBlur);
+      document.removeEventListener("visibilitychange", onVisibility);
+      stop();
+    };
+  }, [plain, recordId]);
+
   return (
-    <div ref={holderRef} className="record-player" style={{ height: PLAYER_HEIGHT }}>
-      {/* Shown until the player arrives, which then covers it. */}
+    <div ref={holderRef} tabIndex={-1} className="record-player" style={{ height: PLAYER_HEIGHT }}>
+      {/* Shown until a player arrives, which then covers it. */}
       <span aria-hidden="true" className="record-player-placeholder">
         Playlist
       </span>
-      {/* The API's player, out of sight until it is ready to take over. */}
+      {/* The API's player, out of sight until it is ready. */}
       <div ref={mountRef} className="record-player-mount" data-ready={handedOver ? "" : undefined} />
-      {inView && !handedOver && (
+      {plain && (
         <iframe
           ref={plainRef}
           title={title}

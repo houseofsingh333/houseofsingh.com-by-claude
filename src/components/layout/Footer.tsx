@@ -11,12 +11,29 @@ const NAV_LINKS = [
   { label: "Contact", href: "/contact" },
 ];
 
+const INSTAGRAM = "https://www.instagram.com/houseofsingh";
+
+export type FooterCopy = Pick<
+  SiteCopy,
+  | "codaCta"
+  | "codaLine"
+  | "codaTimeLabel"
+  | "codaPagesLabel"
+  | "codaNewsletterLabel"
+  | "codaNewsletterPlaceholder"
+  | "codaNewsletterThanks"
+  | "menuInstagram"
+>;
+
 /**
- * The coda: "Start a project" at monumental size with its line, the time
- * in Toronto, the site links and the newsletter, and a bottom line with the
- * copyright, Privacy and Terms.
+ * The coda (canvas "Footer", frames FINAL desktop and FINAL phone):
+ * "Start a project" and the time in Toronto, the only Playfair; under a
+ * hairline, "Pages" and the page names (one row on desktop, two columns on
+ * phone, where Instagram joins them) and the newsletter; the legal line,
+ * the smallest text on the site, right aligned on desktop and at the very
+ * bottom on phone. Every link draws the shared hairline.
  */
-export default function Footer({ copy }: { copy: Pick<SiteCopy, "codaCta" | "codaLine" | "codaTimeLabel"> }) {
+export default function Footer({ copy }: { copy: FooterCopy }) {
   return (
     <footer className="footer-wrap">
       <div className="footer-main">
@@ -34,14 +51,31 @@ export default function Footer({ copy }: { copy: Pick<SiteCopy, "codaCta" | "cod
         </div>
 
         <div className="footer-grid">
-          <nav aria-label="Footer" className="footer-nav">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href} className="footer-nav-link hairline">
-                {link.label}
-              </Link>
-            ))}
+          <nav aria-labelledby="footer-pages" className="footer-pages">
+            <span id="footer-pages" className="footer-label">
+              {copy.codaPagesLabel}
+            </span>
+            <ul className="footer-nav" role="list">
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="footer-nav-link hairline">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              <li className="footer-nav-phone">
+                <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer" className="footer-nav-link hairline">
+                  {copy.menuInstagram}
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </li>
+            </ul>
           </nav>
-          <FooterNewsletter />
+          <FooterNewsletter
+            label={copy.codaNewsletterLabel}
+            placeholder={copy.codaNewsletterPlaceholder}
+            thanks={copy.codaNewsletterThanks}
+          />
         </div>
       </div>
 

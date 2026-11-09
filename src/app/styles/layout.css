@@ -89,161 +89,296 @@ html:not(.js) .footer-time {
   display: none;
 }
 
+/* ——— Under the hairline (canvas "Footer", FINAL desktop and FINAL phone):
+   "Pages" and the page names, and the newsletter. Instrument Sans only. */
 .footer-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 32px;
-  padding-top: 32px;
+  gap: 40px;
+  padding-top: 24px;
   border-top: 1px solid var(--border);
 }
 
-.footer-nav {
+/* The two small labels, "Pages" and "Newsletter": the label token. */
+.footer-label {
+  display: block;
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+}
+
+.footer-pages {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0 24px;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Phone: two columns, Instagram joins the list. */
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .footer-nav-link {
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-  line-height: 2.8;
+  display: inline-block;
+  padding-bottom: 4px;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--foreground);
 }
 
-/* Newsletter */
+/* ——— Newsletter ——— */
 
-.footer-nl-label {
-  display: block;
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  text-transform: uppercase;
-  letter-spacing: var(--type-label-tracking);
-  color: var(--muted-foreground);
-  line-height: 2.8;
+.footer-newsletter {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+/* Phone: its own hairline above, as the pages have. */
+@media (max-width: 767px) {
+  .footer-newsletter {
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* The field and, once signed up, the postmark share one place. */
+.footer-nl-stage {
+  position: relative;
+  min-height: 104px;
 }
 
 .footer-nl-form {
+  position: relative;
   display: flex;
   align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  /* The resting line under the field. */
+  background: linear-gradient(var(--border), var(--border)) 0 100% / 100% 1px no-repeat;
+  transition: opacity var(--dur-hover) var(--ease-slow);
+}
+.footer-nl-form[data-done] {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .footer-nl-input {
-  width: 100%;
-  max-width: 280px;
-  font-size: 14px;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
   font-family: inherit;
-  border: none;
-  border-bottom: 1px solid var(--border);
-  background: transparent;
-  padding: 6px 0;
+  font-size: 15px;
+  line-height: 1.5;
   color: var(--foreground);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+.footer-nl-input::placeholder {
+  color: var(--muted-foreground-inverse);
+  opacity: 1;
+}
+/* Its focus is the brass line drawn beneath it (below), not a ring. */
+.footer-nl-input:focus-visible {
   outline: none;
 }
 
-.footer-nl-input:focus-visible {
-  border-bottom-color: var(--foreground);
+/* Focus: a brass line draws under the field. */
+.footer-nl-line {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
 }
-
-.footer-nl-input::placeholder {
-  color: var(--muted-foreground);
+.footer-nl-form:focus-within .footer-nl-line {
+  transform: scaleX(1);
 }
 
 .footer-nl-btn {
-  min-width: 44px;
-  min-height: 44px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--muted-foreground);
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   font-family: inherit;
+  font-size: 18px;
+  color: var(--foreground);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
-
-.footer-nl-btn:hover {
-  color: var(--foreground);
-}
-
 .footer-nl-arrow {
   display: inline-block;
-  font-size: 15px;
   transition: transform var(--dur-hover) var(--ease-soft-out);
 }
-
+/* Focus (or pointing at it): the arrow turns brass and eases forward. */
+.footer-nl-form:focus-within .footer-nl-btn,
+.footer-nl-btn:hover {
+  color: var(--accent);
+}
+.footer-nl-form:focus-within .footer-nl-arrow,
 .footer-nl-btn:hover .footer-nl-arrow {
   transform: translateX(4px);
 }
-
 .footer-nl-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  cursor: progress;
 }
 
+/* Signed up: the postmark draws itself beside the thank you line. */
+.footer-nl-done {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.footer-postmark {
+  flex: none;
+  overflow: visible;
+}
+.footer-postmark circle {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-dasharray: 302;
+  stroke-dashoffset: 0;
+}
+.footer-postmark text {
+  font-family: var(--font-instrument), Arial, sans-serif;
+  text-anchor: middle;
+}
+.footer-postmark .pm-place,
+.footer-postmark .pm-year {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  fill: var(--accent);
+}
+.footer-postmark .pm-day {
+  font-size: 13px;
+  letter-spacing: 1px;
+  fill: var(--foreground);
+}
 .footer-nl-thanks {
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  line-height: var(--type-label-leading);
-  text-transform: uppercase;
-  letter-spacing: var(--type-label-tracking);
-  color: var(--muted-foreground);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .footer-postmark circle {
+    animation: postmark-draw var(--dur-reveal) var(--ease-slow) both;
+  }
+  .footer-postmark-text {
+    animation: postmark-rise var(--dur-image) var(--ease-slow) 900ms both;
+  }
+  .footer-nl-thanks {
+    animation: postmark-rise var(--dur-image) var(--ease-slow) 600ms both;
+  }
+}
+@keyframes postmark-draw {
+  from {
+    stroke-dashoffset: 302;
+  }
+}
+@keyframes postmark-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
 
+/* Errors: written below the line. */
 .footer-nl-error {
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.5;
   color: var(--error);
-  margin-top: 4px;
 }
 
-/* Bottom line */
+/* ——— The legal line: the smallest text on the site (11px), at the very
+   bottom on phone, right aligned on desktop. Muted grey, not lighter: at
+   11px a lighter grey would fall below the 4.5:1 contrast text needs. ——— */
 
 .footer-bottom {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 24px;
-  padding: 20px 24px 28px;
+  align-items: baseline;
+  gap: 8px 18px;
+  margin: 0 24px;
+  padding: 14px 0 24px;
   border-top: 1px solid var(--border);
 }
 
 .footer-bottom-copyright,
 .footer-bottom-link {
-  font-size: var(--type-label-size);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
   white-space: nowrap;
-  line-height: var(--type-label-leading);
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
   color: var(--muted-foreground);
 }
-
-
+.footer-bottom-link {
+  padding-bottom: 2px;
+}
 
 @media (min-width: 768px) {
   .footer-main {
     padding: 96px 64px 48px;
   }
-  .footer-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 40px;
-  }
-  .footer-nav {
-    flex-direction: column;
-  }
   .footer-cta-subtitle {
     font-size: 18px;
   }
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+    justify-content: space-between;
+    gap: 40px;
+    padding-top: 36px;
+  }
+  /* Desktop: one row of page names; Instagram stays in the menu. */
+  .footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+  }
+  .footer-nav-phone {
+    display: none;
+  }
   .footer-bottom {
-    padding: 20px 64px 28px;
+    justify-content: flex-end;
+    gap: 8px 22px;
+    margin: 0 64px;
+    padding: 0 0 24px;
+    border-top: 0;
   }
 }
 
 @media (min-width: 1024px) {
+  /* The frame's content edges: 96px at 1280, in proportion around it. */
+  .footer-main {
+    padding: 96px max(64px, 7.5%) 72px;
+  }
   .footer-top {
     grid-template-columns: minmax(0, 1fr) 280px;
     gap: 80px;
   }
-  .footer-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .footer-time {
+    align-items: flex-end;
+  }
+  .footer-bottom {
+    margin: 0 max(64px, 7.5%);
   }
 }
 
@@ -251,6 +386,8 @@ html:not(.js) .footer-time {
   .footer-cta-link,
   .footer-nav-link,
   .footer-bottom-link,
+  .footer-nl-form,
+  .footer-nl-line,
   .footer-nl-btn,
   .footer-nl-arrow {
     transition: none;
