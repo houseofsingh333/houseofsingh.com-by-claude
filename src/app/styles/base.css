@@ -5,13 +5,9 @@ html {
   scrollbar-gutter: stable;
 }
 
-/* Smooth scrolling (anchor jumps, the skip link) only when the visitor
-   allows motion; otherwise the browser default of an instant jump. */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
+/* No smooth scrolling on <html>: a new page opens at its top at once and
+   Back returns to where the reader was, both instantly. Links to an anchor
+   on the same page glide (components/SmoothAnchors.tsx), motion allowed. */
 
 /* Instrument Sans comes in regular and medium: strong text uses medium,
    never a synthesised bold. */

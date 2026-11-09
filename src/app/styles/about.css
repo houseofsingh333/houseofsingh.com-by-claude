@@ -165,145 +165,362 @@ a.press-cutting:hover .press-mat {
   transform: translateY(-2px);
 }
 
-/* ——— V · Journey walk ———
-   A sideways row. The current milestone (data-active, set by JourneyWalk
-   from the scroll position) shows its year in charcoal and its photograph
-   in full; the others wait in grey with faded photographs. Opacity only.
-   Without JavaScript (no data-walking) every milestone is in full. */
-.walk-row {
-  display: flex;
-  gap: 48px;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-  padding-inline: 24px;
-  scroll-padding-inline: 24px;
-}
-.walk-row::-webkit-scrollbar {
-  display: none;
-}
-.walk-card {
-  flex: 0 0 auto;
-  width: min(76vw, 420px);
+/* ——— V · Journey ledger (JourneyLedger.tsx) ———
+   Canvas "About, Journey": "FINAL desktop" and "FINAL phone". The year
+   leads each line. The line on the reading line (between the brass
+   hairline and the light one) is at full strength with its description;
+   the others fade by distance (data-d): 0.64 beside it (the lightest that
+   keeps its text at 4.5:1, approved 9 Nov), then 0.16 and 0.08, inactive.
+   The arrival rise is on the wrapper (.jl-rise, the shared scroll reveal),
+   never on the line, so each line rests at its own fade afterwards.
+   900ms for a turn is the frame's own timing (approved for this chapter);
+   the rest uses the motion tokens. Reduced motion: everything at once,
+   no rise, no develop, the hint dot still. */
+.about-journey {
+  --jl-row: 104px;
+  --jl-lines: 3;
+  --jl-turn: 900ms;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  scroll-snap-align: start;
+  gap: 32px;
 }
-/* Lets the last milestone reach the start of the row. */
-.walk-end {
-  flex: 0 0 auto;
-  width: max(0px, calc(100vw - min(76vw, 420px) - 120px));
-}
-.walk-year {
+.jl {
   display: grid;
-  font-family: var(--font-editorial);
-  font-size: clamp(72px, calc(50.97px + 5.393vw), 120px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "side" "ledger";
+  row-gap: 32px;
 }
-.walk-year > span {
-  grid-area: 1 / 1;
-  transition: opacity var(--dur-image) var(--ease-slow);
-}
-.walk-year-on {
-  color: var(--foreground);
-}
-.walk-year-off {
-  color: var(--muted-foreground);
-  opacity: 0;
-}
-.walk-photo {
+.jl-ledger {
+  grid-area: ledger;
   position: relative;
-  aspect-ratio: 3 / 2;
-  overflow: hidden;
-  background: var(--secondary);
-  transition: opacity var(--dur-image) var(--ease-slow);
+  outline-offset: 4px;
 }
-.walk-title {
-  font-family: var(--font-editorial);
-  font-weight: 400;
-  font-size: clamp(24px, calc(21.37px + 0.674vw), 30px);
-  line-height: 1.2;
-  color: var(--foreground);
+.jl-side {
+  grid-area: side;
 }
-.walk-text {
-  max-width: 380px;
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--muted-foreground);
+
+/* The reading line: a brass hairline above, a light one below. */
+.jl-band {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: calc((var(--jl-lines) - 1) / 2 * var(--jl-row));
+  height: var(--jl-row);
+  border-top: 1px solid var(--accent);
+  border-bottom: 1px solid var(--border);
+  pointer-events: none;
 }
-.walk[data-walking] .walk-card:not([data-active]) .walk-year-on {
-  opacity: 0;
+
+/* The window: whole lines only. Phone: a native scroll picker that snaps
+   each line to the reading line; never traps the page (it scrolls on at
+   either end). */
+.jl-window {
+  position: relative;
+  height: calc(var(--jl-lines) * var(--jl-row));
+  overflow-y: auto;
+  overscroll-behavior-y: auto;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
 }
-.walk[data-walking] .walk-card:not([data-active]) .walk-year-off {
-  opacity: 1;
-}
-.walk[data-walking] .walk-card:not([data-active]) .walk-photo {
-  opacity: 0.35;
-}
-.walk-progress {
+.jl-window::-webkit-scrollbar {
   display: none;
 }
-.walk[data-walking] .walk-progress {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  margin-top: 40px;
+.jl-list {
+  margin: 0;
+  padding: calc((var(--jl-lines) - 1) / 2 * var(--jl-row)) 0;
+  list-style: none;
 }
-.walk-track {
+.jl-line {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  height: var(--jl-row);
+  padding: 0 44px 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  text-align: left;
+  cursor: pointer;
+  scroll-snap-align: center;
+  transition: opacity var(--dur-hover) var(--ease-slow);
+}
+.jl-line[data-d="1"] {
+  opacity: 0.64;
+}
+.jl-line[data-d="2"] {
+  opacity: 0.16;
+}
+.jl-line[data-d="3"] {
+  opacity: 0.08;
+}
+.jl-line[aria-disabled="true"] {
+  cursor: default;
+}
+.jl-year {
+  font-family: var(--font-editorial);
+  font-size: 34px;
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+}
+.jl-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.jl-title {
+  align-self: flex-start;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  padding-bottom: 2px;
+}
+.jl-desc {
+  max-width: 360px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+  opacity: 0;
+  transition: opacity var(--dur-hover) var(--ease-slow) 150ms;
+}
+.jl-line[aria-current="true"] .jl-desc {
+  opacity: 1;
+}
+/* Pointing at a line is a preview, never a turn: it darkens and the
+   shared hairline draws under its title. */
+@media (hover: hover) {
+  .jl-line[data-d="1"]:not([aria-disabled="true"]):hover {
+    opacity: 0.85;
+  }
+  .jl-line:not([aria-current="true"]):not([aria-disabled="true"]):hover .jl-title {
+    background-size: 100% 1px;
+  }
+}
+
+/* The first visit hint: a 1px track at the ledger's right edge with a brass
+   dot gliding upward, and "Scroll". */
+.jl-hint {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  top: calc((var(--jl-lines) - 1) / 2 * var(--jl-row) - 8px);
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-page) var(--ease-slow);
+}
+.jl-hint[data-on] {
+  opacity: 1;
+}
+.jl-hint-track {
   position: relative;
-  flex: 1;
-  height: 1px;
+  display: block;
+  width: 1px;
+  height: 88px;
   background: var(--border);
 }
-.walk-fill {
-  position: absolute;
-  inset: 0;
-  background: var(--foreground);
-  transform-origin: left center;
-  transform: scaleX(var(--walk, 0));
-}
-.walk-mover {
-  position: absolute;
-  inset: 0;
-  transform: translateX(calc(var(--walk, 0) * 100%));
-}
-.walk-dot {
+.jl-hint-dot {
   position: absolute;
   left: -3px;
-  top: -3px;
+  top: 0;
+  transform: translateY(40px);
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: var(--accent);
 }
-.walk-hint {
+.jl-hint-label {
   font-size: var(--type-label-size);
-  white-space: nowrap;
   line-height: var(--type-label-leading);
   letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
+  white-space: nowrap;
   color: var(--muted-foreground);
 }
-@media (min-width: 768px) {
-  .walk-row {
-    gap: 72px;
-    padding-inline: 64px;
-    scroll-padding-inline: 64px;
+@media (prefers-reduced-motion: no-preference) {
+  .jl-hint-dot {
+    animation: jl-hint 2.8s var(--ease-slow) infinite;
   }
-  .walk-end {
-    width: max(0px, calc(100vw - 420px - 200px));
+}
+@keyframes jl-hint {
+  0% { transform: translateY(80px); opacity: 0; }
+  15% { opacity: 1; }
+  70% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+/* The photograph: 4:5, the current milestone's, crossfading to the next
+   (which develops as it arrives). */
+.jl-plate {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--secondary);
+}
+.jl-photo {
+  position: absolute;
+  inset: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .jl-photo[data-on] {
+    animation: jl-in var(--dur-image) var(--ease-slow) both;
+  }
+  .jl-photo[data-out] {
+    animation: jl-out var(--dur-image) var(--ease-slow) both;
+  }
+}
+.jl-photo[data-out] {
+  z-index: 0;
+}
+.jl-photo[data-on] {
+  z-index: 1;
+}
+@keyframes jl-in {
+  from { opacity: 0; }
+}
+@keyframes jl-out {
+  to { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jl-photo[data-out] {
+    display: none;
   }
 }
 
-/* ——— VI · In conversation ——— */
+/* The two round buttons (two columns only): newer on the left, older on
+   the right; dimmed at either end. */
+.jl-turns {
+  display: none;
+}
+.jl-turn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: border-color var(--dur-hover) var(--ease-soft-out), opacity var(--dur-hover) var(--ease-soft-out);
+}
+.jl-turn[aria-disabled="true"] {
+  opacity: 0.35;
+  cursor: default;
+}
+@media (hover: hover) {
+  .jl-turn:not([aria-disabled="true"]):hover {
+    border-color: var(--muted-foreground);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Two columns: the ledger, a window of five whole lines that turns by
+     moving the list; the photograph beside it, its centre on the reading
+     line, with the two buttons under it. */
+  .about-journey {
+    --jl-row: 120px;
+    --jl-lines: 5;
+    --jl-year-col: 140px;
+    --jl-plate-w: 300px;
+    gap: 34px;
+  }
+  .jl {
+    grid-template-columns: minmax(0, 1fr) var(--jl-plate-w);
+    grid-template-areas: "ledger side";
+    column-gap: 56px;
+    align-items: center;
+  }
+  .jl-window {
+    overflow: hidden;
+    scroll-snap-type: none;
+  }
+  .jl-list {
+    padding: 0;
+    transform: translateY(calc((var(--jl-lines) - 1) / 2 * var(--jl-row) - var(--jl-k, 0) * var(--jl-row)));
+    transition: transform var(--jl-turn) var(--ease-slow);
+  }
+  .jl-line {
+    display: grid;
+    grid-template-columns: var(--jl-year-col) minmax(0, 1fr);
+    align-items: center;
+    column-gap: 24px;
+    padding-right: 56px;
+  }
+  .jl-year {
+    font-size: 52px;
+  }
+  .jl-body {
+    gap: 6px;
+  }
+  .jl-title {
+    font-size: 18px;
+  }
+  .jl-desc {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .jl-side {
+    /* Centre the photograph on the reading line: the buttons hang below. */
+    margin-bottom: -56px;
+  }
+  .jl-plate {
+    width: var(--jl-plate-w);
+    max-width: none;
+  }
+  .jl-turns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}
+@media (min-width: 1280px) {
+  .about-journey {
+    --jl-year-col: 170px;
+    --jl-plate-w: 380px;
+  }
+  .jl {
+    column-gap: 96px;
+  }
+  .jl-line {
+    column-gap: 28px;
+  }
+  .jl-year {
+    font-size: 64px;
+    letter-spacing: -0.01em;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jl-list,
+  .jl-line,
+  .jl-desc,
+  .jl-hint,
+  .jl-turn {
+    transition: none;
+  }
+}
+
+/* ——— VI · In conversation ———
+   The heading beside the questions only from 1280px, so that below it the
+   replies have the full width. Replies run to the site's reading measure
+   (about 75 characters at their size), not a narrower fixed width. */
 .about-conversation {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 40px;
 }
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .about-conversation {
     grid-template-columns: 320px minmax(0, 1fr);
     gap: 96px;
@@ -373,7 +590,8 @@ html:not(.js) .convo-eye {
   background: var(--accent);
 }
 .convo-reply {
-  max-width: 680px;
+  max-width: 38em;
+  text-wrap: pretty;
   font-family: var(--font-editorial);
   font-size: clamp(22px, calc(20.25px + 0.449vw), 26px);
   line-height: 1.45;
@@ -382,9 +600,6 @@ html:not(.js) .convo-eye {
 @media (min-width: 768px) {
   .convo-q {
     font-size: 18px;
-  }
-  .convo-a {
-    padding-left: 64px;
   }
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -400,8 +615,6 @@ html:not(.js) .convo-eye {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .walk-year > span,
-  .walk-photo,
   .convo-eye,
   a.press-cutting .press-mat,
   a.press-cutting .press-title {

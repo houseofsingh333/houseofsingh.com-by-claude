@@ -14,8 +14,12 @@ const API_SRC = "https://open.spotify.com/embed/iframe-api/v1";
  * used. On the preview it needed about 5 s.
  */
 const API_TIMEOUT_MS = 12000;
-/** The full size Spotify player; the placeholder matches it, so nothing shifts. */
-export const PLAYER_HEIGHT = 352;
+/** The compact Spotify player; the placeholder matches it, so nothing shifts. */
+export const PLAYER_HEIGHT = 152;
+/** After a pause the record stops turning, then waits this long before sliding back to its peek. */
+const SETTLE_MS = 2000;
+/** The arrival (record to its peek) plays once a visit. */
+const ARRIVED_KEY = "hos_record_arrived";
 
 type PlaybackEvent = { data?: { isPaused?: boolean } };
 type Controller = {
@@ -101,6 +105,21 @@ type Props = {
 /** The safety net never turns the disc longer than this without a new tap. */
 const BACKUP_MAX_MS = 30000;
 
+/**
+ * Playing: the record slides out and turns. Stopping: it stops turning at
+ * once and, marked data-settling, slides back to its peek after a pause
+ * (styles/home.css).
+ */
+const settleTimers = new WeakMap<HTMLElement, number>();
+function setPlaying(record: HTMLElement, playing: boolean) {
+  const was = record.hasAttribute("data-playing");
+  if (playing === was) return;
+  window.clearTimeout(settleTimers.get(record));
+  record.toggleAttribute("data-playing", playing);
+  record.toggleAttribute("data-settling", !playing);
+  if (!playing) settleTimers.set(record, window.setTimeout(() => record.removeAttribute("data-settling"), SETTLE_MS));
+}
+
 export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
   const holderRef = useRef<HTMLDivElement>(null);
   const mountRef = useRef<HTMLDivElement>(null);
@@ -114,6 +133,38 @@ export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
   const uri = toUri(embedSrc);
   // The ordinary iframe: the API failed, or there is no Spotify address for it.
   const plain = fallback || (inView && !uri);
+
+  // Arrival: the record slides from inside the sleeve to its peek when the
+  // chapter comes into view, once a visit (later visits find it there).
+  useEffect(() => {
+    const record = document.getElementById(recordId);
+    if (!record) return;
+    let seen = false;
+    try {
+      seen = sessionStorage.getItem(ARRIVED_KEY) === "1";
+    } catch {
+      /* no storage: it simply arrives each time */
+    }
+    if (seen) {
+      record.setAttribute("data-arrived", "");
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        record.setAttribute("data-arrived", "");
+        try {
+          sessionStorage.setItem(ARRIVED_KEY, "1");
+        } catch {
+          /* see above */
+        }
+        io.disconnect();
+      },
+      { threshold: 0.5 },
+    );
+    io.observe(record);
+    return () => io.disconnect();
+  }, [recordId]);
 
   // The API's player.
   useEffect(() => {
@@ -156,7 +207,7 @@ export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
             setHandedOver(true);
           });
           c.addListener("playback_update", (e) => {
-            if (handed) record?.toggleAttribute("data-playing", e.data?.isPaused === false);
+            if (handed && record) setPlaying(record, e.data?.isPaused === false);
           });
         });
       })
@@ -182,11 +233,11 @@ export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
     let cap = 0;
     const stop = () => {
       window.clearTimeout(cap);
-      record?.removeAttribute("data-playing");
+      if (record) setPlaying(record, false);
     };
     const start = () => {
       if (!inSection || document.hidden) return;
-      record?.setAttribute("data-playing", "");
+      if (record) setPlaying(record, true);
       window.clearTimeout(cap);
       cap = window.setTimeout(stop, BACKUP_MAX_MS);
     };

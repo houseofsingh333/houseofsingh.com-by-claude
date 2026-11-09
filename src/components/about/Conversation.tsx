@@ -30,12 +30,12 @@ function EyeOpen() {
 /**
  * Chapter VI on the About page, Rapid Fire as a conversation. Each question
  * is a plain line; opening one shows Maninder's reply in Playfair, marked
- * with his name. The first reply is open to begin with; one is open at a
- * time. Each question is a button with aria-expanded and an eye icon (closed
+ * with his name. Every question starts closed (nothing opens by itself);
+ * one is open at a time. Each question is a button with aria-expanded and an eye icon (closed
  * or open). Without JavaScript every reply is shown.
  */
 export default function Conversation({ items, replyName }: { items: RapidFireItem[]; replyName: string }) {
-  const [open, setOpen] = useState<number | null>(0);
+  const [open, setOpen] = useState<number | null>(null);
 
   return (
     <ul className="convo">

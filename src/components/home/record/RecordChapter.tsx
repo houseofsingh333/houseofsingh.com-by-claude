@@ -1,14 +1,18 @@
-import SanityImage from "@/components/SanityImage";
-import type { SanityImage as SanityImageData } from "@/lib/types";
 import RecordPlayer from "./RecordPlayer";
 import type { SiteCopy } from "@/lib/siteCopy";
 
 /*
- * Chapter VI, the record: the playlist as a record on Maninder's shelf. A
- * square sleeve with a vinyl disc peeking out from behind it, and the
- * Spotify player beneath. The disc turns slowly only while the playlist
- * plays (see RecordPlayer and "Record" in styles/home.css); with reduced
- * motion it never turns.
+ * Chapter VI, on my turntable (canvas "On my turntable", frame "A with C:
+ * a peek on arrival, out and turning on play"). The label, the heading and
+ * one statement on the left; on the right a sleeve of text only (Side A,
+ * Vol. 01, After hours, the genres) with the record behind it, and the
+ * compact Spotify player beneath.
+ * The record (RecordPlayer drives it, "Record" in styles/home.css): fully
+ * inside the sleeve until the chapter comes into view, then it slides out
+ * to a small peek (once a visit); while the playlist plays it slides out
+ * past half its width and turns; paused, it stops, then slides back to its
+ * peek. Reduced motion: positions change at once and it never turns.
+ * The sleeve and record are decorative; the player has its own controls.
  */
 
 const RECORD_ID = "studio-record";
@@ -35,74 +39,52 @@ function Crest({ className }: { className: string }) {
 
 type Props = {
   playlistUrl?: string;
-  sleeve?: SanityImageData | null;
   /** Site Settings, Chapter VI (today's text when empty). */
   copy: SiteCopy;
 };
 
-export default function RecordChapter({ playlistUrl, sleeve, copy }: Props) {
+export default function RecordChapter({ playlistUrl, copy }: Props) {
   if (!playlistUrl) return null;
   const embedSrc = toEmbedUrl(playlistUrl);
 
   return (
-    <section aria-labelledby="chapter-listening" className="px-6 md:px-16 section-py">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(22rem,1fr)_minmax(0,600px)] gap-14 lg:gap-24 items-center">
-        <div className="@container flex flex-col gap-7 max-w-[560px]">
-          <div className="flex items-baseline gap-4">
-            <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
-              VI
-            </span>
-            <span className="type-label text-muted-foreground">
-              {copy.listeningLabel}
-            </span>
-          </div>
-          <h2
-            id="chapter-listening"
-            className="font-editorial font-normal text-[length:min(clamp(36px,calc(28.99px_+_1.798vw),52px),13.5cqi)] leading-[1.1] text-foreground"
-          >
-            {copy.listeningHeading}
-          </h2>
-          <p className="font-editorial text-[length:clamp(20px,calc(19.12px_+_0.225vw),22px)] leading-[1.5] text-foreground">
-            {copy.listeningNote}
-          </p>
-          <p className="text-[16px] md:text-[17px] leading-[1.7] text-muted-foreground max-w-[480px]">
-            {copy.listeningIntro}
-          </p>
+    <section aria-labelledby="chapter-listening" className="turntable px-6 md:px-16 section-py">
+      <div className="turntable-text">
+        <div className="flex items-baseline gap-4">
+          <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
+            VI
+          </span>
+          <span className="type-label text-muted-foreground">{copy.listeningLabel}</span>
         </div>
+        <h2 id="chapter-listening" className="turntable-heading font-editorial font-normal text-foreground">
+          {copy.listeningHeading}
+        </h2>
+        <p className="turntable-note font-editorial text-foreground">{copy.listeningNote}</p>
+      </div>
 
-        <div className="flex flex-col gap-10">
-          {/* The record: the disc sits behind the sleeve and peeks out. */}
-          <div id={RECORD_ID} className="record">
-            <div className="record-disc" aria-hidden="true">
-              <div className="record-spin">
-                <span className="record-label">
-                  <Crest className="record-label-crest" />
-                </span>
-              </div>
-            </div>
-            <div className="record-sleeve">
-              {sleeve ? (
-                <SanityImage
-                  image={sleeve}
-                  context="thumbnail"
-                  fill
-                  sizes="(min-width: 1024px) 384px, 64vw"
-                  className="object-cover"
-                />
-              ) : (
-                <Crest className="record-sleeve-crest" />
-              )}
-              <span className="record-tag">{copy.listeningTag}</span>
+      <div className="turntable-stage">
+        {/* The record behind its sleeve: decorative. */}
+        <div id={RECORD_ID} className="record" aria-hidden="true">
+          <div className="record-disc">
+            <div className="record-spin">
+              <span className="record-label">
+                <Crest className="record-label-crest" />
+              </span>
             </div>
           </div>
-
-          <div className="flex flex-col gap-3">
-            <p className="type-label text-muted-foreground">
-              {copy.listeningPlayerLabel}
-            </p>
-            <RecordPlayer embedSrc={embedSrc} recordId={RECORD_ID} title={copy.listeningPlayerLabel} />
+          <div className="record-sleeve">
+            <div className="record-sleeve-top">
+              <span>{copy.listeningSide}</span>
+              <span>{copy.listeningVolume}</span>
+            </div>
+            <div className="record-sleeve-title">
+              <span>{copy.listeningSleeveTitle}</span>
+              <span className="record-sleeve-rule" />
+            </div>
+            <span className="record-sleeve-genres">{copy.listeningGenres}</span>
           </div>
         </div>
+        <RecordPlayer embedSrc={embedSrc} recordId={RECORD_ID} title={copy.listeningPlayerLabel} />
       </div>
     </section>
   );

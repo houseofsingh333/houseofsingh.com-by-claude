@@ -57,6 +57,7 @@ Maninder is the founder and creative director. He is not a developer. This means
 9. **Alt text is hard required on meaningful images** in the schema. Do not reintroduce silent empty alt fallbacks. Decorative images must be explicitly marked decorative.
 10. **Local development:** either reach Sanity, or run `NEXT_PUBLIC_USE_PLACEHOLDERS=1 npm run dev`.
 11. **The Content Security Policy is strict and lives in `next.config.ts`** (`contentSecurityPolicy`). The one exception: the home page alone allows `'unsafe-eval'` in `script-src`, because Spotify's iFrame API (which tells the record in Chapter VI when the music plays) calls eval and is refused without it. Never widen that to other routes or sitewide; add any new host to the policy deliberately and document why.
+12. **Never put `scroll-behavior: smooth` on `<html>`.** It made every new page glide up from the previous page's depth (pages seemed to open where the last one was left) and made Back glide instead of arriving. Pages scroll instantly; only same page anchor links glide, through `src/components/SmoothAnchors.tsx`. `tests/navigation-scroll.mjs` checks where pages open, Back and Forward, the Projects return and anchors (`node tests/navigation-scroll.mjs <url>`).
 
 ### Protected: never change without Maninder's explicit approval
 

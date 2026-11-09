@@ -2,9 +2,11 @@
    Imported by globals.css, in the order listed there. */
 
 /* ——— Footer, the coda ———
-   "Start a project" at monumental size with its line, and the time in
-   Toronto (TorontoTime; hidden without JavaScript, as it needs a clock);
-   then the site links and the newsletter; then the bottom line with the
+   The closing section (canvas "Closing section", frame "A, chosen"): the
+   invitation in Playfair; the time in Toronto (TorontoTime; hidden
+   without JavaScript, as it needs a clock), "Book a call" (the outlined
+   call to action, styles/motion.css) and a quiet link to Contact. Then
+   the site links and the newsletter; then the bottom line with the
    copyright, Privacy and Terms. */
 
 .footer-wrap {
@@ -26,32 +28,38 @@
   align-items: end;
 }
 
-.footer-cta {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  /* "Start a project" is about 6.2 times its size wide: capped to the
-     column (cqi) it always sits on one line, 120px at 1280 and 52px on
-     phones as designed, smaller only where the column is narrower. */
-  container-type: inline-size;
-}
-
-.footer-cta-link {
-  align-self: flex-start;
+.footer-invite {
+  max-width: 640px;
   font-family: var(--font-editorial);
-  font-weight: 400;
-  font-size: min(clamp(52px, 9.4vw, 136px), 16cqi);
-  line-height: 0.98;
-  letter-spacing: -0.01em;
+  font-size: clamp(26px, calc(19.86px + 1.573vw), 40px);
+  line-height: 1.25;
+  text-wrap: balance;
   color: var(--foreground);
 }
 
-.footer-cta-subtitle {
-  /* One line on desktop; on narrower screens it wraps into even lines. */
-  max-width: 34em;
-  text-wrap: balance;
-  font-size: 16px;
-  line-height: 1.7;
+.footer-reach {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.footer-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+}
+
+/* Phones: the button full width, its words and arrow together. */
+.footer-book {
+  justify-content: center;
+}
+
+.footer-write {
+  align-self: flex-start;
+  padding-bottom: 2px;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--muted-foreground);
 }
 
@@ -72,7 +80,7 @@
 
 .footer-time-value {
   font-family: var(--font-editorial);
-  font-size: clamp(40px, calc(32.99px + 1.798vw), 56px);
+  font-size: clamp(30px, calc(28.25px + 0.449vw), 34px);
   line-height: 1;
   color: var(--foreground);
 }
@@ -338,8 +346,13 @@ html:not(.js) .footer-time {
   .footer-main {
     padding: 96px 64px 48px;
   }
-  .footer-cta-subtitle {
-    font-size: 18px;
+  /* Tablet and desktop: two columns, bottom aligned. */
+  .footer-top {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 48px;
+  }
+  .footer-actions {
+    align-items: flex-start;
   }
   .footer-grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
@@ -371,11 +384,8 @@ html:not(.js) .footer-time {
     padding: 96px max(64px, 7.5%) 72px;
   }
   .footer-top {
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 80px;
-  }
-  .footer-time {
-    align-items: flex-end;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 96px;
   }
   .footer-bottom {
     margin: 0 max(64px, 7.5%);
@@ -383,7 +393,6 @@ html:not(.js) .footer-time {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .footer-cta-link,
   .footer-nav-link,
   .footer-bottom-link,
   .footer-nl-form,

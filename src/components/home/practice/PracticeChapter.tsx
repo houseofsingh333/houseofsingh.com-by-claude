@@ -2,7 +2,7 @@ import type { SiteCopy } from "@/lib/siteCopy";
 import { hasImageAsset, type SanityImageAsset } from "@/lib/sanityImage";
 import { hotspotPosition } from "@/lib/projectHero";
 import type { StudioWorkCard } from "@/lib/types";
-import PracticeCta from "./PracticeCta";
+import OutlineCta from "@/components/OutlineCta";
 import PracticePanels, { type PracticePanel } from "./PracticePanels";
 
 const STUDIO_URL = "https://studios.houseofsingh.com";
@@ -80,7 +80,7 @@ export default function PracticeChapter({
       {panels.length > 0 && <PracticePanels panels={panels} />}
 
       <div className="practice-action">
-        <PracticeCta href={STUDIO_URL} label={copy.practiceLinkText} />
+        <OutlineCta href={STUDIO_URL} label={copy.practiceLinkText} />
       </div>
     </section>
   );

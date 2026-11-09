@@ -244,11 +244,11 @@ export type SiteSettings = {
   spotifyPlaylistUrl?: string;
   listeningHeading?: string | null;
   listeningNote?: string | null;
-  listeningIntro?: string | null;
-  listeningSleeve?: SanityImage | null;
   practiceLine?: string | null;
   /** Chapter VII: up to three studio work panels beside the studio line. */
   studioWorkCards?: StudioWorkCard[] | null;
+  /** The closing section's "Book a call" address (https only). */
+  codaBookUrl?: string | null;
   defaultMetaDescription?: string | null;
   organizationName?: string | null;
   founderName?: string | null;
@@ -290,7 +290,6 @@ export type AboutPageData = {
   /** Optional chapter headings (lib/siteCopy.ts ABOUT_COPY_FIELDS). */
   aboutStoryLabel?: string | null;
   aboutPrintHeading?: string | null;
-  aboutJourneyLabel?: string | null;
   aboutJourneyHeading?: string | null;
   aboutJourneyHint?: string | null;
   aboutConversationLabel?: string | null;

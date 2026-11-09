@@ -7,7 +7,7 @@ import type { AboutPageData } from "@/lib/types";
 import { FALLBACK_BIO_PARAGRAPHS, FALLBACK_MONIKER_PARAGRAPHS } from "./about-constants";
 import AboutPortrait from "./AboutPortrait";
 import Conversation from "./Conversation";
-import JourneyWalk from "./JourneyWalk";
+import JourneyLedger from "./JourneyLedger";
 import PracticeReveal from "./PracticeReveal";
 import PressCuttings from "./PressCuttings";
 import { keepLastWords } from "@/lib/keepLastWords";
@@ -18,7 +18,7 @@ import { keepLastWords } from "@/lib/keepLastWords";
  *   II   the story: the founder bio in short paragraphs, one sentence lifted
  *   III  the practice: the crest and the practice text, centred
  *   IV   in print: Featured On as framed press cuttings
- *   V    a walk through the years: the Journey milestones
+ *   V    a walk through the years: the Journey as a turning ledger
  *   VI   in conversation: Rapid Fire
  * All text comes from the About page in Sanity.
  */
@@ -153,16 +153,13 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— V · A walk through the years ——— */}
       {milestones && milestones.length > 0 && (
-        <section aria-labelledby="about-journey" className="section-py">
-          <div className="px-6 md:px-16">
-            <div className="about-chapter-head">
-              <ChapterMark numeral="V" label={copy.aboutJourneyLabel} />
-              <h2 id="about-journey" className="font-editorial font-normal text-[length:clamp(30px,calc(25.62px_+_1.124vw),40px)] leading-[1.1] text-foreground">
-                {copy.aboutJourneyHeading}
-              </h2>
-            </div>
-          </div>
-          <JourneyWalk milestones={milestones} hint={copy.aboutJourneyHint} />
+        <section aria-labelledby="about-journey" className="about-journey px-6 md:px-16 section-py">
+          <ChapterMark numeral="V">
+            <h2 id="about-journey" className="type-label text-muted-foreground">
+              {copy.aboutJourneyHeading}
+            </h2>
+          </ChapterMark>
+          <JourneyLedger milestones={milestones} hint={copy.aboutJourneyHint} label={`${copy.aboutJourneyHeading}: milestones, newest first`} />
         </section>
       )}
 

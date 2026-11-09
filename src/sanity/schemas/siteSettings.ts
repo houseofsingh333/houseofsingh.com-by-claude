@@ -2,6 +2,7 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 import { imageAltFields } from "./imageFields";
 import { SITE_COPY_FIELDS } from "../../lib/siteCopy";
 import { httpsRule } from "./rules";
+import { BOOKING_URL } from "../../lib/booking";
 
 /*
  * Site Settings, in tabs: General (title, SEO, social), Homepage chapters
@@ -80,18 +81,16 @@ export const siteSettings = defineType({
       fieldset: "chapter6",
       validation: (rule) => httpsRule(rule),
       description:
-        "The embed URL for your Spotify playlist (e.g. https://open.spotify.com/embed/playlist/...)",
+        "Your Spotify playlist's address (https://open.spotify.com/playlist/... or its embed address). Shown as the compact player.",
     }),
     defineField({
-      name: "listeningSleeve",
-      title: "Record sleeve",
-      type: "image",
+      name: "codaBookUrl",
+      title: "Booking address (the button above the footer)",
+      type: "url",
       group: "homepage",
-      fieldset: "chapter6",
-      options: { hotspot: true },
-      description:
-        "Optional. A square image for the record sleeve. When empty, a plain sleeve with the crest is shown.",
-      fields: imageAltFields,
+      fieldset: "coda",
+      description: `Optional. A full https:// address, opened in a new tab. When empty: ${BOOKING_URL}`,
+      validation: (rule) => httpsRule(rule),
     }),
     defineField({
       name: "studioWorkCards",

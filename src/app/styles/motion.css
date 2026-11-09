@@ -304,3 +304,87 @@ html.js .blurup + img[data-blurup]:not([data-loaded]) {
     opacity: 0;
   }
 }
+
+/* ——— The outlined call to action (OutlineCta) ———
+   Chapter VII and the closing section above the footer. Outlined in
+   charcoal; charcoal fills it from the left on hover, keyboard focus or a
+   press on a touch screen, and the arrow is replaced by a second gliding
+   in from the bottom left. Reduced motion: the filled state at once. */
+.outline-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 24px;
+  border: 1px solid var(--foreground);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--foreground);
+  white-space: nowrap;
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+.outline-cta-fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--foreground);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-page) var(--ease-slow);
+}
+.outline-cta-arrows {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  overflow: hidden;
+}
+.outline-cta-arrow {
+  position: absolute;
+  inset: 0;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+.outline-cta-arrow-in {
+  transform: translate(-14px, 14px);
+  transition-delay: 80ms;
+}
+.outline-cta:focus-visible,
+.outline-cta[data-pressed] {
+  color: var(--background);
+}
+.outline-cta:focus-visible .outline-cta-fill,
+.outline-cta[data-pressed] .outline-cta-fill {
+  transform: scaleX(1);
+}
+.outline-cta:focus-visible .outline-cta-arrow-out,
+.outline-cta[data-pressed] .outline-cta-arrow-out {
+  transform: translate(14px, -14px);
+}
+.outline-cta:focus-visible .outline-cta-arrow-in,
+.outline-cta[data-pressed] .outline-cta-arrow-in {
+  transform: none;
+}
+@media (hover: hover) {
+  .outline-cta:hover {
+    color: var(--background);
+  }
+  .outline-cta:hover .outline-cta-fill {
+    transform: scaleX(1);
+  }
+  .outline-cta:hover .outline-cta-arrow-out {
+    transform: translate(14px, -14px);
+  }
+  .outline-cta:hover .outline-cta-arrow-in {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .outline-cta,
+  .outline-cta-fill,
+  .outline-cta-arrow {
+    transition: none;
+  }
+}
+
