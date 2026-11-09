@@ -58,6 +58,22 @@ Maninder is the founder and creative director. He is not a developer. This means
 10. **Local development:** either reach Sanity, or run `NEXT_PUBLIC_USE_PLACEHOLDERS=1 npm run dev`.
 11. **The Content Security Policy is strict and lives in `next.config.ts`** (`contentSecurityPolicy`). The one exception: the home page alone allows `'unsafe-eval'` in `script-src`, because Spotify's iFrame API (which tells the record in Chapter VI when the music plays) calls eval and is refused without it. Never widen that to other routes or sitewide; add any new host to the policy deliberately and document why.
 
+### Protected: never change without Maninder's explicit approval
+
+These are approved and settled. Do not change them as a side effect of other work, a cleanup, a fix or a speed pass, however small the change looks. If a task seems to need a change to one of them, stop, say so, and ask Maninder first; a general instruction to "fix" or "improve" is not approval.
+
+1. **The header:** the crest to wordmark interaction on scroll (State 1 crest, State 2 wordmark bar) and the menu dot.
+2. **The approved layouts:**
+   - Home.
+   - Projects: V1a (One by one) and G1 (At a glance).
+   - Journal: J4 on desktop, Phone B on phones.
+   - The project page ("Zamana, refined").
+   - The automatic photograph layout.
+3. **The brand palette and the two fonts:** the colour tokens in `src/app/styles/tokens.css`, Playfair Display and Instrument Sans.
+4. **The typography hierarchy and the italic rule:** the type scale and the one label style (`BRAND_BOOK.md` 2.2, `--type-label-*`), and Playfair italic only for Maninder's quote beside his portrait.
+5. **The motion tokens:** the `--ease-*` and `--dur-*` values and how they are used.
+6. **The security policy exception:** `'unsafe-eval'` for Spotify on the home page only; never widened, never removed without a replacement for the record.
+
 ---
 
 ## 5. The brand system (build within this)
