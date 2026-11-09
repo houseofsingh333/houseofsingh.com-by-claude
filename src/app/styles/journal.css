@@ -35,8 +35,12 @@
   }
 }
 @media (min-width: 1024px) {
+  /* Desktop (J4): the page's edges at 96px at 1280 (7.5% of the page, at
+     most 1360px of content), the same edges as the Projects page. */
   .jr {
     --jr-top: 200px;
+    --jr-gutter: max(7.5%, calc((100% - 1360px) / 2));
+    max-width: none;
   }
 }
 
@@ -604,10 +608,11 @@ html.js .jr-more[data-more="older"]:not(:focus-visible) {
   .jr-note {
     font-size: 1rem;
   }
-  /* A narrow entries column (from 1024 to about 1180 wide) has no room
+  /* A narrow entries column (from 1024 to about 1250 wide) has no room
      for the text beside the 340px photograph: it runs below it instead,
-     never squeezed into a sliver. At 1280 and wider nothing changes. */
-  @container (max-width: 600px) {
+     never squeezed into a sliver. At 1280 (a 584px column, J4) and wider
+     the text sits beside it. */
+  @container (max-width: 560px) {
     .jr-entry-body[data-photo] {
       grid-template-columns: 340px;
       row-gap: 1.25rem;
