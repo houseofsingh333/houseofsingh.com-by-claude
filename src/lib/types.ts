@@ -290,7 +290,6 @@ export type AboutPageData = {
   /** Optional chapter headings (lib/siteCopy.ts ABOUT_COPY_FIELDS). */
   aboutStoryLabel?: string | null;
   aboutPrintHeading?: string | null;
-  aboutJourneyLabel?: string | null;
   aboutJourneyHeading?: string | null;
   aboutJourneyHint?: string | null;
   aboutConversationLabel?: string | null;
