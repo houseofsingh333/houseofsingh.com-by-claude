@@ -173,13 +173,13 @@ export default async function ProjectDetailPage({ params }: Props) {
 
   // Sanity data available — render full project
   if (project) {
-    const creativeWorkJsonLd = buildCreativeWorkJsonLd(project, settings);
+    const hero = projectHeroImage(project, spotlight);
+    const creativeWorkJsonLd = buildCreativeWorkJsonLd(project, settings, hero.image);
     const breadcrumbJsonLd = buildBreadcrumbJsonLd([
       { name: "Home", path: "/" },
       { name: "Projects", path: "/projects" },
       { name: project.title, path: `/projects/${project.slug}` },
     ]);
-    const hero = projectHeroImage(project, spotlight);
     const next = nextProject(links, project.slug);
     const intro = project.shortIntro?.trim();
     const copy = siteCopy(settings);
