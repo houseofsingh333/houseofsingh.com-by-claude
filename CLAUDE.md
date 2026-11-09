@@ -182,7 +182,7 @@ Three entities are shared across this site and the studio site. Their `@id` valu
 - **Dates:** House of Singh has been active since 2014. House of Singh Studios was founded in Canada in 2023.
 - **Never published on this site:** the trademark registration number and the studio's exact founding day and month. Write "registered Canadian trademark" and "founded in 2023", nothing more specific. This repo is public, so that includes code, docs and commit messages.
 - **Title order, everywhere:** "creative director, photographer and multidisciplinary designer". Do not reorder it.
-- The JSON-LD lives in `src/lib/structured-data.ts` and renders as one `@graph` sitewide, plus a `ProfilePage` on the home page. The plain language version for language models is `public/llms.txt`. Keep the two consistent.
+- The JSON-LD lives in `src/lib/structured-data.ts` and renders as one `@graph` sitewide (Person, Organization, WebSite), plus one node per page type linked to those ids: `ProfilePage` (home), `AboutPage`, `CollectionPage` with an `ItemList` (Projects), `VisualArtwork` or `CreativeWork` with `ImageObject`s (each project), `Blog` and `CollectionPage` (Journal and each month), `BlogPosting` (each entry, with `contentLocation` from `src/lib/places.ts`) and `BreadcrumbList`. The plain language version for language models is `/llms.txt` and `/llms-full.txt`, generated from Sanity by `src/lib/llms.ts`; its fixed "who is who" opening is written there. Keep the two consistent.
 
 ---
 

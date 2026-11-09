@@ -119,7 +119,7 @@ export default function RootLayout({
   return (
     // suppressHydrationWarning: the script below adds the "js" class to
     // <html> before React hydrates, which is intended.
-    <html lang="en" className={`${playfair.variable} ${instrument.variable}`} suppressHydrationWarning>
+    <html lang="en-CA" className={`${playfair.variable} ${instrument.variable}`} suppressHydrationWarning>
       <head>
         {/* Pre paint script. Scroll reveals start hidden only under the "js"
             class (and only when the visitor allows motion), so without
