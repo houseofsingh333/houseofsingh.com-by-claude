@@ -52,6 +52,7 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll(); // a page loaded or reloaded already scrolled down starts as the wordmark bar
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -89,7 +90,7 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
 
       {/* ═══ STATE 1 : Crest + controls — top-edges at 32px rail ═══ */}
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-opacity duration-[250ms] ease-in-out ${
+        className={`site-header fixed inset-x-0 top-0 z-50 transition-opacity duration-[250ms] ease-in-out ${
           showState1 ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         aria-hidden={!showState1}
@@ -142,7 +143,7 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
 
       {/* ═══ STATE 2 : Scrolled white bar header ═══ */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 h-[68px] flex items-center justify-between px-5 md:px-8 bg-background border-b border-border/40 transition-opacity duration-[250ms] ease-in-out ${
+        className={`site-header fixed top-0 left-0 right-0 z-50 h-[68px] flex items-center justify-between px-5 md:px-8 bg-background border-b border-border/40 transition-opacity duration-[250ms] ease-in-out ${
           showState2 ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         aria-hidden={!showState2}

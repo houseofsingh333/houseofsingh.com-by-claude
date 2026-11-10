@@ -417,6 +417,17 @@ html[data-menu-open] {
   scrollbar-gutter: stable;
 }
 
+/* The page header fades out as the panel slides in and back as it slides
+   out, on the panel's timing (approved 10 Nov). Only its opacity during the
+   menu; the crest to wordmark interaction itself is unchanged. */
+html[data-menu-open] .site-header {
+  opacity: 0 !important;
+}
+html[data-menu-open] .site-header,
+html[data-menu-closing] .site-header {
+  transition: opacity var(--dur-menu-panel) var(--ease-slow) !important;
+}
+
 .menu-shell {
   position: fixed;
   inset: 0;
@@ -594,6 +605,10 @@ html[data-menu-open] {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html[data-menu-open] .site-header,
+  html[data-menu-closing] .site-header {
+    transition: none !important;
+  }
   .menu-shell,
   .menu-veil,
   .menu-panel,

@@ -73,11 +73,21 @@ export default function NavOverlay({
   // The page behind does not scroll while the menu is open. Hiding the
   // root's overflow keeps its scroll position exactly (nothing is moved or
   // restored), and the scrollbar's gutter stays so nothing shifts sideways.
+  // The page header fades out with the panel and back in as it closes
+  // (data-menu-closing lasts as long as the panel's slide).
+  const closingTimer = useRef<number | undefined>(undefined);
   useEffect(() => {
     if (!isOpen) return;
     const html = document.documentElement;
+    window.clearTimeout(closingTimer.current);
+    html.removeAttribute("data-menu-closing");
     html.setAttribute("data-menu-open", "");
-    return () => html.removeAttribute("data-menu-open");
+    return () => {
+      html.removeAttribute("data-menu-open");
+      html.setAttribute("data-menu-closing", "");
+      const ms = parseFloat(getComputedStyle(html).getPropertyValue("--dur-menu-panel")) || 700;
+      closingTimer.current = window.setTimeout(() => html.removeAttribute("data-menu-closing"), ms);
+    };
   }, [isOpen]);
 
   // The page under the pointer or focus; the current page until then.
