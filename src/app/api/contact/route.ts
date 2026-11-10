@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { writeClient } from "@/sanity/writeClient";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
@@ -115,7 +116,9 @@ export async function POST(request: Request) {
       );
     }
 
+    // A private id (a dot in it): never readable from the public dataset.
     await writeClient.create({
+      _id: `private.contact-${randomUUID()}`,
       _type: "contactSubmission",
       intent,
       name,
