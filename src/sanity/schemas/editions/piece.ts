@@ -156,6 +156,25 @@ export const editionsPiece = defineType({
       validation: (r) => r.integer().min(0),
     }),
     defineField({
+      name: "holds",
+      title: "Held during checkout",
+      type: "array",
+      group: "stock",
+      readOnly: true,
+      description: "Units someone is paying for right now, each for about thirty minutes. Written by the checkout; they clear themselves.",
+      of: [
+        defineArrayMember({
+          name: "hold",
+          type: "object",
+          fields: [
+            defineField({ name: "size", title: "Size", type: "string" }),
+            defineField({ name: "until", title: "Held until", type: "datetime" }),
+          ],
+          preview: { select: { size: "size", until: "until" }, prepare: ({ size, until }) => ({ title: size ? `Size ${size}` : "One unit", subtitle: until ? `Until ${new Date(until).toLocaleString("en-CA", { timeZone: "America/Toronto" })}` : "" }) },
+        }),
+      ],
+    }),
+    defineField({
       name: "packedWeight",
       title: "Packed weight (kg)",
       type: "number",

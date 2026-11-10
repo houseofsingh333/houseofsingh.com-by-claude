@@ -13,6 +13,9 @@ export type EditionsCategory = {
 
 export type EditionsSize = { _key: string; label: string; stock: number; sold?: number | null };
 
+/** One unit held during a checkout (lib/editions/holds.ts). */
+export type EditionsHold = { _key: string; _type?: "hold"; size?: string | null; until: string };
+
 export type EditionsCollaborator = {
   _id: string;
   name: string;
@@ -36,6 +39,7 @@ export type EditionsPiece = {
   price: number;
   sizes?: EditionsSize[] | null;
   soldCount?: number | null;
+  holds?: EditionsHold[] | null;
   photographs: ShopImage[];
   statement: string;
   story?: PortableTextBlock[] | null;

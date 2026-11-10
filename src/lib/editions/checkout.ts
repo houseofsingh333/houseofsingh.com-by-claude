@@ -1,4 +1,5 @@
 import { available, canBuy, collectionState, sizeAvailable } from "./state";
+import { freeUnits } from "./holds";
 import { shippingPrice, zoneCountries, ZONES } from "./shipping";
 import type { CollectionState, EditionsCollection, EditionsPiece, ShippingRoute, Zone } from "./types";
 import { collectionTitle } from "./format";
@@ -16,6 +17,7 @@ export type BuyRefusal =
   | "sold-out"
   | "size-needed"
   | "size-sold-out"
+  | "held"
   | "no-shipping";
 
 export const REFUSAL_WORDS: Record<BuyRefusal, string> = {
@@ -24,6 +26,7 @@ export const REFUSAL_WORDS: Record<BuyRefusal, string> = {
   "sold-out": "This piece is sold out.",
   "size-needed": "Choose a size first.",
   "size-sold-out": "This size is sold out.",
+  held: "The last one is in someone's checkout just now. If it is not bought, it comes back within half an hour.",
   "no-shipping": "This piece cannot ship there yet. Write to us and we will find a way.",
 };
 
@@ -55,6 +58,9 @@ export function checkPurchase(
     if (sizeAvailable(piece, sizeKey) === 0) return { ok: false, refusal: "size-sold-out" };
     size = { _key: s._key, label: s.label };
   }
+  // Units in someone's checkout are not free, though not sold either
+  // (holds run on real time, not the test clock).
+  if (freeUnits(piece, size?._key ?? null, Date.now()) === 0) return { ok: false, refusal: "held" };
   const shipping = shippingPrice(routes, piece.shipsFrom, zone, piece.packedWeight);
   if (shipping === null) return { ok: false, refusal: "no-shipping" };
   return { ok: true, state, shipping, size };
@@ -78,6 +84,8 @@ export function checkoutParams(input: {
   siteUrl: string;
   imageUrl?: string | null;
   gstNumber?: string | null;
+  /** The stock held for this checkout (lib/editions/holds.ts). */
+  holdKey?: string | null;
   now?: Date;
 }) {
   const { piece, size, zone, shipping, taxRateIds, siteUrl } = input;
@@ -92,6 +100,7 @@ export function checkoutParams(input: {
     zone,
     price: String(piece.price),
     shipping: String(shipping),
+    holdKey: input.holdKey ?? "",
     collection: String(input.collectionNumber),
   };
   const seller = `Sold by ${EDITIONS_DEFAULTS.seller}${input.gstNumber ? `. GST/HST ${input.gstNumber}` : ""}.`;

@@ -14,7 +14,9 @@ import { collectionState, available } from "../src/lib/editions/state";
 import { checkPurchase, checkoutParams } from "../src/lib/editions/checkout";
 import { shippingPrice } from "../src/lib/editions/shipping";
 import { formEncode, signStripePayload, verifyStripeSignature, type CheckoutSession } from "../src/lib/editions/stripe";
-import { processPaidSession, type OrderRecord, type OrderStore, type OrderPiece } from "../src/lib/editions/orders";
+import { processPaidSession, processRefund, type OrderRecord, type OrderStore, type OrderPiece } from "../src/lib/editions/orders";
+import { freeUnits, placeHold, releaseHold, type HoldStore } from "../src/lib/editions/holds";
+import type { EditionsHold } from "../src/lib/editions/types";
 import { gurmukhi, piecesInWords, cad } from "../src/lib/editions/format";
 import type { EditionsCollection, EditionsPiece, ShippingRoute } from "../src/lib/editions/types";
 
@@ -134,6 +136,14 @@ function memoryStore(pieces: Record<string, OrderPiece>) {
       return { created: true, soldAfter: p.soldCount };
     },
     async setOrderFields(id, fields) { orders.set(id, { ...orders.get(id)!, ...fields }); },
+    async orderByPayment(pi) { return [...orders.values()].find((o) => o.paymentIntent === pi) ?? null; },
+    async refundAndRestock(order, at) {
+      const o = orders.get(order._id)!; if (o.status === "refunded") return false;
+      orders.set(order._id, { ...o, status: "refunded", refundedAt: at });
+      const p = pieces[order.piece._ref]; p.soldCount = (p.soldCount ?? 0) - 1;
+      if (order.sizeKey) { const s = p.sizes?.find((x) => x._key === order.sizeKey); if (s) s.sold = (s.sold ?? 0) - 1; }
+      return true;
+    },
   };
   return { store, orders, collectors };
 }
@@ -163,6 +173,39 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
   check(c.order?.collectorNumber === 1 && c.order?.editionNumber === 9, "a returning buyer keeps collector No. 1", [c.order?.collectorNumber, c.order?.editionNumber]);
   const unpaid = await processPaidSession({ ...session("cs_test_d", "x@example.com", { pieceId: "p-print" }), payment_status: "unpaid" }, mem.store, now);
   check(unpaid.status === "ignored", "an unpaid session is not recorded");
+
+  // Refunds
+  const partial = await processRefund({ payment_intent: "pi_cs_test_b", refunded: false, amount: 12300, amount_refunded: 500 }, mem.store);
+  check(partial.status === "ignored" && pieces["p-tee"].sizes![0].sold === 2, "a partial refund changes no stock", partial.reason);
+  const full = await processRefund({ payment_intent: "pi_cs_test_b", refunded: true, amount: 12300, amount_refunded: 12300 }, mem.store);
+  check(full.status === "restocked" && pieces["p-tee"].sizes![0].sold === 1 && pieces["p-tee"].soldCount === 3, "a full refund restocks the size and the piece", [pieces["p-tee"].sizes![0].sold, pieces["p-tee"].soldCount]);
+  const twice = await processRefund({ payment_intent: "pi_cs_test_b", refunded: true }, mem.store);
+  check(twice.status === "ignored" && pieces["p-tee"].sizes![0].sold === 1, "the same refund again restocks nothing", twice.reason);
+
+  // Holds: a piece with two left, buyers arriving together.
+  const held = { _rev: "r0", quantity: 10, soldCount: 8, sizes: null as null, holds: [] as EditionsHold[] };
+  let revN = 0;
+  const holdStore: HoldStore = {
+    async read() { return structuredClone(held); },
+    async write(_id, rev, holds) { await new Promise((r) => setTimeout(r, 5)); if (rev !== held._rev) throw new Error("revision changed"); held.holds = holds; held._rev = `r${++revN}`; },
+    async remove(_id, key) { held.holds = held.holds.filter((h) => h._key !== key); held._rev = `r${++revN}`; },
+  };
+  const tries = await Promise.all([1, 2, 3, 4].map(() => placeHold(holdStore, "p", null)));
+  const won = tries.filter((t) => t.ok).length;
+  check(won === 2 && held.holds.length === 2, "four buyers at once for the last two: two holds, never three", [won, held.holds.length]);
+  check(tries.filter((t) => !t.ok).every((t) => !t.ok && t.reason === "held"), "the others are told it is held, not sold out", tries.map((t) => (t.ok ? "ok" : t.reason)));
+  check(freeUnits(held, null) === 0 && available({ quantity: 10, soldCount: 8, sizes: null }) === 2, "held units are not free, but not sold either");
+  const first = tries.find((t) => t.ok)!;
+  if (first.ok) await releaseHold(holdStore, "p", first.key);
+  check(freeUnits(held, null) === 1, "an expired checkout lets its hold go", freeUnits(held, null));
+  held.holds = held.holds.map((h) => ({ ...h, until: new Date(Date.now() - 1000).toISOString() }));
+  check(freeUnits(held, null) === 2, "a hold past its time no longer counts, even without the webhook", freeUnits(held, null));
+  const sized = { _rev: "s0", quantity: 0, soldCount: 0, sizes: [{ _key: "s", stock: 1, sold: 0 }, { _key: "m", stock: 2, sold: 0 }], holds: [] as EditionsHold[] };
+  const sizedStore: HoldStore = { async read() { return structuredClone(sized); }, async write(_i, _r, h) { sized.holds = h; }, async remove() {} };
+  const s1 = await placeHold(sizedStore, "p", "s");
+  const s2 = await placeHold(sizedStore, "p", "s");
+  const m1 = await placeHold(sizedStore, "p", "m");
+  check(s1.ok && !s2.ok && s2.reason === "held" && m1.ok, "holds are per size: the last S held, M still free", [s1.ok, s2.ok ? "ok" : s2.reason, m1.ok]);
 
   console.log(failures ? `\n${failures} failed` : "\nall passed");
   process.exit(failures ? 1 : 0);

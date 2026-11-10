@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { writeClient } from "@/sanity/writeClient";
 import type { OrderPiece, OrderRecord, OrderStore } from "./orders";
+import type { HoldStore } from "./holds";
+import type { freeUnits } from "./holds";
 
 /**
  * Private records on Sanity. Every document here is written with an ID
@@ -56,14 +58,18 @@ export function sanityOrderStore(): OrderStore {
       }
       throw new Error("Could not assign a collector number");
     },
-    async createOrderAndCount(order, pieceId, sizeKey) {
+    async createOrderAndCount(order, pieceId, sizeKey, holdKey) {
       try {
+        // The sale and its hold's release together: the held unit becomes
+        // the sold one, so stock is never counted twice or oversold.
         await client
           .transaction()
           .create(order)
           .patch(pieceId, (p) => {
-            const q = p.setIfMissing({ soldCount: 0 }).inc({ soldCount: 1 });
-            return sizeKey ? q.inc({ [`sizes[_key=="${sizeKey}"].sold`]: 1 }) : q;
+            let q = p.setIfMissing({ soldCount: 0 }).inc({ soldCount: 1 });
+            if (sizeKey) q = q.inc({ [`sizes[_key=="${sizeKey}"].sold`]: 1 });
+            if (holdKey && /^[a-f0-9]{18}$/.test(holdKey)) q = q.unset([`holds[_key=="${holdKey}"]`]);
+            return q;
           })
           .commit();
       } catch (error) {
@@ -76,6 +82,25 @@ export function sanityOrderStore(): OrderStore {
     },
     async setOrderFields(id, fields) {
       await client.patch(id).set(fields).commit();
+    },
+    async orderByPayment(paymentIntent) {
+      return client.fetch<(OrderRecord & { _rev: string }) | null>(`*[_type == "editionsOrder" && paymentIntent == $pi][0]`, { pi: paymentIntent });
+    },
+    async refundAndRestock(order, at) {
+      const rev = (order as OrderRecord & { _rev?: string })._rev;
+      try {
+        await client
+          .transaction()
+          .patch(order._id, (p) => (rev ? p.ifRevisionId(rev) : p).set({ status: "refunded", refundedAt: at }))
+          .patch(order.piece._ref, (p) => {
+            const q = p.dec({ soldCount: 1 });
+            return order.sizeKey ? q.dec({ [`sizes[_key=="${order.sizeKey}"].sold`]: 1 }) : q;
+          })
+          .commit();
+        return true;
+      } catch {
+        return false;
+      }
     },
   };
 }
@@ -99,10 +124,31 @@ export type Certificate = {
 export async function certificateByCode(code: string): Promise<Certificate | null> {
   if (!writeClient || !/^[A-Z0-9]{10}$/.test(code)) return null;
   return writeClient.fetch<Certificate | null>(
-    `*[_type == "editionsOrder" && certificateCode == $code][0]{
+    `*[_type == "editionsOrder" && certificateCode == $code && status != "refunded"][0]{
       pieceName, editionNumber, collectorNumber, paidAt, testMode,
       "piece": piece->{ editionType, quantity, "slug": slug.current, "collection": collection->{ number, season } }
     }`,
     { code },
   );
 }
+
+/** The hold store on Sanity (lib/editions/holds.ts): holds live on the piece. */
+export function sanityHoldStore(): HoldStore {
+  const client = writeClient;
+  if (!client) throw new Error("SANITY_API_TOKEN is not set");
+  return {
+    async read(pieceId) {
+      return client.fetch<(HoldPiece & { _rev: string }) | null>(
+        `*[_id == $id][0]{ _rev, quantity, soldCount, sizes[]{ _key, stock, sold }, holds[]{ _key, _type, size, until } }`,
+        { id: pieceId },
+      );
+    },
+    async write(pieceId, rev, holds) {
+      await client.patch(pieceId).ifRevisionId(rev).set({ holds }).commit();
+    },
+    async remove(pieceId, key) {
+      await client.patch(pieceId).unset([`holds[_key=="${key}"]`]).commit();
+    },
+  };
+}
+type HoldPiece = Parameters<typeof freeUnits>[0];
