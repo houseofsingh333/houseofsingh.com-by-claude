@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { OutlineButton } from "@/components/OutlineCta";
+import { TextButton } from "@/components/TextLink";
 import StepRenderer from "@/components/contact/StepRenderer";
 import {
   ReviewScreen,
@@ -150,33 +151,19 @@ export default function ContactForm({ portrait, caption, copy }: Props) {
           <div className="flex items-center justify-between pt-10 md:pt-16">
             <div>
               {currentStep > 0 && (
-                <button
-                  onClick={handlePrev}
-                  className="contact-btn contact-btn-secondary flex items-center gap-2"
-                >
-                  <ArrowLeft className="contact-btn-arrow contact-btn-arrow-back w-4 h-4" />
+                <TextButton back onClick={handlePrev}>
                   Back
-                </button>
+                </TextButton>
               )}
             </div>
             <div className="flex items-center gap-3">
               {isSkippable && (
-                <button
-                  onClick={handleNext}
-                  className="contact-btn contact-btn-ghost hairline"
-                >
-                  Skip
-                </button>
+                <TextButton onClick={handleNext}>Skip</TextButton>
               )}
               {currentStepDef?.type !== "intent" && (
-                <button
-                  onClick={handleNext}
-                  disabled={!isValid() && !isSkippable}
-                  className="contact-btn contact-btn-primary flex items-center gap-2"
-                >
+                <OutlineButton onClick={handleNext} disabled={!isValid() && !isSkippable}>
                   {currentStep === steps.length - 1 ? "Review" : "Next"}
-                  <ArrowRight className="contact-btn-arrow contact-btn-arrow-next w-4 h-4" />
-                </button>
+                </OutlineButton>
               )}
             </div>
           </div>

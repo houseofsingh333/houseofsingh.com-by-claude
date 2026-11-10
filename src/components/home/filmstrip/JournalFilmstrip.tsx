@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import ChapterMark from "@/components/ChapterMark";
+import TextLink from "@/components/TextLink";
 import type { JournalEntry } from "@/lib/types";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import { useDragToScroll } from "@/hooks/useDragToScroll";
@@ -53,14 +54,7 @@ export default function JournalFilmstrip({
       <div className="px-6 md:px-16">
         <div className="flex items-end justify-between gap-6 border-b border-border pb-4 md:pb-6">
           <div className="flex flex-col gap-4">
-            <div className="flex items-baseline gap-4">
-              <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
-                V
-              </span>
-              <span className="type-label text-muted-foreground">
-                {label}
-              </span>
-            </div>
+            <ChapterMark numeral="V" label={label} />
             <h2
               id="journal-strip-title"
               className="font-editorial font-normal text-display-l leading-[1.1] text-foreground"
@@ -88,12 +82,7 @@ export default function JournalFilmstrip({
                 )}
               </button>
             )}
-            <Link
-              href="/journal"
-              className="hairline pb-1 type-label text-muted-foreground"
-            >
-              Read the journal
-            </Link>
+            <TextLink href="/journal">Read the journal</TextLink>
           </div>
         </div>
       </div>

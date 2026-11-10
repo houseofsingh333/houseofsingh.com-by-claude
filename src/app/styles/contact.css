@@ -30,7 +30,7 @@
 .contact-input {
   border-bottom-width: 1px;
   border-bottom-color: var(--border);
-  transition: border-color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: border-color var(--dur-hover) var(--ease-soft-out);
 }
 
 .contact-input:focus {
@@ -44,7 +44,7 @@
 
 .contact-input::placeholder {
   color: var(--muted-foreground);
-  transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color var(--dur-hover) var(--ease-soft-out);
 }
 
 /* Typed text should be distinctly darker than body copy */
@@ -69,89 +69,10 @@
   transition-duration: 100ms;
 }
 
-/* Focus-visible for keyboard navigation — calm ring */
-
-/* Primary button — filled, site-consistent */
-.contact-btn-primary {
-  padding: 0.75rem 1.5rem;                  /* px-6 py-3 */
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  line-height: var(--type-label-leading);                     /* ~13px, matches site text-sm */
-  letter-spacing: var(--type-label-tracking);                    /* tracking-widest */
-  text-transform: uppercase;
-  background-color: var(--foreground);
-  color: var(--background);
-}
-
-.contact-btn-primary:hover {
-  background-color: var(--foreground);
-}
-
-.contact-btn-primary:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-/* Quiet button: a text label over a hairline (the project interest form) */
-.contact-btn-quiet {
-  display: inline-flex;
-  align-items: flex-end;
-  min-height: 44px;
-  padding: 0 0 4px;
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  line-height: var(--type-label-leading);
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
-  color: var(--foreground);
-}
-
-.contact-btn-quiet:disabled {
-  color: var(--muted-foreground);
-  cursor: not-allowed;
-}
-
-/* Secondary button — outlined, site-consistent */
-.contact-btn-secondary {
-  padding: 0.75rem 1.25rem;                 /* px-5 py-3 */
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  line-height: var(--type-label-leading);
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-  border: 1px solid var(--border);
-}
-
-.contact-btn-secondary:hover {
-  color: var(--foreground);
-  border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
-}
-
-/* Ghost button — text only, minimal */
-.contact-btn-ghost {
-  padding: 0.75rem 1.25rem;
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  line-height: var(--type-label-leading);
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-}
-
-
-/* Arrow nudge on hover */
-.contact-btn-arrow {
-  transition: transform var(--dur-hover) var(--ease-soft-out);
-}
-
-.contact-btn:hover .contact-btn-arrow-next {
-  transform: translateX(2px);
-}
-
-.contact-btn:hover .contact-btn-arrow-back {
-  transform: translateX(-2px);
-}
+/* The form's steps use the shared actions (approved 10 Nov): Next,
+   Review, Submit as the outlined button (OutlineButton), Back and Skip as
+   the text link (TextButton). .contact-btn remains for Clear saved
+   progress. */
 
 /* Chip and select buttons — calm selection feedback */
 .contact-option {

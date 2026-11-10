@@ -12,6 +12,16 @@ function Arrow({ className }: { className: string }) {
   );
 }
 
+/** The forward arrow (east), for buttons that move on through a form. */
+function ArrowRight({ className }: { className: string }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" className={className}>
+      <path d="M4 12h15" />
+      <path d="M13 6l6 6-6 6" />
+    </svg>
+  );
+}
+
 /** How long the fill stays after a press on a touch screen: its 600ms draw and a short hold. */
 const PRESS_MS = 900;
 
@@ -54,5 +64,43 @@ export default function OutlineCta({ href, label, className }: { href: string; l
         <Arrow className="outline-cta-arrow outline-cta-arrow-in" />
       </span>
     </a>
+  );
+}
+
+/**
+ * The outlined button for a form's primary step (approved 10 Nov): Continue,
+ * Send and Submit on the contact form and the project interest form. The
+ * same outline, fill and text as OutlineCta, a forward arrow that slips out
+ * to the right while a second glides in from the left, and a quiet
+ * disabled state (no fill) until the step can go on.
+ */
+export function OutlineButton({
+  children,
+  onClick,
+  type = "button",
+  disabled,
+  className,
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  type?: "button" | "submit";
+  disabled?: boolean;
+  className?: string;
+}) {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      data-arrow="right"
+      className={`outline-cta type-label${className ? ` ${className}` : ""}`}
+    >
+      <span aria-hidden="true" className="outline-cta-fill" />
+      <span className="outline-cta-text">{children}</span>
+      <span aria-hidden="true" className="outline-cta-arrows">
+        <ArrowRight className="outline-cta-arrow outline-cta-arrow-out" />
+        <ArrowRight className="outline-cta-arrow outline-cta-arrow-in" />
+      </span>
+    </button>
   );
 }

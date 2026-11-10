@@ -88,7 +88,9 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   founderRoles,
   founderBio,
   bioPullQuote,
+  aboutPortraitLabel,
   aboutStoryLabel,
+  aboutPracticeLabel,
   aboutPrintHeading,
   aboutJourneyHeading,
   aboutConversationLabel,
@@ -147,12 +149,23 @@ export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
 
 // --------------- Homepage Featured Projects ---------------
 
-export const homepageFeaturedProjectsQuery = `*[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc){
+const _homepageProject = `{
   _id, title, "slug": slug.current, category,
   "thumbnail": thumbnail ${_imageAsset},
   "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt, year,
   "coverImage": coverImage ${_imageAsset}
 }`;
+
+/**
+ * Chapter III's three projects: Site Settings "Homepage projects" in its
+ * order when it has any, else the first three projects shown on the
+ * homepage, in homepage order.
+ */
+export const homepageFeaturedProjectsQuery = `select(
+  count(*[_type == "siteSettings"][0].homepageProjects[defined(@->_id)]) > 0 =>
+    *[_type == "siteSettings"][0].homepageProjects[]->${_homepageProject}[defined(_id)][0...3],
+  *[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc)[0...3]${_homepageProject}
+)`;
 
 export const latestProjectsQuery = `*[_type == "project"] | order(_createdAt desc)[0...6]{
   _id, title, "slug": slug.current, category,

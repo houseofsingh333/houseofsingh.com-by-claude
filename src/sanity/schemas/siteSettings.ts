@@ -171,6 +171,19 @@ export const siteSettings = defineType({
       fields: imageAltFields,
     }),
 
+    /* ——— Chapter III: the three projects (approved 10 Nov) ——— */
+    defineField({
+      name: "homepageProjects",
+      title: "Homepage projects",
+      type: "array",
+      group: "homepage",
+      fieldset: "chapter3",
+      of: [{ type: "reference", to: [{ type: "project" }] }],
+      description:
+        "Up to three projects for Chapter III, in this order. When empty, the first three projects marked Show on Homepage are used, in their Homepage Order.",
+      validation: (rule) => rule.max(3).unique(),
+    }),
+
     /* ——— Menu: one photograph per page (approved 10 Nov) ——— */
     ...MENU_PHOTOS.map(([name, title, fallback]) =>
       defineField({

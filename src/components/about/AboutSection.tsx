@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { PortableText } from "@portabletext/react";
 import { proseComponents } from "@/components/proseComponents";
 import { storyFlow } from "@/lib/portableText";
@@ -12,6 +11,7 @@ import PracticeReveal from "./PracticeReveal";
 import PressCuttings from "./PressCuttings";
 import { keepLastWords } from "@/lib/keepLastWords";
 import { linkStudio } from "@/components/StudioLink";
+import ChapterMark from "@/components/ChapterMark";
 
 /*
  * The About page in six chapters:
@@ -29,21 +29,6 @@ function rolesLine(roles: string[]): string {
   const lower = roles.map((r, i) => (i === 0 ? r.charAt(0).toUpperCase() + r.slice(1).toLowerCase() : r.toLowerCase()));
   if (lower.length < 2) return lower.join("");
   return `${lower.slice(0, -1).join(", ")} and ${lower[lower.length - 1]}`;
-}
-
-/** A chapter's brass numeral with its small label. */
-function ChapterMark({ numeral, label, children }: { numeral: string; label?: string; children?: ReactNode }) {
-  return (
-    <div className="flex items-baseline gap-4">
-      <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
-        {numeral}
-      </span>
-      {label && (
-        <span className="type-label text-muted-foreground">{label}</span>
-      )}
-      {children}
-    </div>
-  );
 }
 
 export default function AboutSection({ data }: { data: AboutPageData }) {
@@ -73,7 +58,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       <section aria-labelledby="about-name" className="about-opening px-6 md:px-16 page-top-offset section-pb">
         <AboutPortrait image={portrait} alt={`${founderName}, ${roles[0]}`} />
         <div className="about-opening-text">
-          <ChapterMark numeral="I" />
+          <ChapterMark numeral="I" label={copy.aboutPortraitLabel} />
           {introQuote && (
             <blockquote className="about-quote text-display-l leading-[1.2] text-foreground">
               &ldquo;{keepLastWords(introQuote)}&rdquo;
@@ -90,11 +75,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— II · The story ——— */}
       <section aria-labelledby="about-story" className="about-story px-6 md:px-16 section-py">
-        <ChapterMark numeral="II">
-          <h2 id="about-story" className="type-label text-muted-foreground">
-            {copy.aboutStoryLabel}
-          </h2>
-        </ChapterMark>
+        <ChapterMark numeral="II" label={copy.aboutStoryLabel} headingId="about-story" />
         <div className="about-story-text">
           {story.length > 0
             ? story.map((item, i) =>
@@ -122,10 +103,10 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
 
       {/* ——— III · The practice ——— */}
       <section aria-labelledby="about-practice" className="px-6 md:px-16 section-py">
-        <h2 id="about-practice" className="sr-only">
-          The practice, House of Singh
-        </h2>
-        <PracticeReveal logo={typeof monikerLogo === "string" ? monikerLogo : null}>
+        <PracticeReveal
+          logo={typeof monikerLogo === "string" ? monikerLogo : null}
+          mark={<ChapterMark numeral="III" label={copy.aboutPracticeLabel} headingId="about-practice" centred />}
+        >
           {monikerText ? (
             <PortableText value={monikerText} components={proseComponents} />
           ) : (
@@ -142,11 +123,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       {featuredOn && featuredOn.length > 0 && (
         <section aria-labelledby="about-print" className="px-6 md:px-16 section-py">
           <div className="about-chapter-head">
-            <ChapterMark numeral="IV">
-              <h2 id="about-print" className="font-editorial font-normal text-display-l leading-[1.1] text-foreground">
-                {copy.aboutPrintHeading}
-              </h2>
-            </ChapterMark>
+            <ChapterMark numeral="IV" label={copy.aboutPrintHeading} headingId="about-print" />
           </div>
           <PressCuttings outlets={featuredOn} />
         </section>
@@ -155,11 +132,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
       {/* ——— V · A walk through the years ——— */}
       {milestones && milestones.length > 0 && (
         <section aria-labelledby="about-journey" className="about-journey px-6 md:px-16 section-py">
-          <ChapterMark numeral="V">
-            <h2 id="about-journey" className="type-label text-muted-foreground">
-              {copy.aboutJourneyHeading}
-            </h2>
-          </ChapterMark>
+          <ChapterMark numeral="V" label={copy.aboutJourneyHeading} headingId="about-journey" />
           <JourneyLedger milestones={milestones} label={`${copy.aboutJourneyHeading}: milestones, newest first`} />
         </section>
       )}

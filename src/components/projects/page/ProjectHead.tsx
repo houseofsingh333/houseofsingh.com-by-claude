@@ -1,4 +1,4 @@
-import Link from "next/link";
+import TextLink from "@/components/TextLink";
 import { linkStudio } from "@/components/StudioLink";
 
 type Props = {
@@ -24,9 +24,9 @@ type Props = {
 export default function ProjectHead({ title, counter, meta, isUpcoming, excerpt, allProjectsHref, allProjectsLabel }: Props) {
   return (
     <div className="pp-col">
-      <Link href={allProjectsHref} className="pp-back hairline">
-        <span aria-hidden="true">&larr;</span> {allProjectsLabel}
-      </Link>
+      <TextLink href={allProjectsHref} back className="pp-back">
+        {allProjectsLabel}
+      </TextLink>
       <header className="pp-head">
         <div className="pp-head-main">
           {counter && <span className="pp-counter">{counter}</span>}

@@ -1,6 +1,7 @@
 import { ViewTransition } from "react";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
+import TextLink from "@/components/TextLink";
 import { hasImageAsset } from "@/lib/sanityImage";
 import { hotspotPosition } from "@/lib/projectHero";
 import type { ProjectLink } from "@/lib/types";
@@ -39,12 +40,8 @@ export default function ProjectNext({ next, label, allProjectsHref, allProjectsL
         </Link>
         {next.category && <span className="pp-next-meta">{next.category}</span>}
         <div className="pp-next-links">
-          <Link href={allProjectsHref} className="hairline">
-            {allProjectsLabel}
-          </Link>
-          <Link href="/contact" className="hairline">
-            {startLabel}
-          </Link>
+          <TextLink href={allProjectsHref}>{allProjectsLabel}</TextLink>
+          <TextLink href="/contact">{startLabel}</TextLink>
         </div>
       </div>
     </nav>

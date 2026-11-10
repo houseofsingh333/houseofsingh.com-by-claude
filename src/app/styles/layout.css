@@ -56,10 +56,6 @@
 
 .footer-write {
   align-self: flex-start;
-  padding-bottom: 2px;
-  font-size: var(--type-small);
-  line-height: 1.5;
-  color: var(--muted-foreground);
 }
 
 .footer-time {

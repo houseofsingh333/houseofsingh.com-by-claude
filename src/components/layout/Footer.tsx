@@ -1,5 +1,6 @@
 import Link from "next/link";
 import OutlineCta from "@/components/OutlineCta";
+import TextLink from "@/components/TextLink";
 import TorontoTime from "@/components/TorontoTime";
 import type { SiteCopy } from "@/lib/siteCopy";
 import FooterNewsletter from "./FooterNewsletter";
@@ -52,9 +53,9 @@ export default function Footer({ copy, bookUrl }: { copy: FooterCopy; bookUrl: s
             </p>
             <div className="footer-actions">
               <OutlineCta href={bookUrl} label={copy.codaBookLabel} className="footer-book" />
-              <Link href="/contact" className="footer-write hairline">
+              <TextLink href="/contact" className="footer-write">
                 {copy.codaWriteLabel}
-              </Link>
+              </TextLink>
             </div>
           </div>
         </div>

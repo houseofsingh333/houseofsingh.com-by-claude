@@ -1,4 +1,5 @@
-import Link from "next/link";
+import ChapterMark from "@/components/ChapterMark";
+import TextLink from "@/components/TextLink";
 import SanityImage from "@/components/SanityImage";
 import { hasImageAsset } from "@/lib/sanityImage";
 import type { SpotlightData } from "@/lib/types";
@@ -31,14 +32,7 @@ export default function SpotlightBillboard({ spotlight, copy }: { spotlight: Spo
         media="(min-width: 1024px) and (prefers-reduced-motion: no-preference)"
       />
       <div className="aperture-stage px-6 md:px-16">
-        <div className="aperture-head">
-          <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
-            IV
-          </span>
-          <span className="type-label text-muted-foreground-inverse">
-            {copy.studioNowLabel}
-          </span>
-        </div>
+        <ChapterMark numeral="IV" label={copy.studioNowLabel} inverse className="aperture-head" />
 
         <div className="aperture-grid">
           <div className="aperture-text">
@@ -59,21 +53,9 @@ export default function SpotlightBillboard({ spotlight, copy }: { spotlight: Spo
               </p>
             )}
             {spotlight.linkText && spotlight.linkUrl && (
-              isExternal ? (
-                <a
-                  href={spotlight.linkUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="aperture-link hairline"
-                >
-                  {spotlight.linkText}
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-              ) : (
-                <Link href={spotlight.linkUrl} className="aperture-link hairline">
-                  {spotlight.linkText}
-                </Link>
-              )
+              <TextLink href={spotlight.linkUrl} external={isExternal} inverse className="aperture-link">
+                {spotlight.linkText}
+              </TextLink>
             )}
           </div>
 

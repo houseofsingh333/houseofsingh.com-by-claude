@@ -45,14 +45,9 @@
 .mono-heading {
   font-family: var(--font-editorial);
   font-weight: 400;
-  font-size: var(--type-display-m);
+  font-size: var(--type-display-l); /* the same token as the Journal heading (approved 10 Nov) */
   line-height: 1;
   color: var(--foreground);
-}
-@media (min-width: 1024px) {
-  .mono-heading {
-    font-size: var(--type-display-m);
-  }
 }
 .mono-controls {
   position: relative;
@@ -67,7 +62,6 @@
 .mono-counter,
 .mono-pause,
 .mono-meta,
-.mono-enter,
 .mono-nav button,
 .mono-card-meta {
   font-size: var(--type-label-size);
@@ -551,9 +545,12 @@ html:not(.js) .mono-icon {
     min-height: 44px;
     padding-bottom: 0;
   }
+  /* The heading at display-l (as the Journal's) inside the 44px header
+     row: its line box is held at the row's height, so the row, and the
+     plate below it (--plate-top), stay where V1a puts them. */
   .mono-heading {
     font-weight: 400;
-    font-size: calc(34 * var(--px)); /* display-m, scaled with the frame */
+    line-height: 44px;
   }
   .mono-views {
     gap: calc(24 * var(--px));
@@ -1099,16 +1096,7 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
 
 /* All projects, beneath the hero */
 .pp-back {
-  display: inline-flex;
-  gap: 0.5rem;
   margin-top: 1.25rem;
-  padding: 0.5rem 0 0.25rem;
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  line-height: var(--type-label-leading);
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
-  color: var(--muted-foreground);
 }
 
 /* The title block: counter, title, small capitals; the excerpt beside it */
@@ -1300,17 +1288,13 @@ p.pp-story {
   gap: 0.875rem;
 }
 .pp-next-label,
-.pp-next-meta,
-.pp-next-links {
+.pp-next-meta {
   font-size: var(--type-label-size);
   white-space: nowrap;
   line-height: var(--type-label-leading);
   letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
-}
-.pp-next-label {
-  letter-spacing: var(--type-label-tracking);
 }
 .pp-next-title {
   font-family: var(--font-editorial);
@@ -1321,9 +1305,9 @@ p.pp-story {
 }
 .pp-next-links {
   display: flex;
-  gap: 1.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.75rem;
   margin-top: 1.5rem;
-  color: var(--foreground);
 }
 /* Pointing at the photograph or the title: both answer. */
 .pp-next:has(.pp-next-plate:hover, .pp-next-title:hover, .pp-next-title:focus-visible) .pp-next-plate img {
