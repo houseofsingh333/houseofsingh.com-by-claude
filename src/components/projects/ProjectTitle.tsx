@@ -24,8 +24,7 @@ export default function ProjectTitle({
   return (
     <div className={`${PAGE_COLUMN} pt-(--section-space-sm)`}>
       <h1
-        className="font-editorial font-light text-foreground leading-[1.05] tracking-[-0.01em] text-balance break-words"
-        style={{ fontSize: "clamp(42px, 6vw, 88px)" }}
+        className="font-editorial font-normal text-display-xl text-foreground leading-[1.05] tracking-[-0.01em] text-balance break-words"
       >
         {title}
       </h1>

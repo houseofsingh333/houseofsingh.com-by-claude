@@ -22,10 +22,10 @@ export default function ErrorLayout({
         {label}
       </p>
       <div className="w-full h-px bg-border mb-8 md:mb-10" />
-      <h1 className="font-editorial text-[length:clamp(30px,calc(16.85px_+_3.371vw),60px)] font-light text-foreground leading-none">
+      <h1 className="font-editorial font-normal text-display-xl text-foreground leading-none">
         {title}
       </h1>
-      <p className="mt-8 max-w-md text-sm md:text-[15px] text-muted-foreground leading-[1.8]">
+      <p className="mt-8 max-w-md text-body text-muted-foreground leading-[1.7]">
         {text}
       </p>
       <div className="mt-12 flex flex-wrap items-center gap-x-10 gap-y-4">

@@ -11,6 +11,7 @@ import JourneyLedger from "./JourneyLedger";
 import PracticeReveal from "./PracticeReveal";
 import PressCuttings from "./PressCuttings";
 import { keepLastWords } from "@/lib/keepLastWords";
+import { linkStudio } from "@/components/StudioLink";
 
 /*
  * The About page in six chapters:
@@ -34,7 +35,7 @@ function rolesLine(roles: string[]): string {
 function ChapterMark({ numeral, label, children }: { numeral: string; label?: string; children?: ReactNode }) {
   return (
     <div className="flex items-baseline gap-4">
-      <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
+      <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
         {numeral}
       </span>
       {label && (
@@ -74,15 +75,15 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         <div className="about-opening-text">
           <ChapterMark numeral="I" />
           {introQuote && (
-            <blockquote className="about-quote text-[length:clamp(30px,calc(22.11px_+_2.022vw),48px)] leading-[1.2] text-foreground">
+            <blockquote className="about-quote text-display-l leading-[1.2] text-foreground">
               &ldquo;{keepLastWords(introQuote)}&rdquo;
             </blockquote>
           )}
           <div className="flex flex-col gap-1.5 border-t border-border pt-5">
-            <h2 id="about-name" className="font-editorial font-normal text-[24px] leading-[1.3] text-foreground">
+            <h2 id="about-name" className="font-editorial font-normal text-display-s leading-[1.3] text-foreground">
               {founderName}
             </h2>
-            <p className="text-[14px] leading-[1.6] text-muted-foreground">{rolesLine(roles)}</p>
+            <p className="text-small leading-[1.6] text-muted-foreground">{rolesLine(roles)}</p>
           </div>
         </div>
       </section>
@@ -103,11 +104,11 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
                   </div>
                 ) : item.kind === "quote" ? (
                   <p key={i} className="about-pull">
-                    {keepLastWords(item.text)}
+                    {linkStudio(keepLastWords(item.text))}
                   </p>
                 ) : (
                   <p key={i} className="about-story-p">
-                    {item.text}
+                    {linkStudio(item.text)}
                   </p>
                 ),
               )
@@ -142,7 +143,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         <section aria-labelledby="about-print" className="px-6 md:px-16 section-py">
           <div className="about-chapter-head">
             <ChapterMark numeral="IV">
-              <h2 id="about-print" className="font-editorial font-normal text-[length:clamp(30px,calc(27.37px_+_0.674vw),36px)] leading-[1.15] text-foreground">
+              <h2 id="about-print" className="font-editorial font-normal text-display-l leading-[1.1] text-foreground">
                 {copy.aboutPrintHeading}
               </h2>
             </ChapterMark>
@@ -159,7 +160,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
               {copy.aboutJourneyHeading}
             </h2>
           </ChapterMark>
-          <JourneyLedger milestones={milestones} hint={copy.aboutJourneyHint} label={`${copy.aboutJourneyHeading}: milestones, newest first`} />
+          <JourneyLedger milestones={milestones} label={`${copy.aboutJourneyHeading}: milestones, newest first`} />
         </section>
       )}
 
@@ -168,7 +169,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
         <section aria-labelledby="about-conversation" className="about-conversation px-6 md:px-16 section-py-lg">
           <div className="flex flex-col gap-5">
             <ChapterMark numeral="VI" label={copy.aboutConversationLabel} />
-            <h2 id="about-conversation" className="font-editorial font-normal text-[length:clamp(30px,calc(25.62px_+_1.124vw),40px)] leading-[1.1] text-foreground">
+            <h2 id="about-conversation" className="font-editorial font-normal text-display-l leading-[1.1] text-foreground">
               {copy.aboutConversationHeading}
             </h2>
           </div>

@@ -138,7 +138,7 @@ export const SITE_COPY_FIELDS = [
   { name: "menuClose", title: "Close button", group: "menu", text: "Close" },
   { name: "menuInstagram", title: "Instagram link", group: "menu", text: "Instagram" },
   { name: "menuNewsletter", title: "Newsletter link", group: "menu", text: "Newsletter" },
-  { name: "menuTimeLabel", title: "Time label", group: "menu", text: "Toronto" },
+  { name: "menuTimeLabel", title: "Words after the time (10:42 pm in Toronto)", group: "menu", text: "in Toronto" },
 
   // ——— 404 page ———
   { name: "notFoundLabel", title: "Label", group: "notFound", text: "404" },
@@ -223,7 +223,6 @@ export const ABOUT_COPY_FIELDS = [
   { name: "aboutStoryLabel", title: "Chapter II label", text: "The story" },
   { name: "aboutPrintHeading", title: "Chapter IV heading", text: "In print" },
   { name: "aboutJourneyHeading", title: "Chapter V label", text: "A walk through the years" },
-  { name: "aboutJourneyHint", title: "Chapter V scroll hint (first visit)", text: "Scroll" },
   { name: "aboutConversationLabel", title: "Chapter VI label", text: "Rapid fire" },
   { name: "aboutConversationHeading", title: "Chapter VI heading", text: "In conversation" },
   { name: "aboutReplyName", title: "Name on each reply", text: "Maninder" },

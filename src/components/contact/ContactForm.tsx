@@ -86,7 +86,7 @@ export default function ContactForm({ portrait, caption, copy }: Props) {
         {submitError && (
           <p
             role="alert"
-            className="text-sm text-muted-foreground mb-6 border-l-2 border-foreground/20 pl-4"
+            className="text-small text-muted-foreground mb-6 border-l-2 border-foreground/20 pl-4"
           >
             {submitError}
           </p>
@@ -113,13 +113,13 @@ export default function ContactForm({ portrait, caption, copy }: Props) {
         <div className="min-h-[50vh] flex flex-col justify-center max-w-lg">
           <div key={currentStep} className="editorial-slide-up">
             {/* Question */}
-            <h2 className="font-editorial text-[length:clamp(28px,calc(19.24px_+_2.247vw),48px)] font-light text-foreground leading-[1.15] sm:leading-[1.12] mb-5 tracking-[-0.01em] text-balance">
+            <h2 className="font-editorial font-normal text-display-l text-foreground leading-[1.15] sm:leading-[1.12] mb-5 tracking-[-0.01em] text-balance">
               {currentStepDef?.question}
             </h2>
 
             {/* Helper text — stronger pause before input */}
             {currentStepDef?.helperText && (
-              <p className="text-sm text-muted-foreground leading-relaxed mb-10">
+              <p className="text-small text-muted-foreground leading-relaxed mb-10">
                 {currentStepDef.helperText}
               </p>
             )}

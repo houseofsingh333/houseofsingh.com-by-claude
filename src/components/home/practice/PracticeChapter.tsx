@@ -54,7 +54,7 @@ export default function PracticeChapter({
       data-panels={panels.length}
     >
       <div className="practice-label flex items-baseline gap-4">
-        <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
+        <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
           VII
         </span>
         <h2 id="chapter-practice" className="type-label text-muted-foreground">
@@ -73,7 +73,7 @@ export default function PracticeChapter({
           decoding="async"
           className="practice-logo"
         />
-        <p className="practice-line font-editorial text-foreground">{copy.practiceLine}</p>
+        <p className="practice-line text-foreground">{copy.practiceLine}</p>
         <p className="practice-business text-muted-foreground">{copy.practiceBusinessLine}</p>
       </div>
 

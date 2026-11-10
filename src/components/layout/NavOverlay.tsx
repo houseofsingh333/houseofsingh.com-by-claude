@@ -1,24 +1,29 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import SanityImage from "@/components/SanityImage";
 import TorontoTime from "@/components/TorontoTime";
 import { roman } from "@/lib/roman";
+import { hotspotPosition } from "@/lib/projectHero";
 import type { MenuPhoto, NavItem } from "@/lib/types";
 import type { SiteCopy } from "@/lib/siteCopy";
 
 /** id of the menu panel, referenced by the menu buttons' aria-controls. */
 export const SITE_MENU_ID = "site-menu";
 
+/** Where the photograph half of the menu begins. */
+const WIDE = "(min-width: 1024px)";
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onNewsletterOpen: () => void;
   items: NavItem[];
-  /** Menu photographs by page link. */
+  /** Menu photographs by page link (Site Settings, Menu; else a default). */
   photos: Record<string, MenuPhoto>;
   /** The menu's small texts (Site Settings, Menu). */
   copy: MenuCopy;
@@ -26,19 +31,32 @@ type Props = {
 
 export type MenuCopy = Pick<SiteCopy, "menuClose" | "menuInstagram" | "menuNewsletter" | "menuTimeLabel">;
 
-const SMALL_LINK =
-  "type-label text-muted-foreground hover:text-foreground transition-colors duration-(--dur-hover) ease-(--ease-soft-out) py-2";
-
 /**
- * The menu as an index room: a full screen canvas with the pages in large
- * Playfair, numbered I to V in brass, and a photograph that changes with
- * the page under the pointer or focus (each page's Menu photograph in
- * Sanity, or a default from the page). Below: Studio, Instagram and the
- * newsletter as small links, and the time in Toronto. It fades in within
- * 500ms (see "Menu, the index room" in styles/layout.css).
+ * The menu (approved 10 Nov, after slowness.com; canvas page "Menu").
  *
- * While open the rest of the page is inert, focus moves to the first page,
- * Tab stays inside, Escape closes, and focus returns to the dot (Header).
+ * From 1024 wide: a canvas panel slides in from the left over the left half
+ * (--dur-menu-panel, --ease-slow) while the right half fills with one large
+ * photograph, inset 24px, fading in and settling from a 1.04 scale. The
+ * page is fully covered. The photograph is the current page's on opening
+ * and changes only when a page name is pointed at or focused (a 700ms
+ * crossfade, no timer). Closing: the photograph fades first, then the panel
+ * slides out. Clicking the photograph closes the menu, as do Close and
+ * Escape.
+ *
+ * Below 1024: the panel covers 85 percent of the width with a soft shadow,
+ * no photograph; the page shows on the strip beside it under a light veil,
+ * and tapping the strip closes the menu.
+ *
+ * Inside: "× Close", the five pages in small uppercase Instrument Sans
+ * with muted Roman numerals (the shared hairline under the one pointed at
+ * and the current page), and a bottom line with Studio, Instagram,
+ * Newsletter and "10:42 pm in Toronto". No Playfair, no House of Singh.
+ *
+ * While open it is a modal dialog: the page behind is inert and does not
+ * scroll (its position is kept, html[data-menu-open]), the page header
+ * fades out with the panel and back as it closes (html[data-menu-closing]),
+ * focus moves to the first page, Tab stays inside, Escape closes, and
+ * focus returns to the dot (Header). Reduced motion: no slide, no zoom.
  */
 export default function NavOverlay({
   isOpen,
@@ -56,121 +74,160 @@ export default function NavOverlay({
     p.href === "/" ? pathname === "/" : pathname === p.href || pathname.startsWith(p.href + "/"),
   );
 
-  const panelRef = useRef<HTMLElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const veilRef = useRef<HTMLDivElement>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
+  // Focus opens on the current page (Home elsewhere), so the photograph
+  // shown on opening is the current page's.
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
   useFocusTrap({
     active: isOpen,
     containerRef: panelRef,
+    keepRefs: [veilRef, photoRef],
     onEscape: onClose,
     initialFocusRef: firstLinkRef,
   });
 
-  // The page under the pointer or focus; the current page until then.
+  // The page behind does not scroll while the menu is open. Hiding the
+  // root's overflow keeps its scroll position exactly (nothing is moved or
+  // restored), and the scrollbar's gutter stays so nothing shifts sideways.
+  // The page header fades out with the panel and back in as it closes
+  // (data-menu-closing lasts as long as the panel's slide).
+  const closingTimer = useRef<number | undefined>(undefined);
+  useEffect(() => {
+    if (!isOpen) return;
+    const html = document.documentElement;
+    window.clearTimeout(closingTimer.current);
+    html.removeAttribute("data-menu-closing");
+    html.setAttribute("data-menu-open", "");
+    return () => {
+      html.removeAttribute("data-menu-open");
+      html.setAttribute("data-menu-closing", "");
+      const ms = parseFloat(getComputedStyle(html).getPropertyValue("--dur-menu-panel")) || 750;
+      closingTimer.current = window.setTimeout(() => html.removeAttribute("data-menu-closing"), ms + 150);
+    };
+  }, [isOpen]);
+
+  // The page pointed at or focused; the current page until then (and again
+  // on every opening).
   const [hovered, setHovered] = useState<number | null>(null);
+  const [wasOpen, setWasOpen] = useState(isOpen);
+  if (isOpen !== wasOpen) {
+    setWasOpen(isOpen);
+    if (isOpen) setHovered(null);
+  }
   const active = hovered ?? Math.max(0, current);
-  // Photographs load only once the menu has been opened, never with the page.
+
+  // Photographs load only from 1024 wide, and only once the menu has been
+  // opened, never with the page.
+  const wide = useMediaQuery(WIDE);
   const [opened, setOpened] = useState(false);
-  if (isOpen && !opened) setOpened(true);
+  if (isOpen && wide && !opened) setOpened(true);
 
   return (
-    <nav
-      ref={panelRef}
-      id={SITE_MENU_ID}
-      aria-label="Site menu"
-      inert={!isOpen}
-      data-open={isOpen ? "" : undefined}
-      className="menu-room"
-    >
-      <div className="menu-top">
-        <button type="button" onClick={onClose} aria-label={`${copy.menuClose} menu`} className="menu-close">
-          {copy.menuClose}
-        </button>
-        <span aria-hidden="true" />
-      </div>
+    <div className="menu-shell" inert={!isOpen} data-open={isOpen ? "" : undefined}>
+      {/* Below 1024: the veil over the strip of page; a tap on it closes. */}
+      <div ref={veilRef} aria-hidden="true" className="menu-veil" onClick={onClose} />
 
-      <div className="menu-body">
-        <ul className="menu-list" onMouseLeave={() => setHovered(null)}>
-          {pages.map((item, i) => (
-            <li key={item.href}>
-              <Link
-                ref={i === 0 ? firstLinkRef : undefined}
-                href={item.href}
-                onClick={onClose}
-                onMouseEnter={() => setHovered(i)}
-                onFocus={() => setHovered(i)}
-                aria-current={i === current ? "page" : undefined}
-                data-active={i === active ? "" : undefined}
-                className="menu-link hairline-host"
-              >
-                <span aria-hidden="true" className="menu-num">
-                  {roman(i + 1)}
-                </span>
-                <span className="menu-label hairline">{item.label}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        {/* Decorative here: it only echoes the page under the pointer. */}
-        <figure aria-hidden="true" className="menu-photo">
-          <div className="menu-photo-frame">
+      {/* From 1024: the photograph half; a click on it closes. Decorative:
+          it only echoes the page pointed at, and Close and Escape close too. */}
+      <div ref={photoRef} aria-hidden="true" className="menu-photo" onClick={onClose}>
+        <div className="menu-photo-frame">
+          <div className="menu-photo-stack">
             {opened &&
               pages.map((item, i) => {
                 const photo = photos[item.href];
                 if (!photo) return null;
                 return (
-                  <div key={item.href} className="menu-photo-layer" data-active={i === active ? "" : undefined}>
+                  <div key={item.href} className="menu-photo-layer" data-href={item.href} data-active={i === active ? "" : undefined}>
                     <SanityImage
                       image={photo.image}
-                      context="thumbnail"
+                      context="body"
                       alt={photo.alt ?? undefined}
                       fill
-                      sizes="420px"
+                      sizes="50vw"
                       className="object-cover"
+                      objectPosition={typeof photo.image === "string" ? undefined : hotspotPosition(photo.image)}
                       develop={false}
                     />
                   </div>
                 );
               })}
           </div>
-          <figcaption className="menu-photo-caption">
-            {photos[pages[active]?.href]?.caption ?? ""}
-          </figcaption>
-        </figure>
+        </div>
       </div>
 
-      <div className="menu-foot">
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
-          {outside.map((item) => (
+      <div
+        ref={panelRef}
+        id={SITE_MENU_ID}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu"
+        className="menu-panel"
+      >
+        <button type="button" onClick={onClose} aria-label={`${copy.menuClose} menu`} className="menu-close">
+          <span aria-hidden="true" className="menu-close-x">
+            &#215;
+          </span>
+          {copy.menuClose}
+        </button>
+
+        <nav aria-label="Site menu" className="menu-body">
+          <ul className="menu-list" onMouseLeave={() => setHovered(null)}>
+            {pages.map((item, i) => (
+              <li key={item.href} className="menu-item" style={{ ["--i" as string]: i }}>
+                <Link
+                  ref={i === Math.max(0, current) ? firstLinkRef : undefined}
+                  href={item.href}
+                  onClick={onClose}
+                  onMouseEnter={() => setHovered(i)}
+                  onFocus={() => setHovered(i)}
+                  aria-current={i === current ? "page" : undefined}
+                  className="menu-link hairline-host"
+                >
+                  <span aria-hidden="true" className="menu-num">
+                    {roman(i + 1)}
+                  </span>
+                  <span className="menu-label hairline">{item.label}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="menu-foot">
+          <div className="menu-foot-links">
+            {outside.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={onClose}
+                className="menu-small hairline"
+              >
+                {item.label}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            ))}
             <a
-              key={item.href}
-              href={item.href}
+              href="https://www.instagram.com/houseofsingh"
               target="_blank"
               rel="noopener noreferrer"
-              onClick={onClose}
-              className={SMALL_LINK}
+              className="menu-small hairline"
             >
-              {item.label}
+              {copy.menuInstagram}
               <span className="sr-only"> (opens in a new tab)</span>
             </a>
-          ))}
-          <a
-            href="https://www.instagram.com/houseofsingh"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={SMALL_LINK}
-          >
-            {copy.menuInstagram}
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
-          <button type="button" onClick={onNewsletterOpen} className={SMALL_LINK}>
-            {copy.menuNewsletter}
-          </button>
+            <button type="button" onClick={onNewsletterOpen} className="menu-small hairline">
+              {copy.menuNewsletter}
+            </button>
+          </div>
+          <p className="menu-small menu-time">
+            <TorontoTime /> {copy.menuTimeLabel}
+          </p>
         </div>
-        <p className="type-label text-muted-foreground">
-          {copy.menuTimeLabel} <TorontoTime />
-        </p>
       </div>
-    </nav>
+    </div>
   );
 }

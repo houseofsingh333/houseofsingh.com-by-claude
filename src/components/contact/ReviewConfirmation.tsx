@@ -44,7 +44,7 @@ export function ReviewScreen({
       <p className="type-label text-muted-foreground mb-4">
         Review
       </p>
-      <h2 className="font-editorial text-[length:clamp(30px,calc(22.11px_+_2.022vw),48px)] font-light text-foreground mb-12 leading-[1.12]">
+      <h2 className="font-editorial font-normal text-display-l text-foreground mb-12 leading-[1.12]">
         Before you send.
       </h2>
 
@@ -64,10 +64,10 @@ export function ReviewScreen({
                     className="flex items-baseline justify-between border-b border-border py-4 group"
                   >
                     <div className="flex-1 min-w-0">
-                      <span className="text-sm text-muted-foreground block mb-1">
+                      <span className="text-small text-muted-foreground block mb-1">
                         {step.question.replace(/[?.]/g, "")}
                       </span>
-                      <span className="text-base md:text-lg font-light text-foreground break-words">
+                      <span className="text-body text-foreground break-words">
                         {step.type === "date" && val
                           ? formatDateOnly(val)
                           : val}
@@ -111,10 +111,10 @@ export function ReviewScreen({
 export function ConfirmationScreen({ heading, line }: { heading: string; line: string }) {
   return (
     <div className="w-full max-w-xl mx-auto editorial-slide-up">
-      <h2 className="font-editorial text-[length:clamp(36px,calc(25.48px_+_2.697vw),60px)] font-light text-foreground mb-6 leading-[1.08]">
+      <h2 className="font-editorial font-normal text-display-l text-foreground mb-6 leading-[1.08]">
         {heading}
       </h2>
-      <p className="text-muted-foreground text-lg mb-14 leading-relaxed">
+      <p className="text-muted-foreground text-body-l mb-14 leading-relaxed">
         {line}
       </p>
       <div className="flex flex-wrap gap-4">

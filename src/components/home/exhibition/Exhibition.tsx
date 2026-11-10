@@ -45,8 +45,8 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
           >
             <div className="exhibition-stage">
               <div className="exhibition-head px-6 md:px-16" aria-hidden={i > 0 ? true : undefined}>
-                <span className="font-editorial text-[30px] leading-none text-accent">III</span>
-                <h2 id={i === 0 ? "chapter-work" : undefined} className="font-editorial font-normal text-[length:clamp(30px,calc(27.37px_+_0.674vw),36px)] leading-[1.1] text-foreground">
+                <span className="font-editorial text-numeral leading-none text-accent">III</span>
+                <h2 id={i === 0 ? "chapter-work" : undefined} className="font-editorial font-normal text-display-l leading-[1.1] text-foreground">
                   {copy.workHeading}
                 </h2>
               </div>
@@ -77,14 +77,14 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
               </div>
 
               <div className="exhibition-label">
-                <h3 className="font-editorial font-normal text-[24px] leading-[1.2] text-foreground">
+                <h3 className="font-editorial font-normal text-display-s leading-[1.2] text-foreground">
                   <Link href={href} className="hairline">
                     {project.title}
                   </Link>
                 </h3>
                 {meta && <p className="type-label text-muted-foreground">{meta}</p>}
                 {project.excerpt && (
-                  <p className="mt-2 text-[14px] leading-[1.6] text-foreground">{project.excerpt}</p>
+                  <p className="mt-2 text-small leading-[1.6] text-foreground">{project.excerpt}</p>
                 )}
                 <Link href={href} className="exhibition-label-enter mt-3 type-label text-foreground border-b border-foreground pb-1">
                   {copy.workEnterLink}
@@ -93,15 +93,15 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
 
               <div className="exhibition-plate" aria-hidden="true">
                 <span className="type-label text-muted-foreground">{count}</span>
-                <p className="font-editorial text-[44px] leading-[1.05] text-foreground">{project.title}</p>
-                {project.excerpt && <p className="text-[15px] leading-[1.6] text-foreground">{project.excerpt}</p>}
+                <p className="font-editorial text-display-l leading-[1.05] text-foreground">{project.title}</p>
+                {project.excerpt && <p className="text-small leading-[1.6] text-foreground">{project.excerpt}</p>}
                 <Link href={href} tabIndex={-1} className="self-start mt-1.5 type-label text-foreground border-b border-foreground pb-1">
                   {copy.workEnterLink}
                 </Link>
               </div>
 
               <div className="exhibition-bar px-6 md:px-16" aria-hidden="true">
-                <span className="font-editorial text-[18px] whitespace-nowrap text-foreground">
+                <span className="font-editorial text-display-s whitespace-nowrap text-foreground">
                   {roman(i + 1)} <span className="text-muted-foreground">/ {roman(n)}</span>
                 </span>
                 <span className="exhibition-line"><span className="exhibition-line-fill" /></span>

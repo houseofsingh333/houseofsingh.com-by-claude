@@ -556,14 +556,14 @@ html:not(.js) .hero-progress {
   max-width: 400px;
 }
 .turntable-heading {
-  font-size: clamp(36px, calc(28.99px + 1.798vw), 52px);
+  font-size: var(--type-display-l);
   line-height: 1.05;
   text-wrap: balance;
 }
 .turntable-note {
-  font-size: clamp(20px, calc(19.12px + 0.225vw), 22px);
-  line-height: 1.4;
-  text-wrap: balance;
+  font-size: var(--type-body-l);
+  line-height: 1.6;
+  text-wrap: pretty;
 }
 .turntable-stage {
   display: flex;
@@ -776,7 +776,7 @@ html:not(.js) .hero-progress {
 .practice {
   --practice-flex-dur: 900ms;
   --practice-cap-gap: 14px;
-  --practice-cap-line: 21px;
+  --practice-cap-line: 30px; /* display-s names, at a 1.25 line */
   display: flex;
   flex-direction: column;
 }
@@ -793,13 +793,13 @@ html:not(.js) .hero-progress {
 .practice-line {
   margin-top: 24px;
   max-width: 560px;
-  font-size: clamp(26px, calc(24.25px + 0.449vw), 30px);
-  line-height: 1.3;
+  font-size: var(--type-statement);
+  line-height: 1.35;
 }
 .practice-business {
   margin-top: 14px;
   max-width: 420px;
-  font-size: 16px;
+  font-size: var(--type-body);
   line-height: 1.6;
 }
 .practice-work {
@@ -846,7 +846,8 @@ html:not(.js) .hero-progress {
 }
 .practice-client {
   overflow: hidden;
-  font-size: 15px;
+  font-family: var(--font-editorial);
+  font-size: var(--type-display-s);
   line-height: var(--practice-cap-line);
   text-overflow: clip;
 }
@@ -912,7 +913,7 @@ html:not(.js) .hero-progress {
   }
   .practice-line {
     margin-top: 26px;
-    font-size: 32px;
+    font-size: var(--type-statement);
   }
   .practice-action {
     grid-area: action;

@@ -24,15 +24,12 @@ export type NavItem = {
   href: string;
   external?: boolean;
   order?: number;
-  /** Optional menu photograph (navigation item "Menu photograph"). */
-  image?: SanityImageAsset | null;
 };
 
-/** A photograph shown in the menu while its page is hovered or focused. */
+/** A photograph shown in the menu while its page is pointed at or focused. */
 export type MenuPhoto = {
   image: SanityImage;
   alt?: string | null;
-  caption?: string | null;
 };
 
 export type HeroSlide = {
@@ -291,7 +288,6 @@ export type AboutPageData = {
   aboutStoryLabel?: string | null;
   aboutPrintHeading?: string | null;
   aboutJourneyHeading?: string | null;
-  aboutJourneyHint?: string | null;
   aboutConversationLabel?: string | null;
   aboutConversationHeading?: string | null;
   aboutReplyName?: string | null;

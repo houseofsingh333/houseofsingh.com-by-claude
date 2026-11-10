@@ -92,11 +92,12 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 - Do not introduce colors outside this palette without updating `BRAND_BOOK.md` first.
 
 ### Type
-- Display and headings: Playfair Display via `--font-editorial`.
+- **Serif for names and numbers, sans for sentences.** Playfair Display (`--font-editorial`, weight 400 only) is only for page, chapter, project and journal titles (including in lists, cards and the studio panels), Roman numerals, Journey years and journal dates, the Toronto time, and the About portrait quote. Every sentence is Instrument Sans.
+- One type scale, every size a token (`--type-*` in `src/app/styles/tokens.css`, Tailwind `text-display-xl`, `text-display-l`, `text-display-m`, `text-display-s`, `text-numeral`, `text-date`, `text-statement`, `text-body-l`, `text-body`, `text-small`, `text-legal`, and `type-label`). Never a one off size; map anything new to the nearest token.
 - Body and interface: Instrument Sans, live on every page (regular 400 and medium 500), self hosted from `public/fonts` through next/font in `src/app/layout.tsx` (`--font-instrument`, with a size adjusted Arial fallback so nothing shifts). The Studio keeps its own font.
 - Labels and eyebrows: one style everywhere, the label token (`--type-label-size` 12px, `--type-label-leading` 1.5, `--type-label-tracking` 0.12em, uppercase, regular; the `type-label` class in components). Muted grey at rest, charcoal with the drawn hairline when active. Never a one off label size; a label never wraps.
 - Playfair italic only for Maninder's quote beside his portrait (About, chapter I). Everything else is regular Playfair.
-- Display sizes and headings are fluid (`clamp()` from the 390 value to the 1280 value); headings and statements balance their lines, paragraphs avoid a lone last word. The full type scale is in `BRAND_BOOK.md` (2.2).
+- Display and body sizes are fluid (`clamp()` from the 390 value to the 1280 value); headings and statements balance their lines, paragraphs avoid a lone last word. The full type scale and what uses each size is in `BRAND_BOOK.md` (2.2).
 - Headings are natural or sentence case, never all caps. All caps is for small labels only.
 - Never use Inter, Roboto, Arial, or default system fonts as the brand body face in finished work. Generic fonts are the look we exist to avoid.
 
@@ -109,7 +110,7 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 ### Motion
 - Calm and minimal. Soft fades and quiet reveals, never fast or springy.
 - Use the motion tokens in `src/app/styles/tokens.css`, never hard coded values: `--ease-slow` (`cubic-bezier(0.37, 0, 0.63, 1)`, a soft sine) for scroll reveals, fades, crossfades, image fade ins and the page fade in; `--ease-soft-out` (`cubic-bezier(0.33, 1, 0.68, 1)`) for hover and focus. Durations: `--dur-reveal` 1400ms with a 12px rise (`--rise-reveal`), `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-page` 600ms, `--dur-develop` 1400ms (a content photograph developing to full tone when first in view), `--dur-plate` 1400ms (a Projects page plate crossfading to its next photograph). Tailwind: `ease-(--ease-slow)`, `ease-(--ease-soft-out)`, `duration-(--dur-hover)`.
-- Keep quick on purpose: focus rings and form error messages appear at once; the menu and popup open in at most 500ms. The old fast curve `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`) is no longer the default; it remains only for the menu and popup opening.
+- Keep quick on purpose: focus rings and form error messages appear at once; the popup opens in at most 500ms. The menu (approved 10 Nov, after slowness.com): from 1024 wide a canvas panel slides over the left half (`--dur-menu-panel`, 750ms, `--ease-slow`) and the right half fills with one photograph that fades in and settles from 1.04 (the `--dur-menu-*` and `--delay-menu-*` tokens), changing only when a page name is pointed at or focused; below 1024 an 85 percent panel over an 18 percent veil, no photograph. No Playfair in the menu: names in the small token, uppercase, numerals in the legal token, muted. The page behind keeps its scroll position, and the page header fades out with the panel and back as it closes (the crest to wordmark interaction is unchanged). A page loaded or reloaded already scrolled down shows the wordmark bar at once. The old fast curve `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`) is no longer the default; it remains only for the popup opening.
 - The 2.8s breathing brass dot is the reference for brand motion.
 - One well orchestrated reveal beats many scattered micro animations.
 

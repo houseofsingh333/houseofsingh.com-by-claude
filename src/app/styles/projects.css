@@ -44,14 +44,14 @@
 }
 .mono-heading {
   font-family: var(--font-editorial);
-  font-weight: 300;
-  font-size: 1.875rem;
+  font-weight: 400;
+  font-size: var(--type-display-m);
   line-height: 1;
   color: var(--foreground);
 }
 @media (min-width: 1024px) {
   .mono-heading {
-    font-size: 3rem;
+    font-size: var(--type-display-m);
   }
 }
 .mono-controls {
@@ -317,8 +317,8 @@ html:not(.js) .mono-icon {
 
 .mono-title {
   font-family: var(--font-editorial);
-  font-weight: 300;
-  font-size: 1.75rem;
+  font-weight: 400;
+  font-size: var(--type-display-l);
   line-height: 1.15;
   color: var(--foreground);
 }
@@ -329,7 +329,7 @@ html:not(.js) .mono-icon {
 .mono-excerpt {
   margin-top: 1rem;
   max-width: 34rem;
-  font-size: 0.9375rem;
+  font-size: var(--type-body);
   line-height: 1.7;
   color: var(--foreground);
   display: -webkit-box;
@@ -368,7 +368,7 @@ html:not(.js) .mono-icon {
   right: 0;
   margin-top: 0.25rem;
   font-family: var(--font-editorial);
-  font-size: 0.9375rem;
+  font-size: var(--type-display-s);
   color: var(--muted-foreground);
   white-space: nowrap;
   opacity: 0;
@@ -530,7 +530,7 @@ html:not(.js) .mono-icon {
     aspect-ratio: 4 / 5;
   }
   .mono-title {
-    font-size: 1.5rem;
+    font-size: var(--type-display-m);
   }
 }
 
@@ -553,7 +553,7 @@ html:not(.js) .mono-icon {
   }
   .mono-heading {
     font-weight: 400;
-    font-size: calc(28 * var(--px));
+    font-size: calc(34 * var(--px)); /* display-m, scaled with the frame */
   }
   .mono-views {
     gap: calc(24 * var(--px));
@@ -615,13 +615,13 @@ html:not(.js) .mono-icon {
   }
   .mono-title {
     font-weight: 400;
-    font-size: calc(52 * var(--px));
+    font-size: calc(52 * var(--px)); /* display-l, scaled with the frame */
     line-height: 1.05;
   }
   .mono-excerpt {
     display: block;
     min-height: 0;
-    font-size: calc(16 * var(--px));
+    font-size: calc(17 * var(--px)); /* body, scaled with the frame */
     line-height: 1.7;
     -webkit-line-clamp: none;
     line-clamp: none;
@@ -644,7 +644,7 @@ html:not(.js) .mono-icon {
   .mono-next-title {
     position: static;
     margin: 0;
-    font-size: calc(15 * var(--px));
+    font-size: calc(24 * var(--px)); /* display-s, scaled with the frame */
   }
   .mono-phone-nav {
     display: none;
@@ -735,7 +735,7 @@ html:not(.js) .mono-icon {
   position: relative;
   flex: none;
   font-family: var(--font-editorial);
-  font-size: 1rem;
+  font-size: var(--type-display-s);
   line-height: 1.2;
   color: var(--foreground);
   padding-bottom: 4px;
@@ -820,7 +820,7 @@ html:not(.js) .mono-icon {
     padding-top: calc(14 * var(--px));
   }
   .mono-card-title {
-    font-size: calc(24 * var(--px));
+    font-size: calc(24 * var(--px)); /* display-s, scaled with the frame */
   }
   .mono-card-meta {
     display: block;
@@ -879,8 +879,8 @@ html:not(.js) .mono-icon {
   gap: 1rem;
   padding-block: 0.25rem;
   font-family: var(--font-editorial);
-  font-weight: 300;
-  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 400;
+  font-size: var(--type-display-m);
   line-height: 1.2;
   color: var(--foreground);
   white-space: nowrap;
@@ -1134,7 +1134,7 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
 .pp-title {
   font-family: var(--font-editorial);
   font-weight: 400;
-  font-size: clamp(42px, calc(21.84px + 5.169vw), 88px);
+  font-size: var(--type-display-xl);
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--foreground);
@@ -1158,7 +1158,7 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   gap: 0.5rem;
 }
 .pp-excerpt {
-  font-size: 1.0625rem;
+  font-size: var(--type-body-l);
   line-height: 1.7;
   color: var(--foreground);
 }
@@ -1176,7 +1176,7 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
     gap: 1rem;
   }
   .pp-excerpt {
-    font-size: 1.125rem;
+    font-size: var(--type-body-l);
   }
 }
 /* It rises in once the hero has settled. */
@@ -1190,7 +1190,7 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   }
 }
 
-/* The story: one 640px column, 18px at 1.75 */
+/* The story: one 640px column, the reading text at 1.75 */
 .pp-item {
   margin-top: var(--pp-space);
 }
@@ -1199,16 +1199,14 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   margin-inline: auto;
 }
 .pp-text {
-  font-size: 1.0625rem;
+  font-size: var(--type-body);
   line-height: 1.75;
   color: var(--foreground);
 }
-@media (min-width: 768px) {
-  .pp-text,
-  p.pp-story {
-    font-size: 1.125rem;
-    line-height: 1.75;
-  }
+/* The intro at body-l, the story text at body (BRAND_BOOK 2.2). */
+p.pp-story {
+  font-size: var(--type-body-l);
+  line-height: 1.7;
 }
 
 /* Photographs, in groups */
@@ -1223,8 +1221,7 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
 }
 .pp-caption {
   margin-top: 0.875rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.02em;
+  font-size: var(--type-small);
   color: var(--muted-foreground);
 }
 .pp-group {
@@ -1317,7 +1314,7 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
 }
 .pp-next-title {
   font-family: var(--font-editorial);
-  font-size: clamp(40px, 9vw, 64px);
+  font-size: var(--type-display-xl);
   line-height: 1;
   color: var(--foreground);
   padding-bottom: 4px;

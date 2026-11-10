@@ -29,21 +29,28 @@ const _seo = `{
 // --------------- Navigation ---------------
 
 export const navigationQuery = `*[_type == "navigation"][0]{
-  items[]{ label, href, external, order, "image": image ${_imageAsset} }
+  items[]{ label, href, external, order }
 }`;
 
 /**
- * Default menu photographs, one per page, for pages whose menu item has no
- * photograph of its own: the first hero slide, the About portrait, the
- * first featured project, the latest journal entry and the Contact
- * portrait (else the About portrait).
+ * The menu photographs: each page's own from Site Settings (Menu), and the
+ * defaults for those left empty: the first hero slide, the About portrait,
+ * the first project in homepage order, the latest journal entry and the
+ * Contact portrait (else the About portrait).
  */
 export const menuPhotosQuery = `{
+  "set": *[_type == "siteSettings"][0]{
+    "home": { "image": menuPhotoHome ${_imageAsset}, "alt": menuPhotoHome.alt },
+    "about": { "image": menuPhotoAbout ${_imageAsset}, "alt": menuPhotoAbout.alt },
+    "projects": { "image": menuPhotoProjects ${_imageAsset}, "alt": menuPhotoProjects.alt },
+    "journal": { "image": menuPhotoJournal ${_imageAsset}, "alt": menuPhotoJournal.alt },
+    "contact": { "image": menuPhotoContact ${_imageAsset}, "alt": menuPhotoContact.alt }
+  },
   "home": *[_type == "heroSlide"] | order(order asc)[0]{ "image": image ${_imageAsset}, "alt": coalesce(image.alt, imageAlt), caption },
-  "about": *[_type == "aboutPage"][0]{ "image": portrait ${_imageAsset} },
-  "projects": *[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc)[0]{ title, "image": coalesce(coverImage, thumbnail) ${_imageAsset} },
-  "journal": *[_type == "journalEntry"] | order(date desc)[0]{ title, "image": coverImage ${_imageAsset} },
-  "contact": *[_type == "contactPage"][0]{ "image": portrait ${_imageAsset} }
+  "about": *[_type == "aboutPage"][0]{ "image": portrait ${_imageAsset}, "alt": portrait.alt },
+  "projects": *[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc)[0]{ title, "image": select(defined(coverImage.asset) => coverImage, thumbnail) ${_imageAsset}, "alt": select(defined(coverImage.asset) => coverImage.alt, thumbnail.alt) },
+  "journal": *[_type == "journalEntry"] | order(date desc)[0]{ title, "image": coverImage ${_imageAsset}, "alt": coverImage.alt },
+  "contact": *[_type == "contactPage"][0]{ "image": portrait ${_imageAsset}, "alt": portrait.alt }
 }`;
 
 // --------------- Site Settings ---------------
@@ -84,7 +91,6 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   aboutStoryLabel,
   aboutPrintHeading,
   aboutJourneyHeading,
-  aboutJourneyHint,
   aboutConversationLabel,
   aboutConversationHeading,
   aboutReplyName,

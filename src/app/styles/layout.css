@@ -3,7 +3,7 @@
 
 /* ——— Footer, the coda ———
    The closing section (canvas "Closing section", frame "A, chosen"): the
-   invitation in Playfair; the time in Toronto (TorontoTime; hidden
+   invitation in Instrument Sans at the statement size; the time in Toronto (TorontoTime; hidden
    without JavaScript, as it needs a clock), "Book a call" (the outlined
    call to action, styles/motion.css) and a quiet link to Contact. Then
    the site links and the newsletter; then the bottom line with the
@@ -30,9 +30,8 @@
 
 .footer-invite {
   max-width: 640px;
-  font-family: var(--font-editorial);
-  font-size: clamp(26px, calc(19.86px + 1.573vw), 40px);
-  line-height: 1.25;
+  font-size: var(--type-statement);
+  line-height: 1.35;
   text-wrap: balance;
   color: var(--foreground);
 }
@@ -58,7 +57,7 @@
 .footer-write {
   align-self: flex-start;
   padding-bottom: 2px;
-  font-size: 14px;
+  font-size: var(--type-small);
   line-height: 1.5;
   color: var(--muted-foreground);
 }
@@ -80,7 +79,7 @@
 
 .footer-time-value {
   font-family: var(--font-editorial);
-  font-size: clamp(30px, calc(28.25px + 0.449vw), 34px);
+  font-size: var(--type-display-m);
   line-height: 1;
   color: var(--foreground);
 }
@@ -137,7 +136,7 @@ html:not(.js) .footer-time {
 .footer-nav-link {
   display: inline-block;
   padding-bottom: 4px;
-  font-size: 17px;
+  font-size: var(--type-body);
   line-height: 1.4;
   color: var(--foreground);
 }
@@ -183,7 +182,7 @@ html:not(.js) .footer-time {
   min-width: 0;
   padding: 0;
   font-family: inherit;
-  font-size: 15px;
+  font-size: var(--type-body);
   line-height: 1.5;
   color: var(--foreground);
   background: transparent;
@@ -221,7 +220,7 @@ html:not(.js) .footer-time {
   height: 44px;
   padding: 0;
   font-family: inherit;
-  font-size: 18px;
+  font-size: var(--type-body-l);
   color: var(--foreground);
   background: transparent;
   border: 0;
@@ -281,7 +280,7 @@ html:not(.js) .footer-time {
   fill: var(--foreground);
 }
 .footer-nl-thanks {
-  font-size: 16px;
+  font-size: var(--type-body);
   line-height: 1.5;
   color: var(--foreground);
   text-wrap: balance;
@@ -311,7 +310,7 @@ html:not(.js) .footer-time {
 
 /* Errors: written below the line. */
 .footer-nl-error {
-  font-size: 13px;
+  font-size: var(--type-small);
   line-height: 1.5;
   color: var(--error);
 }
@@ -332,7 +331,7 @@ html:not(.js) .footer-time {
 
 .footer-bottom-copyright,
 .footer-bottom-link {
-  font-size: 11px;
+  font-size: var(--type-legal);
   line-height: 1.5;
   letter-spacing: 0.08em;
   white-space: nowrap;
@@ -403,50 +402,80 @@ html:not(.js) .footer-time {
   }
 }
 
-/* ——— Menu, the index room (NavOverlay) ———
-   A full screen canvas over the page. It fades in over --dur-menu on the
-   menu curve (--editorial-ease) and is inert while closed. The photograph
-   (desktop only) crossfades with the page under the pointer or focus.
-   Reduced motion: it appears and changes at once. */
+/* ——— Menu (NavOverlay; approved 10 Nov, after slowness.com) ———
+   From 1024 wide: a canvas panel slides in over the left half
+   (--dur-menu-panel, --ease-slow) while the right half fills with one
+   photograph, inset 24px on its top, right and bottom, fading in
+   (--dur-menu-photo) and settling from a 1.04 scale (--dur-reveal), both
+   after --delay-menu-photo. The page is fully covered. Closing: the
+   photograph fades first (--dur-menu-photo-out), then the panel slides
+   out (--dur-menu-panel-out after --delay-menu-out). Below 1024: the
+   panel covers 85 percent with a soft shadow, no photograph, and the page
+   shows on the strip beside it under an 18 percent charcoal veil.
+   Reduced motion: no slide, no zoom; everything appears and goes at once.
+   The page's scroll is locked while open without moving
+   (html[data-menu-open]). */
 
-.menu-room {
+html[data-menu-open] {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+/* The page header fades out as the panel slides in and back as it slides
+   out, on the panel's timing (approved 10 Nov). Only its opacity during the
+   menu; the crest to wordmark interaction itself is unchanged. */
+html[data-menu-open] .site-header {
+  opacity: 0 !important;
+}
+html[data-menu-open] .site-header,
+html[data-menu-closing] .site-header {
+  transition: opacity var(--dur-menu-panel) var(--ease-slow) !important;
+}
+
+.menu-shell {
   position: fixed;
   inset: 0;
   z-index: 55; /* over the header bars (50), under the newsletter (60) */
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 20px 24px 24px;
-  background: var(--background);
-  color: var(--foreground);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition:
-    opacity var(--dur-menu) var(--editorial-ease),
-    visibility 0s linear var(--dur-menu);
+  transition: visibility 0s linear calc(var(--delay-menu-out) + var(--dur-menu-panel-out));
 }
-
-.menu-room[data-open] {
-  opacity: 1;
+.menu-shell[data-open] {
   visibility: visible;
   pointer-events: auto;
-  transition: opacity var(--dur-menu) var(--editorial-ease);
+  transition: none;
 }
 
-.menu-top {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
+/* The panel. */
+.menu-panel {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  z-index: 2;
+  width: 85%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 26px 24px 32px;
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: 8px 0 30px color-mix(in srgb, var(--foreground) 12%, transparent);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateX(-100%);
+  transition: transform var(--dur-menu-panel-out) var(--ease-slow) var(--delay-menu-out);
 }
-
-.menu-top > :first-child {
-  justify-self: start;
+.menu-shell[data-open] .menu-panel {
+  transform: none;
+  transition: transform var(--dur-menu-panel) var(--ease-slow);
 }
 
 .menu-close {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   min-height: 44px;
   padding: 0;
   font-size: var(--type-label-size);
@@ -455,122 +484,185 @@ html:not(.js) .footer-time {
   letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--foreground);
-  border-bottom: 1px solid var(--foreground);
+}
+.menu-close-x {
+  font-size: var(--type-body);
+  line-height: 1;
+  letter-spacing: 0;
 }
 
-.menu-body {
-  flex: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: center;
-  gap: 48px;
-}
-
+/* The five pages: small uppercase sans, the numerals muted (brass is
+   for text of 28px and more). */
 .menu-list {
   display: flex;
   flex-direction: column;
+  gap: 14px;
 }
-
+.menu-item {
+  opacity: 0;
+  transition: opacity var(--dur-menu-photo-out) var(--ease-slow);
+}
+.menu-shell[data-open] .menu-item {
+  opacity: 1;
+  transition: opacity var(--dur-menu-crossfade) var(--ease-slow) calc(300ms + var(--i, 0) * 70ms);
+}
 .menu-link {
-  display: flex;
+  display: inline-flex;
   align-items: baseline;
-  gap: 20px;
+  gap: 14px;
   padding: 6px 0;
-  color: var(--muted-foreground);
-  transition: color var(--dur-hover) var(--ease-soft-out);
-}
-
-.menu-link[data-active] {
+  font-size: var(--type-small);
+  line-height: 1.5;
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
   color: var(--foreground);
 }
-
-/* Brass, at 28px: the smallest size brass may be used for text. */
 .menu-num {
-  width: 48px;
+  width: 26px;
   flex-shrink: 0;
-  font-family: var(--font-editorial);
-  font-size: 28px;
-  line-height: 1;
-  color: var(--accent);
+  font-size: var(--type-legal);
+  letter-spacing: 0;
+  color: var(--muted-foreground);
 }
 
-.menu-label {
-  font-family: var(--font-editorial);
-  font-size: clamp(40px, calc(29.48px + 2.697vw), 64px);
-  line-height: 1.1;
-}
-
-.menu-photo {
-  display: none;
-}
-
+/* The bottom line: Studio, Instagram, Newsletter; the time. */
 .menu-foot {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
-  gap: 8px 24px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
+  align-items: baseline;
+  gap: 12px 24px;
+}
+.menu-foot-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+}
+.menu-small {
+  padding: 4px 0;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+a.menu-small:hover,
+button.menu-small:hover,
+a.menu-small:focus-visible,
+button.menu-small:focus-visible {
+  color: var(--foreground);
 }
 
-@media (min-width: 768px) {
-  .menu-room {
-    padding: 24px 32px 32px;
-  }
+/* Below 1024: the veil over the strip of page; no photograph. */
+.menu-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: color-mix(in srgb, var(--foreground) 18%, transparent);
+  opacity: 0;
+  cursor: pointer;
+  touch-action: none;
+  transition: opacity var(--dur-menu-photo-out) var(--ease-slow) var(--delay-menu-out);
+}
+.menu-shell[data-open] .menu-veil {
+  opacity: 1;
+  transition: opacity var(--dur-menu-photo) var(--ease-slow);
+}
+.menu-photo {
+  display: none;
 }
 
+/* From 1024: half the screen, and the photograph on the other half. */
 @media (min-width: 1024px) {
-  .menu-room {
-    gap: 32px;
-    padding: 40px 96px 48px;
+  .menu-veil {
+    display: none;
   }
-  .menu-body {
-    grid-template-columns: minmax(0, 1fr) 420px;
-    gap: 96px;
+  .menu-panel {
+    width: 50%;
+    padding: 30px 64px 36px;
+    box-shadow: none;
+  }
+  .menu-list {
+    gap: 10px;
   }
   .menu-photo {
-    justify-self: end;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin: 0;
-    /* 420px wide, or less on a short screen so the room fits it. */
-    width: min(420px, calc((100svh - 300px) * 0.8));
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 50%;
+    z-index: 1;
+    padding: 24px 24px 24px 0;
+    background: var(--background);
+    cursor: zoom-out;
+    opacity: 0;
+    transition: opacity var(--dur-menu-photo-out) var(--ease-slow);
+  }
+  .menu-shell[data-open] .menu-photo {
+    opacity: 1;
+    transition: opacity var(--dur-menu-photo) var(--ease-slow) var(--delay-menu-photo);
   }
   .menu-photo-frame {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 5;
+    height: 100%;
     overflow: hidden;
     background: var(--secondary);
+  }
+  /* Settles from 1.04 on every opening (an animation, so it also plays the
+     first time, when the photographs are only just added). */
+  .menu-photo-stack {
+    position: absolute;
+    inset: 0;
+    transform: scale(1.04);
+  }
+  .menu-shell[data-open] .menu-photo-stack {
+    animation: menu-settle var(--dur-reveal) var(--ease-slow) var(--delay-menu-photo) both;
   }
   .menu-photo-layer {
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity var(--dur-image) var(--ease-slow);
+    transition: opacity var(--dur-menu-crossfade) var(--ease-slow);
   }
   .menu-photo-layer[data-active] {
     opacity: 1;
   }
-  .menu-photo-caption {
-    min-height: 1.5em;
-    font-size: var(--type-label-size);
-    white-space: nowrap;
-    line-height: var(--type-label-leading);
-    letter-spacing: var(--type-label-tracking);
-    text-transform: uppercase;
-    color: var(--muted-foreground);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu-room,
-  .menu-room[data-open],
-  .menu-link,
+  html[data-menu-open] .site-header,
+  html[data-menu-closing] .site-header {
+    transition: none !important;
+  }
+  .menu-shell,
+  .menu-shell[data-open],
+  .menu-panel,
+  .menu-shell[data-open] .menu-panel,
+  .menu-veil,
+  .menu-shell[data-open] .menu-veil,
+  .menu-item,
+  .menu-shell[data-open] .menu-item,
+  .menu-photo,
+  .menu-shell[data-open] .menu-photo,
   .menu-photo-layer {
     transition: none;
+  }
+  .menu-photo-stack,
+  .menu-shell[data-open] .menu-photo-stack {
+    transform: none;
+    animation: none;
+  }
+}
+
+@keyframes menu-settle {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: none;
   }
 }
 
@@ -610,7 +702,7 @@ html:not(.js) .footer-time {
 .note-input {
   width: 100%;
   padding: 8px 0;
-  font-size: 16px;
+  font-size: var(--type-body);
   color: var(--foreground);
   background: transparent;
   border: 0;

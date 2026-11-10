@@ -12,8 +12,8 @@ export const PAGE_COLUMN = "mx-auto w-full max-w-5xl px-6 md:px-16";
 export const READING_COLUMN = "max-w-[640px]";
 
 /** Story text: intro and body. */
-export const STORY_TEXT = "text-[17px] md:text-[18px] leading-[1.7] text-foreground";
+export const STORY_TEXT = "text-body-l leading-[1.7] text-foreground";
 
 /** Section headings in the story. */
 export const STORY_HEADING =
-  "font-editorial text-[28px] md:text-[36px] font-light leading-[1.2] text-foreground text-balance";
+  "font-editorial font-normal text-display-m leading-[1.2] text-foreground text-balance";

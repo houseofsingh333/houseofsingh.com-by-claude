@@ -35,7 +35,7 @@ export default function PracticeReveal({
 
   return (
     <div ref={ref} className="flex flex-col items-center gap-6 text-center">
-      <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
+      <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
         III
       </span>
       <div {...revealProps({ revealed, rise: false })}>
@@ -43,7 +43,7 @@ export default function PracticeReveal({
         <img {...logoSource(logo)} alt="House of Singh" width={260} height={260} className="w-[200px] md:w-[260px] h-auto" />
       </div>
       <div
-        className="about-practice-text max-w-[640px] font-editorial text-[length:clamp(21px,calc(18.81px_+_0.562vw),26px)] leading-[1.45] text-foreground"
+        className="about-practice-text max-w-[640px] text-body-l leading-[1.7] text-foreground"
         {...revealProps({ revealed, delay: 400 })}
       >
         {children}

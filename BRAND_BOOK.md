@@ -62,39 +62,46 @@ The palette is deliberately tight. A warm neutral base, a soft charcoal for text
 
 ### 2.2 Typography
 
-Two typefaces, both from Google Fonts. One elegant serif for display, one quiet grotesque for everything else. The contrast between them is the brand's typographic signature.
+Two typefaces, both from Google Fonts. One elegant serif for names and numbers, one quiet grotesque for everything else. The contrast between them is the brand's typographic signature.
 
-**Display and headings: Playfair Display.** Elegant, high contrast serif. Used for page titles, section headings, project titles, pull quotes, and key editorial moments. This is the voice of the brand at full presence.
+**Serif for names and numbers, sans for sentences.** This is the rule that decides which face a piece of text takes (approved 10 Nov 2026).
+- **Playfair Display** is used only for names and numbers: page titles, chapter titles, project titles and journal titles (including in lists and cards and the studio panels), the Roman chapter numerals, the Journey years and the journal's day and month, the time in Toronto, and Maninder's quote beside his portrait (the one italic).
+- **Instrument Sans** is used for every sentence: chapter statements and introductions, the closing invitation, the practice line, the turntable note, About's story, practice text, answers and pull quote, the Privacy and Terms summaries, captions, body copy, labels, navigation, buttons and form fields. A prominent single line or short statement takes the statement size (26/20); longer introductions take body-l.
 
-**Body and interface: Instrument Sans.** Clean, slightly warm grotesque. Used for body copy, captions, labels, navigation, buttons, form fields, and all interface text. It is quiet by design so it never competes with Playfair.
+**Weights.** Playfair 400 only (no light 300, no bold). Instrument Sans 400, and 500 for emphasis (strong text, titles in the Journey). Never a synthesised bold.
 
 **Type principles.**
-- Body text runs small and calm, with generous line height (1.6 to 1.7) for an unhurried reading rhythm.
+- Body text runs calm, with generous line height (1.6 to 1.75) for an unhurried reading rhythm.
 - Labels and eyebrows use the one label style below: 12px, uppercase, 0.12em letter spacing, in muted grey.
 - Headings are sentence case or natural case, never all caps. All caps is reserved for small labels only.
-- One display weight and one or two body weights. Avoid a wide spread of weights, which reads busy.
 - Never use Inter, Roboto, Arial, or default system fonts in produced brand material. They signal the generic, defaulted look the brand exists to avoid.
 
-**Implementation note.** Both faces are live and self hosted from `public/fonts` through next/font (`src/app/layout.tsx`): Playfair Display as `--font-editorial` for display, and Instrument Sans (regular 400 and medium 500) as `--font-instrument`, the body and interface face on every page (the Sanity Studio keeps its own). Each has a size adjusted fallback (Times New Roman, Arial) used only for the moment before the font arrives, so nothing moves when it does. Strong text uses medium, never a synthesised bold.
+**Implementation note.** Both faces are live and self hosted from `public/fonts` through next/font (`src/app/layout.tsx`): Playfair Display as `--font-editorial`, declared at weight 400 only, and Instrument Sans (regular 400 and medium 500) as `--font-instrument`, the body and interface face on every page (the Sanity Studio keeps its own). Each has a size adjusted fallback (Times New Roman, Arial) used only for the moment before the font arrives, so nothing moves when it does.
 
-**The type scale.** These are the sizes in use, measured on the site at a phone (390 wide) and at desktop (1280 wide). Display sizes and headings are fluid: each is a `clamp()` that equals the phone value at 390 and the desktop value at 1280 and scales smoothly between them, never jumping at a breakpoint. Do not add a size outside this scale.
+**The type scale.** One scale for the whole site, as tokens in `src/app/styles/tokens.css` (`--type-*`) and as Tailwind sizes (`text-display-xl`, `text-body` and so on). Fluid sizes are a `clamp()` that equals the phone value at 390 and the desktop value at 1280 and scales smoothly between them. Every size on the site is one of these; never a one off size. Where a usage had no exact role, it takes the nearest token.
 
-| Role | Phone 390 | Desktop 1280 | Weight | Line height | Family |
-|------|-----------|--------------|--------|-------------|--------|
-| Display, footer statement ("Start a project") | 52px | 120px (to 136px) | 400 | 0.98 | Playfair |
-| Display, project title | 42px | 88px | 400 | 0.98 | Playfair |
-| Page heading (Journal, legal pages, 404) | 30 to 40px | 56 to 60px | 300 to 400 | 1.0 to 1.05 | Playfair |
-| Section heading (homepage chapters, contact) | 36px | 52px | 400 | 1.1 | Playfair |
-| Quote (About) | 28 to 30px | 40 to 48px | 400 | 1.2 to 1.3 | Playfair |
-| Title in a sequence (One by one, Journal entry) | 24 to 28px | 30 to 52px | 300 to 400 | 1.05 to 1.15 | Playfair |
-| Numerals (chapter, entry date, footer clock) | 30 to 40px | 30 to 56px | 400 | 0.9 to 1.0 | Playfair |
-| Body, reading | 16 to 17px | 17 to 18px | 400 | 1.7 to 1.75 | Instrument Sans |
-| Body, note | 15px | 16px | 400 | 1.7 | Instrument Sans |
-| **Label** | **12px** | **12px** | **400** | **1.5** | **Instrument Sans, uppercase, 0.12em** |
+| Token | Desktop 1280 | Phone 390 | Face | Used for |
+|------|------|------|------|------|
+| `display-xl` | 72px | 40px | Playfair 400 | Page and project titles (Contact, Privacy and Terms, a project, the next project, the home spotlight, error pages) |
+| `display-l` | 52px | 34px | Playfair 400 | Chapter titles (The work, Journal, On my turntable, In print, In conversation, a contact step), the About quote, One by one's title, the Journal heading |
+| `display-m` | 34px | 26px | Playfair 400 | The time in Toronto and large single values; the Projects heading, legal section titles, story headings, the filter's choices |
+| `display-s` | 24px | 20px | Playfair 400 | Titles in lists and cards: At a glance, journal entries, the filmstrip, the studio panels, press cuttings, the newsletter note |
+| `numeral` | 30px | 30px | Playfair 400, brass | Roman chapter numerals (brass text is never under 28px) |
+| `date` | 44px | 40px | Playfair 400 | Journey years, the journal's day and month |
+| `statement` | 26px | 20px | Instrument Sans 400 | Prominent single lines and short statements: Chapter II's opening, the practice line, the closing invitation, About's pull quote and answers, contact choices and fields |
+| `body-l` | 19px | 17px | Instrument Sans 400 | Introductions and statements: About's story and practice text, project intros and excerpts, the turntable note, legal summaries, questions, Journey titles (500) |
+| `body` | 17px | 16px | Instrument Sans 400 | Reading text: project stories, journal entries, legal text, the home introduction, footer links, form fields |
+| `small` | 14px | 14px | Instrument Sans 400 | Captions and descriptions |
+| **label** | **12px** | **12px** | **Instrument Sans 400, uppercase, 0.12em** | Every small label (below) |
+| `legal` | 11px | 11px | Instrument Sans 400 | The footer's bottom line (copyright, Privacy, Terms) |
 
-**The label: one style, every small label.** Every small uppercase label on the site uses one token, taken from "In Toronto it is" in the footer: 12px, line height 1.5, letter spacing 0.12em, uppercase, regular weight (`--type-label-size`, `--type-label-leading`, `--type-label-tracking` in `src/app/styles/tokens.css`; the `type-label` class in components). That covers view switches, filters, categories, counters, dates, eyebrows, meta lines under titles, "Enter the project", "Next project", the Journal's month and weekday letters, footer labels and the menu's small links. Colour is set where it is used: muted grey at rest, charcoal when active, with the drawn hairline beneath an active control. A label never wraps: a row of labels wraps between them, never inside one. Never set a one off label size.
+Two drawings keep their own proportional lettering and are not part of the scale: the record sleeve's title in Chapter VI (drawn to the sleeve's size) and the newsletter postmark. The header wordmark is the logo, not text.
 
-**Italic in one place only.** Playfair italic is used for one line on the whole site: Maninder's quote beside his portrait in About, chapter I. Everything else in Playfair is regular, including pull quotes, chapter numerals, the playlist note and the next project preview. Do not introduce italic anywhere else.
+**The label: one style, every small label.** Every small uppercase label on the site uses one token, taken from "In Toronto it is" in the footer: 12px, line height 1.5, letter spacing 0.12em, uppercase, regular weight (`--type-label-size`, `--type-label-leading`, `--type-label-tracking` in `src/app/styles/tokens.css`; the `type-label` class in components). That covers view switches, filters, categories, counters, dates, eyebrows, meta lines under titles, "Enter the project", "Next project", the Journal's month and weekday letters, footer labels and the menu's small links. Colour is set where it is used: muted grey at rest, charcoal when active, with the drawn hairline beneath an active control. A label never wraps: a row of labels wraps between them, never inside one. Never set a one off label size. The header's "Menu" uses it too (0.12em).
+
+**The menu: no Playfair.** The menu's page names use the small token (14px), Instrument Sans 400, uppercase, 0.12em, with the shared hairline under the one pointed at and the current page; their Roman numerals use the legal token (11px) in muted grey, never brass (brass text stays at 28px and above); the bottom line (Studio, Instagram, Newsletter and "10:42 pm in Toronto") the small token in sentence case; Close the label token with the × sign.
+
+**Italic in one place only.** Playfair italic is used for one line on the whole site: Maninder's quote beside his portrait in About, chapter I. Everything else in Playfair is regular, including chapter numerals and the next project preview. Do not introduce italic anywhere else.
 
 **Line breaks.** Headings, quotes and short statements balance their lines (`text-wrap: balance`), so none ends on one or two words; paragraphs avoid a lone last word (`text-wrap: pretty`); statements longer than balancing can handle keep their last two words together (`keepLastWords`). Reading columns stay about 60 to 75 characters wide; single line statements may run wider. No text may overflow or be clipped at any width from 375 to 1600. A heading whose column can be narrower than its size needs is capped to that column (`cqi`), so it never leaves a word on its own line.
 
@@ -206,8 +213,8 @@ Motion is calm and minimal. It supports the content, never performs for its own 
 | `--dur-develop` | 1400ms | A content photograph developing like a print the first time it is in view: from a warm, pale, low contrast state to full tone, on `--ease-slow`. It runs alongside the blur up dissolve, never on priority images (the hero's first slide, page covers), and not on photos with their own grey to colour reveal. Reduced motion and no JavaScript: full tone from the start. |
 | `--dur-plate` | 1400ms | One photograph crossfading to the next on a Projects page plate, on `--ease-slow`, every 8 s while nothing pauses it. Reduced motion: the plate does not cycle. |
 
-- Kept quick on purpose, for usability: focus rings appear at once, form error messages appear at once, and the menu and popup open in at most 500ms. Tap feedback on touch screens and anything that follows the scroll position stay immediate.
-- The earlier fast curve, `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`), is no longer the default. It remains only for the menu and popup opening.
+- Kept quick on purpose, for usability: focus rings appear at once, form error messages appear at once, and the popup and the Projects filter open in at most 500ms. The menu (approved 10 Nov, after slowness.com) is a canvas panel that slides in from the left over 750ms on `--ease-slow` (`--dur-menu-panel`). From 1024 wide it covers the left half while the right half fills with one photograph, inset 24px, fading in over `--dur-menu-photo` and settling from a 1.04 scale over `--dur-reveal`, both after `--delay-menu-photo`; the page is fully covered. The photograph changes only when a page name is pointed at or focused (`--dur-menu-crossfade`), never on a timer. Closing, the photograph fades first (`--dur-menu-photo-out`), then the panel slides out (`--dur-menu-panel-out` after `--delay-menu-out`); a click on the photograph closes it. Below 1024 the panel covers 85 percent of the width with a soft shadow, no photograph, over an 18 percent charcoal veil on the strip of page, which closes it when tapped. The page header fades out with the panel and back as it closes; reduced motion shows and hides everything at once, with no slide and no zoom. Tap feedback on touch screens and anything that follows the scroll position stay immediate.
+- The earlier fast curve, `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`), is no longer the default. It remains only for the popup opening.
 - The upcoming dot pulse runs at 2.8s, infinite, the slow breathing reference.
 - Every animation has a `prefers-reduced-motion` fallback that resolves to a static state. This is mandatory for anything new.
 
@@ -236,7 +243,7 @@ The brand does not become loud or generic just because the platform is fast. Hou
 
 ### 5.2 Visual consistency on social
 - Use the same palette: warm canvas, charcoal, muted grey, brass as a rare accent.
-- Use the brand type where text appears on graphics: Playfair Display for statements, Instrument Sans for support.
+- Use the brand type where text appears on graphics: Playfair Display for names, titles and numbers, Instrument Sans for sentences and support.
 - Let photography lead. Clean frames with room to breathe, the same honest treatment as the site.
 - Avoid trend driven templates, heavy text overlays, loud stickers, or busy effects. When everyone zigs loud, the brand zags quiet.
 - A grid or feed should feel like a curated editorial spread, not a noticeboard.
@@ -266,7 +273,7 @@ The voice is the same calm, grounded, reflective voice used across the brand. (D
 
 **Palette:** Canvas `#F9F7F5` (`--background`) · Charcoal `#1A1A1A` (`--foreground`) · Muted grey `#76706B` (`--muted-foreground`, `hsl(30 5% 44%)` — meets WCAG AA, do not lighten) · Border `hsl(40 10% 88%)` (`--border`) · Antique brass `#A8895C` (`--accent`) · Error brick `#9B4B3B` (`--error`, `hsl(10 45% 42%)`, error text only) · White `#FFFFFF`
 
-**Type:** Playfair Display via `--font-editorial` (display, regular; italic only for the About quote) · Instrument Sans (body and interface, regular and medium). Fluid display and headings with `clamp()`, body 16 to 18px at 1.7, one label style: 12px uppercase, 0.12em, `--type-label-*`.
+**Type:** serif for names and numbers, sans for sentences. Playfair Display via `--font-editorial` (400 only; italic only for the About quote) · Instrument Sans (every sentence, body and interface, 400 and 500). One fluid scale of tokens (`--type-*`, section 2.2): display 72, 52, 34, 24; numerals 30; dates 44; statement 26; body 19, 17; small 14; label 12 uppercase 0.12em; legal 11.
 
 **Spacing:** Section rhythm `--section-space-sm/md/lg`. Desktop large is 144px, the airy signature.
 

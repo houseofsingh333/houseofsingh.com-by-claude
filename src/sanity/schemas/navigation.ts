@@ -1,6 +1,5 @@
 import { defineField, defineType } from "sanity";
 import { linkRule } from "./rules";
-import { captionField, imageAltFields } from "./imageFields";
 
 export const navigation = defineType({
   name: "navigation",
@@ -38,15 +37,6 @@ export const navigation = defineType({
               name: "order",
               title: "Order",
               type: "number",
-            }),
-            defineField({
-              name: "image",
-              title: "Menu photograph",
-              type: "image",
-              options: { hotspot: true },
-              description:
-                "Optional. Shown in the menu while this page is hovered or focused. When empty, a photograph from the page itself is used.",
-              fields: [...imageAltFields, captionField],
             }),
           ],
         },
