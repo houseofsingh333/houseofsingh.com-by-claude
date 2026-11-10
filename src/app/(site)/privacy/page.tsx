@@ -95,8 +95,39 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
         <p>
           <strong className="text-foreground">Newsletter.</strong>{" "}
           The newsletter signup in the footer and in the newsletter window
-          collects your email address only. It is saved in Sanity together
-          with the time you signed up.
+          collects your email address only. It is kept in Kit, the service
+          that holds our list and sends the letters, together with the
+          words you agreed to beneath the field, where you signed up and
+          when. A welcome email is sent at once through Resend. If Kit
+          cannot be reached at that moment, your signup is held privately
+          in Sanity and passed to Kit as soon as it can be, then deleted
+          from Sanity.
+        </p>
+        <p>
+          <strong className="text-foreground">The Shop: Notify me.</strong>{" "}
+          Notify me, on the House of Singh Editions pages, collects your
+          email address and which Collection you want to hear about. It is
+          kept in Kit with that Collection, the words you agreed to, where
+          and when, and a confirmation is sent at once through Resend.
+        </p>
+        <p>
+          <strong className="text-foreground">The Shop: orders.</strong>{" "}
+          When you buy a piece, payment happens on Stripe&apos;s checkout
+          page: your card details go to Stripe and never reach this site.
+          Stripe passes us your name, email address and shipping address,
+          and what you bought (the piece, its size, where it ships, the
+          price, shipping and tax). We keep that order privately in Sanity,
+          with the collector number we give each buyer and, for numbered
+          pieces, the certificate code. Emails about your order (the
+          confirmation, the certificate, when it is being made and when it
+          ships, with tracking) are sent through Resend.
+        </p>
+        <p>
+          <strong className="text-foreground">The Shop: collaboration proposals.</strong>{" "}
+          The proposal form for artists collects your name, email address,
+          what you make, a link to your work if you give one, and your
+          idea. It is kept privately in Sanity; you receive an email that
+          it arrived, and a copy goes to Maninder, through Resend.
         </p>
         <p>
           <strong className="text-foreground">Protection against abuse.</strong>{" "}
@@ -147,6 +178,9 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
           <li>Reply to messages sent through the contact form</li>
           <li>Reply to project interest submissions</li>
           <li>Send newsletter updates to people who have signed up</li>
+          <li>Tell people who asked when a Collection opens, and about its early access</li>
+          <li>Take payment for, make, ship and support Shop orders, and send the emails about them</li>
+          <li>Reply to collaboration proposals</li>
           <li>See how quickly pages load and improve them</li>
         </ul>
         <p>
@@ -163,12 +197,15 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
     body: (
       <>
         <p>
-          To be removed from the newsletter, send a message through the{" "}
+          Every letter, and every email about a Collection, has a link to
+          unsubscribe at the bottom: one click removes you. You can also
+          send a message through the{" "}
           <Link href="/contact" className="text-foreground hairline-rest">
             contact page
           </Link>{" "}
           at houseofsingh.com/contact asking to unsubscribe, and you will
-          be removed.
+          be removed. Emails about an order you placed are not newsletters
+          and still reach you.
         </p>
       </>
     ),
@@ -180,8 +217,13 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
     body: (
       <>
         <p>
-          This website sets no cookies of its own and uses no advertising
-          or tracking scripts. Besides the contact form draft described
+          This website uses no advertising or tracking scripts. Its pages
+          set no cookies of their own, with one exception in the Shop: if
+          you open an early access link or enter an early access code, a
+          cookie remembers for sixty days that your code was valid (a
+          fingerprint of the code, not the code itself), so the Collection
+          stays open to you. A second cookie of the same kind exists only
+          for the site&apos;s owner, to preview the Shop before it opens. Besides the contact form draft described
           above, it keeps two small notes in your browser&apos;s session
           storage, which is cleared when you close the tab: one so the
           opening animation plays only once per visit, and one so a scroll
@@ -214,8 +256,23 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
           </li>
           <li>
             <strong className="text-foreground">Sanity</strong>: stores the site&apos;s
-            content and images, and receives contact form, project interest
-            and newsletter submissions.
+            content and images, and keeps contact form and project interest
+            submissions, Shop orders and collaboration proposals privately.
+          </li>
+          <li>
+            <strong className="text-foreground">Kit</strong>: holds the newsletter list and
+            the Shop&apos;s Notify me list, and sends the letters and the emails
+            about each Collection.
+          </li>
+          <li>
+            <strong className="text-foreground">Resend</strong>: sends the emails this website
+            triggers, one person at a time: newsletter welcomes, Notify me
+            confirmations, order emails and proposal acknowledgements.
+          </li>
+          <li>
+            <strong className="text-foreground">Stripe</strong>: takes payment for Shop orders
+            on its own checkout page, and holds the card details, which never
+            reach this site.
           </li>
           <li>
             <strong className="text-foreground">Spotify</strong>: the playlist player on

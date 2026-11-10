@@ -6,14 +6,13 @@ How to switch the Shop on, test it, take it live, and run it from one Collection
 
 | Name | What it is | Where it comes from |
 |---|---|---|
-| `EDITIONS_ENABLED` | Switches the Shop on: `true`. Set on **Preview only** until launch. Anywhere else the footer has no Shop link, every `/editions` page is a 404 and the Shop's API routes answer 404. | Set by hand; at launch, add it to Production too |
+| `EDITIONS_MODE` | How much of the Shop a site shows: `off` (nothing: no footer link, every Shop page and API route is a 404), `anticipation` (the live site before launch: /editions shows only the sealed Collection with Notify me, linked from the footer and indexable; pieces, prices, the archive, collaborators, checkout and certificates are 404), `full` (everything). Preview: `full`. Production: `off`, then `anticipation`, then `full` at launch. Unset, the older `EDITIONS_ENABLED=true` still means `full`. | Set by hand |
+| `EDITIONS_PREVIEW_SECRET` | A long random string (at least 12 characters). Opening `/editions?preview=THE_SECRET` on the live site shows that browser the full Shop while the site is in anticipation (a cookie, for 30 days); `/editions?preview=off` removes it. Keep it to yourself. | Set by hand, Production |
 | `STRIPE_SECRET_KEY` | Stripe's secret key. `sk_test_...` on Preview, `sk_live_...` on Production only at launch. | Stripe Dashboard, Developers, API keys |
 | `STRIPE_WEBHOOK_SECRET` | Proves an event really came from Stripe (`whsec_...`). One per endpoint and per mode. | Stripe Dashboard, Developers, Webhooks, the endpoint, Signing secret |
 | `GST_NUMBER` | The GST/HST number of House of Singh Studios Inc. Shown on the Stripe checkout page, the receipt line and the terms of sale. | Your CRA business number with the RT account (for example `123456789 RT0001`) |
 | `SANITY_API_TOKEN` | Already set for the contact form. The Shop uses it to save orders, collectors, notify requests and proposals. Needs write access. | Sanity, manage, API, Tokens (Editor) |
-| `RESEND_API_KEY` | Optional. Sends you an email for each collaboration proposal. Without it, proposals are still saved in the Studio. | resend.com, API Keys |
-| `EDITIONS_NOTIFY_TO` | Optional. The address those emails go to. | Your email |
-| `EDITIONS_NOTIFY_FROM` | Optional. The sender, on a domain verified in Resend (for example `Shop <shop@houseofsingh.com>`). | Resend, Domains |
+| Email | `KIT_API_KEY`, `RESEND_API_KEY`, `EMAIL_REPLY_TO`, `EMAIL_POSTAL_ADDRESS`, `CRON_SECRET` and the rest: see `docs/email.md`. | |
 | `EDITIONS_CLOCK` | Testing only. An ISO date (for example `2027-04-20T12:00:00Z`) that moves the Shop's clock, to see Open or Closed before the dates arrive. Ignored on the live site. | Set it on Preview only, then remove it |
 
 Never put any of these in the code or in a message. After changing a variable, redeploy the preview for it to take effect.
@@ -27,7 +26,7 @@ Never put any of these in the code or in a message. After changing a variable, r
    It creates one rate per province and territory (GST 5% in AB, BC, MB, NT, NU, QC, SK and YT; HST 13% in ON, 14% in NS, 15% in NB, NL and PE), exclusive of the price. Check these against the CRA before launch: a changed rate is fixed in `src/lib/editions/tax.ts` and the script run again (it switches the old rate off).
 4. Add the webhook: Stripe, Developers, Webhooks, Add endpoint.
    - URL: `https://<your preview address>/api/editions/webhook` (and later `https://houseofsingh.com/api/editions/webhook`).
-   - Events: `checkout.session.completed` and `checkout.session.async_payment_succeeded`.
+   - Events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.expired`, `checkout.session.async_payment_failed` and `charge.refunded`. The first two record the order; the next two let go of the stock held for an unpaid checkout; the last restocks a piece refunded in full.
    - Copy its signing secret into `STRIPE_WEBHOOK_SECRET` (Preview).
    - Vercel's preview protection blocks Stripe: in Vercel, Deployment Protection, add a bypass for automation, or test the webhook on a preview without protection.
 5. Buy something on the preview with the test card `4242 4242 4242 4242`, any future date, any CVC, a Canadian address. You should land on the thank you page; within a few seconds the collector number appears, the piece's sold count goes up in the Studio (per size for clothing), and an order appears under House of Singh Editions, Orders.
@@ -41,7 +40,8 @@ Only when the test purchase has worked end to end.
 3. Add the live webhook endpoint (`https://houseofsingh.com/api/editions/webhook`, same two events) and copy its live signing secret.
 4. In Vercel, for **Production** only: `STRIPE_SECRET_KEY` = the live key, `STRIPE_WEBHOOK_SECRET` = the live signing secret, `GST_NUMBER`.
 5. Delete the sample content (section 6), remove `EDITIONS_CLOCK` everywhere, and redeploy.
-6. Launch is a separate decision: set `EDITIONS_ENABLED` to `true` on Production and redeploy. The Shop stays noindex and linked only from the footer until the launch change removes that.
+6. Before launch, the live site can sit in anticipation: set `EDITIONS_MODE` to `anticipation` on Production and redeploy. /editions then shows the sealed Collection with Notify me, linked from the footer, and you can see the whole Shop yourself with `/editions?preview=EDITIONS_PREVIEW_SECRET`.
+7. Launch: set `EDITIONS_MODE` to `full` on Production and redeploy.
 
 ## 4. The shipping table (Canada Post)
 
@@ -81,3 +81,18 @@ Orders, collectors, notify requests and proposals are saved with ids beginning `
 
 - `npx tsx scripts/editions-test.ts`: the Shop's rules (states, stock, refusals, shipping, checkout parameters, signatures, orders, collector numbers, certificates).
 - After any schema change: `npx sanity@latest schema deploy`.
+
+## 9. Orders, from paid to shipped
+
+In the Studio: House of Singh Editions, Orders (To make, Being made, Shipped, Refunded, All orders). Open an order:
+
+- **Made**, at the foot of the order, marks it as being made and emails the buyer.
+- **Shipped** asks for the tracking number (and, for a carrier other than Canada Post, the tracking address), marks it shipped and emails the buyer with the tracking.
+
+Each click goes through the website, which checks your Studio login first; a second click sends no second email. The Studio keeps its login in the browser for this, so after this change you may be asked to sign in to the Studio once more.
+
+A refund in Stripe (in full) marks the order Refunded, puts the piece (and its size) back in stock and withdraws its certificate. A partial refund changes nothing in the Shop.
+
+## 10. Stock held during checkout
+
+When someone goes to Stripe's checkout, the piece (and size) is held for them for about thirty minutes, shown read only on the piece in the Studio ("Held during checkout"). If they pay, the hold becomes the sale; if they leave, it is released when Stripe reports the checkout expired, and a hold past its time never counts anyway. If the last one is held, the next buyer is told it is in someone's checkout and may come back. Sold counts and holds are written to the published piece: if you are editing a piece while it sells, publish your edit promptly, or it can overwrite the newer counts.
