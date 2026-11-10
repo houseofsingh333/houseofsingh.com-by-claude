@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 /** The external arrow (north east). */
 function Arrow({ className }: { className: string }) {
@@ -64,6 +65,23 @@ export default function OutlineCta({ href, label, className }: { href: string; l
         <Arrow className="outline-cta-arrow outline-cta-arrow-in" />
       </span>
     </a>
+  );
+}
+
+/**
+ * The same outlined call to action for a page on this site (the Shop's
+ * "Propose a collaboration"): opens in the same tab, with the forward arrow.
+ */
+export function OutlineLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
+  return (
+    <Link href={href} data-arrow="right" className={`outline-cta type-label${className ? ` ${className}` : ""}`}>
+      <span aria-hidden="true" className="outline-cta-fill" />
+      <span className="outline-cta-text">{children}</span>
+      <span aria-hidden="true" className="outline-cta-arrows">
+        <ArrowRight className="outline-cta-arrow outline-cta-arrow-out" />
+        <ArrowRight className="outline-cta-arrow outline-cta-arrow-in" />
+      </span>
+    </Link>
   );
 }
 

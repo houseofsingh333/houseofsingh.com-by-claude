@@ -1,0 +1,1097 @@
+/* ═══ House of Singh Editions, the Shop ═══
+   Canvas "Shop, the flow" (SF-ShopFinal, Y4b-PieceLuxe, FL3-Closed,
+   FL4-Second, FL5-Shelf, FL6-Artists) and "Shop, decisions" (R1-A two
+   across, R2-A, R3-A, R4-B Buy beneath on pointing). Site tokens only; the
+   one addition is each Collection's own colour (lib/editions/palette.ts,
+   BRAND_BOOK "The Shop palette"), set inline as --sq, --sq-ink and
+   --sq-quiet on its square and spine. Brass is never small text here: the
+   frames' small brass labels are muted grey, and the seal's words are
+   charcoal on brass (5.0:1). */
+
+.ed {
+  --ed-gutter: 24px;
+  /* Clears the State 1 crest, as page-top-offset does, a little closer. */
+  padding-top: 176px;
+}
+@media (min-width: 768px) {
+  .ed {
+    --ed-gutter: 64px;
+    padding-top: 232px;
+  }
+}
+@media (min-width: 1280px) {
+  .ed {
+    --ed-gutter: 96px;
+  }
+}
+
+/* Anchored sections stop clear of the wordmark bar. */
+.ed-anchor {
+  scroll-margin-top: 112px;
+}
+
+/* ——— The Shop's own header and footer line ——— */
+
+.ed-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px 40px;
+  padding-inline: var(--ed-gutter);
+}
+.ed-head-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+.ed-head-name {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-s);
+  line-height: 1.2;
+  color: var(--foreground);
+}
+.ed-head-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--foreground);
+}
+
+.ed-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 32px;
+  margin-inline: var(--ed-gutter);
+  padding-block: 28px var(--section-space-sm);
+  border-top: 1px solid var(--border);
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+.ed-foot a {
+  color: var(--foreground);
+}
+
+/* ——— The opening view: the square beside the Collection's words ——— */
+
+.ed-open {
+  display: grid;
+  gap: 48px;
+  padding: 72px var(--ed-gutter) var(--section-space-sm);
+}
+@media (min-width: 1024px) {
+  .ed-open {
+    grid-template-columns: min(460px, 38vw) minmax(0, 1fr);
+    column-gap: 96px;
+    padding-top: 96px;
+  }
+}
+.ed-open-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+}
+.ed-open-words {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 480px;
+}
+.ed-open-sentence {
+  font-size: var(--type-body-l);
+  line-height: 1.6;
+  color: var(--foreground);
+  text-wrap: pretty;
+}
+.ed-open-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+.ed-open-archive {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+/* The way down to the Collection: its label over a brass hairline. */
+.ed-cue {
+  grid-column: 1 / -1;
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted-foreground);
+}
+.ed-cue-line {
+  width: 1px;
+  height: 40px;
+  background: var(--accent);
+}
+
+/* ——— The square ——— */
+
+.ed-square-stage {
+  perspective: 1200px;
+  width: 100%;
+  max-width: 460px;
+}
+.ed-square {
+  --rx: 0deg;
+  --ry: 0deg;
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(22px, 7.8%, 36px);
+  background: var(--sq);
+  color: var(--sq-ink);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 14%, transparent);
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform var(--dur-image) var(--ease-soft-out);
+}
+.ed-square-top,
+.ed-square-label {
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--sq-quiet);
+}
+.ed-square-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ed-square-title {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ed-square-season {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-xl);
+  line-height: 1.02;
+  max-width: 6ch;
+}
+.ed-square-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+/* The seal: brass for Early access and Open, the crest while Sealed, an
+   outline once Sold out. It breathes like the brass dot (2.8s). */
+.ed-seal {
+  flex: none;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--foreground);
+  font-size: var(--type-label-size);
+  line-height: 1.35;
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  text-align: center;
+}
+.ed-seal[data-state="closed"] {
+  background: transparent;
+  color: var(--sq-ink);
+  border: 1px solid currentColor;
+}
+.ed-seal-crest {
+  width: 46px;
+  height: 46px;
+  background: var(--foreground);
+  -webkit-mask: url(/images/hos-logo.svg) center / contain no-repeat;
+  mask: url(/images/hos-logo.svg) center / contain no-repeat;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ed-seal:not([data-state="closed"]) {
+    animation: ed-seal-breath 2.8s var(--ease-slow) infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-square {
+    transition: none;
+  }
+}
+@keyframes ed-seal-breath {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.86;
+  }
+}
+
+/* ——— Notify me: the footer's newsletter line, worded, on the canvas ——— */
+
+.ed-notify {
+  max-width: 440px;
+  margin-top: 10px;
+}
+.ed-notify .footer-newsletter {
+  padding-top: 0;
+  border-top: 0;
+}
+.ed-notify .footer-nl-input::placeholder {
+  color: var(--muted-foreground);
+}
+.footer-newsletter-worded .footer-nl-btn {
+  width: auto;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: var(--type-small);
+  font-weight: 500;
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+}
+.footer-nl-note {
+  margin-top: -4px;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+.ed-notify-band {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 var(--ed-gutter) var(--section-space-md);
+}
+@media (min-width: 1024px) {
+  .ed-notify-band {
+    padding-inline: max(var(--ed-gutter), 13.75vw);
+  }
+}
+
+/* ——— The Collection: two across, 4:5, name and price, Buy beneath ——— */
+
+.ed-collection {
+  padding: var(--section-space-md) var(--ed-gutter);
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 1024px) {
+  .ed-collection {
+    padding-inline: max(var(--ed-gutter), 13.75vw);
+  }
+}
+.ed-collection-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px 40px;
+  margin-bottom: clamp(56px, 7.5vw, 96px);
+}
+.ed-collection-title {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ed-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  padding-bottom: 10px;
+}
+.ed-filter {
+  padding: 4px 0;
+  color: var(--muted-foreground);
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--dur-hover) var(--ease-soft-out), background-size var(--dur-hover) var(--ease-soft-out);
+}
+.ed-filter[aria-pressed="true"],
+.ed-filter:hover {
+  color: var(--foreground);
+}
+.ed-grid {
+  display: grid;
+  gap: 96px;
+}
+@media (min-width: 768px) {
+  .ed-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(96px, 14vw, 180px) clamp(40px, 9.4vw, 120px);
+  }
+}
+.ed-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ed-card-photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  margin-bottom: 4px;
+  background: var(--border);
+}
+.ed-card-photo img {
+  transition:
+    transform var(--dur-reveal) var(--ease-soft-out),
+    filter var(--dur-image) var(--ease-slow);
+}
+.ed-card:hover .ed-card-photo img {
+  transform: scale(1.04);
+}
+.ed-card[data-sold] .ed-card-photo img {
+  filter: grayscale(0.6);
+}
+.ed-card-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+.ed-card-name {
+  font-size: var(--type-body);
+  line-height: 1.4;
+  color: var(--foreground);
+}
+.ed-card-price {
+  flex: none;
+  font-size: var(--type-body);
+  line-height: 1.4;
+  color: var(--foreground);
+}
+.ed-card[data-sold] .ed-card-price {
+  color: var(--muted-foreground);
+}
+.ed-card-action {
+  margin-top: 4px;
+}
+/* With a fine pointer, Buy appears beneath on pointing (R4-B); on touch it
+   is always there. Keyboard focus shows it too. */
+@media (hover: hover) and (pointer: fine) {
+  .ed-card-action {
+    opacity: 0;
+    transition: opacity var(--dur-hover) var(--ease-slow);
+  }
+  .ed-card:hover .ed-card-action,
+  .ed-card:focus-within .ed-card-action {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-card-photo img,
+  .ed-card-action {
+    transition: none;
+  }
+  .ed-card:hover .ed-card-photo img {
+    transform: none;
+  }
+}
+
+/* ——— Before you buy ——— */
+
+.ed-before {
+  display: grid;
+  gap: 40px;
+  padding: var(--section-space-md) var(--ed-gutter);
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 1024px) {
+  .ed-before {
+    grid-template-columns: 300px minmax(0, 1fr);
+    column-gap: 96px;
+  }
+}
+.ed-before-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+.ed-before-head h2 {
+  text-wrap: balance;
+  margin-bottom: 8px;
+}
+.ed-before-notes {
+  display: grid;
+  gap: 26px 56px;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .ed-before-notes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.ed-before-notes li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 8px;
+  font-size: var(--type-body);
+  line-height: 1.6;
+  color: var(--foreground);
+  text-wrap: pretty;
+}
+.ed-before-numeral {
+  font-family: var(--font-editorial);
+  font-size: var(--type-body-l);
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+/* ——— For artists, on the Shop page ——— */
+
+.ed-artists-teaser {
+  display: grid;
+  gap: 40px;
+  margin-inline: var(--ed-gutter);
+  padding-block: var(--section-space-md);
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 1024px) {
+  .ed-artists-teaser {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    column-gap: 96px;
+    align-items: end;
+  }
+}
+.ed-artists-words {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 600px;
+}
+.ed-artists-words h1,
+.ed-artists-words h2 {
+  text-wrap: balance;
+}
+.ed-artists-act {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.ed-archive-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px 32px;
+  margin-inline: var(--ed-gutter);
+  padding-block: 32px var(--section-space-md);
+  border-top: 1px solid var(--border);
+}
+
+/* ——— A piece ——— */
+
+.ed-piece-back {
+  padding: 56px var(--ed-gutter) 0;
+}
+.ed-piece {
+  display: grid;
+  gap: 40px;
+  padding: 32px var(--ed-gutter) var(--section-space-md);
+}
+@media (min-width: 1024px) {
+  .ed-piece {
+    grid-template-columns: min(600px, 48vw) minmax(0, 1fr);
+    column-gap: clamp(56px, 7.5vw, 96px);
+    align-items: start;
+  }
+}
+.ed-piece-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.ed-piece-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--border);
+}
+.ed-piece-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 480px;
+}
+@media (min-width: 1024px) {
+  .ed-piece-panel {
+    position: sticky;
+    top: 112px;
+  }
+}
+.ed-piece-price {
+  font-size: var(--type-body-l);
+  line-height: 1.4;
+  color: var(--foreground);
+}
+.ed-piece-statement {
+  font-size: var(--type-body);
+  line-height: 1.7;
+  color: var(--foreground);
+  text-wrap: pretty;
+}
+.ed-piece-maker,
+.ed-piece-foot {
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+.ed-piece-foot {
+  margin-top: 4px;
+}
+
+/* Buy: the sizes and where it ships as quiet outlined boxes, then the
+   outlined button across the panel. */
+.ed-buy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 6px;
+}
+.ed-buy-closed {
+  align-items: flex-start;
+}
+.ed-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.ed-choice legend {
+  padding: 0;
+  margin-bottom: 10px;
+}
+.ed-sizes,
+.ed-zones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ed-size,
+.ed-zone {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  font-size: var(--type-small);
+  line-height: 1.3;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: border-color var(--dur-hover) var(--ease-soft-out);
+}
+.ed-zone {
+  flex: 1 1 0;
+  min-width: 96px;
+  padding-block: 10px;
+}
+.ed-zone-price {
+  color: var(--muted-foreground);
+}
+.ed-size input,
+.ed-zone input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.ed-size:hover,
+.ed-zone:hover {
+  border-color: var(--muted-foreground);
+}
+.ed-size:has(input:checked),
+.ed-zone:has(input:checked) {
+  border-color: var(--foreground);
+}
+.ed-size:has(input:focus-visible),
+.ed-zone:has(input:focus-visible) {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+.ed-size[data-sold],
+.ed-zone[data-none] {
+  color: var(--muted-foreground);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+.ed-size[data-sold] {
+  text-decoration: line-through;
+}
+.ed-buy-btn {
+  width: 100%;
+  justify-content: center;
+  margin-top: 6px;
+}
+.ed-buy-message {
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--error);
+}
+.ed-buy-quiet {
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+
+/* The folding sections. */
+.ed-folds {
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.ed-fold {
+  border-bottom: 1px solid var(--border);
+}
+.ed-fold summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--foreground);
+  cursor: pointer;
+  list-style: none;
+}
+.ed-fold summary::-webkit-details-marker {
+  display: none;
+}
+.ed-fold-mark {
+  position: relative;
+  flex: none;
+  width: 11px;
+  height: 11px;
+}
+.ed-fold-mark::before,
+.ed-fold-mark::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 11px;
+  height: 1px;
+  background: var(--muted-foreground);
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+.ed-fold-mark::after {
+  transform: rotate(90deg);
+}
+.ed-fold[open] .ed-fold-mark::after {
+  transform: rotate(0deg);
+}
+.ed-fold-body {
+  padding: 0 0 18px;
+  font-size: var(--type-small);
+  line-height: 1.65;
+  color: var(--foreground);
+  white-space: pre-line;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-fold-mark::before,
+  .ed-fold-mark::after,
+  .ed-size,
+  .ed-zone {
+    transition: none;
+  }
+}
+
+/* Phones: the price and Buy held at the foot of the screen. */
+.ed-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 12px var(--ed-gutter) calc(12px + env(safe-area-inset-bottom));
+  background: var(--background);
+  border-top: 1px solid var(--border);
+  transition:
+    transform var(--dur-hover) var(--ease-soft-out),
+    opacity var(--dur-hover) var(--ease-soft-out);
+}
+.ed-bar[data-away] {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.ed-bar-price {
+  font-size: var(--type-body);
+  color: var(--foreground);
+}
+.ed-bar-buy {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 22px;
+  border: 1px solid var(--foreground);
+  color: var(--foreground);
+}
+@media (min-width: 1024px) {
+  .ed-bar {
+    display: none;
+  }
+}
+@media (max-width: 1023px) {
+  .ed-page:has(.ed-bar) {
+    padding-bottom: 72px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-bar {
+    transition: none;
+  }
+}
+
+/* ——— The archive: the shelf of spines ——— */
+
+.ed-shelf-view {
+  display: grid;
+  gap: 56px;
+  padding: 72px var(--ed-gutter) var(--section-space-md);
+}
+@media (min-width: 1024px) {
+  .ed-shelf-view {
+    grid-template-columns: minmax(0, 1fr) min(400px, 32vw);
+    column-gap: 96px;
+    align-items: end;
+  }
+}
+.ed-shelf-words {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.ed-shelf-words p {
+  max-width: 520px;
+  text-wrap: pretty;
+}
+.ed-shelf {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  min-height: 380px;
+  padding-top: 40px;
+  border-bottom: 1px solid var(--border);
+}
+.ed-shelf-square-link {
+  display: block;
+}
+.ed-spine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 52px;
+  height: 320px;
+  padding: 14px 0;
+  background: var(--sq);
+  color: var(--sq-ink);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--foreground) 14%, transparent);
+  transition: transform var(--dur-image) var(--ease-slow);
+}
+a.ed-spine:hover,
+a.ed-spine:focus-visible {
+  transform: translateY(-36px);
+}
+.ed-spine-numeral {
+  font-size: var(--type-body);
+  line-height: 1;
+}
+.ed-spine-title {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: var(--type-label-size);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ed-spine-ring {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+}
+.ed-spine-sealed {
+  justify-content: center;
+  background: transparent;
+  color: var(--muted-foreground);
+  border: 1px dashed var(--muted-foreground);
+  box-shadow: none;
+}
+.ed-spine[data-small] {
+  width: 34px;
+  height: 120px;
+  padding: 10px 0;
+}
+.ed-spine[data-small] .ed-spine-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.ed-spine[data-small] .ed-spine-ring {
+  width: 10px;
+  height: 10px;
+}
+.ed-spine[data-small]:hover,
+.ed-spine[data-small]:focus-visible {
+  transform: translateY(-12px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-spine {
+    transition: none;
+  }
+  a.ed-spine:hover,
+  a.ed-spine:focus-visible {
+    transform: none;
+  }
+}
+
+/* What a closed Collection held. */
+.ed-held {
+  padding: var(--section-space-md) var(--ed-gutter);
+  border-top: 1px solid var(--border);
+}
+.ed-held-head {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 640px;
+  margin-bottom: 56px;
+}
+.ed-held-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 40px 24px;
+  list-style: none;
+}
+.ed-held-piece {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ed-held-photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  margin-bottom: 4px;
+  background: var(--border);
+}
+
+/* ——— For artists ——— */
+
+.ed-artists {
+  display: grid;
+  gap: 64px;
+  padding: 72px var(--ed-gutter) var(--section-space-md);
+}
+@media (min-width: 1024px) {
+  .ed-artists {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+    column-gap: 96px;
+    align-items: start;
+  }
+}
+.ed-steps {
+  display: grid;
+  gap: 22px 40px;
+  margin-top: 18px;
+  list-style: none;
+}
+@media (min-width: 768px) {
+  .ed-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.ed-steps li {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 4px 8px;
+}
+.ed-step-numeral {
+  grid-row: span 2;
+  font-family: var(--font-editorial);
+  font-size: var(--type-body-l);
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+.ed-step-title {
+  font-size: var(--type-body);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--foreground);
+}
+.ed-step-text {
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+.ed-proposal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 26px;
+}
+.ed-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.ed-field input,
+.ed-field textarea {
+  width: 100%;
+  padding: 8px 0;
+  font-family: inherit;
+  font-size: var(--type-body);
+  line-height: 1.5;
+  color: var(--foreground);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  resize: vertical;
+  transition: border-color var(--dur-hover) var(--ease-soft-out);
+}
+.ed-field input:focus-visible,
+.ed-field textarea:focus-visible {
+  outline: none;
+  border-bottom-color: var(--foreground);
+}
+.ed-artists-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px 96px;
+  margin-inline: var(--ed-gutter);
+  padding-block: 40px var(--section-space-md);
+  border-top: 1px solid var(--border);
+}
+.ed-artists-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ed-artists-group ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+
+/* A collaborator. */
+.ed-person {
+  display: grid;
+  gap: 40px;
+  padding: 40px var(--ed-gutter) var(--section-space-md);
+}
+@media (min-width: 1024px) {
+  .ed-person {
+    grid-template-columns: min(400px, 34vw) minmax(0, 1fr);
+    column-gap: 96px;
+    align-items: end;
+  }
+}
+.ed-person-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--border);
+}
+.ed-person-words {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 600px;
+}
+.ed-person-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  list-style: none;
+}
+
+/* ——— Thank you, the certificate, the terms of sale ——— */
+
+.ed-thanks,
+.ed-terms {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+  max-width: calc(720px + 2 * var(--ed-gutter));
+  padding: 72px var(--ed-gutter) var(--section-space-md);
+}
+.ed-thanks h1,
+.ed-terms h1 {
+  text-wrap: balance;
+}
+.ed-summary {
+  width: 100%;
+  border-top: 1px solid var(--border);
+}
+.ed-summary div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.ed-summary dd {
+  margin: 0;
+  font-size: var(--type-body);
+  color: var(--foreground);
+  text-align: right;
+}
+.ed-thanks-next,
+.ed-thanks-collector {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.ed-terms-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 640px;
+}

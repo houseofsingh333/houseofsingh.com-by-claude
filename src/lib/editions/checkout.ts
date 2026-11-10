@@ -86,6 +86,7 @@ export function checkoutParams(input: {
   const metadata = {
     pieceId: piece._id,
     pieceSlug: piece.slug,
+    pieceName: piece.name.slice(0, 450),
     size: size?.label ?? "",
     sizeKey: size?._key ?? "",
     zone,

@@ -32,7 +32,13 @@ export const editionsPiece = defineType({
       group: "main",
       description: "The piece's address: houseofsingh.com/editions/[address].",
       options: { source: "name", maxLength: 60 },
-      validation: (r) => r.required(),
+      // These addresses are the Shop's own pages, so a piece cannot use them.
+      validation: (r) =>
+        r.required().custom((v: { current?: string } | undefined) =>
+          v?.current && ["archive", "artists", "collaborators", "terms", "thank-you", "verify"].includes(v.current)
+            ? "This address belongs to a Shop page. Choose another."
+            : true,
+        ),
     }),
     defineField({ name: "collection", title: "Collection", type: "reference", group: "main", to: [{ type: "editionsCollection" }], validation: (r) => r.required() }),
     defineField({ name: "category", title: "Category", type: "reference", group: "main", to: [{ type: "editionsCategory" }], validation: (r) => r.required() }),

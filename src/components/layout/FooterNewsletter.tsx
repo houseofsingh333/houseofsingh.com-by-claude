@@ -6,12 +6,26 @@ import { HONEYPOT_FIELD } from "@/lib/spam-protection";
 import { roman } from "@/lib/roman";
 
 type Props = {
-  /** "Newsletter" (Site Settings, Coda). */
-  label: string;
+  /** "Newsletter" (Site Settings, Coda); none for the Shop's Notify me. */
+  label?: string;
   /** The faint text inside the empty field. */
   placeholder: string;
   /** Beside the postmark once signed up. */
   thanks: string;
+  /** Where the email goes (the Shop's Notify me posts elsewhere). */
+  endpoint?: string;
+  /** Sent with the email (the Shop: which Collection). */
+  extra?: Record<string, string>;
+  /** The field's accessible name. */
+  fieldLabel?: string;
+  /** The button's accessible name. */
+  buttonLabel?: string;
+  /** A visible word beside the arrow (the Shop: "Notify me"). */
+  buttonText?: string;
+  /** A quiet note beneath the line (the Shop: what the email is for). */
+  note?: string;
+  /** Distinguishes the honeypot when two forms share a page. */
+  idSuffix?: string;
 };
 
 /** Today in Toronto, as the postmark reads it: "8 NOV" and "MMXXVI". */
@@ -31,7 +45,18 @@ function postmarkDate(): { day: string; year: string } {
  * Same endpoint, validation and spam protection as before. Reduced motion:
  * the postmark appears at once (styles/layout.css).
  */
-export default function FooterNewsletter({ label, placeholder, thanks }: Props) {
+export default function FooterNewsletter({
+  label,
+  placeholder,
+  thanks,
+  endpoint = "/api/newsletter",
+  extra,
+  fieldLabel = "Email for newsletter",
+  buttonLabel = "Subscribe",
+  buttonText,
+  note,
+  idSuffix = "footer",
+}: Props) {
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState(""); // honeypot
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -43,10 +68,10 @@ export default function FooterNewsletter({ label, placeholder, thanks }: Props) 
     if (!email.trim()) return;
     setStatus("loading");
     try {
-      const res = await fetch("/api/newsletter", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), [HONEYPOT_FIELD]: company }),
+        body: JSON.stringify({ ...extra, email: email.trim(), [HONEYPOT_FIELD]: company }),
       });
       if (!res.ok) {
         // Show the server's own wording (for example the rate limit message).
@@ -68,23 +93,24 @@ export default function FooterNewsletter({ label, placeholder, thanks }: Props) 
   const done = status === "success";
 
   return (
-    <div className="footer-newsletter">
-      <span className="footer-label">{label}</span>
+    <div className={`footer-newsletter${buttonText ? " footer-newsletter-worded" : ""}`}>
+      {label && <span className="footer-label">{label}</span>}
       <div className="footer-nl-stage">
         <form onSubmit={handleSubscribe} className="footer-nl-form" data-done={done ? "" : undefined} inert={done}>
-          <HoneypotField value={company} onChange={setCompany} idSuffix="footer" />
+          <HoneypotField value={company} onChange={setCompany} idSuffix={idSuffix} />
           <input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={placeholder}
-            aria-label="Email for newsletter"
+            aria-label={fieldLabel}
             aria-invalid={status === "error" ? true : undefined}
-            aria-describedby={status === "error" ? "footer-nl-error" : undefined}
+            aria-describedby={status === "error" ? `${idSuffix}-nl-error` : undefined}
             className="footer-nl-input"
           />
-          <button type="submit" disabled={status === "loading"} aria-label="Subscribe" className="footer-nl-btn">
+          <button type="submit" disabled={status === "loading"} aria-label={buttonText ? undefined : buttonLabel} className="footer-nl-btn">
+            {buttonText && <span className="footer-nl-word">{buttonText}</span>}
             <span aria-hidden="true" className="footer-nl-arrow">
               {status === "loading" ? "..." : "→"}
             </span>
@@ -109,8 +135,9 @@ export default function FooterNewsletter({ label, placeholder, thanks }: Props) 
       <p className="sr-only" role="status">
         {done ? thanks : ""}
       </p>
+      {note && !done && <p className="footer-nl-note">{note}</p>}
       {status === "error" && (
-        <p id="footer-nl-error" className="footer-nl-error" role="alert">
+        <p id={`${idSuffix}-nl-error`} className="footer-nl-error" role="alert">
           {errorMsg || "Something went wrong. Try again."}
         </p>
       )}

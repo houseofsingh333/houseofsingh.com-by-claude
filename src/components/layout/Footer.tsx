@@ -91,6 +91,10 @@ export default function Footer({ copy, bookUrl }: { copy: FooterCopy; bookUrl: s
 
       <div className="footer-bottom">
         <span className="footer-bottom-copyright">&copy; 2026 House of Singh</span>
+        {/* The Shop, while in development: linked from here only, never indexed. */}
+        <Link href="/editions" className="footer-bottom-link hairline">
+          Shop
+        </Link>
         <Link href="/privacy" className="footer-bottom-link hairline">
           Privacy
         </Link>
