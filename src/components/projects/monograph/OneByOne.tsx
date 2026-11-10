@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { MonographProject } from "@/lib/projectsData";
 import Crossfade from "@/components/Crossfade";
+import TextLink from "@/components/TextLink";
 import Plate from "./Plate";
 import { attachSwipe, clearSwipeStyles, playMove, type SwipeTarget } from "./swipe";
 import type { ProjectsCopy } from "./types";
@@ -201,9 +202,9 @@ export default function OneByOne({ projects, index, onGo, copy, active, arriving
                     {p.excerpt}
                   </p>
                 )}
-                <Link href={`/projects/${p.slug}`} onClick={() => onLeave(p.slug)} className="mono-enter hairline" style={{ "--i": 4 } as CSSProperties}>
+                <TextLink href={`/projects/${p.slug}`} onClick={() => onLeave(p.slug)} className="mono-enter" style={{ "--i": 4 } as CSSProperties}>
                   {copy.enter}
-                </Link>
+                </TextLink>
                 <div className="mono-nav" style={{ "--i": 5 } as CSSProperties}>
                   <button type="button" className="hairline" onClick={() => go(-1)}>
                     <span aria-hidden="true">&larr;</span> {copy.previous}

@@ -1,4 +1,5 @@
-import Link from "next/link";
+import ChapterMark from "@/components/ChapterMark";
+import TextLink from "@/components/TextLink";
 import { devPlaceholder } from "@/lib/placeholders";
 import { plainParagraphs, splitFirstSentence } from "@/lib/portableText";
 import type { HomeIntroData } from "@/lib/types";
@@ -14,9 +15,11 @@ const FALLBACK_PORTRAIT = "/images/hero-placeholder-1.svg";
 
 /**
  * Chapter II, the artist. Left: the portrait with its colour reveal. Right:
- * the brass numeral, the home bio from Sanity (its first sentence lifted
- * out as one large Playfair statement that reveals line by line, the rest
- * at reading size) and a link to About. Phone: portrait above, text below.
+ * the chapter mark (II, "The artist"), the home bio from Sanity (its first
+ * sentence lifted out as the site's opening statement in Playfair at
+ * display-m, revealing line by line: the one approved exception to "serif
+ * for names and numbers, sans for sentences", 10 Nov), the rest at reading
+ * size, and the text link to About. Phone: portrait above, text below.
  */
 export default function IntroSection({ data, copy }: { data: HomeIntroData; copy: SiteCopy }) {
   const portrait = data.portrait ?? devPlaceholder(FALLBACK_PORTRAIT, null);
@@ -35,18 +38,10 @@ export default function IntroSection({ data, copy }: { data: HomeIntroData; copy
           caption={copy.artistCaption}
         />
         <div className="flex flex-col gap-7 md:gap-8">
-          <span
-            aria-hidden="true"
-            className="font-editorial text-numeral leading-none text-accent"
-          >
-            II
-          </span>
-          <h2 id="chapter-artist" className="sr-only">
-            {copy.artistHeading}
-          </h2>
+          <ChapterMark numeral="II" label={copy.artistHeading} headingId="chapter-artist" />
           <LineReveal
             text={first}
-            className="text-statement leading-[1.4] text-foreground max-w-[620px] text-balance"
+            className="font-editorial font-normal text-display-m leading-[1.25] text-foreground max-w-[620px] text-balance"
           />
           {reading.map((p, i) => (
             <p
@@ -56,12 +51,9 @@ export default function IntroSection({ data, copy }: { data: HomeIntroData; copy
               {linkStudio(p)}
             </p>
           ))}
-          <Link
-            href="/about"
-            className="hairline self-start pb-1 type-label text-foreground"
-          >
+          <TextLink href="/about" className="self-start">
             {copy.artistLink}
-          </Link>
+          </TextLink>
         </div>
       </div>
     </section>

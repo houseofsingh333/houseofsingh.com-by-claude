@@ -1,5 +1,6 @@
 import RecordPlayer from "./RecordPlayer";
 import type { SiteCopy } from "@/lib/siteCopy";
+import ChapterMark from "@/components/ChapterMark";
 
 /*
  * Chapter VI, on my turntable (canvas "On my turntable", frame "A with C:
@@ -50,12 +51,7 @@ export default function RecordChapter({ playlistUrl, copy }: Props) {
   return (
     <section aria-labelledby="chapter-listening" className="turntable px-6 md:px-16 section-py">
       <div className="turntable-text">
-        <div className="flex items-baseline gap-4">
-          <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
-            VI
-          </span>
-          <span className="type-label text-muted-foreground">{copy.listeningLabel}</span>
-        </div>
+        <ChapterMark numeral="VI" label={copy.listeningLabel} />
         <h2 id="chapter-listening" className="turntable-heading font-editorial font-normal text-foreground">
           {copy.listeningHeading}
         </h2>

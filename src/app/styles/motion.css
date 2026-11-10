@@ -253,6 +253,88 @@ html.js .blurup + img[data-blurup]:not([data-loaded]) {
   }
 }
 
+/* ——— One chapter mark (ChapterMark; approved 10 Nov) ———
+   The brass numeral at the numeral token with the chapter's label beside
+   it in the label token, on one baseline, 16px apart. */
+.chapter-mark {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+.chapter-mark-centred {
+  justify-content: center;
+}
+
+/* ——— One text call to action (TextLink; approved 10 Nov) ———
+   Secondary actions sitewide: no box, Instrument Sans 500 at the small
+   token, uppercase, 0.12em, a permanent 1px hairline in the text's colour
+   under the words. On hover and keyboard focus the hairline redraws from
+   the left and the arrow moves 4px to the right (--dur-text-link on
+   --ease-soft-out). Reduced motion: the line stays, the arrow moves at
+   once. Primary actions use the outlined button (.outline-cta). */
+.text-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-block: 6px;
+  font-family: var(--font-sans);
+  font-size: var(--type-small);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--foreground);
+  text-decoration: none;
+}
+.text-link-inverse {
+  color: var(--background);
+}
+.text-link-text {
+  position: relative;
+  padding-bottom: 4px;
+}
+.text-link-text::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left center;
+}
+.text-link-arrow {
+  display: inline-block;
+  letter-spacing: 0;
+  transition: transform var(--dur-text-link) var(--ease-soft-out);
+}
+.text-link:hover .text-link-text::after,
+.text-link:focus-visible .text-link-text::after {
+  animation: text-link-redraw var(--dur-text-link) var(--ease-soft-out);
+}
+.text-link:hover .text-link-arrow,
+.text-link:focus-visible .text-link-arrow {
+  transform: translateX(4px);
+}
+@keyframes text-link-redraw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .text-link:hover .text-link-text::after,
+  .text-link:focus-visible .text-link-text::after {
+    animation: none;
+  }
+  .text-link-arrow {
+    transition: none;
+  }
+}
+
 /* ——— One calm focus ring ———
    Keyboard focus everywhere: a 1px line in the element's own colour, set a
    little away from it. Never shown for a mouse click (focus-visible). */

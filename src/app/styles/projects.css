@@ -67,7 +67,6 @@
 .mono-counter,
 .mono-pause,
 .mono-meta,
-.mono-enter,
 .mono-nav button,
 .mono-card-meta {
   font-size: var(--type-label-size);
@@ -1300,17 +1299,13 @@ p.pp-story {
   gap: 0.875rem;
 }
 .pp-next-label,
-.pp-next-meta,
-.pp-next-links {
+.pp-next-meta {
   font-size: var(--type-label-size);
   white-space: nowrap;
   line-height: var(--type-label-leading);
   letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
-}
-.pp-next-label {
-  letter-spacing: var(--type-label-tracking);
 }
 .pp-next-title {
   font-family: var(--font-editorial);
@@ -1321,9 +1316,9 @@ p.pp-story {
 }
 .pp-next-links {
   display: flex;
-  gap: 1.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.75rem;
   margin-top: 1.5rem;
-  color: var(--foreground);
 }
 /* Pointing at the photograph or the title: both answer. */
 .pp-next:has(.pp-next-plate:hover, .pp-next-title:hover, .pp-next-title:focus-visible) .pp-next-plate img {

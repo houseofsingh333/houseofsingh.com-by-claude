@@ -4,6 +4,7 @@ import { hotspotPosition } from "@/lib/projectHero";
 import type { StudioWorkCard } from "@/lib/types";
 import OutlineCta from "@/components/OutlineCta";
 import PracticePanels, { type PracticePanel } from "./PracticePanels";
+import ChapterMark from "@/components/ChapterMark";
 
 const STUDIO_URL = "https://studios.houseofsingh.com";
 
@@ -53,14 +54,7 @@ export default function PracticeChapter({
       className="practice px-6 md:px-16 section-py"
       data-panels={panels.length}
     >
-      <div className="practice-label flex items-baseline gap-4">
-        <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
-          VII
-        </span>
-        <h2 id="chapter-practice" className="type-label text-muted-foreground">
-          {copy.practiceLabel}
-        </h2>
-      </div>
+      <ChapterMark numeral="VII" label={copy.practiceLabel} headingId="chapter-practice" className="practice-label" />
 
       <div className="practice-sign">
         {/* eslint-disable-next-line @next/next/no-img-element -- an SVG logo: next/image adds nothing for vector files. */}

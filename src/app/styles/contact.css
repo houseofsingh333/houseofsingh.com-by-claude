@@ -30,7 +30,7 @@
 .contact-input {
   border-bottom-width: 1px;
   border-bottom-color: var(--border);
-  transition: border-color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: border-color var(--dur-hover) var(--ease-soft-out);
 }
 
 .contact-input:focus {
@@ -44,7 +44,7 @@
 
 .contact-input::placeholder {
   color: var(--muted-foreground);
-  transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color var(--dur-hover) var(--ease-soft-out);
 }
 
 /* Typed text should be distinctly darker than body copy */

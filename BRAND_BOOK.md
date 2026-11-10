@@ -68,6 +68,10 @@ Two typefaces, both from Google Fonts. One elegant serif for names and numbers, 
 - **Playfair Display** is used only for names and numbers: page titles, chapter titles, project titles and journal titles (including in lists and cards and the studio panels), the Roman chapter numerals, the Journey years and the journal's day and month, the time in Toronto, and Maninder's quote beside his portrait (the one italic).
 - **Instrument Sans** is used for every sentence: chapter statements and introductions, the closing invitation, the practice line, the turntable note, About's story, practice text, answers and pull quote, the Privacy and Terms summaries, captions, body copy, labels, navigation, buttons and form fields. A prominent single line or short statement takes the statement size (26/20); longer introductions take body-l.
 
+**The one exception: the site's opening statement** (approved 10 Nov 2026). The first sentence of the homepage introduction, Chapter II ("Maninder Singh is a creative director, photographer, and multidisciplinary designer working out of Toronto."), is set in Playfair 400 at display-m (34/26), with balanced line breaks. No other sentence on the site is set in Playfair.
+
+**Chapter marks: one system** (approved 10 Nov 2026). Every chapter on every page opens with its Roman numeral in brass at the numeral token (30px) and, beside it on one baseline, a visible label in the label token (12px, uppercase, 0.12em, muted grey; canvas grey on the charcoal band). Where a chapter has a title, it sits below in its own heading style; where it has none, the label is the chapter's heading. Every label is editable in Sanity (Site Settings for Home, the About Page for About). Home: II The artist, III The work, IV In the studio now, V Notebook (title: Journal), VI Listening (title: On my turntable), VII The practice. About: I The portrait, II The story, III House of Singh, IV In print, V A walk through the years, VI Rapid fire (title: In conversation). Component: `ChapterMark`.
+
 **Weights.** Playfair 400 only (no light 300, no bold). Instrument Sans 400, and 500 for emphasis (strong text, titles in the Journey). Never a synthesised bold.
 
 **Type principles.**
@@ -83,8 +87,8 @@ Two typefaces, both from Google Fonts. One elegant serif for names and numbers, 
 | Token | Desktop 1280 | Phone 390 | Face | Used for |
 |------|------|------|------|------|
 | `display-xl` | 72px | 40px | Playfair 400 | Page and project titles (Contact, Privacy and Terms, a project, the next project, the home spotlight, error pages) |
-| `display-l` | 52px | 34px | Playfair 400 | Chapter titles (The work, Journal, On my turntable, In print, In conversation, a contact step), the About quote, One by one's title, the Journal heading |
-| `display-m` | 34px | 26px | Playfair 400 | The time in Toronto and large single values; the Projects heading, legal section titles, story headings, the filter's choices |
+| `display-l` | 52px | 34px | Playfair 400 | Chapter titles (Journal, On my turntable, In conversation, a contact step), the About quote, One by one's title, the Journal heading |
+| `display-m` | 34px | 26px | Playfair 400 | The site's opening statement (the one sentence in Playfair), the time in Toronto and large single values; the Projects heading, legal section titles, story headings, the filter's choices |
 | `display-s` | 24px | 20px | Playfair 400 | Titles in lists and cards: At a glance, journal entries, the filmstrip, the studio panels, press cuttings, the newsletter note |
 | `numeral` | 30px | 30px | Playfair 400, brass | Roman chapter numerals (brass text is never under 28px) |
 | `date` | 44px | 40px | Playfair 400 | Journey years, the journal's day and month |
@@ -221,6 +225,7 @@ Motion is calm and minimal. It supports the content, never performs for its own 
 ### 4.3 Components
 
 - **Buttons and links.** Quiet and typographic. Often a simple label with a hairline or a subtle hover, rather than a heavy filled shape. The brass may appear as a restrained hover or underline accent.
+- **Calls to action: two styles, one each** (approved 10 Nov 2026). Primary actions (Book a call, Visit House of Singh Studios) use the outlined button (`OutlineCta`). Every secondary action uses the one text link (`TextLink`): no box, Instrument Sans 500 at the small token (14px), uppercase, 0.12em, a permanent 1px hairline under the words and an arrow; on hover and focus the arrow moves 4px to the right while the hairline redraws from the left (`--dur-text-link`, 400ms). It is used for More about Maninder, Enter the project (homepage and Projects), View project, Read the journal, or write to me instead, All projects and Start a project (end of each project), and the contact confirmation's Explore my projects and Read the journal.
 - **Forms.** Clean, generous, calm. Comfortable field spacing, clear muted labels, gentle focus states. No visual noise.
 - **Cards.** Let the image and a small caption do the work. Avoid borders, heavy shadows, or busy chrome. Space separates content, not boxes.
 - **Labels and eyebrows.** The one label style (12px, uppercase, 0.12em, muted grey; charcoal with a hairline when active). The consistent signal of category and metadata across the brand.
@@ -281,7 +286,7 @@ The voice is the same calm, grounded, reflective voice used across the brand. (D
 
 **Feel:** Calm, editorial, crafted, grounded, timeless.
 
-**Motion:** Tokens in `src/app/styles/tokens.css`: `--ease-slow` `cubic-bezier(0.37, 0, 0.63, 1)` for reveals, fades and the page fade in; `--ease-soft-out` `cubic-bezier(0.33, 1, 0.68, 1)` for hover and focus; `--dur-reveal` 1400ms with a 12px rise, `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-page` 600ms, `--dur-develop` 1400ms (photographs developing to full tone), `--dur-plate` 1400ms (a Projects plate crossfading to its next photograph). Focus rings, form errors and the menu and popup opening stay quick. Slow, gentle, minimal. Respect reduced motion. The 2.8s breathing brass dot is the reference.
+**Motion:** Tokens in `src/app/styles/tokens.css`: `--ease-slow` `cubic-bezier(0.37, 0, 0.63, 1)` for reveals, fades and the page fade in; `--ease-soft-out` `cubic-bezier(0.33, 1, 0.68, 1)` for hover and focus; `--dur-reveal` 1400ms with a 12px rise, `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-text-link` 400ms (the text call to action), `--dur-record-turn` 3600ms (one turn of the homepage record, half of 33 1/3 rpm), `--dur-page` 600ms, `--dur-develop` 1400ms (photographs developing to full tone), `--dur-plate` 1400ms (a Projects plate crossfading to its next photograph). Focus rings, form errors and the menu and popup opening stay quick. Slow, gentle, minimal. Respect reduced motion. The 2.8s breathing brass dot is the reference.
 
 **The test:** Calm, considered, crafted, or loud, rushed, generic? Ship only the former.
 

@@ -56,7 +56,8 @@
   --delay-menu-photo: 250ms;
   --dur-menu-photo-out: 400ms; /* the menu photograph fading out on closing */
   --dur-menu-crossfade: 700ms; /* one menu photograph to the next; the page names fading in */
-  --dur-record-turn: 1800ms; /* one steady turn of the home page record (Chapter VI, approved 9 Nov) */
+  --dur-record-turn: 3600ms; /* one steady turn of the home page record, half of 33 1/3 rpm (Chapter VI, approved 10 Nov) */
+  --dur-text-link: 400ms; /* the text call to action: its hairline redrawing and its arrow moving (approved 10 Nov) */
 
   /* Earlier fast curve, kept only for the menu and popup opening. */
   --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);

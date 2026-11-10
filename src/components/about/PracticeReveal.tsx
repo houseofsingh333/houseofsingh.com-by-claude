@@ -24,10 +24,13 @@ function logoSource(logo?: string | null): { src: string; srcSet?: string } {
 
 export default function PracticeReveal({
   logo,
+  mark,
   children,
 }: {
   /** The practice logo from Sanity, else the crest. */
   logo: string | null;
+  /** The chapter mark, III with its label, centred above the logo. */
+  mark: ReactNode;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -35,9 +38,7 @@ export default function PracticeReveal({
 
   return (
     <div ref={ref} className="flex flex-col items-center gap-6 text-center">
-      <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
-        III
-      </span>
+      {mark}
       <div {...revealProps({ revealed, rise: false })}>
         {/* eslint-disable-next-line @next/next/no-img-element -- a logo at a fixed size: an SVG, or a Sanity image asked for at that size. */}
         <img {...logoSource(logo)} alt="House of Singh" width={260} height={260} className="w-[200px] md:w-[260px] h-auto" />

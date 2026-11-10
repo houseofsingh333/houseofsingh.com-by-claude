@@ -3,15 +3,21 @@ import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import { hasImageAsset } from "@/lib/sanityImage";
 import { hotspotPosition } from "@/lib/projectHero";
-import { roman } from "@/lib/roman";
+import ChapterMark from "@/components/ChapterMark";
+import TextLink from "@/components/TextLink";
 import type { HomepageProject } from "@/lib/types";
 import ScrollProgress from "../ScrollProgress";
 
-const ROOMS = 4;
+/** Chapter III shows exactly three projects (Site Settings, Homepage projects). */
+const ROOMS = 3;
+
+const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
- * Chapter III, the exhibition: the homepage projects (in homepageOrder) as
- * rooms. On desktop with motion allowed each room pins for about one screen
+ * Chapter III, the exhibition: three projects (Site Settings, Homepage
+ * projects; else the first three in homepage order) as rooms. The chapter
+ * mark, "III The work", appears once as the chapter opens; each room
+ * carries only its counter, "01 / 03", in the label token. On desktop with motion allowed each room pins for about one screen
  * of scrolling: the framed print on the canvas wall grows to fill the
  * screen while its wall label gives way to a small canvas plate with
  * "Enter the project", then the next room. One progress value per room
@@ -35,7 +41,7 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
         const image = hasImageAsset(project.coverImage) ? project.coverImage : project.thumbnail;
         const href = `/projects/${project.slug}`;
         const meta = [project.category?.trim(), project.year ? String(project.year) : null].filter(Boolean).join(", ");
-        const count = `${roman(i + 1)} / ${roman(n)}`;
+        const count = `${pad(i + 1)} / ${pad(n)}`;
         return (
           <div
             key={project._id}
@@ -44,12 +50,11 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
             style={{ "--i": i } as React.CSSProperties}
           >
             <div className="exhibition-stage">
-              <div className="exhibition-head px-6 md:px-16" aria-hidden={i > 0 ? true : undefined}>
-                <span className="font-editorial text-numeral leading-none text-accent">III</span>
-                <h2 id={i === 0 ? "chapter-work" : undefined} className="font-editorial font-normal text-display-l leading-[1.1] text-foreground">
-                  {copy.workHeading}
-                </h2>
-              </div>
+              {i === 0 && (
+                <div className="exhibition-head px-6 md:px-16">
+                  <ChapterMark numeral="III" label={copy.workHeading} headingId="chapter-work" />
+                </div>
+              )}
 
               <a href="#journal-strip-title" className="exhibition-skip">
                 {copy.workSkipLink}
@@ -77,6 +82,7 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
               </div>
 
               <div className="exhibition-label">
+                <span className="exhibition-count type-label text-muted-foreground">{count}</span>
                 <h3 className="font-editorial font-normal text-display-s leading-[1.2] text-foreground">
                   <Link href={href} className="hairline">
                     {project.title}
@@ -86,24 +92,22 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
                 {project.excerpt && (
                   <p className="mt-2 text-small leading-[1.6] text-foreground">{project.excerpt}</p>
                 )}
-                <Link href={href} className="exhibition-label-enter mt-3 type-label text-foreground border-b border-foreground pb-1">
+                <TextLink href={href} className="exhibition-label-enter mt-2">
                   {copy.workEnterLink}
-                </Link>
+                </TextLink>
               </div>
 
               <div className="exhibition-plate" aria-hidden="true">
                 <span className="type-label text-muted-foreground">{count}</span>
                 <p className="font-editorial text-display-l leading-[1.05] text-foreground">{project.title}</p>
                 {project.excerpt && <p className="text-small leading-[1.6] text-foreground">{project.excerpt}</p>}
-                <Link href={href} tabIndex={-1} className="self-start mt-1.5 type-label text-foreground border-b border-foreground pb-1">
+                <TextLink href={href} tabIndex={-1} className="self-start">
                   {copy.workEnterLink}
-                </Link>
+                </TextLink>
               </div>
 
               <div className="exhibition-bar px-6 md:px-16" aria-hidden="true">
-                <span className="font-editorial text-display-s whitespace-nowrap text-foreground">
-                  {roman(i + 1)} <span className="text-muted-foreground">/ {roman(n)}</span>
-                </span>
+                <span className="type-label whitespace-nowrap text-muted-foreground">{count}</span>
                 <span className="exhibition-line"><span className="exhibition-line-fill" /></span>
               </div>
             </div>

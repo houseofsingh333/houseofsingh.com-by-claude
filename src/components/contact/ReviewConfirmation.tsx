@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import TextLink from "@/components/TextLink";
 import { ArrowLeft, Pencil } from "lucide-react";
 import { formatDateOnly } from "@/lib/dates";
 import type {
@@ -118,18 +118,8 @@ export function ConfirmationScreen({ heading, line }: { heading: string; line: s
         {line}
       </p>
       <div className="flex flex-wrap gap-4">
-        <Link
-          href="/projects"
-          className="contact-btn contact-btn-secondary inline-flex items-center gap-2 hover:bg-foreground hover:text-background"
-        >
-          Explore my projects
-        </Link>
-        <Link
-          href="/journal"
-          className="contact-btn contact-btn-secondary inline-flex items-center gap-2 hover:bg-foreground hover:text-background"
-        >
-          Read the journal
-        </Link>
+        <TextLink href="/projects">Explore my projects</TextLink>
+        <TextLink href="/journal">Read the journal</TextLink>
       </div>
     </div>
   );

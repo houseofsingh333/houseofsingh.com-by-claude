@@ -25,11 +25,11 @@ export const SITE_COPY_FIELDS = [
   { name: "heroPreviousLabel", title: "Previous slide button", group: "homepage", fieldset: "chapter1", text: "Previous slide" },
   { name: "heroNextLabel", title: "Next slide button", group: "homepage", fieldset: "chapter1", text: "Next slide" },
 
-  { name: "artistHeading", title: "Heading (read by screen readers)", group: "homepage", fieldset: "chapter2", text: "The artist" },
+  { name: "artistHeading", title: "Label", group: "homepage", fieldset: "chapter2", text: "The artist" },
   { name: "artistLink", title: "Link text", group: "homepage", fieldset: "chapter2", text: "More about Maninder" },
   { name: "artistCaption", title: "Portrait caption", group: "homepage", fieldset: "chapter2", text: "Maninder Singh, Toronto" },
 
-  { name: "workHeading", title: "Heading", group: "homepage", fieldset: "chapter3", text: "The work" },
+  { name: "workHeading", title: "Label", group: "homepage", fieldset: "chapter3", text: "The work" },
   { name: "workSkipLink", title: "Skip link", group: "homepage", fieldset: "chapter3", text: "Skip to journal" },
   { name: "workEnterLink", title: "Project link text", group: "homepage", fieldset: "chapter3", text: "Enter the project" },
 
@@ -217,11 +217,13 @@ export function siteCopy(settings: object | null | undefined): SiteCopy {
   return out;
 }
 
-// ——— About page chapter headings (About Page document) ———
+// ——— About page chapter labels and headings (About Page document) ———
 
 export const ABOUT_COPY_FIELDS = [
+  { name: "aboutPortraitLabel", title: "Chapter I label", text: "The portrait" },
   { name: "aboutStoryLabel", title: "Chapter II label", text: "The story" },
-  { name: "aboutPrintHeading", title: "Chapter IV heading", text: "In print" },
+  { name: "aboutPracticeLabel", title: "Chapter III label", text: "House of Singh" },
+  { name: "aboutPrintHeading", title: "Chapter IV label", text: "In print" },
   { name: "aboutJourneyHeading", title: "Chapter V label", text: "A walk through the years" },
   { name: "aboutConversationLabel", title: "Chapter VI label", text: "Rapid fire" },
   { name: "aboutConversationHeading", title: "Chapter VI heading", text: "In conversation" },
