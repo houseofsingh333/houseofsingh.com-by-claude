@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { linkStudio } from "@/components/StudioLink";
 
 type Props = {
   title: string;
@@ -42,7 +43,7 @@ export default function ProjectHead({ title, counter, meta, isUpcoming, excerpt,
             </p>
           )}
         </div>
-        {excerpt && <p className="pp-excerpt">{excerpt}</p>}
+        {excerpt && <p className="pp-excerpt">{linkStudio(excerpt)}</p>}
       </header>
     </div>
   );

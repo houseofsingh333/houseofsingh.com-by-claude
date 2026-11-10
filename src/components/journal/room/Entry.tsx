@@ -5,6 +5,7 @@ import SanityImage from "@/components/SanityImage";
 import { proseComponents } from "@/components/proseComponents";
 import { MONTH_NAMES, dateParts, type JournalEntryFull } from "@/lib/journalRoom";
 import type { SanityImageAsset } from "@/lib/sanityImage";
+import { linkStudio } from "@/components/StudioLink";
 
 type Props = {
   entry: JournalEntryFull;
@@ -86,7 +87,7 @@ export default function Entry({ entry, isPageHeading, current, priority }: Props
           </figure>
         )}
         <div className="jr-entry-text">
-          {entry.excerpt && <p className="jr-note">{entry.excerpt}</p>}
+          {entry.excerpt && <p className="jr-note">{linkStudio(entry.excerpt)}</p>}
           {hasBody && (
             <div className="jr-text">
               <PortableText value={entry.body!} components={bodyComponents(entry.title)} />

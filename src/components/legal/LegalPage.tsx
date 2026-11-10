@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import LegalContents from "./LegalContents";
 import { keepLastWords } from "@/lib/keepLastWords";
+import { linkStudio } from "@/components/StudioLink";
 
 export type LegalSection = {
   id: string;
@@ -45,7 +46,7 @@ export default function LegalPage({
             </h2>
             <p className="legal-short">
               {`${labels.inShort} `}
-              {keepLastWords(s.short)}
+              {linkStudio(keepLastWords(s.short))}
             </p>
             <div className="legal-body">{s.body}</div>
           </section>

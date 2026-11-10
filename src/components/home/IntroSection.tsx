@@ -5,6 +5,7 @@ import type { HomeIntroData } from "@/lib/types";
 import ArtistPortrait from "./artist/ArtistPortrait";
 import type { SiteCopy } from "@/lib/siteCopy";
 import LineReveal from "./artist/LineReveal";
+import { linkStudio } from "@/components/StudioLink";
 
 const FALLBACK_BIO =
   "Depth over noise. Craft over trend. Always evolving, never in a rush. A creative practice rooted in Toronto, built on intention and quiet consistency.";
@@ -52,7 +53,7 @@ export default function IntroSection({ data, copy }: { data: HomeIntroData; copy
               key={i}
               className="text-[17px] leading-[1.7] text-foreground max-w-[520px]"
             >
-              {p}
+              {linkStudio(p)}
             </p>
           ))}
           <Link

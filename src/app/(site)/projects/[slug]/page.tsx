@@ -40,6 +40,7 @@ import ContentSections from "@/components/projects/ContentSections";
 import ProjectInterestForm from "@/components/projects/ProjectInterestForm";
 import JsonLd from "@/components/JsonLd";
 import { normalizeTitle, pageTitle } from "@/lib/page-title";
+import { linkStudio } from "@/components/StudioLink";
 import {
   buildCreativeWorkJsonLd,
   buildBreadcrumbJsonLd,
@@ -222,7 +223,7 @@ export default async function ProjectDetailPage({ params }: Props) {
             placed between them automatically, then any content sections. */}
         {intro && (
           <div className="pp-col pp-item">
-            <p className={`pp-story ${STORY_TEXT}`}>{intro}</p>
+            <p className={`pp-story ${STORY_TEXT}`}>{linkStudio(intro)}</p>
           </div>
         )}
         {photographs.length > 0 ? (

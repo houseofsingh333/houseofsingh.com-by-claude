@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { proseParts } from "@/lib/proseBlocks";
+import { linkStudioChildren } from "@/components/StudioLink";
 
 /** Headings inside rich text: Playfair, sized for a section within a page. */
 const HEADING = "font-editorial font-normal text-foreground leading-[1.2] text-balance mt-10 mb-5 first:mt-0";
@@ -28,7 +29,7 @@ function makeProse(level: 2 | 3): PortableTextComponents {
       normal: ({ children, value }) => {
         const parts = proseParts(value);
         if (parts.length === 1 && parts[0].kind === "paragraph" && parts[0].block === value) {
-          return <p className="mb-6 last:mb-0">{children}</p>;
+          return <p className="mb-6 last:mb-0">{linkStudioChildren(children)}</p>;
         }
         return (
           <>
@@ -52,7 +53,7 @@ function makeProse(level: 2 | 3): PortableTextComponents {
       h4: ({ children }) => (level === 2 ? <h3 className={H3}>{children}</h3> : <h4 className={H3}>{children}</h4>),
       blockquote: ({ children }) => (
         <blockquote className="my-8 font-editorial text-[length:clamp(22px,calc(20.25px_+_0.449vw),26px)] leading-[1.4] text-foreground">
-          {children}
+          {linkStudioChildren(children)}
         </blockquote>
       ),
     },
