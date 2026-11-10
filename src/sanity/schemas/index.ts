@@ -34,6 +34,9 @@ import {
   editionsProposal,
   editionsOrder,
   editionsCollector,
+  signupPending,
+  emailQueued,
+  emailDay,
 } from "./editions";
 import { siteSettings } from "./siteSettings";
 import { spotlight } from "./spotlight";
@@ -63,6 +66,10 @@ export const schemaTypes = [
   editionsProposal,
   editionsOrder,
   editionsCollector,
+  // Email: what waits (private records)
+  signupPending,
+  emailQueued,
+  emailDay,
   // Section block types (used inside project.contentSections)
   textSection,
   fullWidthImage,

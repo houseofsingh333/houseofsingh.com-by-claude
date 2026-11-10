@@ -6,6 +6,7 @@ import { defineConfig } from "sanity";
 import { structureTool, type StructureResolver } from "sanity/structure";
 import { schemaTypes } from "./schemas";
 import { projectId, dataset, apiVersion } from "./env";
+import { MarkMadeAction, MarkShippedAction } from "./actions/orderActions";
 
 /** Single documents of the Shop: edited in place, never listed or duplicated. */
 const EDITIONS_SINGLETONS = new Set(["editionsShipping", "editionsSettings"]);
@@ -25,7 +26,7 @@ const structure: StructureResolver = (S) =>
     .title("Content")
     .items([
       ...S.documentTypeListItems()
-        .filter((item) => !String(item.getId() ?? "").startsWith("editions"))
+        .filter((item) => !String(item.getId() ?? "").startsWith("editions") && !["signupPending", "emailQueued", "emailDay"].includes(String(item.getId())))
         // Contact submissions and newsletter subscribers are private
         // records (ids beginning "private."), so they are listed by type
         // with the Studio's own token, like the Shop's records below.
@@ -59,11 +60,38 @@ const structure: StructureResolver = (S) =>
               S.listItem().title("Shipping rates").child(S.document().schemaType("editionsShipping").documentId("editionsShipping")),
               S.listItem().title("Shop settings").child(S.document().schemaType("editionsSettings").documentId("editionsSettings")),
               S.divider(),
+              S.listItem()
+                .title("Orders")
+                .child(
+                  S.list()
+                    .title("Orders")
+                    .items(
+                      [
+                        ["To make", 'status == "paid" || !defined(status)'],
+                        ["Being made", 'status == "made"'],
+                        ["Shipped", 'status == "shipped"'],
+                        ["Refunded", 'status == "refunded"'],
+                        ["All orders", "true"],
+                      ].map(([title, filter]) =>
+                        S.listItem()
+                          .title(title)
+                          .child(
+                            S.documentList()
+                              .title(title)
+                              .schemaType("editionsOrder")
+                              .apiVersion(apiVersion)
+                              .filter(`_type == "editionsOrder" && (${filter})`)
+                              .defaultOrdering([{ field: "paidAt", direction: "desc" }]),
+                          ),
+                      ),
+                    ),
+                ),
               ...[
-                ["editionsOrder", "Orders"],
                 ["editionsCollector", "Collectors"],
                 ["editionsNotify", "Notify requests"],
                 ["editionsProposal", "Collaboration proposals"],
+                ["signupPending", "Sign ups waiting for Kit"],
+                ["emailQueued", "Emails waiting to send"],
               ].map(([type, title]) =>
                 S.listItem()
                   .title(title)
@@ -80,6 +108,12 @@ export default defineConfig({
   dataset,
   basePath: "/studio-sanity",
   plugins: [structureTool({ structure })],
+  // The login is kept in the browser (not a cookie) so the order actions
+  // can show the website who is asking (sanity/actions/orderActions.tsx).
+  auth: { loginMethod: "token" },
+  document: {
+    actions: (prev, context) => (context.schemaType === "editionsOrder" ? [MarkMadeAction, MarkShippedAction] : prev),
+  },
   schema: {
     types: schemaTypes,
     // Singletons are not offered as new documents.

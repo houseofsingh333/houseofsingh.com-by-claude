@@ -4,4 +4,4 @@ export { editionsPiece } from "./piece";
 export { editionsCollaborator } from "./collaborator";
 export { editionsShipping } from "./shipping";
 export { editionsSettings } from "./settings";
-export { editionsNotify, editionsProposal, editionsOrder, editionsCollector } from "./records";
+export { editionsNotify, editionsProposal, editionsOrder, editionsCollector, signupPending, emailQueued, emailDay } from "./records";
