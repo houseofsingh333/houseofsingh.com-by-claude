@@ -38,14 +38,14 @@ export default function FilmstripCard({
         />
       </div>
       <p className="mt-3 md:mt-4 flex items-baseline gap-2.5 md:gap-3">
-        <span className="font-editorial text-[length:clamp(34px,calc(31.37px_+_0.674vw),40px)] leading-none text-foreground">
+        <span className="font-editorial text-date leading-none text-foreground">
           {formatDayOfMonth(entry.date)}
         </span>
         <span className="type-label text-muted-foreground">
           {formatMonthYear(entry.date)}
         </span>
       </p>
-      <h3 className="mt-2.5 md:mt-3 font-editorial font-normal text-[length:clamp(20px,calc(19.12px_+_0.225vw),22px)] leading-[1.25] text-foreground text-balance">
+      <h3 className="mt-2.5 md:mt-3 font-editorial font-normal text-display-s leading-[1.25] text-foreground text-balance">
         {entry.title}
       </h3>
     </Link>

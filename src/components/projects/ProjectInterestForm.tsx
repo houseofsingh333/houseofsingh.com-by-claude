@@ -63,7 +63,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         <p className="type-label text-muted-foreground mb-4">
           Thank you
         </p>
-        <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.9]">
+        <p className="text-small text-muted-foreground leading-[1.8]">
           Your interest has been submitted. We&apos;ll be in touch.
         </p>
       </div>
@@ -78,10 +78,10 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
       <p className="type-label text-muted-foreground mb-4">
         Interested?
       </p>
-      <h2 className="font-editorial text-[length:clamp(24px,calc(21.37px_+_0.674vw),30px)] font-light text-foreground leading-[1.15] mb-4">
+      <h2 className="font-editorial font-normal text-display-m text-foreground leading-[1.15] mb-4">
         Share your story
       </h2>
-      <p className="text-sm md:text-[15px] text-muted-foreground leading-[1.9] max-w-xl mb-10">
+      <p className="text-small text-muted-foreground leading-[1.8] max-w-xl mb-10">
         Know someone, or are you someone, who should be part of this project?
         Tell us about it.
       </p>
@@ -102,7 +102,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="contact-input w-full bg-transparent text-sm py-2 text-foreground"
+            className="contact-input w-full bg-transparent text-body py-2 text-foreground"
             placeholder="Your name"
           />
         </div>
@@ -120,7 +120,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="contact-input w-full bg-transparent text-sm py-2 text-foreground"
+            className="contact-input w-full bg-transparent text-body py-2 text-foreground"
             placeholder="you@example.com"
           />
         </div>
@@ -137,7 +137,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="contact-input w-full bg-transparent text-sm py-2 text-foreground"
+            className="contact-input w-full bg-transparent text-body py-2 text-foreground"
             placeholder="Optional"
           />
         </div>
@@ -154,7 +154,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
             type="text"
             value={instagram}
             onChange={(e) => setInstagram(e.target.value)}
-            className="contact-input w-full bg-transparent text-sm py-2 text-foreground"
+            className="contact-input w-full bg-transparent text-body py-2 text-foreground"
             placeholder="@handle"
           />
         </div>
@@ -172,7 +172,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
             rows={5}
             value={story}
             onChange={(e) => setStory(e.target.value)}
-            className="contact-input w-full bg-transparent text-sm py-2 text-foreground resize-none"
+            className="contact-input w-full bg-transparent text-body py-2 text-foreground resize-none"
             placeholder="Tell us about yourself or who you'd like to nominate…"
           />
         </div>
@@ -180,7 +180,7 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
         {error && (
           <p
             role="alert"
-            className="text-sm text-muted-foreground border-l-2 border-foreground/20 pl-4"
+            className="text-small text-muted-foreground border-l-2 border-foreground/20 pl-4"
           >
             {error}
           </p>

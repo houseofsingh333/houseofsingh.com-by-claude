@@ -13,7 +13,7 @@ export default function Caption({
   if (!text?.trim()) return null;
   return (
     <figcaption
-      className={`mt-3 text-xs text-muted-foreground tracking-wide ${
+      className={`mt-3 text-small text-muted-foreground ${
         align === "center" ? "text-center" : ""
       }`}
     >

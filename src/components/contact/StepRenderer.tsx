@@ -30,7 +30,7 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`contact-intent-option w-full text-left py-5 md:py-6 font-editorial text-[length:clamp(26px,calc(23.37px_+_0.674vw),32px)] leading-[1.2]${
+            className={`contact-intent-option w-full text-left py-5 md:py-6 text-statement leading-[1.3]${
               value === option ? " is-selected" : ""
             }`}
           >
@@ -49,7 +49,7 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`contact-option px-5 py-3 border font-editorial text-[18px] md:text-[20px] ${
+            className={`contact-option px-5 py-3 border text-body-l ${
               value === option
                 ? "bg-foreground text-background border-foreground"
                 : "bg-transparent text-foreground border-border hover:border-foreground/40"
@@ -70,7 +70,7 @@ export default function StepRenderer({
           <button
             key={option}
             onClick={() => handleChange(option)}
-            className={`contact-option w-full text-left px-5 py-4 border-b border-border font-editorial text-[length:clamp(24px,calc(22.25px_+_0.449vw),28px)] leading-[1.25] ${
+            className={`contact-option w-full text-left px-5 py-4 border-b border-border text-statement leading-[1.3] ${
               value === option
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground"
@@ -92,7 +92,7 @@ export default function StepRenderer({
         value={value}
         onChange={(e) => handleChange(e.target.value)}
         placeholder="Type here…"
-        className="contact-input w-full bg-transparent border-0 px-0 py-3 text-xl md:text-2xl font-light text-foreground resize-none"
+        className="contact-input w-full bg-transparent border-0 px-0 py-3 text-statement text-foreground resize-none"
         autoFocus
       />
     );
@@ -105,11 +105,11 @@ export default function StepRenderer({
         <div className="contact-input flex items-center gap-3 py-3">
           <CalendarIcon className="w-5 h-5 text-muted-foreground flex-shrink-0" />
           {value ? (
-            <span className="text-xl md:text-2xl font-light text-foreground">
+            <span className="text-statement text-foreground">
               {formatDateOnly(value)}
             </span>
           ) : (
-            <span className="text-xl md:text-2xl font-light text-muted-foreground">
+            <span className="text-statement text-muted-foreground">
               Pick a date…
             </span>
           )}
@@ -139,7 +139,7 @@ export default function StepRenderer({
             ? "+1 (555) 000-0000"
             : "Type here…"
       }
-      className="contact-input w-full bg-transparent border-0 px-0 py-3 text-xl md:text-2xl font-light text-foreground"
+      className="contact-input w-full bg-transparent border-0 px-0 py-3 text-statement text-foreground"
       autoFocus
     />
   );

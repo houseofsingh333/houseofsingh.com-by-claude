@@ -6,7 +6,7 @@ const Studio = dynamic(() => import("./Studio"), {
   ssr: false,
   loading: () => (
     <div className="flex h-screen items-center justify-center">
-      <p className="text-sm text-muted-foreground">Loading Studio…</p>
+      <p className="text-small text-muted-foreground">Loading Studio…</p>
     </div>
   ),
 });

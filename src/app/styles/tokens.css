@@ -62,6 +62,23 @@
   --type-label-leading: 1.5;
   --type-label-tracking: 0.12em;
 
+  /* The one type scale (BRAND_BOOK.md 2.2, approved 10 Nov). Every size on
+     the site is one of these; never a one off size. Fluid sizes equal the
+     phone value at 390 and the desktop value at 1280 and scale between.
+     Serif (Playfair 400) for names and numbers, sans (Instrument Sans 400,
+     500 for emphasis) for sentences. */
+  --type-display-xl: clamp(40px, calc(25.978px + 3.5955vw), 72px); /* 72/40 page and project titles */
+  --type-display-l: clamp(34px, calc(26.112px + 2.0225vw), 52px); /* 52/34 chapter titles */
+  --type-display-m: clamp(26px, calc(22.494px + 0.8989vw), 34px); /* 34/26 Toronto time, large single values */
+  --type-display-s: clamp(20px, calc(18.247px + 0.4494vw), 24px); /* 24/20 titles in lists and cards, the menu */
+  --type-numeral: 30px; /* chapter Roman numerals */
+  --type-date: clamp(40px, calc(38.247px + 0.4494vw), 44px); /* 44/40 Journey years, journal days and months */
+  --type-statement: clamp(20px, calc(17.371px + 0.6742vw), 26px); /* 26/20 sans, prominent single lines */
+  --type-body-l: clamp(17px, calc(16.124px + 0.2247vw), 19px); /* 19/17 introductions and statements */
+  --type-body: clamp(16px, calc(15.562px + 0.1124vw), 17px); /* 17/16 reading text */
+  --type-small: 14px; /* captions and descriptions */
+  --type-legal: 11px; /* the footer's legal line */
+
   /* Section spacing scale — consistent vertical rhythm */
   --section-space-sm: 4rem;   /* 64px — page header bottoms, tight sections */
   --section-space-md: 5rem;   /* 80px — standard section rhythm */
@@ -114,6 +131,18 @@
   --color-border: var(--border);
   --font-editorial: var(--font-playfair), Georgia, serif;
   --font-sans: var(--font-instrument), Arial, sans-serif;
+  /* The type scale as Tailwind sizes: text-display-xl, text-body and so on. */
+  --text-display-xl: var(--type-display-xl);
+  --text-display-l: var(--type-display-l);
+  --text-display-m: var(--type-display-m);
+  --text-display-s: var(--type-display-s);
+  --text-numeral: var(--type-numeral);
+  --text-date: var(--type-date);
+  --text-statement: var(--type-statement);
+  --text-body-l: var(--type-body-l);
+  --text-body: var(--type-body);
+  --text-small: var(--type-small);
+  --text-legal: var(--type-legal);
   --animate-fade-in: fadeIn 0.3s ease-out;
   --animate-editorial-fade-in: editorialFadeIn var(--dur-reveal) var(--ease-slow) both;
 }

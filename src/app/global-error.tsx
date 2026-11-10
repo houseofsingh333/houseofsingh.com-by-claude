@@ -60,7 +60,7 @@ export default function GlobalError({
           @font-face {
             font-family: "Playfair Display";
             src: url("/fonts/playfair-display-latin-wght-normal.woff2") format("woff2");
-            font-weight: 300 900;
+            font-weight: 400;
             font-display: swap;
           }
           .ge-link:hover, .ge-link:focus-visible { border-bottom-color: ${CHARCOAL} !important; }
@@ -98,8 +98,8 @@ export default function GlobalError({
           <h1
             style={{
               fontFamily: '"Playfair Display", Georgia, serif',
-              fontSize: "clamp(30px, 5vw, 60px)",
-              fontWeight: 300,
+              fontSize: "clamp(40px, calc(25.978px + 3.5955vw), 72px)",
+              fontWeight: 400,
               lineHeight: 1,
               margin: 0,
             }}
@@ -108,8 +108,8 @@ export default function GlobalError({
           </h1>
           <p
             style={{
-              fontSize: 15,
-              lineHeight: 1.8,
+              fontSize: "clamp(16px, calc(15.562px + 0.1124vw), 17px)",
+              lineHeight: 1.7,
               color: MUTED,
               maxWidth: 448,
               margin: "32px 0 0",

@@ -51,7 +51,7 @@ export default function RecordChapter({ playlistUrl, copy }: Props) {
     <section aria-labelledby="chapter-listening" className="turntable px-6 md:px-16 section-py">
       <div className="turntable-text">
         <div className="flex items-baseline gap-4">
-          <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
+          <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
             VI
           </span>
           <span className="type-label text-muted-foreground">{copy.listeningLabel}</span>
@@ -59,7 +59,7 @@ export default function RecordChapter({ playlistUrl, copy }: Props) {
         <h2 id="chapter-listening" className="turntable-heading font-editorial font-normal text-foreground">
           {copy.listeningHeading}
         </h2>
-        <p className="turntable-note font-editorial text-foreground">{copy.listeningNote}</p>
+        <p className="turntable-note text-foreground">{copy.listeningNote}</p>
       </div>
 
       <div className="turntable-stage">

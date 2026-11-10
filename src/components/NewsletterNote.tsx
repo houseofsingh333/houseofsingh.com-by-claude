@@ -119,20 +119,20 @@ export default function NewsletterNote({ isOpen, onClose, copy }: Props) {
     >
       {status === "success" ? (
         <div className="flex flex-col gap-2">
-          <h2 id="newsletter-title" className="font-editorial font-normal text-[24px] leading-[1.2] text-foreground">
+          <h2 id="newsletter-title" className="font-editorial font-normal text-display-s leading-[1.2] text-foreground">
             {copy.newsletterThanksHeading}
           </h2>
-          <p className="text-[14px] leading-[1.6] text-muted-foreground">
+          <p className="text-small leading-[1.6] text-muted-foreground">
             {copy.newsletterThanksText}
           </p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <h2 id="newsletter-title" className="font-editorial font-normal text-[24px] leading-[1.2] text-foreground">
+            <h2 id="newsletter-title" className="font-editorial font-normal text-display-s leading-[1.2] text-foreground">
               {copy.newsletterHeading}
             </h2>
-            <p className="text-[14px] leading-[1.6] text-muted-foreground">
+            <p className="text-small leading-[1.6] text-muted-foreground">
               {copy.newsletterText}
             </p>
           </div>
@@ -150,7 +150,7 @@ export default function NewsletterNote({ isOpen, onClose, copy }: Props) {
             />
           </label>
           {status === "error" && (
-            <p className="text-[13px] text-error" role="alert">
+            <p className="text-small text-error" role="alert">
               {errorMsg}
             </p>
           )}

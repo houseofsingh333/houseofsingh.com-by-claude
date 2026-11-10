@@ -133,7 +133,7 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
           style={{ pointerEvents: showState1 ? "auto" : "none" }}
         >
           <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
-          <span className="text-xs tracking-widest uppercase text-foreground transition-all duration-(--dur-hover) ease-(--ease-soft-out) opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0">
+          <span className="type-label text-foreground transition-all duration-(--dur-hover) ease-(--ease-soft-out) opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0">
             Menu
           </span>
         </button>
@@ -158,7 +158,7 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
           className="flex items-center gap-2 group min-h-[44px] min-w-[44px]"
         >
           <span className="block w-2.5 h-2.5 rounded-full bg-foreground" />
-          <span className="text-xs tracking-widest uppercase text-foreground transition-all duration-(--dur-hover) ease-(--ease-soft-out) opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0">
+          <span className="type-label text-foreground transition-all duration-(--dur-hover) ease-(--ease-soft-out) opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0">
             Menu
           </span>
         </button>

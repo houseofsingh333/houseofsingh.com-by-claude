@@ -20,7 +20,7 @@ function ChapterImages({
   images: SanityImageAsset[];
   preset: StickyChapterBlock["layoutPreset"];
 }) {
-  const captionCls = "mt-3 text-xs text-muted-foreground tracking-wide";
+  const captionCls = "mt-3 text-small text-muted-foreground";
 
   if (images.length === 0) return null;
 

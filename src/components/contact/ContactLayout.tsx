@@ -6,15 +6,15 @@ import type { ReactNode } from "react";
 function EditorialSidebar() {
   return (
     <div className="mb-12 md:mb-20 lg:mb-24">
-      <h1 className="font-editorial text-[length:clamp(40px,calc(25.98px_+_3.596vw),72px)] font-light text-foreground mb-6 md:mb-8 leading-[1.08] sm:leading-[1.05] text-balance">
+      <h1 className="font-editorial font-normal text-display-xl text-foreground mb-6 md:mb-8 leading-[1.08] sm:leading-[1.05] text-balance">
         Say hello.
       </h1>
       <div className="max-w-md">
-        <p className="text-muted-foreground text-[0.9375rem] md:text-base leading-[1.7] mb-3">
+        <p className="text-muted-foreground text-body leading-[1.7] mb-3">
           Whether it&apos;s a project, a collaboration, or simply a conversation,
           I&apos;m always open to hearing from thoughtful people.
         </p>
-        <p className="text-muted-foreground text-[0.9375rem] md:text-base leading-[1.7]">
+        <p className="text-muted-foreground text-body leading-[1.7]">
           If you&apos;d like to catch up over coffee, go for a walk, or explore an
           idea together, feel free to reach out.
         </p>

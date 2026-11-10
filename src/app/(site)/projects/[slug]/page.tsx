@@ -285,7 +285,7 @@ export default async function ProjectDetailPage({ params }: Props) {
       <ProjectHero image={null} />
       <ProjectTitle title={fallback.title} category={fallback.category} />
       <div className={`${PAGE_COLUMN} pt-12`}>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-small text-muted-foreground">
           Full project detail with content sections will render here once Sanity
           is connected.
         </p>

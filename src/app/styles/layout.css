@@ -3,7 +3,7 @@
 
 /* ——— Footer, the coda ———
    The closing section (canvas "Closing section", frame "A, chosen"): the
-   invitation in Playfair; the time in Toronto (TorontoTime; hidden
+   invitation in Instrument Sans at the statement size; the time in Toronto (TorontoTime; hidden
    without JavaScript, as it needs a clock), "Book a call" (the outlined
    call to action, styles/motion.css) and a quiet link to Contact. Then
    the site links and the newsletter; then the bottom line with the
@@ -30,9 +30,8 @@
 
 .footer-invite {
   max-width: 640px;
-  font-family: var(--font-editorial);
-  font-size: clamp(26px, calc(19.86px + 1.573vw), 40px);
-  line-height: 1.25;
+  font-size: var(--type-statement);
+  line-height: 1.35;
   text-wrap: balance;
   color: var(--foreground);
 }
@@ -58,7 +57,7 @@
 .footer-write {
   align-self: flex-start;
   padding-bottom: 2px;
-  font-size: 14px;
+  font-size: var(--type-small);
   line-height: 1.5;
   color: var(--muted-foreground);
 }
@@ -80,7 +79,7 @@
 
 .footer-time-value {
   font-family: var(--font-editorial);
-  font-size: clamp(30px, calc(28.25px + 0.449vw), 34px);
+  font-size: var(--type-display-m);
   line-height: 1;
   color: var(--foreground);
 }
@@ -137,7 +136,7 @@ html:not(.js) .footer-time {
 .footer-nav-link {
   display: inline-block;
   padding-bottom: 4px;
-  font-size: 17px;
+  font-size: var(--type-body);
   line-height: 1.4;
   color: var(--foreground);
 }
@@ -183,7 +182,7 @@ html:not(.js) .footer-time {
   min-width: 0;
   padding: 0;
   font-family: inherit;
-  font-size: 15px;
+  font-size: var(--type-body);
   line-height: 1.5;
   color: var(--foreground);
   background: transparent;
@@ -221,7 +220,7 @@ html:not(.js) .footer-time {
   height: 44px;
   padding: 0;
   font-family: inherit;
-  font-size: 18px;
+  font-size: var(--type-body-l);
   color: var(--foreground);
   background: transparent;
   border: 0;
@@ -281,7 +280,7 @@ html:not(.js) .footer-time {
   fill: var(--foreground);
 }
 .footer-nl-thanks {
-  font-size: 16px;
+  font-size: var(--type-body);
   line-height: 1.5;
   color: var(--foreground);
   text-wrap: balance;
@@ -311,7 +310,7 @@ html:not(.js) .footer-time {
 
 /* Errors: written below the line. */
 .footer-nl-error {
-  font-size: 13px;
+  font-size: var(--type-small);
   line-height: 1.5;
   color: var(--error);
 }
@@ -332,7 +331,7 @@ html:not(.js) .footer-time {
 
 .footer-bottom-copyright,
 .footer-bottom-link {
-  font-size: 11px;
+  font-size: var(--type-legal);
   line-height: 1.5;
   letter-spacing: 0.08em;
   white-space: nowrap;
@@ -484,19 +483,19 @@ html:not(.js) .footer-time {
   color: var(--foreground);
 }
 
-/* Brass, at 28px: the smallest size brass may be used for text. */
+/* Brass at the numeral size, 30px (brass text is never under 28px). */
 .menu-num {
   width: 48px;
   flex-shrink: 0;
   font-family: var(--font-editorial);
-  font-size: 28px;
+  font-size: var(--type-numeral);
   line-height: 1;
   color: var(--accent);
 }
 
 .menu-label {
   font-family: var(--font-editorial);
-  font-size: clamp(40px, calc(29.48px + 2.697vw), 64px);
+  font-size: var(--type-display-s);
   line-height: 1.1;
 }
 
@@ -610,7 +609,7 @@ html:not(.js) .footer-time {
 .note-input {
   width: 100%;
   padding: 8px 0;
-  font-size: 16px;
+  font-size: var(--type-body);
   color: var(--foreground);
   background: transparent;
   border: 0;

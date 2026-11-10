@@ -37,7 +37,7 @@ export default function IntroSection({ data, copy }: { data: HomeIntroData; copy
         <div className="flex flex-col gap-7 md:gap-8">
           <span
             aria-hidden="true"
-            className="font-editorial text-[30px] leading-none text-accent"
+            className="font-editorial text-numeral leading-none text-accent"
           >
             II
           </span>
@@ -46,12 +46,12 @@ export default function IntroSection({ data, copy }: { data: HomeIntroData; copy
           </h2>
           <LineReveal
             text={first}
-            className="font-editorial font-normal text-[length:clamp(34px,calc(26.11px_+_2.022vw),52px)] leading-[1.15] text-foreground max-w-[620px] text-balance"
+            className="text-statement leading-[1.4] text-foreground max-w-[620px] text-balance"
           />
           {reading.map((p, i) => (
             <p
               key={i}
-              className="text-[17px] leading-[1.7] text-foreground max-w-[520px]"
+              className="text-body leading-[1.7] text-foreground max-w-[520px]"
             >
               {linkStudio(p)}
             </p>

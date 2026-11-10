@@ -54,7 +54,7 @@ export default function JournalFilmstrip({
         <div className="flex items-end justify-between gap-6 border-b border-border pb-4 md:pb-6">
           <div className="flex flex-col gap-4">
             <div className="flex items-baseline gap-4">
-              <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
+              <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
                 V
               </span>
               <span className="type-label text-muted-foreground">
@@ -63,7 +63,7 @@ export default function JournalFilmstrip({
             </div>
             <h2
               id="journal-strip-title"
-              className="font-editorial font-normal text-[length:clamp(32px,calc(26.74px_+_1.348vw),44px)] leading-[1.1] text-foreground"
+              className="font-editorial font-normal text-display-l leading-[1.1] text-foreground"
             >
               Journal
             </h2>

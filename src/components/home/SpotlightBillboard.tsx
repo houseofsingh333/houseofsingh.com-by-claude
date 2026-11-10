@@ -32,7 +32,7 @@ export default function SpotlightBillboard({ spotlight, copy }: { spotlight: Spo
       />
       <div className="aperture-stage px-6 md:px-16">
         <div className="aperture-head">
-          <span aria-hidden="true" className="font-editorial text-[30px] leading-none text-accent">
+          <span aria-hidden="true" className="font-editorial text-numeral leading-none text-accent">
             IV
           </span>
           <span className="type-label text-muted-foreground-inverse">
@@ -43,12 +43,12 @@ export default function SpotlightBillboard({ spotlight, copy }: { spotlight: Spo
         <div className="aperture-grid">
           <div className="aperture-text">
             {spotlight.title && (
-              <h2 id={TITLE_ID} className="font-editorial font-normal text-[length:clamp(44px,calc(31.73px_+_3.146vw),72px)] leading-[1.02] text-background text-balance">
+              <h2 id={TITLE_ID} className="font-editorial font-normal text-display-xl leading-[1.02] text-background text-balance">
                 {spotlight.title}
               </h2>
             )}
             {spotlight.teaser && (
-              <p className="text-[17px] md:text-[18px] leading-[1.7] text-background max-w-[460px]">
+              <p className="text-body-l leading-[1.7] text-background max-w-[460px]">
                 {spotlight.teaser}
               </p>
             )}

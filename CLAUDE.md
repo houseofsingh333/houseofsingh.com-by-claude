@@ -92,11 +92,12 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 - Do not introduce colors outside this palette without updating `BRAND_BOOK.md` first.
 
 ### Type
-- Display and headings: Playfair Display via `--font-editorial`.
+- **Serif for names and numbers, sans for sentences.** Playfair Display (`--font-editorial`, weight 400 only) is only for page, chapter, project and journal titles (including in lists, cards, the menu and the studio panels), Roman numerals, Journey years and journal dates, the Toronto time, and the About portrait quote. Every sentence is Instrument Sans.
+- One type scale, every size a token (`--type-*` in `src/app/styles/tokens.css`, Tailwind `text-display-xl`, `text-display-l`, `text-display-m`, `text-display-s`, `text-numeral`, `text-date`, `text-statement`, `text-body-l`, `text-body`, `text-small`, `text-legal`, and `type-label`). Never a one off size; map anything new to the nearest token.
 - Body and interface: Instrument Sans, live on every page (regular 400 and medium 500), self hosted from `public/fonts` through next/font in `src/app/layout.tsx` (`--font-instrument`, with a size adjusted Arial fallback so nothing shifts). The Studio keeps its own font.
 - Labels and eyebrows: one style everywhere, the label token (`--type-label-size` 12px, `--type-label-leading` 1.5, `--type-label-tracking` 0.12em, uppercase, regular; the `type-label` class in components). Muted grey at rest, charcoal with the drawn hairline when active. Never a one off label size; a label never wraps.
 - Playfair italic only for Maninder's quote beside his portrait (About, chapter I). Everything else is regular Playfair.
-- Display sizes and headings are fluid (`clamp()` from the 390 value to the 1280 value); headings and statements balance their lines, paragraphs avoid a lone last word. The full type scale is in `BRAND_BOOK.md` (2.2).
+- Display and body sizes are fluid (`clamp()` from the 390 value to the 1280 value); headings and statements balance their lines, paragraphs avoid a lone last word. The full type scale and what uses each size is in `BRAND_BOOK.md` (2.2).
 - Headings are natural or sentence case, never all caps. All caps is for small labels only.
 - Never use Inter, Roboto, Arial, or default system fonts as the brand body face in finished work. Generic fonts are the look we exist to avoid.
 
