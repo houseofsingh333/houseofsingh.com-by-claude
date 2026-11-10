@@ -20,8 +20,8 @@ export default async function ArtistsPage() {
   const intro = rawSettings.artistsInvitation?.trim() || EDITIONS_DEFAULTS.artistsShort;
   const footnote =
     s.proposalsFor && s.proposalDeadline
-      ? `Proposals for ${s.proposalsFor} are open until ${dayIn(s.proposalDeadline)}. Every proposal is read.`
-      : "Every proposal is read.";
+      ? `Proposals for ${s.proposalsFor} are open until ${dayIn(s.proposalDeadline)}. ${EDITIONS_DEFAULTS.proposalPromise}`
+      : EDITIONS_DEFAULTS.proposalPromise;
 
   const released = collections.filter((c) => c.state !== "sealed");
   const artists = released

@@ -10,7 +10,7 @@ How email works on houseofsingh.com, what to set up, and how to check it.
 | What it sends | Only the letters Maninder writes: newsletters, Collection releases, early access invitations, sent to a tag | Every automatic email the website triggers, one person at a time |
 | Who presses send | Maninder, in Kit | The website |
 
-Replies to any email, from either, go to Maninder's own inbox (`EMAIL_REPLY_TO`).
+**Who sends what.** The newsletter welcome comes from Maninder himself, `Maninder Singh <maninder@houseofsingh.com>` (`EMAIL_FROM_LETTERS`), and replies go to maninder@. Every Shop email (Notify me, proposals, orders, certificate, being made, shipped) comes from `House of Singh Editions <editions@houseofsingh.com>` (`EMAIL_FROM_EDITIONS`), and replies go to editions@. Each email's replies go back to its own sender. Letters Maninder sends from Kit use Kit's own sender settings.
 
 **Tags in Kit.** Footer newsletter sign ups carry the tag `Letters`. Shop Notify me sign ups carry the Collection's tag, its title from Sanity, for example `Collection 01`. One person can carry both. A letter goes to a tag: write the newsletter to `Letters`, the release of Collection 01 to `Collection 01`. The website creates a tag the first time it is used.
 
@@ -27,17 +27,19 @@ Those exact words, the form and the moment are kept on the person in Kit, in a c
 
 ## The emails the website sends (Resend)
 
-All from `editions@houseofsingh.com` (`EMAIL_FROM`), in `src/lib/email/templates.ts`, where every word is kept:
+In `src/lib/email/templates.ts`, where every word is kept:
 
-| Email | When | Priority |
-|---|---|---|
-| Welcome ("Welcome. The next letter will find you.") | Footer sign up | Sign up |
-| Notify me ("You are on the list for Collection 01.") | Shop Notify me | Sign up |
-| Proposal received, and a copy to Maninder | For artists proposal | Sign up |
-| Order confirmation | Payment confirmed (Stripe webhook) | Order |
-| Certificate link | Same, for numbered and one of one pieces | Order |
-| Being made | Studio: order, Made | Order |
-| Shipped, with tracking | Studio: order, Shipped | Order |
+| Email | From | When | Priority |
+|---|---|---|---|
+| Welcome ("Welcome. The next letter will find you.") | Maninder | Footer sign up | Sign up |
+| Notify me ("You are on the list for Collection 01.") | Editions | Shop Notify me | Sign up |
+| Proposal received, and a copy to editions@ | Editions | For artists proposal | Sign up |
+| Order confirmation | Editions | Payment confirmed (Stripe webhook) | Order |
+| Certificate link | Editions | Same, for numbered and one of one pieces | Order |
+| Being made | Editions | Studio: order, Made | Order |
+| Shipped, with tracking | Editions | Studio: order, Shipped | Order |
+
+Only fitting proposals receive a reply. The For artists page, the thank you after sending and the proposal email say so in the same sentence, kept once (`proposalPromise` in `src/lib/editions/defaults.ts`): "Every proposal is read. If your idea fits a coming Collection, I will be in touch to talk it through."
 
 **The daily limit.** Resend's free plan sends 100 emails a day (`RESEND_DAILY_LIMIT`). The website counts each day's emails (UTC, when Resend's allowance resets) privately in Sanity. Over the limit, an email waits privately (Studio: "Emails waiting to send") and goes out the next day, just after midnight UTC, order and shipping emails first, then oldest first; none is dropped. Sign up confirmations stop 10 short of the limit (`RESEND_SIGNUP_RESERVE`), so a busy day of sign ups never holds back an order email. An email that fails to send waits the same way.
 
@@ -54,7 +56,7 @@ All from `editions@houseofsingh.com` (`EMAIL_FROM`), in `src/lib/email/templates
 
 ### 2. Resend and the DNS records at GoDaddy
 
-1. Create the account at resend.com. Domains, Add domain: `houseofsingh.com`.
+1. Create the account at resend.com. Domains, Add domain: `houseofsingh.com`. One verified domain covers both senders, maninder@ and editions@; both addresses need a real inbox, since replies go to them.
 2. Resend shows the exact records to add. They are of these kinds (the values are your own; copy them from Resend, not from here):
 
 | Type | Name (at GoDaddy) | Value | What it is for |
@@ -74,14 +76,14 @@ All from `editions@houseofsingh.com` (`EMAIL_FROM`), in `src/lib/email/templates
 |---|---|---|
 | `KIT_API_KEY` | Kit v4 API key | Production, Preview |
 | `RESEND_API_KEY` | Resend API key | Production, Preview |
-| `EMAIL_FROM` | `House of Singh Editions <editions@houseofsingh.com>` (the default) | Optional |
-| `EMAIL_REPLY_TO` | Maninder's own email address | Production, Preview |
+| `EMAIL_FROM_LETTERS` | `Maninder Singh <maninder@houseofsingh.com>` (the default) | Optional |
+| `EMAIL_FROM_EDITIONS` | `House of Singh Editions <editions@houseofsingh.com>` (the default) | Optional |
 | `EMAIL_POSTAL_ADDRESS` | The mailing address for the anti spam law, one line | Production, Preview |
 | `CRON_SECRET` | A long random string | Production |
 | `RESEND_DAILY_LIMIT` | `100` (the default); raise it on a paid plan | Optional |
 | `RESEND_SIGNUP_RESERVE` | `10` (the default) | Optional |
 
-`EDITIONS_NOTIFY_TO` and `EDITIONS_NOTIFY_FROM` from the first Shop build are no longer needed (the copy of a proposal goes to `EMAIL_REPLY_TO`).
+`EDITIONS_NOTIFY_TO`, `EDITIONS_NOTIFY_FROM`, `EMAIL_FROM` and `EMAIL_REPLY_TO` are no longer read: replies go back to each email's sender, and the copy of a proposal goes to the Shop's address.
 
 ## Moving to Kit (once)
 

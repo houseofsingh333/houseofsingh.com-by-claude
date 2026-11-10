@@ -87,7 +87,9 @@ function footer(who: "letters" | "editions", why: string): string {
 }
 
 function email(to: string, kind: string, priority: Email["priority"], subject: string, blocks: Block[], foot: string): Email {
-  return { to, kind, priority, subject, html: render(blocks, foot), text: plain(blocks, foot) };
+  // The newsletter welcome comes from Maninder; every other email from the Shop.
+  const sender = kind === "welcome" ? "letters" : "editions";
+  return { to, kind, priority, sender, subject, html: render(blocks, foot), text: plain(blocks, foot) };
 }
 
 // ——— Sign ups ———
@@ -130,7 +132,7 @@ export function proposalReceivedEmail(to: string, name: string): Email {
     "Your proposal is in",
     [
       { big: `Thank you, ${name}. Your proposal is in.` },
-      { p: "Every proposal is read. If yours fits a Collection, I will write to you to talk it through and sketch it together." },
+      { p: EDITIONS_DEFAULTS.proposalPromise },
       { sign: "Maninder" },
     ],
     footer("editions", "You are receiving this because you sent a collaboration proposal on houseofsingh.com."),
@@ -138,7 +140,7 @@ export function proposalReceivedEmail(to: string, name: string): Email {
 }
 
 export function proposalCopyEmail(to: string, p: { name: string; email: string; practice: string; link: string; idea: string }): Email {
-  return email(
+  const copy = email(
     to,
     "proposal-copy",
     "signup",
@@ -152,6 +154,8 @@ export function proposalCopyEmail(to: string, p: { name: string; email: string; 
     ],
     footer("editions", "A copy of a proposal sent on houseofsingh.com."),
   );
+  // Replying to the copy writes to the artist.
+  return { ...copy, replyTo: p.email };
 }
 
 // ——— Orders ———

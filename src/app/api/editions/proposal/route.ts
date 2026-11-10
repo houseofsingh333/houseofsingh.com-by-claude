@@ -4,6 +4,7 @@ import { isHoneypotFilled } from "@/lib/spam-protection";
 import { readJsonBody } from "@/lib/read-json-body";
 import { saveProposal } from "@/lib/editions/records";
 import { sendEmail } from "@/lib/email/outbox";
+import { addressOf, emailConfig } from "@/lib/email/config";
 import { proposalCopyEmail, proposalReceivedEmail } from "@/lib/email/templates";
 import { editionsAllowed, editionsOff } from "@/lib/editions/enabled";
 
@@ -48,9 +49,8 @@ export async function POST(request: Request) {
     console.error("Editions proposal was not saved:", error instanceof Error ? error.message : error);
     return NextResponse.json({ error: "Unable to send that right now. Please try again later." }, { status: 500 });
   }
-  // The artist hears at once; Maninder gets a copy (EMAIL_REPLY_TO).
+  // The artist hears at once; a copy goes to the Shop's own address.
   await sendEmail(proposalReceivedEmail(p.email, p.name));
-  const copyTo = process.env.EMAIL_REPLY_TO?.trim() || process.env.EDITIONS_NOTIFY_TO?.trim();
-  if (copyTo) await sendEmail(proposalCopyEmail(copyTo, p));
+  await sendEmail(proposalCopyEmail(addressOf(emailConfig().fromEditions), p));
   return NextResponse.json({ success: true });
 }

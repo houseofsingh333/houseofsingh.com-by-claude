@@ -137,6 +137,7 @@ export const emailQueued = defineType({
         defineField({ name: "to", title: "To", type: "string" }),
         defineField({ name: "subject", title: "Subject", type: "string" }),
         defineField({ name: "kind", title: "Kind", type: "string" }),
+        defineField({ name: "sender", title: "From", type: "string", description: "letters: Maninder; editions: the Shop." }),
         defineField({ name: "priority", title: "Priority", type: "string" }),
         defineField({ name: "text", title: "Text", type: "text" }),
         defineField({ name: "html", title: "HTML", type: "text", hidden: true }),

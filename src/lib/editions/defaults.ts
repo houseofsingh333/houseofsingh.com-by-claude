@@ -26,6 +26,8 @@ export const EDITIONS_DEFAULTS = {
   artistsHeading: "Make something with House of Singh",
   artistsInvitation:
     "Every Collection holds pieces made with other artists. If you work with your hands, a camera, cloth or metal, and something here speaks to you, propose an idea.",
+  /** Under the proposal form, after sending, and in the proposal email: only fitting proposals receive a reply. */
+  proposalPromise: "Every proposal is read. If your idea fits a coming Collection, I will be in touch to talk it through.",
   artistsShort: "Every Collection holds pieces made with other artists. If something here speaks to you, propose an idea.",
   artistsSteps: [
     { title: "Propose", text: "Your work and an idea, in a few lines." },

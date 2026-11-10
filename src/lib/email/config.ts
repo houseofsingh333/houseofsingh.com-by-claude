@@ -5,9 +5,12 @@
  *   only the letters Maninder writes.
  * - RESEND_API_KEY: Resend, which sends every automatic email the website
  *   triggers, one person at a time.
- * - EMAIL_FROM: the sender of those emails (a verified Resend domain).
- * - EMAIL_REPLY_TO: where replies go (Maninder's own inbox); also where
- *   the copy of a collaboration proposal is sent.
+ * - EMAIL_FROM_LETTERS: the sender of the newsletter welcome, Maninder
+ *   himself (default "Maninder Singh <maninder@houseofsingh.com>").
+ * - EMAIL_FROM_EDITIONS: the sender of every Shop email (default "House
+ *   of Singh Editions <editions@houseofsingh.com>"). Replies to each go
+ *   back to its own sender's address; the copy of a collaboration
+ *   proposal goes to the Shop's address.
  * - EMAIL_POSTAL_ADDRESS: the mailing address every email carries, as
  *   Canada's anti spam law asks.
  * - RESEND_DAILY_LIMIT (default 100, Resend's free plan) and
@@ -25,11 +28,14 @@ export const emailConfig = () => ({
   kitBase: (notProduction && process.env.KIT_API_BASE) || "https://api.kit.com",
   resendKey: process.env.RESEND_API_KEY?.trim() || "",
   resendBase: (notProduction && process.env.RESEND_API_BASE) || "https://api.resend.com",
-  from: process.env.EMAIL_FROM?.trim() || "House of Singh Editions <editions@houseofsingh.com>",
-  replyTo: process.env.EMAIL_REPLY_TO?.trim() || "",
+  fromLetters: process.env.EMAIL_FROM_LETTERS?.trim() || "Maninder Singh <maninder@houseofsingh.com>",
+  fromEditions: process.env.EMAIL_FROM_EDITIONS?.trim() || "House of Singh Editions <editions@houseofsingh.com>",
   postalAddress: process.env.EMAIL_POSTAL_ADDRESS?.trim() || "",
   dailyLimit: Math.max(1, Number(process.env.RESEND_DAILY_LIMIT) || 100),
   signupReserve: Math.max(0, Number(process.env.RESEND_SIGNUP_RESERVE ?? 10)),
   /** Absolute addresses in emails: the site's own (a preview's in testing). */
   siteUrl: (notProduction && process.env.EMAIL_SITE_URL) || SITE_URL,
 });
+
+/** The bare address in "Name <address>" (or the address itself). */
+export const addressOf = (sender: string) => (sender.match(/<([^>]+)>/)?.[1] ?? sender).trim();

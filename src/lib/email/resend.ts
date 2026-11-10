@@ -1,4 +1,4 @@
-import { emailConfig } from "./config";
+import { addressOf, emailConfig } from "./config";
 
 /** One email, ready to send. */
 export type Email = {
@@ -10,6 +10,10 @@ export type Email = {
   priority: "order" | "signup";
   /** What it is, for the logs and the queue (never the address). */
   kind: string;
+  /** Who sends it: Maninder (the newsletter welcome) or the Shop (everything else). */
+  sender: "letters" | "editions";
+  /** Where a reply goes, when not back to the sender (the proposal copy: to the artist). */
+  replyTo?: string;
 };
 
 export class ResendError extends Error {
@@ -20,7 +24,9 @@ export class ResendError extends Error {
 
 /** Sends one email through Resend's API (plain fetch). */
 export async function resendSend(email: Email): Promise<string> {
-  const { resendKey, resendBase, from, replyTo } = emailConfig();
+  const { resendKey, resendBase, fromLetters, fromEditions } = emailConfig();
+  // Each email comes from its sender, and replies go back to that sender.
+  const from = email.sender === "letters" ? fromLetters : fromEditions;
   if (!resendKey) throw new ResendError("RESEND_API_KEY is not set", 0);
   const res = await fetch(`${resendBase}/emails`, {
     method: "POST",
@@ -31,7 +37,7 @@ export async function resendSend(email: Email): Promise<string> {
       subject: email.subject,
       html: email.html,
       text: email.text,
-      ...(replyTo ? { reply_to: replyTo } : {}),
+      reply_to: email.replyTo || addressOf(from),
       tags: [{ name: "kind", value: email.kind.replace(/[^a-zA-Z0-9_-]/g, "_") }],
     }),
     cache: "no-store",
