@@ -87,8 +87,8 @@ Two typefaces, both from Google Fonts. One elegant serif for names and numbers, 
 | Token | Desktop 1280 | Phone 390 | Face | Used for |
 |------|------|------|------|------|
 | `display-xl` | 72px | 40px | Playfair 400 | Page and project titles (Contact, Privacy and Terms, a project, the next project, the home spotlight, error pages) |
-| `display-l` | 52px | 34px | Playfair 400 | Chapter titles (Journal, On my turntable, In conversation, a contact step), the About quote, One by one's title, the Journal heading |
-| `display-m` | 34px | 26px | Playfair 400 | The site's opening statement (the one sentence in Playfair), the time in Toronto and large single values; the Projects heading, legal section titles, story headings, the filter's choices |
+| `display-l` | 52px | 34px | Playfair 400 | Chapter titles (Journal, On my turntable, In conversation, a contact step), the About quote, One by one's title, the Projects and Journal page headings |
+| `display-m` | 34px | 26px | Playfair 400 | The site's opening statement (the one sentence in Playfair), the time in Toronto and large single values; legal section titles, story headings, the filter's choices |
 | `display-s` | 24px | 20px | Playfair 400 | Titles in lists and cards: At a glance, journal entries, the filmstrip, the studio panels, press cuttings, the newsletter note |
 | `numeral` | 30px | 30px | Playfair 400, brass | Roman chapter numerals (brass text is never under 28px) |
 | `date` | 44px | 40px | Playfair 400 | Journey years, the journal's day and month |
