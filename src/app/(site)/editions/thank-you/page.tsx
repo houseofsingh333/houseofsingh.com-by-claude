@@ -7,6 +7,7 @@ import { orderId } from "@/lib/editions/orders";
 import { cad, fromCents } from "@/lib/editions/format";
 import { ZONES } from "@/lib/editions/shipping";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
+import { requireEditions } from "@/lib/editions/enabled";
 
 export const metadata: Metadata = { title: "Thank you" };
 
@@ -19,6 +20,7 @@ const SESSION = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
  * session in the address; the email is never shown here.
  */
 export default async function ThankYouPage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
+  requireEditions();
   const { session_id: id } = await searchParams;
   if (!id || !SESSION.test(id) || !stripeConfigured()) notFound();
 

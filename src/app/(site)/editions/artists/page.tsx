@@ -4,6 +4,7 @@ import ProposalForm from "@/components/editions/ProposalForm";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import { collectionTitle, dayIn, pad2 } from "@/lib/editions/format";
+import { requireEditions } from "@/lib/editions/enabled";
 
 export const metadata: Metadata = { title: "For artists" };
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = { title: "For artists" };
  * artists already in a released Collection, each with their own page.
  */
 export default async function ArtistsPage() {
+  requireEditions();
   const [rawSettings, collections] = await Promise.all([loadSettings(), loadCollections()]);
   const s = withDefaults(rawSettings);
   const intro = rawSettings.artistsInvitation?.trim() || EDITIONS_DEFAULTS.artistsShort;

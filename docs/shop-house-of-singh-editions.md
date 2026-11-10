@@ -12,7 +12,7 @@ The seller is **House of Singh Studios Inc., operating House of Singh Editions**
 
 ## Visibility while in development
 
-Linked only from the footer ("Shop"), not the menu or the homepage. Every `/editions` page is noindex and nofollow, and none is in the sitemap, llms.txt or the structured data. Launch is a separate, deliberate change.
+Switched on only where the environment variable `EDITIONS_ENABLED` is `true`: on Vercel, Preview only until launch. On Production the footer has no Shop link, every `/editions` page is a 404, and the Shop's API routes answer 404 (`src/lib/editions/enabled.ts`). Where it is on, it is linked only from the footer ("Shop"), not the menu or the homepage. Every `/editions` page is noindex and nofollow, and none is in the sitemap, llms.txt or the structured data. Launch is a separate, deliberate change.
 
 ## The pages
 

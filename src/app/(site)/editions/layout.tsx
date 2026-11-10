@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
+import { requireEditions } from "@/lib/editions/enabled";
 
 /**
  * House of Singh Editions, while in development: reachable only from the
@@ -20,6 +21,7 @@ const NAV = [
 ];
 
 export default function EditionsLayout({ children }: { children: React.ReactNode }) {
+  requireEditions();
   return (
     <div className="ed">
       <header className="ed-head">

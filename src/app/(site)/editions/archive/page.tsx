@@ -8,6 +8,7 @@ import { loadCollections } from "@/lib/editions/load";
 import { available } from "@/lib/editions/state";
 import { collectionTitle, monthIn, pad2, piecesInWords } from "@/lib/editions/format";
 import { collectionsInWords } from "@/lib/editions/view";
+import { requireEditions } from "@/lib/editions/enabled";
 
 export const metadata: Metadata = { title: "Archive" };
 
@@ -18,6 +19,7 @@ export const metadata: Metadata = { title: "Archive" };
  * Collection held, every piece marked sold or not.
  */
 export default async function ArchivePage() {
+  requireEditions();
   const collections = await loadCollections();
   const closed = collections.filter((c) => c.state === "closed").sort((a, b) => a.number - b.number);
   const upcoming = collections.find((c) => c.state !== "closed");

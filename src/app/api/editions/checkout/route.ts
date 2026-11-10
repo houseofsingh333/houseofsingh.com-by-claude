@@ -8,6 +8,7 @@ import { freshPiece, freshShipping } from "@/lib/editions/fresh";
 import { isZone } from "@/lib/editions/shipping";
 import { stripeConfigured, stripePost, type CheckoutSession } from "@/lib/editions/stripe";
 import { shopTaxRateIds } from "@/lib/editions/tax";
+import { editionsEnabled, editionsOff } from "@/lib/editions/enabled";
 
 /**
  * Buy: a plain form post from a piece's page (no client script). Checks,
@@ -18,6 +19,7 @@ import { shopTaxRateIds } from "@/lib/editions/tax";
  * reason (?buy=…), which the page writes beside Buy.
  */
 export async function POST(request: Request) {
+  if (!editionsEnabled()) return editionsOff();
   const origin = new URL(request.url).origin;
   const back = (slug: string, reason: string) =>
     NextResponse.redirect(new URL(`/editions/${encodeURIComponent(slug)}?buy=${reason}#buy`, origin), 303);

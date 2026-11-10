@@ -74,7 +74,7 @@ These are approved and settled. Do not change them as a side effect of other wor
 4. **The typography hierarchy and the italic rule:** the type scale and the one label style (`BRAND_BOOK.md` 2.2, `--type-label-*`), and Playfair italic only for Maninder's quote beside his portrait.
 5. **The motion tokens:** the `--ease-*` and `--dur-*` values and how they are used.
 6. **The security policy exception:** `'unsafe-eval'` for Spotify on the home page only; never widened, never removed without a replacement for the record.
-7. **House of Singh Editions (the Shop):** its concept, states, design decisions, schema and checkout as written in `docs/shop-house-of-singh-editions.md` (setup in `docs/editions-setup.md`). While in development it is linked only from the footer and every `/editions` page is noindex, outside the sitemap, llms.txt and the structured data.
+7. **House of Singh Editions (the Shop):** its concept, states, design decisions, schema and checkout as written in `docs/shop-house-of-singh-editions.md` (setup in `docs/editions-setup.md`). While in development it is switched on only where `EDITIONS_ENABLED` is `true` (Vercel Preview; on Production the footer link is absent and `/editions` is a 404), linked only from the footer, and every `/editions` page is noindex, outside the sitemap, llms.txt and the structured data.
 
 ---
 

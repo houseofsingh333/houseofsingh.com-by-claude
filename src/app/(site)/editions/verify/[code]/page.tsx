@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import TextLink from "@/components/TextLink";
 import { certificateByCode } from "@/lib/editions/records";
 import { collectionTitle, dayIn } from "@/lib/editions/format";
+import { requireEditions } from "@/lib/editions/enabled";
 
 export const metadata: Metadata = { title: "Certificate" };
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = { title: "Certificate" };
  * matches no order is a 404. No name, email or address is ever shown.
  */
 export default async function VerifyPage({ params }: { params: Promise<{ code: string }> }) {
+  requireEditions();
   const code = (await params).code.toUpperCase();
   const cert = await certificateByCode(code).catch(() => null);
   if (!cert) notFound();

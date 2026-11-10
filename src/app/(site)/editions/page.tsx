@@ -12,6 +12,7 @@ import { canBuy, releaseTimes, shopNow, untilWords } from "@/lib/editions/state"
 import { collectionTitle, dayIn } from "@/lib/editions/format";
 import { collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
+import { requireEditions } from "@/lib/editions/enabled";
 
 export const metadata: Metadata = { title: { absolute: "House of Singh Editions" } };
 
@@ -24,6 +25,7 @@ export const metadata: Metadata = { title: { absolute: "House of Singh Editions"
  * the highest number.
  */
 export default async function EditionsPage({ searchParams }: { searchParams: Promise<{ access?: string }> }) {
+  requireEditions();
   const { access } = await searchParams;
   if (access) redirect(`/api/editions/access?code=${encodeURIComponent(access.slice(0, 64))}`);
 

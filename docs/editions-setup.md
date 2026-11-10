@@ -6,6 +6,7 @@ How to switch the Shop on, test it, take it live, and run it from one Collection
 
 | Name | What it is | Where it comes from |
 |---|---|---|
+| `EDITIONS_ENABLED` | Switches the Shop on: `true`. Set on **Preview only** until launch. Anywhere else the footer has no Shop link, every `/editions` page is a 404 and the Shop's API routes answer 404. | Set by hand; at launch, add it to Production too |
 | `STRIPE_SECRET_KEY` | Stripe's secret key. `sk_test_...` on Preview, `sk_live_...` on Production only at launch. | Stripe Dashboard, Developers, API keys |
 | `STRIPE_WEBHOOK_SECRET` | Proves an event really came from Stripe (`whsec_...`). One per endpoint and per mode. | Stripe Dashboard, Developers, Webhooks, the endpoint, Signing secret |
 | `GST_NUMBER` | The GST/HST number of House of Singh Studios Inc. Shown on the Stripe checkout page, the receipt line and the terms of sale. | Your CRA business number with the RT account (for example `123456789 RT0001`) |
@@ -40,7 +41,7 @@ Only when the test purchase has worked end to end.
 3. Add the live webhook endpoint (`https://houseofsingh.com/api/editions/webhook`, same two events) and copy its live signing secret.
 4. In Vercel, for **Production** only: `STRIPE_SECRET_KEY` = the live key, `STRIPE_WEBHOOK_SECRET` = the live signing secret, `GST_NUMBER`.
 5. Delete the sample content (section 6), remove `EDITIONS_CLOCK` everywhere, and redeploy.
-6. Launch is a separate decision: the Shop stays noindex and linked only from the footer until the launch change removes that.
+6. Launch is a separate decision: set `EDITIONS_ENABLED` to `true` on Production and redeploy. The Shop stays noindex and linked only from the footer until the launch change removes that.
 
 ## 4. The shipping table (Canada Post)
 

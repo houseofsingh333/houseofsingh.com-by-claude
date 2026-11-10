@@ -52,3 +52,4 @@ for (const d of docs) {
 }
 const left = await client.fetch(`count(*[_type in $types && !(_id in path("private.**"))])`, { types: Object.keys(KINDS) });
 console.log(`Moved ${moved}. Public records left: ${left}.`);
+process.exit(0);

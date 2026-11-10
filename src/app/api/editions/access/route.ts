@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { sanityFetch } from "@/sanity/fetch";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { ACCESS_COOKIE, normaliseCode, sameHash, sha256Hex } from "@/lib/editions/access";
+import { editionsEnabled, editionsOff } from "@/lib/editions/enabled";
 
 /**
  * The early access link: /editions?access=CODE leads here. A code that
@@ -10,6 +11,7 @@ import { ACCESS_COOKIE, normaliseCode, sameHash, sha256Hex } from "@/lib/edition
  * reads as sealed without a valid cookie.
  */
 export async function GET(request: Request) {
+  if (!editionsEnabled()) return editionsOff();
   const url = new URL(request.url);
   const shop = new URL("/editions", url.origin);
   const limit = rateLimit(`editions-access:${getClientIp(request)}`, { max: 20 });
