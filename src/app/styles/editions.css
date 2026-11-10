@@ -320,6 +320,26 @@
   gap: 10px 28px;
   padding-bottom: 10px;
 }
+/* Phones: the filters as one sideways row. */
+@media (max-width: 767px) {
+  .ed-collection-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ed-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(-1 * var(--ed-gutter));
+    padding-inline: var(--ed-gutter);
+    scrollbar-width: none;
+  }
+  .ed-filters::-webkit-scrollbar {
+    display: none;
+  }
+  .ed-filter {
+    flex: none;
+  }
+}
 .ed-filter {
   padding: 4px 0;
   color: var(--muted-foreground);

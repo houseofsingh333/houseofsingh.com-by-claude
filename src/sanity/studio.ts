@@ -10,6 +10,9 @@ import { projectId, dataset, apiVersion } from "./env";
 /** Single documents of the Shop: edited in place, never listed or duplicated. */
 const EDITIONS_SINGLETONS = new Set(["editionsShipping", "editionsSettings"]);
 
+/** Types the site writes as private records (never publicly readable). */
+const PRIVATE_TYPES = new Set(["contactSubmission", "newsletterSubscriber"]);
+
 /**
  * The Studio's contents: everything as before, then House of Singh
  * Editions in its own section (Collections, pieces, categories,
@@ -21,7 +24,27 @@ const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
-      ...S.documentTypeListItems().filter((item) => !String(item.getId() ?? "").startsWith("editions")),
+      ...S.documentTypeListItems()
+        .filter((item) => !String(item.getId() ?? "").startsWith("editions"))
+        // Contact submissions and newsletter subscribers are private
+        // records (ids beginning "private."), so they are listed by type
+        // with the Studio's own token, like the Shop's records below.
+        .map((item) =>
+          PRIVATE_TYPES.has(String(item.getId()))
+            ? S.listItem()
+                .id(String(item.getId()))
+                .title(item.getTitle() ?? "")
+                .schemaType(String(item.getId()))
+                .child(
+                  S.documentList()
+                    .title(item.getTitle() ?? "")
+                    .schemaType(String(item.getId()))
+                    .apiVersion(apiVersion)
+                    .filter("_type == $type")
+                    .params({ type: String(item.getId()) }),
+                )
+            : item,
+        ),
       S.divider(),
       S.listItem()
         .title("House of Singh Editions")

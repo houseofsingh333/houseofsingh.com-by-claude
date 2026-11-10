@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { sanityFetch } from "@/sanity/fetch";
 import { ACCESS_COOKIE, hasAccess } from "./access";
 import { editionsCollectionsQuery, editionsSettingsQuery, editionsShippingQuery } from "./queries";
-import { collectionState } from "./state";
+import { collectionState, shopNow } from "./state";
 import { EDITIONS_DEFAULTS } from "./defaults";
 import type { CollectionState, EditionsCollection, EditionsPiece, EditionsSettings, ShippingRoute } from "./types";
 
@@ -23,7 +23,7 @@ export async function loadCollections(): Promise<CollectionView[]> {
     sanityFetch<CollectionWithPieces[] | null>({ query: editionsCollectionsQuery, revalidate: 60 }),
     accessCookie(),
   ]);
-  const now = new Date();
+  const now = shopNow();
   return (collections ?? []).map((c) => {
     const early = hasAccess(cookie, c.earlyAccessCodeHash);
     return { ...c, pieces: c.pieces ?? [], early, state: collectionState(c, c.pieces ?? [], now, early) };

@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { ACCESS_COOKIE, hasAccess } from "@/lib/editions/access";
 import { checkPurchase, checkoutParams } from "@/lib/editions/checkout";
+import { shopNow } from "@/lib/editions/state";
 import { freshPiece, freshShipping } from "@/lib/editions/fresh";
 import { isZone } from "@/lib/editions/shipping";
 import { stripeConfigured, stripePost, type CheckoutSession } from "@/lib/editions/stripe";
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
   try {
     const [piece, routes, jar] = await Promise.all([freshPiece(slug), freshShipping(), cookies()]);
     const early = hasAccess(jar.get(ACCESS_COOKIE)?.value, piece?.collection?.earlyAccessCodeHash);
-    const check = checkPurchase(piece, sizeKey, zone, routes, early, new Date());
+    const check = checkPurchase(piece, sizeKey, zone, routes, early, shopNow());
     if (!check.ok) return back(slug, check.refusal);
 
     const taxRateIds = await shopTaxRateIds();

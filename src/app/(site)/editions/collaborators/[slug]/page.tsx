@@ -6,7 +6,7 @@ import CollectionGrid from "@/components/editions/CollectionGrid";
 import { hotspotPosition } from "@/lib/projectHero";
 import { sanityFetch } from "@/sanity/fetch";
 import { editionsCollaboratorQuery } from "@/lib/editions/queries";
-import { canBuy, collectionState } from "@/lib/editions/state";
+import { canBuy, collectionState, shopNow } from "@/lib/editions/state";
 import { gridPiece } from "@/lib/editions/view";
 import type { EditionsCollaborator, EditionsCollection, EditionsPiece } from "@/lib/editions/types";
 
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function CollaboratorPage({ params }: { params: Promise<{ slug: string }> }) {
   const c = await load((await params).slug);
   if (!c) notFound();
-  const now = new Date();
+  const now = shopNow();
   // Released pieces only, and Buy only where the Collection is open to
   // everyone (early access is the Shop page's, with its code).
   const pieces = (c.pieces ?? [])

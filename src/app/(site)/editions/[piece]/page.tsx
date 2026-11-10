@@ -13,7 +13,7 @@ import { sanityFetch } from "@/sanity/fetch";
 import { editionsPieceQuery } from "@/lib/editions/queries";
 import { accessCookie, loadSettings, loadShipping, withDefaults } from "@/lib/editions/load";
 import { hasAccess } from "@/lib/editions/access";
-import { available, canBuy, collectionState, sizeAvailable } from "@/lib/editions/state";
+import { available, canBuy, collectionState, shopNow, sizeAvailable } from "@/lib/editions/state";
 import { shippingTable, ZONES } from "@/lib/editions/shipping";
 import { REFUSAL_WORDS, type BuyRefusal } from "@/lib/editions/checkout";
 import { cad, collectionTitle } from "@/lib/editions/format";
@@ -106,7 +106,7 @@ export default async function PiecePage({ params, searchParams }: { params: Prom
   if (!piece || !piece.collection) notFound();
 
   const c = piece.collection;
-  const state = collectionState(c, c.pieces ?? [], new Date(), hasAccess(cookie, c.earlyAccessCodeHash));
+  const state = collectionState(c, c.pieces ?? [], shopNow(), hasAccess(cookie, c.earlyAccessCodeHash));
   if (state === "sealed") notFound();
 
   const settings = withDefaults(rawSettings);

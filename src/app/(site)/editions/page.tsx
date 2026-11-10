@@ -8,7 +8,7 @@ import { Spine } from "@/components/editions/Spine";
 import TextLink from "@/components/TextLink";
 import { OutlineLink } from "@/components/OutlineCta";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
-import { canBuy, releaseTimes, untilWords } from "@/lib/editions/state";
+import { canBuy, releaseTimes, shopNow, untilWords } from "@/lib/editions/state";
 import { collectionTitle, dayIn } from "@/lib/editions/format";
 import { collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
@@ -31,7 +31,7 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
   const settings = withDefaults(rawSettings);
   const current = collections[0];
   const closed = collections.filter((c) => c.state === "closed" && c !== current);
-  const now = new Date();
+  const now = shopNow();
 
   if (!current) {
     return (

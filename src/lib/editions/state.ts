@@ -64,3 +64,17 @@ export function untilWords(iso: string, now: Date): string {
   const days = Math.round(hours / 24);
   return `in ${days} days`;
 }
+
+/**
+ * Now, for the Shop. EDITIONS_CLOCK (an ISO date) moves the Shop's clock
+ * to see every state before it happens: locally and on Vercel previews
+ * only, never on the live site (docs/editions-setup.md).
+ */
+export function shopNow(): Date {
+  const clock = process.env.EDITIONS_CLOCK;
+  if (clock && process.env.VERCEL_ENV !== "production") {
+    const t = Date.parse(clock);
+    if (!Number.isNaN(t)) return new Date(t);
+  }
+  return new Date();
+}
