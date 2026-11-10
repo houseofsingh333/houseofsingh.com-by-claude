@@ -45,7 +45,8 @@
   --dur-page: 600ms; /* page fade in, content swapped by a click */
   --dur-develop: 1400ms; /* a photograph developing to full tone */
   --dur-plate: 1400ms; /* one photograph crossfading to the next on a Projects plate */
-  --dur-menu: 500ms; /* the menu and the newsletter note opening (the longest allowed) */
+  --dur-menu: 500ms; /* the newsletter note and the filter veil opening */
+  --dur-menu-panel: 700ms; /* the menu panel sliding in from the left (approved 10 Nov) */
   --dur-record-turn: 1800ms; /* one steady turn of the home page record (Chapter VI, approved 9 Nov) */
 
   /* Earlier fast curve, kept only for the menu and popup opening. */

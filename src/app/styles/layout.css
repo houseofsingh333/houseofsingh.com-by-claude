@@ -402,50 +402,71 @@ html:not(.js) .footer-time {
   }
 }
 
-/* ——— Menu, the index room (NavOverlay) ———
-   A full screen canvas over the page. It fades in over --dur-menu on the
-   menu curve (--editorial-ease) and is inert while closed. The photograph
-   (desktop only) crossfades with the page under the pointer or focus.
-   Reduced motion: it appears and changes at once. */
+/* ——— Menu, a panel from the left (NavOverlay; approved 10 Nov) ———
+   A canvas panel slides in from the left edge over --dur-menu-panel on
+   --ease-slow and back out on closing. The page stays where it is on the
+   right, under a light charcoal veil (8 percent); a click or tap on the
+   veil closes the menu. Desktop and tablets (a fine pointer, or 1024 wide
+   and up): half the screen, 520 to 760px; touch screens below 1024: 85
+   percent of the width, leaving a strip of the page to tap. Reduced
+   motion: it appears and disappears at once. The page's scroll is locked
+   while open without moving (html[data-menu-open]). */
 
-.menu-room {
+html[data-menu-open] {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+.menu-shell {
   position: fixed;
   inset: 0;
   z-index: 55; /* over the header bars (50), under the newsletter (60) */
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear var(--dur-menu-panel);
+}
+.menu-shell[data-open] {
+  visibility: visible;
+  pointer-events: auto;
+  transition: none;
+}
+
+.menu-veil {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  opacity: 0;
+  cursor: pointer;
+  touch-action: none;
+  transition: opacity var(--dur-menu-panel) var(--ease-slow);
+}
+.menu-shell[data-open] .menu-veil {
+  opacity: 1;
+}
+
+.menu-panel {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 85vw;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 20px 24px 24px;
+  gap: 28px;
+  /* Close sits where the dot was. */
+  padding: 32px 24px 24px 20px;
   background: var(--background);
   color: var(--foreground);
   overflow-y: auto;
   overscroll-behavior: contain;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    opacity var(--dur-menu) var(--editorial-ease),
-    visibility 0s linear var(--dur-menu);
+  transform: translateX(-100%);
+  transition: transform var(--dur-menu-panel) var(--ease-slow);
 }
-
-.menu-room[data-open] {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transition: opacity var(--dur-menu) var(--editorial-ease);
-}
-
-.menu-top {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-}
-
-.menu-top > :first-child {
-  justify-self: start;
+.menu-shell[data-open] .menu-panel {
+  transform: none;
 }
 
 .menu-close {
+  align-self: flex-start;
   min-height: 44px;
   padding: 0;
   font-size: var(--type-label-size);
@@ -459,10 +480,10 @@ html:not(.js) .footer-time {
 
 .menu-body {
   flex: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: center;
-  gap: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
 }
 
 .menu-list {
@@ -474,7 +495,7 @@ html:not(.js) .footer-time {
   display: flex;
   align-items: baseline;
   gap: 20px;
-  padding: 6px 0;
+  padding: 4px 0;
   color: var(--muted-foreground);
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
@@ -495,12 +516,49 @@ html:not(.js) .footer-time {
 
 .menu-label {
   font-family: var(--font-editorial);
-  font-size: var(--type-display-s);
-  line-height: 1.1;
+  font-size: var(--type-display-l);
+  line-height: 1.05;
 }
 
+/* The photograph, about 4:5: on touch screens below 1024 only when the
+   screen is tall enough for it (220px wide); on desktop and tablets 220 to
+   260px wide, smaller on a short screen. */
 .menu-photo {
   display: none;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+@media (min-height: 800px) {
+  .menu-photo {
+    display: flex;
+    width: min(220px, calc((100svh - 560px) * 0.8));
+  }
+}
+.menu-photo-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--secondary);
+}
+.menu-photo-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--dur-image) var(--ease-slow);
+}
+.menu-photo-layer[data-active] {
+  opacity: 1;
+}
+.menu-photo-caption {
+  min-height: 1.5em;
+  font-size: var(--type-label-size);
+  white-space: nowrap;
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--muted-foreground);
 }
 
 .menu-foot {
@@ -513,60 +571,32 @@ html:not(.js) .footer-time {
   border-top: 1px solid var(--border);
 }
 
-@media (min-width: 768px) {
-  .menu-room {
-    padding: 24px 32px 32px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .menu-room {
+/* Desktop and tablets: half the screen, 520 to 760px. */
+@media (pointer: fine), (min-width: 1024px) {
+  .menu-panel {
+    width: min(max(520px, 50vw), 760px, calc(100vw - 48px));
     gap: 32px;
-    padding: 40px 96px 48px;
+    padding: 32px 48px 32px 32px;
   }
   .menu-body {
-    grid-template-columns: minmax(0, 1fr) 420px;
-    gap: 96px;
+    gap: 40px;
   }
   .menu-photo {
-    justify-self: end;
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin: 0;
-    /* 420px wide, or less on a short screen so the room fits it. */
-    width: min(420px, calc((100svh - 300px) * 0.8));
+    width: clamp(180px, calc((100svh - 620px) * 0.8), 260px);
   }
-  .menu-photo-frame {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
-    background: var(--secondary);
-  }
-  .menu-photo-layer {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity var(--dur-image) var(--ease-slow);
-  }
-  .menu-photo-layer[data-active] {
-    opacity: 1;
-  }
-  .menu-photo-caption {
-    min-height: 1.5em;
-    font-size: var(--type-label-size);
-    white-space: nowrap;
-    line-height: var(--type-label-leading);
-    letter-spacing: var(--type-label-tracking);
-    text-transform: uppercase;
-    color: var(--muted-foreground);
+}
+/* A short laptop screen: the pages and the small links, without the photograph. */
+@media (pointer: fine) and (max-height: 799px), (min-width: 1024px) and (max-height: 799px) {
+  .menu-photo {
+    display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu-room,
-  .menu-room[data-open],
+  .menu-shell,
+  .menu-veil,
+  .menu-panel,
   .menu-link,
   .menu-photo-layer {
     transition: none;

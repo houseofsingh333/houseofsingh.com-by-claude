@@ -83,9 +83,9 @@ Two typefaces, both from Google Fonts. One elegant serif for names and numbers, 
 | Token | Desktop 1280 | Phone 390 | Face | Used for |
 |------|------|------|------|------|
 | `display-xl` | 72px | 40px | Playfair 400 | Page and project titles (Contact, Privacy and Terms, a project, the next project, the home spotlight, error pages) |
-| `display-l` | 52px | 34px | Playfair 400 | Chapter titles (The work, Journal, On my turntable, In print, In conversation, a contact step), the About quote, One by one's title, the Journal heading |
+| `display-l` | 52px | 34px | Playfair 400 | Chapter titles (The work, Journal, On my turntable, In print, In conversation, a contact step), the menu's page names, the About quote, One by one's title, the Journal heading |
 | `display-m` | 34px | 26px | Playfair 400 | The time in Toronto and large single values; the Projects heading, legal section titles, story headings, the filter's choices |
-| `display-s` | 24px | 20px | Playfair 400 | Titles in lists and cards: At a glance, journal entries, the filmstrip, the menu, the studio panels, press cuttings, the newsletter note |
+| `display-s` | 24px | 20px | Playfair 400 | Titles in lists and cards: At a glance, journal entries, the filmstrip, the studio panels, press cuttings, the newsletter note |
 | `numeral` | 30px | 30px | Playfair 400, brass | Roman chapter numerals (brass text is never under 28px) |
 | `date` | 44px | 40px | Playfair 400 | Journey years, the journal's day and month |
 | `statement` | 26px | 20px | Instrument Sans 400 | Prominent single lines and short statements: Chapter II's opening, the practice line, the closing invitation, About's pull quote and answers, contact choices and fields |
@@ -211,8 +211,8 @@ Motion is calm and minimal. It supports the content, never performs for its own 
 | `--dur-develop` | 1400ms | A content photograph developing like a print the first time it is in view: from a warm, pale, low contrast state to full tone, on `--ease-slow`. It runs alongside the blur up dissolve, never on priority images (the hero's first slide, page covers), and not on photos with their own grey to colour reveal. Reduced motion and no JavaScript: full tone from the start. |
 | `--dur-plate` | 1400ms | One photograph crossfading to the next on a Projects page plate, on `--ease-slow`, every 8 s while nothing pauses it. Reduced motion: the plate does not cycle. |
 
-- Kept quick on purpose, for usability: focus rings appear at once, form error messages appear at once, and the menu and popup open in at most 500ms. Tap feedback on touch screens and anything that follows the scroll position stay immediate.
-- The earlier fast curve, `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`), is no longer the default. It remains only for the menu and popup opening.
+- Kept quick on purpose, for usability: focus rings appear at once, form error messages appear at once, and the popup and the Projects filter open in at most 500ms. The menu is a panel that slides in from the left over 700ms on `--ease-slow` (`--dur-menu-panel`, approved 10 Nov), over a light charcoal veil (8 percent) that closes it when clicked; reduced motion shows and hides it at once. Tap feedback on touch screens and anything that follows the scroll position stay immediate.
+- The earlier fast curve, `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`), is no longer the default. It remains only for the popup opening.
 - The upcoming dot pulse runs at 2.8s, infinite, the slow breathing reference.
 - Every animation has a `prefers-reduced-motion` fallback that resolves to a static state. This is mandatory for anything new.
 
