@@ -118,7 +118,7 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 - Calm over dense. Less per screen. One clear focus.
 - Restraint in interaction. Standard, predictable patterns. The brand expresses through type, space, and photography, not novel controls.
 - Buttons and links are quiet and typographic, often a label with a hairline or subtle hover, not heavy filled shapes.
-- Calls to action: primary actions (Book a call, Visit House of Singh Studios) use the outlined button (`OutlineCta`); every secondary action uses the one text link (`TextLink`: 14px, 500, uppercase, 0.12em, a permanent hairline and an arrow that moves 4px on hover). Never a third style.
+- Calls to action: primary actions (Book a call, Visit House of Singh Studios) use the outlined button (`OutlineCta`); every secondary action uses the one text link (`TextLink`: 14px, 500, uppercase, 0.12em, a permanent hairline and an arrow that moves 4px on hover; `back` puts the arrow on the left; `TextButton` for actions that are not pages). A form's step forward (Next, Review, Submit) uses `OutlineButton`. Never a third style.
 - Chapter marks: every chapter opens with `ChapterMark`, the Roman numeral in brass (30px) and a visible label in the label token beside it, editable in Sanity; a chapter title, where there is one, sits below.
 - Cards let the image and a small caption do the work. Avoid borders, heavy shadows, busy chrome.
 - Accessibility is non negotiable: contrast, keyboard navigation, alt text, reduced motion.

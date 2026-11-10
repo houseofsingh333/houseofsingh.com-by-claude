@@ -317,6 +317,17 @@ html.js .blurup + img[data-blurup]:not([data-loaded]) {
 .text-link:focus-visible .text-link-arrow {
   transform: translateX(4px);
 }
+/* The back version: the arrow on the left, moving 4px to the left. */
+.text-link-back:hover .text-link-arrow,
+.text-link-back:focus-visible .text-link-arrow {
+  transform: translateX(-4px);
+}
+button.text-link {
+  background: none;
+  border: 0;
+  padding-inline: 0;
+  cursor: pointer;
+}
 @keyframes text-link-redraw {
   from {
     transform: scaleX(0);
@@ -459,6 +470,46 @@ html.js .blurup + img[data-blurup]:not([data-loaded]) {
   }
   .outline-cta:hover .outline-cta-arrow-in {
     transform: none;
+  }
+}
+
+/* The form button (OutlineButton): the arrow points on, so it slides
+   across instead of up; disabled, it stays outlined and quiet. */
+.outline-cta[data-arrow="right"] .outline-cta-arrow-in {
+  transform: translateX(-14px);
+}
+.outline-cta[data-arrow="right"]:focus-visible .outline-cta-arrow-out {
+  transform: translateX(14px);
+}
+.outline-cta[data-arrow="right"]:focus-visible .outline-cta-arrow-in {
+  transform: none;
+}
+@media (hover: hover) {
+  .outline-cta[data-arrow="right"]:hover:not(:disabled) .outline-cta-arrow-out {
+    transform: translateX(14px);
+  }
+}
+button.outline-cta {
+  background: none;
+  cursor: pointer;
+}
+button.outline-cta:disabled {
+  color: var(--muted-foreground);
+  border-color: var(--border);
+  cursor: not-allowed;
+}
+@media (hover: hover) {
+  button.outline-cta:disabled:hover {
+    color: var(--muted-foreground);
+  }
+  button.outline-cta:disabled:hover .outline-cta-fill {
+    transform: scaleX(0);
+  }
+  button.outline-cta:disabled:hover .outline-cta-arrow-out {
+    transform: none;
+  }
+  button.outline-cta:disabled:hover .outline-cta-arrow-in {
+    transform: translateX(-14px);
   }
 }
 

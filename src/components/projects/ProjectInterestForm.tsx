@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import HoneypotField from "@/components/HoneypotField";
+import { OutlineButton } from "@/components/OutlineCta";
 import { PAGE_COLUMN, READING_COLUMN } from "./story";
 
 type Props = {
@@ -186,13 +187,9 @@ export default function ProjectInterestForm({ projectTitle }: Props) {
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className="contact-btn contact-btn-quiet hairline-rest"
-        >
+        <OutlineButton type="submit" disabled={!canSubmit} className="self-start">
           {submitting ? "Sending…" : "Submit"}
-        </button>
+        </OutlineButton>
       </form>
     </div>
       </section>

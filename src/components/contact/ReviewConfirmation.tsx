@@ -1,7 +1,8 @@
 "use client";
 
-import TextLink from "@/components/TextLink";
-import { ArrowLeft, Pencil } from "lucide-react";
+import TextLink, { TextButton } from "@/components/TextLink";
+import { Pencil } from "lucide-react";
+import { OutlineButton } from "@/components/OutlineCta";
 import { formatDateOnly } from "@/lib/dates";
 import type {
   ContactFormData,
@@ -89,20 +90,12 @@ export function ReviewScreen({
       </div>
 
       <div className="flex items-center justify-between mt-16">
-        <button
-          onClick={onBack}
-          className="contact-btn contact-btn-secondary flex items-center gap-2"
-        >
-          <ArrowLeft className="contact-btn-arrow contact-btn-arrow-back w-4 h-4" />
+        <TextButton back onClick={onBack}>
           Back
-        </button>
-        <button
-          onClick={onSubmit}
-          disabled={submitting}
-          className="contact-btn contact-btn-primary flex items-center gap-2 px-8"
-        >
+        </TextButton>
+        <OutlineButton onClick={onSubmit} disabled={submitting}>
           {submitting ? "Sending…" : "Submit"}
-        </button>
+        </OutlineButton>
       </div>
     </div>
   );

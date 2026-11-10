@@ -19,7 +19,9 @@
    icon) and unfolds the month's calendar. */
 
 .jr {
-  /* Clears the crest at the top of the page (State 1 of the header). */
+  /* Clears the crest at the top of the page (State 1 of the header): the
+     shared header row height, so the Journal and Projects headings start
+     at the same height (approved 10 Nov). */
   --jr-top: var(--head-top);
   --jr-gutter: 1.5rem;
   /* Where things stop under the fixed 68px header once the page scrolls. */
@@ -38,7 +40,6 @@
   /* Desktop (J4): the page's edges at 96px at 1280 (7.5% of the page, at
      most 1360px of content), the same edges as the Projects page. */
   .jr {
-    --jr-top: 200px;
     --jr-gutter: max(7.5%, calc((100% - 1360px) / 2));
     max-width: none;
   }
