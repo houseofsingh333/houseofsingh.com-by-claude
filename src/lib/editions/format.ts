@@ -21,10 +21,10 @@ export function piecesInWords(n: number): string {
   return `${word} ${n === 1 ? "piece" : "pieces"}`;
 }
 
-/** 180 → "CA$180", 180.5 → "CA$180.50". */
+/** 180 → "$180 CAD", 180.5 → "$180.50 CAD": every price says its currency. */
 export function cad(amount: number): string {
   const whole = Number.isInteger(amount);
-  return `CA$${amount.toLocaleString("en-CA", { minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: 2 })}`;
+  return `$${amount.toLocaleString("en-CA", { minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: 2 })} CAD`;
 }
 
 /** Cents to dollars. */

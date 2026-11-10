@@ -7,7 +7,7 @@ import { hotspotPosition } from "@/lib/projectHero";
 import { loadCollections } from "@/lib/editions/load";
 import { available } from "@/lib/editions/state";
 import { collectionTitle, monthIn, pad2, piecesInWords } from "@/lib/editions/format";
-import { collectionsInWords } from "@/lib/editions/view";
+import { allSold, closedSentence, collectionsInWords } from "@/lib/editions/view";
 import { requireEditions } from "@/lib/editions/enabled";
 
 export const metadata: Metadata = { title: "Archive" };
@@ -55,7 +55,7 @@ export default async function ArchivePage() {
         {upcoming && (
           <div className="ed-shelf-square">
             <Link href="/editions" aria-label={`${collectionTitle(upcoming.number)}, in the Shop`} className="ed-shelf-square-link">
-              <CollectionSquare number={upcoming.number} season={upcoming.season} colour={upcoming.colour} pieces={upcoming.pieces.length} state={upcoming.state} />
+              <CollectionSquare number={upcoming.number} season={upcoming.season} colour={upcoming.colour} pieces={upcoming.pieces.length} state={upcoming.state} soldOut={allSold(upcoming.pieces)} />
             </Link>
           </div>
         )}
@@ -68,7 +68,7 @@ export default async function ArchivePage() {
             <h2 id={`held-${c.number}`} className="font-editorial font-normal text-display-l leading-[1.05] text-foreground">
               {`${collectionTitle(c.number)}, ${c.season}`}
             </h2>
-            <p className="text-body text-muted-foreground">{c.closedLine?.trim() || c.intro}</p>
+            <p className="text-body text-muted-foreground">{closedSentence(c, c.pieces)}</p>
           </div>
           <ul className="ed-held-list" aria-label={piecesInWords(c.pieces.length)}>
             {c.pieces.map((p) => {

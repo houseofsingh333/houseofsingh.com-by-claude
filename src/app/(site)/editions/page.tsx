@@ -10,7 +10,7 @@ import { OutlineLink } from "@/components/OutlineCta";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
 import { canBuy, releaseTimes, shopNow, untilWords } from "@/lib/editions/state";
 import { collectionTitle, dayIn } from "@/lib/editions/format";
-import { collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
+import { allSold, closedSentence, collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import { requireEditions } from "@/lib/editions/enabled";
 
@@ -56,7 +56,7 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
   const nextTitle = collectionTitle(nextNumber);
   const sentence =
     state === "closed"
-      ? current.closedLine?.trim() || current.intro
+      ? closedSentence(current, current.pieces)
       : state === "sealed"
         ? `${current.intro} Opens at ${releaseTimes(current.opens)}.`
         : current.intro;
@@ -65,7 +65,7 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
   return (
     <div className="ed-page">
       <section className="ed-open" aria-labelledby="ed-title">
-        <CollectionSquare number={current.number} season={current.season} colour={current.colour} pieces={current.pieces.length} state={state} />
+        <CollectionSquare number={current.number} season={current.season} colour={current.colour} pieces={current.pieces.length} state={state} soldOut={allSold(current.pieces)} />
         <div className="ed-open-text">
           <div className="ed-open-words">
             <span className="type-label text-muted-foreground">{stateLine(current, state, now, untilWords(current.opens, now))}</span>

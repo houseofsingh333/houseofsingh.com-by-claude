@@ -57,6 +57,7 @@ export type EditionsCollection = {
   colour: string;
   intro: string;
   closedLine?: string | null;
+  closedUnsoldLine?: string | null;
   essay?: PortableTextBlock[] | null;
   earlyAccessOpens?: string | null;
   opens: string;

@@ -17,7 +17,7 @@ const _piece = `{
 }`;
 
 const _collection = `{
-  _id, number, season, colour, intro, closedLine, essay,
+  _id, number, season, colour, intro, closedLine, closedUnsoldLine, essay,
   earlyAccessOpens, opens, closes, earlyAccessCodeHash,
   "filters": filters[]{ _key, label, "category": category->${_category} },
   isTestData

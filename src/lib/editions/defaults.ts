@@ -21,6 +21,7 @@ export const EDITIONS_DEFAULTS = {
     "Made with others. When a piece is a collaboration, both names stand on it.",
   ],
   returnsLine: "Unworn pieces may be returned within 14 days.",
+  soldOutLine: "Every piece has found its home.",
   shippingLine: "Made and packed with care, shipped in 2 to 4 weeks, with tracking by email. Shipping at cost; import duties paid on arrival.",
   artistsHeading: "Make something with House of Singh",
   artistsInvitation:

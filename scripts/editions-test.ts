@@ -68,7 +68,7 @@ const withCol = (p: EditionsPiece) => ({ ...p, collection: { ...collection, piec
 // Numbers and words
 check(gurmukhi(1) === "੧" && gurmukhi(12) === "੧੨", "Gurmukhi numerals", [gurmukhi(1), gurmukhi(12)]);
 check(piecesInWords(8) === "Eight pieces" && piecesInWords(1) === "One piece", "pieces in words");
-check(cad(180) === "CA$180" && cad(14.5) === "CA$14.50", "CAD prices", [cad(180), cad(14.5)]);
+check(cad(180) === "$180 CAD" && cad(14.5) === "$14.50 CAD", "CAD prices", [cad(180), cad(14.5)]);
 
 // States
 check(collectionState(collection, [tee], new Date("2027-04-01T00:00:00Z"), false) === "sealed", "before early access: sealed");
