@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyStripeSignature, type CheckoutSession } from "@/lib/editions/stripe";
 import { processPaidSession } from "@/lib/editions/orders";
 import { sanityOrderStore } from "@/lib/editions/records";
-import { editionsEnabled, editionsOff } from "@/lib/editions/enabled";
+import { editionsAllowed, editionsOff } from "@/lib/editions/enabled";
 
 /**
  * Stripe's webhook (docs/editions-setup.md). Only signed events are read
@@ -13,7 +13,7 @@ import { editionsEnabled, editionsOff } from "@/lib/editions/enabled";
  * repeat change nothing.
  */
 export async function POST(request: Request) {
-  if (!editionsEnabled()) return editionsOff();
+  if (!(await editionsAllowed("any"))) return editionsOff();
   const raw = await request.text();
   const secret = process.env.STRIPE_WEBHOOK_SECRET ?? "";
   if (!verifyStripeSignature(raw, request.headers.get("stripe-signature"), secret)) {

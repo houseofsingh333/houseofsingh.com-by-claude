@@ -3,10 +3,13 @@
 import { useState } from "react";
 import { OutlineButton } from "@/components/OutlineCta";
 import { cad } from "@/lib/editions/format";
+import { taxForPostalCode } from "@/lib/editions/tax-rates";
 import type { Zone } from "@/lib/editions/types";
 
 type Props = {
   slug: string;
+  /** The piece's price before tax, CAD. */
+  price: number;
   sizes: { key: string; label: string; left: number }[];
   zones: { value: Zone; label: string; price: number | null }[];
   /** The edition and Stripe line beneath Buy. */
@@ -28,7 +31,8 @@ type Props = {
  * not let a form post be redirected to another site). Without JavaScript
  * the form posts as usual and the answer moves on to Stripe.
  */
-export default function BuyForm({ slug, sizes, zones, quiet, taxLine, message: initialMessage, words }: Props) {
+export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, message: initialMessage, words }: Props) {
+  const [postal, setPostal] = useState("");
   const [message, setMessage] = useState(initialMessage ?? null);
   const [sending, setSending] = useState(false);
   const [size, setSize] = useState<string | null>(null);
@@ -36,6 +40,12 @@ export default function BuyForm({ slug, sizes, zones, quiet, taxLine, message: i
   const [zone, setZone] = useState<Zone | null>(firstZone);
   const chosen = sizes.find((s) => s.key === size);
   const needsSize = sizes.length > 0 && !chosen;
+  // The estimate before Buy: GST/HST for the province of a Canadian postal
+  // code, on the piece and its shipping. Stripe charges the exact amount
+  // from the address given at checkout.
+  const shipping = zones.find((z) => z.value === zone)?.price ?? 0;
+  const tax = zone === "canada" ? taxForPostalCode(postal) : null;
+  const taxAmount = tax ? Math.round((price + shipping) * tax.percentage) / 100 : 0;
   const label = sending ? "Opening checkout" : sizes.length === 0 ? "Buy" : chosen ? `Buy, size ${chosen.label}` : "Choose a size";
 
   async function buy(e: React.FormEvent<HTMLFormElement>) {
@@ -85,6 +95,29 @@ export default function BuyForm({ slug, sizes, zones, quiet, taxLine, message: i
           ))}
         </div>
       </fieldset>
+      {zone === "canada" && (
+        <div className="ed-postal">
+          <label htmlFor={`ed-postal-${slug}`} className="type-label text-muted-foreground">
+            Postal code, for the tax estimate
+          </label>
+          <input
+            id={`ed-postal-${slug}`}
+            value={postal}
+            onChange={(e) => setPostal(e.target.value)}
+            autoComplete="postal-code"
+            maxLength={7}
+            placeholder="M5H 2N2"
+            aria-describedby={`ed-tax-${slug}`}
+          />
+          <p id={`ed-tax-${slug}`} className="ed-buy-quiet" aria-live="polite">
+            {tax
+              ? `Estimated ${tax.label} for ${tax.name}, ${tax.percentage}%: ${cad(taxAmount)}. Total about ${cad(price + shipping + taxAmount)}.`
+              : postal.trim().length >= 3
+                ? "That does not look like a Canadian postal code."
+                : ""}
+          </p>
+        </div>
+      )}
       <OutlineButton type="submit" disabled={needsSize || !zone || sending} className="ed-buy-btn">
         {label}
       </OutlineButton>

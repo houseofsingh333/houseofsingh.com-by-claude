@@ -4,7 +4,7 @@ import { isHoneypotFilled } from "@/lib/spam-protection";
 import { readJsonBody } from "@/lib/read-json-body";
 import { saveProposal } from "@/lib/editions/records";
 import { notifyManinder } from "@/lib/editions/notify-email";
-import { editionsEnabled, editionsOff } from "@/lib/editions/enabled";
+import { editionsAllowed, editionsOff } from "@/lib/editions/enabled";
 
 const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
@@ -13,7 +13,7 @@ const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slic
  * Maninder when email is set up (lib/editions/notify-email.ts).
  */
 export async function POST(request: Request) {
-  if (!editionsEnabled()) return editionsOff();
+  if (!(await editionsAllowed("any"))) return editionsOff();
   const limit = rateLimit(`editions-proposal:${getClientIp(request)}`);
   if (!limit.success) {
     return NextResponse.json(

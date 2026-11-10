@@ -19,7 +19,7 @@ function fill(text: string, gst: string | null, returns: string): string {
  * settings can replace the text; the GST/HST number comes from GST_NUMBER.
  */
 export default async function TermsOfSalePage() {
-  requireEditions();
+  await requireEditions("any");
   const s = withDefaults(await loadSettings());
   const gst = process.env.GST_NUMBER?.trim() || null;
   const sections = (s.terms ?? DEFAULT_TERMS).map((t) => ({ title: t.title, text: fill(t.text, gst, s.returnsLine) }));

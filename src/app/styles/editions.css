@@ -1132,3 +1132,106 @@ a.ed-spine:focus-visible {
   gap: 10px;
   max-width: 640px;
 }
+
+/* "Have an early access code?": a quiet line like Notify me. */
+.ed-code {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 440px;
+  margin-top: 8px;
+}
+.ed-code-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  transition: border-color var(--dur-hover) var(--ease-soft-out);
+}
+.ed-code-line:focus-within {
+  border-bottom-color: var(--foreground);
+}
+.ed-code-line input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 0;
+  font-family: inherit;
+  font-size: var(--type-body);
+  line-height: 1.5;
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--foreground);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+.ed-code-line input::placeholder {
+  color: var(--muted-foreground);
+  letter-spacing: normal;
+  text-transform: none;
+}
+.ed-code-btn {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0;
+  font-family: inherit;
+  font-size: var(--type-small);
+  font-weight: 500;
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--foreground);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.ed-code-arrow {
+  display: inline-block;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+.ed-code-btn:hover .ed-code-arrow,
+.ed-code-btn:focus-visible .ed-code-arrow {
+  transform: translateX(4px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-code-line,
+  .ed-code-arrow {
+    transition: none;
+  }
+}
+
+/* The postal code for the tax estimate (Ships to Canada only). */
+.ed-postal {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ed-postal input {
+  width: 9.5em;
+  padding: 8px 0;
+  font-family: inherit;
+  font-size: var(--type-body);
+  line-height: 1.5;
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--foreground);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  transition: border-color var(--dur-hover) var(--ease-soft-out);
+}
+.ed-postal input::placeholder {
+  color: var(--muted-foreground);
+}
+.ed-postal input:focus-visible {
+  outline: none;
+  border-bottom-color: var(--foreground);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-postal input {
+    transition: none;
+  }
+}

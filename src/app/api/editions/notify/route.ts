@@ -3,7 +3,7 @@ import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { isHoneypotFilled } from "@/lib/spam-protection";
 import { readJsonBody } from "@/lib/read-json-body";
 import { saveNotify } from "@/lib/editions/records";
-import { editionsEnabled, editionsOff } from "@/lib/editions/enabled";
+import { editionsAllowed, editionsOff } from "@/lib/editions/enabled";
 
 /**
  * "Notify me": an email and the Collection it is for, saved privately with
@@ -11,7 +11,7 @@ import { editionsEnabled, editionsOff } from "@/lib/editions/enabled";
  * Same guards as the newsletter: rate limit, size limit, honeypot.
  */
 export async function POST(request: Request) {
-  if (!editionsEnabled()) return editionsOff();
+  if (!(await editionsAllowed("any"))) return editionsOff();
   const limit = rateLimit(`editions-notify:${getClientIp(request)}`);
   if (!limit.success) {
     return NextResponse.json(

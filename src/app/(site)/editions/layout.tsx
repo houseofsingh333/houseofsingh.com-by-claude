@@ -4,9 +4,11 @@ import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import { requireEditions } from "@/lib/editions/enabled";
 
 /**
- * House of Singh Editions, while in development: reachable only from the
- * footer's "Shop" link, and never indexed (every /editions page is
- * noindex, and none is in the sitemap, llms.txt or the structured data).
+ * House of Singh Editions: reachable only from the footer's "Shop" link,
+ * and never indexed (every /editions page is noindex, and none is in the
+ * sitemap, llms.txt or the structured data), except /editions itself in
+ * anticipation (its own metadata). In anticipation the Shop's menu is
+ * left out: nothing beyond the sealed Collection is shown.
  */
 export const metadata: Metadata = {
   title: { default: "House of Singh Editions", template: "%s | House of Singh Editions" },
@@ -20,8 +22,8 @@ const NAV = [
   { href: "/editions/archive", label: "Archive" },
 ];
 
-export default function EditionsLayout({ children }: { children: React.ReactNode }) {
-  requireEditions();
+export default async function EditionsLayout({ children }: { children: React.ReactNode }) {
+  const mode = await requireEditions("any");
   return (
     <div className="ed">
       <header className="ed-head">
@@ -29,13 +31,15 @@ export default function EditionsLayout({ children }: { children: React.ReactNode
           <span className="type-label text-muted-foreground">Shop</span>
           <span className="ed-head-name">{EDITIONS_DEFAULTS.brand}</span>
         </Link>
-        <nav aria-label="The Shop" className="ed-head-nav">
-          {NAV.map((n) => (
-            <Link key={n.href} href={n.href} className="hairline">
-              {n.label}
-            </Link>
-          ))}
-        </nav>
+        {mode === "full" && (
+          <nav aria-label="The Shop" className="ed-head-nav">
+            {NAV.map((n) => (
+              <Link key={n.href} href={n.href} className="hairline">
+                {n.label}
+              </Link>
+            ))}
+          </nav>
+        )}
       </header>
       {children}
       <div className="ed-foot">

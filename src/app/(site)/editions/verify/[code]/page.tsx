@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Certificate" };
  * matches no order is a 404. No name, email or address is ever shown.
  */
 export default async function VerifyPage({ params }: { params: Promise<{ code: string }> }) {
-  requireEditions();
+  await requireEditions();
   const code = (await params).code.toUpperCase();
   const cert = await certificateByCode(code).catch(() => null);
   if (!cert) notFound();

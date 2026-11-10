@@ -12,9 +12,17 @@ import { canBuy, releaseTimes, shopNow, untilWords } from "@/lib/editions/state"
 import { collectionTitle, dayIn } from "@/lib/editions/format";
 import { allSold, closedSentence, collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
-import { requireEditions } from "@/lib/editions/enabled";
+import EarlyAccessForm from "@/components/editions/EarlyAccessForm";
+import { requireEditions, siteMode } from "@/lib/editions/enabled";
 
-export const metadata: Metadata = { title: { absolute: "House of Singh Editions" } };
+/** In anticipation the live site lets /editions be indexed; otherwise noindex (the layout's). */
+export async function generateMetadata(): Promise<Metadata> {
+  const indexable = siteMode() === "anticipation";
+  return {
+    title: { absolute: "House of Singh Editions" },
+    ...(indexable ? { robots: { index: true, follow: true }, alternates: { canonical: "/editions" } } : {}),
+  };
+}
 
 /**
  * The Shop (canvas "Shop, the flow", SF-ShopFinal, FL3-Closed and
@@ -24,10 +32,12 @@ export const metadata: Metadata = { title: { absolute: "House of Singh Editions"
  * artists and the archive line. The current Collection is the one with
  * the highest number.
  */
-export default async function EditionsPage({ searchParams }: { searchParams: Promise<{ access?: string }> }) {
-  requireEditions();
-  const { access } = await searchParams;
-  if (access) redirect(`/api/editions/access?code=${encodeURIComponent(access.slice(0, 64))}`);
+export default async function EditionsPage({ searchParams }: { searchParams: Promise<{ access?: string; preview?: string; code?: string }> }) {
+  const mode = await requireEditions("any");
+  const { access, preview, code } = await searchParams;
+  if (preview) redirect(`/api/editions/preview?secret=${encodeURIComponent(preview.slice(0, 128))}`);
+  if (access && mode === "full") redirect(`/api/editions/access?code=${encodeURIComponent(access.slice(0, 64))}`);
+  const anticipation = mode === "anticipation";
 
   const [collections, rawSettings] = await Promise.all([loadCollections(), loadSettings()]);
   const settings = withDefaults(rawSettings);
@@ -45,12 +55,13 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
             <NotifyMe collection="Collection 01" thanks="You are on the list for Collection 01." idSuffix="shop" />
           </div>
         </section>
-        <BeforeYouBuy notes={settings.beforeYouBuy} />
+        {!anticipation && <BeforeYouBuy notes={settings.beforeYouBuy} />}
       </div>
     );
   }
 
-  const { state } = current;
+  // Anticipation: always the sealed Collection, whatever its dates say.
+  const state = anticipation ? "sealed" : current.state;
   const buying = canBuy(state);
   const nextNumber = state === "closed" ? current.number + 1 : current.number;
   const nextTitle = collectionTitle(nextNumber);
@@ -60,7 +71,9 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
       : state === "sealed"
         ? `${current.intro} Opens at ${releaseTimes(current.opens)}.`
         : current.intro;
-  const previous = state === "sealed" ? closed[0] : undefined;
+  const previous = state === "sealed" && !anticipation ? closed[0] : undefined;
+  // The fallback for an early access link that did not arrive: a field for the code, once early access has opened.
+  const askForCode = !anticipation && state === "sealed" && Boolean(current.earlyAccessCodeHash) && Boolean(current.earlyAccessOpens) && now.getTime() >= Date.parse(current.earlyAccessOpens!);
 
   return (
     <div className="ed-page">
@@ -78,6 +91,7 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
                 <NotifyMe collection={nextTitle} thanks={`You are on the list for ${nextTitle}.`} idSuffix="shop" />
               </div>
             )}
+            {askForCode && <EarlyAccessForm wrong={code === "wrong"} />}
           </div>
           <div className="ed-open-foot">
             {state === "closed" ? (
@@ -93,6 +107,8 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
                 </span>
                 <span>{`Collectors of ${collectionTitle(previous.number)} enter first.`}</span>
               </>
+            ) : anticipation ? (
+              <span>{settings.honestLine}</span>
             ) : (
               <>
                 <span>{settings.honestLine}</span>
@@ -111,6 +127,8 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
         )}
       </section>
 
+      {!anticipation && (
+        <>
       {buying && (
         <CollectionGrid
           pieces={current.pieces.map((p) => gridPiece(p))}
@@ -153,6 +171,8 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
           <span className="text-small text-muted-foreground">{`The archive begins when ${collectionTitle(current.number)} closes.`}</span>
         )}
       </section>
+        </>
+      )}
     </div>
   );
 }

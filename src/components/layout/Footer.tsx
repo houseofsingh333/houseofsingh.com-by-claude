@@ -4,7 +4,7 @@ import TextLink from "@/components/TextLink";
 import TorontoTime from "@/components/TorontoTime";
 import type { SiteCopy } from "@/lib/siteCopy";
 import FooterNewsletter from "./FooterNewsletter";
-import { editionsEnabled } from "@/lib/editions/enabled";
+import { editionsLinked } from "@/lib/editions/enabled";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -93,8 +93,8 @@ export default function Footer({ copy, bookUrl }: { copy: FooterCopy; bookUrl: s
       <div className="footer-bottom">
         <span className="footer-bottom-copyright">&copy; 2026 House of Singh</span>
         {/* The Shop, while in development: linked from here only, never
-            indexed, and only where EDITIONS_ENABLED is "true" (Preview). */}
-        {editionsEnabled() && (
+            indexed, and only where EDITIONS_MODE is not "off". */}
+        {editionsLinked() && (
           <Link href="/editions" className="footer-bottom-link hairline">
             Shop
           </Link>

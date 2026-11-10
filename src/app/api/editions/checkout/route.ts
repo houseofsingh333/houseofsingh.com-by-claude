@@ -8,7 +8,7 @@ import { freshPiece, freshShipping } from "@/lib/editions/fresh";
 import { isZone } from "@/lib/editions/shipping";
 import { stripeConfigured, stripePost, type CheckoutSession } from "@/lib/editions/stripe";
 import { shopTaxRateIds } from "@/lib/editions/tax";
-import { editionsEnabled, editionsOff } from "@/lib/editions/enabled";
+import { editionsAllowed, editionsOff } from "@/lib/editions/enabled";
 
 /**
  * Buy: a plain form post from a piece's page (no client script). Checks,
@@ -36,7 +36,7 @@ function toCheckout(url: string) {
 }
 
 export async function POST(request: Request) {
-  if (!editionsEnabled()) return editionsOff();
+  if (!(await editionsAllowed("full"))) return editionsOff();
   const origin = new URL(request.url).origin;
   // The Buy form sends this from the page (fetch) and moves to Stripe
   // itself; a plain form post (no JavaScript) gets redirects and pages.

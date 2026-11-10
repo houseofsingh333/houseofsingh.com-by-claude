@@ -11,21 +11,7 @@ import { stripeGet } from "./stripe";
  * This table is the source the script creates the rates from. Check it
  * against the CRA's rates before launch (docs/editions-setup.md).
  */
-export const CANADA_TAX_RATES: { province: string; name: string; type: "gst" | "hst"; percentage: number }[] = [
-  { province: "AB", name: "Alberta", type: "gst", percentage: 5 },
-  { province: "BC", name: "British Columbia", type: "gst", percentage: 5 },
-  { province: "MB", name: "Manitoba", type: "gst", percentage: 5 },
-  { province: "NB", name: "New Brunswick", type: "hst", percentage: 15 },
-  { province: "NL", name: "Newfoundland and Labrador", type: "hst", percentage: 15 },
-  { province: "NS", name: "Nova Scotia", type: "hst", percentage: 14 },
-  { province: "NT", name: "Northwest Territories", type: "gst", percentage: 5 },
-  { province: "NU", name: "Nunavut", type: "gst", percentage: 5 },
-  { province: "ON", name: "Ontario", type: "hst", percentage: 13 },
-  { province: "PE", name: "Prince Edward Island", type: "hst", percentage: 15 },
-  { province: "QC", name: "Quebec", type: "gst", percentage: 5 },
-  { province: "SK", name: "Saskatchewan", type: "gst", percentage: 5 },
-  { province: "YT", name: "Yukon", type: "gst", percentage: 5 },
-];
+export { CANADA_TAX_RATES } from "./tax-rates";
 
 export const TAX_RATE_APP = "hos-editions";
 

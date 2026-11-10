@@ -20,7 +20,7 @@ const SESSION = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
  * session in the address; the email is never shown here.
  */
 export default async function ThankYouPage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
-  requireEditions();
+  await requireEditions();
   const { session_id: id } = await searchParams;
   if (!id || !SESSION.test(id) || !stripeConfigured()) notFound();
 

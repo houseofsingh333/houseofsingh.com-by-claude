@@ -19,7 +19,7 @@ export const metadata: Metadata = { title: "Archive" };
  * Collection held, every piece marked sold or not.
  */
 export default async function ArchivePage() {
-  requireEditions();
+  await requireEditions();
   const collections = await loadCollections();
   const closed = collections.filter((c) => c.state === "closed").sort((a, b) => a.number - b.number);
   const upcoming = collections.find((c) => c.state !== "closed");
