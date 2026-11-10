@@ -6,7 +6,7 @@
  */
 
 // Shared projection for image asset data (includes alt/caption from image fields)
-const _imageAsset = `{
+export const _imageAsset = `{
   "url": asset->url,
   "lqip": asset->metadata.lqip,
   "width": asset->metadata.dimensions.width,
