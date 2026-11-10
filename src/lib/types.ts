@@ -291,7 +291,6 @@ export type AboutPageData = {
   aboutStoryLabel?: string | null;
   aboutPrintHeading?: string | null;
   aboutJourneyHeading?: string | null;
-  aboutJourneyHint?: string | null;
   aboutConversationLabel?: string | null;
   aboutConversationHeading?: string | null;
   aboutReplyName?: string | null;

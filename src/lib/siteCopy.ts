@@ -223,7 +223,6 @@ export const ABOUT_COPY_FIELDS = [
   { name: "aboutStoryLabel", title: "Chapter II label", text: "The story" },
   { name: "aboutPrintHeading", title: "Chapter IV heading", text: "In print" },
   { name: "aboutJourneyHeading", title: "Chapter V label", text: "A walk through the years" },
-  { name: "aboutJourneyHint", title: "Chapter V scroll hint (first visit)", text: "Scroll" },
   { name: "aboutConversationLabel", title: "Chapter VI label", text: "Rapid fire" },
   { name: "aboutConversationHeading", title: "Chapter VI heading", text: "In conversation" },
   { name: "aboutReplyName", title: "Name on each reply", text: "Maninder" },

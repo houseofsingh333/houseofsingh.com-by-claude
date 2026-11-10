@@ -84,7 +84,6 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   aboutStoryLabel,
   aboutPrintHeading,
   aboutJourneyHeading,
-  aboutJourneyHint,
   aboutConversationLabel,
   aboutConversationHeading,
   aboutReplyName,

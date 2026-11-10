@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useSyncExternalStore, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import SanityImage from "@/components/SanityImage";
 import { useInView } from "@/hooks/useInView";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -8,48 +8,23 @@ import { hotspotPosition } from "@/lib/projectHero";
 import { revealProps } from "@/lib/reveal";
 import type { SanityImageAsset } from "@/lib/sanityImage";
 import type { AboutMilestone } from "@/lib/types";
+import { linkStudio } from "@/components/StudioLink";
 
-/** Two columns and the turning ledger from here; below, the phone picker. */
-const TWO_COLUMNS = "(min-width: 1024px)";
-/** One wheel or trackpad gesture turns one milestone: a gesture starts after this much quiet. */
+/** A mouse or trackpad: the turning ledger. Otherwise (touch): the sideways swipe. */
+const FINE_POINTER = "(pointer: fine)";
+/** One sideways trackpad gesture turns one milestone: a gesture starts after this much quiet. */
 const GESTURE_GAP_MS = 160;
 /** And turns are at least this far apart. */
 const TURN_MS = 500;
 /** How long the outgoing photograph stays while the next one fades in (--dur-image). */
 const CROSSFADE_MS = 1000;
-/** Arrival: the lines rise in one by one, this far apart. */
+/** Arrival: the ledger's lines rise in one by one, this far apart. */
 const ARRIVE_STEP_MS = 70;
-
-// ——— The first visit hint, remembered in localStorage ———
-const HINT_KEY = "hos_journey_hint_seen";
-const hintListeners = new Set<() => void>();
-function hintSeen(): boolean {
-  try {
-    return window.localStorage.getItem(HINT_KEY) === "1";
-  } catch {
-    return true; // No storage (private mode, blocked): no hint rather than one that never leaves.
-  }
-}
-function markHintSeen() {
-  try {
-    window.localStorage.setItem(HINT_KEY, "1");
-  } catch {
-    /* storage unavailable: the hint still hides for this visit */
-  }
-  hintDismissed = true;
-  hintListeners.forEach((l) => l());
-}
-let hintDismissed = false;
-function useHintVisible(): boolean {
-  return useSyncExternalStore(
-    (cb) => {
-      hintListeners.add(cb);
-      return () => hintListeners.delete(cb);
-    },
-    () => !hintDismissed && !hintSeen(),
-    () => false,
-  );
-}
+/** A swipe moves on once it covers this share of the photograph's width, or is a flick. */
+const SWIPE_SHARE = 0.18;
+const FLICK_PX_PER_MS = 0.35;
+/** Movement before a touch is read as sideways (a swipe) or upright (the page scrolling). */
+const DECIDE_PX = 8;
 
 /** Newest first: by year, latest first; within a year, the order set in Sanity. */
 function newestFirst(milestones: AboutMilestone[]): AboutMilestone[] {
@@ -67,51 +42,49 @@ function reducer(state: Photo, action: Action): Photo {
   return { k: action.k, prev: state.k };
 }
 
+/** The distance from the current milestone, capped at 3, for the fades. */
+const dist = (i: number, k: number) => Math.min(Math.abs(i - k), 3);
+
 /**
- * Chapter V on the About page, the Journey as a turning ledger (canvas
- * "Homepage Journal: three options", page "About, Journey", "FINAL desktop"
- * and "FINAL phone"). The milestones newest first, the year leading each
- * line; the one on the reading line (between the brass hairline and the
- * light one) at full strength with its description, the others fading by
- * distance. Its photograph sits beside the ledger and follows it.
+ * Chapter V on the About page, the Journey (canvas "Homepage Journal: three
+ * options", page "About, Journey": "FINAL desktop" and "NEW phone: swipe
+ * the photograph sideways"). Milestones newest first.
  *
- * From 1024px: a window of five whole lines. A wheel or trackpad gesture
- * over it turns it one milestone (and at either end passes to the page),
- * as do the arrow keys, a click on a line and the two round buttons under
- * the photograph. Pointing at a line only previews it.
- * Below 1024px: one column, the photograph above a native scroll picker
- * of three whole lines that snaps to the reading line.
+ * One principle on every screen: up and down always moves the page;
+ * sideways and taps move through the years. Nothing here captures vertical
+ * scrolling. Which layout is chosen by the pointer, not the screen width
+ * (both are in the page; styles/about.css shows one):
  *
- * Fades (approved for readability, 9 Nov): the lines next to the reading
- * line rest at 0.64, the lightest that keeps their text at 4.5:1; those
- * further out at 0.16 and 0.08, marked inactive until they come within one
- * line. All motion is CSS (styles/about.css, Journey ledger); reduced
- * motion: everything at once.
+ * A mouse or trackpad, the turning ledger: five whole lines, the year
+ * leading each, the current one on the brass reading line at full
+ * strength with its description, the others fading by distance; its
+ * photograph beside it. It turns by the two round buttons under the
+ * photograph, a click on a line, the arrow keys, or a sideways trackpad
+ * swipe (one milestone a gesture; an upright wheel is never read).
+ *
+ * Touch (phones and tablets of any width), the sideways swipe: the
+ * photograph as a carousel that follows the finger and settles on
+ * release; a strip of years moving with it (tap one to go there); the
+ * title and description beneath. touch-action: pan-y keeps upright
+ * movement for the page.
+ *
+ * Fades (approved for readability, 9 Nov): beside the current one 0.64,
+ * the lightest that keeps text at contrast; further out 0.16 and 0.08,
+ * marked inactive until they come within one. Reduced motion: everything
+ * at once, no develop.
  */
-export default function JourneyLedger({
-  milestones,
-  hint,
-  label,
-}: {
-  milestones: AboutMilestone[];
-  /** "Scroll", beside the first visit hint. */
-  hint: string;
-  /** The ledger region's name, distinct from the chapter's. */
-  label: string;
-}) {
+export default function JourneyLedger({ milestones, label }: { milestones: AboutMilestone[]; label: string }) {
   const items = useMemo(() => newestFirst(milestones), [milestones]);
   const last = items.length - 1;
   const [{ k, prev }, dispatch] = useReducer(reducer, { k: 0, prev: null });
-  const twoColumns = useMediaQuery(TWO_COLUMNS);
-  const hintVisible = useHintVisible();
+  const fine = useMediaQuery(FINE_POINTER);
 
-  const regionRef = useRef<HTMLDivElement>(null);
-  const windowRef = useRef<HTMLDivElement>(null);
+  const ledgerRef = useRef<HTMLDivElement>(null);
   const kRef = useRef(0);
   const settleTimer = useRef<number | undefined>(undefined);
-  const arrived = useInView(regionRef, { threshold: 0.2 });
+  const arrived = useInView(ledgerRef, { threshold: 0.2 });
 
-  /** Make milestone n the current one (photograph, fades, hint). */
+  /** Make milestone n the current one. */
   const go = useCallback(
     (n: number) => {
       const next = Math.max(0, Math.min(last, n));
@@ -120,79 +93,36 @@ export default function JourneyLedger({
       dispatch({ type: "go", k: next });
       window.clearTimeout(settleTimer.current);
       settleTimer.current = window.setTimeout(() => dispatch({ type: "settle" }), CROSSFADE_MS);
-      if (!hintDismissed) markHintSeen();
     },
     [last],
   );
   useEffect(() => () => window.clearTimeout(settleTimer.current), []);
 
-  /** Turn to milestone n: by moving the list (two columns) or scrolling the picker (phone). */
-  const turnTo = useCallback(
-    (n: number) => {
-      const target = Math.max(0, Math.min(last, n));
-      const win = windowRef.current;
-      if (!twoColumns && win) {
-        const row = rowHeight(win);
-        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        win.scrollTo({ top: target * row, behavior: reduce ? "auto" : "smooth" });
-        return; // The scroll itself makes it current.
-      }
-      go(target);
-    },
-    [go, last, twoColumns],
-  );
-
-  // Two columns: each wheel or trackpad gesture over the ledger turns it by
-  // one; at either end the gesture passes to the page (never trapped),
-  // unless it already turned the ledger.
+  // The ledger: a sideways trackpad swipe turns it, one milestone a gesture.
+  // Upright movement is never read, so the page always scrolls.
   useEffect(() => {
-    const region = regionRef.current;
-    if (!region || !twoColumns) return;
+    const ledger = ledgerRef.current;
+    if (!ledger || !fine) return;
     let lastWheel = 0;
     let lastTurn = 0;
-    let turnedThisGesture = false;
+    let turned = false;
     const onWheel = (e: WheelEvent) => {
-      if (e.ctrlKey) return; // pinch zoom
-      const dy = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : 0;
-      if (Math.abs(dy) < 1) return;
-      const now = performance.now();
-      const newGesture = now - lastWheel > GESTURE_GAP_MS;
-      lastWheel = now;
-      if (newGesture) turnedThisGesture = false;
-      const dir = dy > 0 ? 1 : -1;
-      const atEnd = (dir < 0 && kRef.current === 0) || (dir > 0 && kRef.current === last);
-      if (atEnd && !turnedThisGesture) return; // to the page
+      if (e.ctrlKey || Math.abs(e.deltaX) <= Math.abs(e.deltaY) || Math.abs(e.deltaX) < 2) return;
+      // Sideways: ours (this also keeps the browser's own back gesture out of it).
       e.preventDefault();
-      if (atEnd || turnedThisGesture || now - lastTurn < TURN_MS) return;
+      const now = performance.now();
+      if (now - lastWheel > GESTURE_GAP_MS) turned = false;
+      lastWheel = now;
+      if (turned || now - lastTurn < TURN_MS || Math.abs(e.deltaX) < 8) return;
+      turned = true;
       lastTurn = now;
-      turnedThisGesture = true;
-      go(kRef.current + dir);
+      go(kRef.current + (e.deltaX > 0 ? 1 : -1));
     };
-    region.addEventListener("wheel", onWheel, { passive: false });
-    return () => region.removeEventListener("wheel", onWheel);
-  }, [go, last, twoColumns]);
+    ledger.addEventListener("wheel", onWheel, { passive: false });
+    return () => ledger.removeEventListener("wheel", onWheel);
+  }, [fine, go]);
 
-  // Phone: the picker's scroll position chooses the current milestone.
-  useEffect(() => {
-    const win = windowRef.current;
-    if (!win || twoColumns) return;
-    // Entering the phone layout: show the current milestone on the reading line.
-    win.scrollTop = kRef.current * rowHeight(win);
-    let raf = 0;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        go(Math.round(win.scrollTop / rowHeight(win)));
-      });
-    };
-    win.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      win.removeEventListener("scroll", onScroll);
-    };
-  }, [go, twoColumns]);
-
+  /** Arrow keys (and Home, End) on either layout; focus follows on the ledger's lines and the years. */
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const step = { ArrowUp: -1, ArrowLeft: -1, ArrowDown: 1, ArrowRight: 1 }[e.key];
     let target: number | null = step === undefined ? null : kRef.current + step;
@@ -201,110 +131,78 @@ export default function JourneyLedger({
     if (target === null || e.altKey || e.ctrlKey || e.metaKey) return;
     e.preventDefault();
     target = Math.max(0, Math.min(last, target));
-    turnTo(target);
-    // Keyboard focus follows the reading line (one tab stop for the list).
-    if ((e.target as HTMLElement).closest("[data-jl-line]")) {
-      regionRef.current?.querySelector<HTMLElement>(`[data-jl-line="${target}"]`)?.focus({ preventScroll: true });
-    }
+    go(target);
+    const el = e.target as HTMLElement;
+    const attr = el.closest("[data-jl-line]") ? "data-jl-line" : el.closest("[data-jl-year]") ? "data-jl-year" : null;
+    if (attr) e.currentTarget.querySelector<HTMLElement>(`[${attr}="${target}"]`)?.focus({ preventScroll: true });
   };
 
   const current = items[k];
 
   return (
-    <div className="jl" data-arrived={arrived ? "" : undefined}>
-      <div
-        ref={regionRef}
-        role="region"
-        aria-label={label}
-        aria-describedby="jl-keys"
-        className="jl-ledger"
-        data-glide-off=""
-        onKeyDown={onKeyDown}
-      >
-        <p id="jl-keys" className="sr-only">
-          Use the arrow keys to move through the years.
-        </p>
-        <span aria-hidden="true" className="jl-band" />
-        <div aria-hidden="true" className="jl-hint" data-on={hintVisible ? "" : undefined}>
-          <span className="jl-hint-track">
-            <span className="jl-hint-dot" />
-          </span>
-          <span className="jl-hint-label">{hint}</span>
+    <div className="jl">
+      {/* ——— A mouse or trackpad: the turning ledger ——— */}
+      <div className="jl-fine">
+        <div ref={ledgerRef} role="region" aria-label={label} aria-describedby="jl-keys" className="jl-ledger" onKeyDown={onKeyDown}>
+          <p id="jl-keys" className="sr-only">
+            Use the arrow keys, or the newer and older buttons, to move through the years.
+          </p>
+          <span aria-hidden="true" className="jl-band" />
+          <div className="jl-window">
+            <ol className="jl-list" style={{ "--jl-k": k } as CSSProperties}>
+              {items.map((m, i) => {
+                const d = dist(i, k);
+                const inactive = d >= 2;
+                return (
+                  <li key={`${m.year}-${i}`} className="jl-rise" {...revealProps({ revealed: arrived, delay: Math.max(0, i - k + 2) * ARRIVE_STEP_MS })}>
+                    <button
+                      type="button"
+                      data-jl-line={i}
+                      data-d={d}
+                      className="jl-line"
+                      aria-current={i === k ? "true" : undefined}
+                      aria-disabled={inactive ? "true" : undefined}
+                      tabIndex={i === k ? 0 : -1}
+                      onClick={() => {
+                        if (!inactive) go(i);
+                      }}
+                    >
+                      <span className="jl-year">{m.year}</span>
+                      <span className="jl-body">
+                        <span className="jl-title hairline">{m.title}</span>
+                        {m.text && <span className="jl-desc">{m.text}</span>}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
         </div>
-        <div ref={windowRef} className="jl-window">
-          <ol className="jl-list" style={{ "--jl-k": k } as React.CSSProperties}>
-            {items.map((m, i) => {
-              const d = Math.min(Math.abs(i - k), 3);
-              const inactive = d >= 2;
-              return (
-                <li
-                  key={`${m.year}-${i}`}
-                  className="jl-rise"
-                  {...revealProps({ revealed: arrived, delay: Math.max(0, i - k + 2) * ARRIVE_STEP_MS })}
-                >
-                  <button
-                    type="button"
-                    data-jl-line={i}
-                    data-d={d}
-                    className="jl-line"
-                    aria-current={i === k ? "true" : undefined}
-                    aria-disabled={inactive ? "true" : undefined}
-                    tabIndex={i === k ? 0 : -1}
-                    onClick={() => {
-                      if (!inactive) turnTo(i);
-                    }}
-                  >
-                    <span className="jl-year">{m.year}</span>
-                    <span className="jl-body">
-                      <span className="jl-title hairline">{m.title}</span>
-                      {m.text && <span className="jl-desc">{m.text}</span>}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
+
+        <div className="jl-side">
+          <div className="jl-plate">
+            {items.map((m, i) =>
+              i === k || i === prev ? (
+                <div key={i} className="jl-photo" data-on={i === k ? "" : undefined} data-out={i === prev && i !== k ? "" : undefined}>
+                  <SanityImage
+                    image={m.image}
+                    context="body"
+                    fill
+                    sizes="(min-width: 1280px) 380px, 300px"
+                    objectPosition={hotspotPosition(m.image as SanityImageAsset | null)}
+                    className="object-cover"
+                  />
+                </div>
+              ) : null,
+            )}
+          </div>
+          <Turns k={k} last={last} go={go} className="jl-turns" />
         </div>
       </div>
 
-      <div className="jl-side">
-        <div className="jl-plate">
-          {items.map((m, i) =>
-            i === k || i === prev ? (
-              <div key={i} className="jl-photo" data-on={i === k ? "" : undefined} data-out={i === prev && i !== k ? "" : undefined}>
-                <SanityImage
-                  image={m.image}
-                  context="body"
-                  fill
-                  sizes="(min-width: 1280px) 380px, (min-width: 1024px) 300px, min(480px, 92vw)"
-                  objectPosition={hotspotPosition(m.image as SanityImageAsset | null)}
-                  className="object-cover"
-                />
-              </div>
-            ) : null,
-          )}
-        </div>
-        <div className="jl-turns">
-          <button
-            type="button"
-            className="jl-turn"
-            aria-label="Newer milestone"
-            aria-disabled={k === 0 ? "true" : undefined}
-            onClick={() => k > 0 && turnTo(k - 1)}
-          >
-            <Arrow dir="left" />
-          </button>
-          <button
-            type="button"
-            className="jl-turn"
-            aria-label="Older milestone"
-            aria-disabled={k === last ? "true" : undefined}
-            onClick={() => k < last && turnTo(k + 1)}
-          >
-            <Arrow dir="right" />
-          </button>
-        </div>
-      </div>
+      {/* ——— Touch: the sideways swipe ——— */}
+      <Swipe items={items} k={k} go={go} label={label} onKeyDown={onKeyDown} />
 
       <p className="sr-only" aria-live="polite">
         {current ? `${current.year}, ${current.title}` : ""}
@@ -313,9 +211,170 @@ export default function JourneyLedger({
   );
 }
 
-/** The height of one line, from the CSS (--jl-row). */
-function rowHeight(win: HTMLElement): number {
-  return parseFloat(getComputedStyle(win).getPropertyValue("--jl-row")) || 104;
+/** The two round buttons: newer on the left, older on the right; dimmed at either end. */
+function Turns({ k, last, go, className }: { k: number; last: number; go: (n: number) => void; className: string }) {
+  return (
+    <div className={className}>
+      <button type="button" className="jl-turn" aria-label="Newer milestone" aria-disabled={k === 0 ? "true" : undefined} onClick={() => k > 0 && go(k - 1)}>
+        <Arrow dir="left" />
+      </button>
+      <button type="button" className="jl-turn" aria-label="Older milestone" aria-disabled={k === last ? "true" : undefined} onClick={() => k < last && go(k + 1)}>
+        <Arrow dir="right" />
+      </button>
+    </div>
+  );
+}
+
+/**
+ * Touch: the photograph as a sideways carousel, the strip of years moving
+ * with it, the title and description beneath. The finger moves it while
+ * dragging (--jl-drag); on release it settles (650ms, --ease-slow) one
+ * milestone on if the swipe went far enough or was a flick. Upright
+ * movement is the page's: the browser scrolls it (touch-action: pan-y)
+ * and the swipe lets go.
+ */
+function Swipe({
+  items,
+  k,
+  go,
+  label,
+  onKeyDown,
+}: {
+  items: AboutMilestone[];
+  k: number;
+  go: (n: number) => void;
+  label: string;
+  onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => void;
+}) {
+  const frameRef = useRef<HTMLDivElement>(null);
+  // The finger's recent speed (vx, px per ms) decides a flick, not the whole touch's average.
+  const drag = useRef<{ id: number; x: number; y: number; dx: number; lx: number; lt: number; vx: number; sideways: boolean | null } | null>(null);
+  const moved = useRef(false);
+  const last = items.length - 1;
+  const current = items[k];
+
+  const setDrag = (px: number | null) => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    if (px === null) {
+      frame.removeAttribute("data-dragging");
+      frame.style.removeProperty("--jl-drag");
+    } else {
+      frame.setAttribute("data-dragging", "");
+      frame.style.setProperty("--jl-drag", `${px}px`);
+    }
+  };
+
+  const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    drag.current = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, lx: e.clientX, lt: performance.now(), vx: 0, sideways: null };
+    moved.current = false;
+  };
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d || d.id !== e.pointerId) return;
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    if (d.sideways === null) {
+      if (Math.abs(dx) < DECIDE_PX && Math.abs(dy) < DECIDE_PX) return;
+      d.sideways = Math.abs(dx) > Math.abs(dy);
+      if (!d.sideways) {
+        drag.current = null; // upright: the page scrolls
+        return;
+      }
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+    moved.current = true;
+    const now = performance.now();
+    const inst = (e.clientX - d.lx) / Math.max(1, now - d.lt);
+    d.vx = d.vx * 0.3 + inst * 0.7;
+    d.lx = e.clientX;
+    d.lt = now;
+    // A little resistance past either end.
+    const atEnd = (dx > 0 && k === 0) || (dx < 0 && k === last);
+    d.dx = atEnd ? dx * 0.3 : dx;
+    setDrag(d.dx);
+  };
+  const end = (e: PointerEvent<HTMLDivElement>, cancelled: boolean) => {
+    const d = drag.current;
+    drag.current = null;
+    setDrag(null);
+    if (!d || !d.sideways || cancelled) return;
+    const width = frameRef.current?.clientWidth || 1;
+    // A pause before lifting the finger is not a flick.
+    const flick = performance.now() - d.lt < 120 && Math.abs(d.vx) > FLICK_PX_PER_MS && Math.sign(d.vx) === Math.sign(d.dx);
+    if (Math.abs(d.dx) > width * SWIPE_SHARE || flick) go(k + (d.dx < 0 ? 1 : -1));
+  };
+
+  return (
+    <div role="region" aria-label={label} className="jl-touch" onKeyDown={onKeyDown}>
+      <div
+        ref={frameRef}
+        className="jl-frame"
+        style={{ "--jl-k": k } as CSSProperties}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={(e) => end(e, false)}
+        onPointerCancel={(e) => end(e, true)}
+        onClickCapture={(e) => {
+          if (moved.current) e.preventDefault();
+        }}
+      >
+        <div className="jl-track">
+          {items.map((m, i) => (
+            <div key={`${m.year}-${i}`} className="jl-slide" aria-hidden={i !== k ? "true" : undefined}>
+              <SanityImage
+                image={m.image}
+                context="body"
+                fill
+                sizes="(min-width: 768px) 90vw, 100vw"
+                objectPosition={hotspotPosition(m.image as SanityImageAsset | null)}
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="jl-years" style={{ "--jl-k": k } as CSSProperties}>
+        <div className="jl-years-track">
+          {items.map((m, i) => {
+            const d = dist(i, k);
+            const inactive = d >= 2;
+            return (
+              <button
+                key={`${m.year}-${i}`}
+                type="button"
+                data-jl-year={i}
+                data-d={d}
+                className="jl-year-tab"
+                aria-label={`${m.year}, ${m.title}`}
+                aria-current={i === k ? "true" : undefined}
+                aria-disabled={inactive ? "true" : undefined}
+                tabIndex={i === k ? 0 : -1}
+                onClick={() => {
+                  if (!inactive) go(i);
+                }}
+              >
+                <span className="jl-year-text">{m.year}</span>
+              </button>
+            );
+          })}
+        </div>
+        <span aria-hidden="true" className="jl-years-rule" />
+      </div>
+
+      {current && (
+        <div key={k} className="jl-caption">
+          <p className="jl-caption-title">{current.title}</p>
+          {current.text && <p className="jl-caption-desc">{linkStudio(current.text)}</p>}
+        </div>
+      )}
+
+      {/* Previous and next for keyboards and assistive technology; seen only when focused. */}
+      <Turns k={k} last={last} go={go} className="jl-touch-turns" />
+    </div>
+  );
 }
 
 function Arrow({ dir }: { dir: "left" | "right" }) {

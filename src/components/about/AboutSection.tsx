@@ -11,6 +11,7 @@ import JourneyLedger from "./JourneyLedger";
 import PracticeReveal from "./PracticeReveal";
 import PressCuttings from "./PressCuttings";
 import { keepLastWords } from "@/lib/keepLastWords";
+import { linkStudio } from "@/components/StudioLink";
 
 /*
  * The About page in six chapters:
@@ -103,11 +104,11 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
                   </div>
                 ) : item.kind === "quote" ? (
                   <p key={i} className="about-pull">
-                    {keepLastWords(item.text)}
+                    {linkStudio(keepLastWords(item.text))}
                   </p>
                 ) : (
                   <p key={i} className="about-story-p">
-                    {item.text}
+                    {linkStudio(item.text)}
                   </p>
                 ),
               )
@@ -159,7 +160,7 @@ export default function AboutSection({ data }: { data: AboutPageData }) {
               {copy.aboutJourneyHeading}
             </h2>
           </ChapterMark>
-          <JourneyLedger milestones={milestones} hint={copy.aboutJourneyHint} label={`${copy.aboutJourneyHeading}: milestones, newest first`} />
+          <JourneyLedger milestones={milestones} label={`${copy.aboutJourneyHeading}: milestones, newest first`} />
         </section>
       )}
 
