@@ -89,7 +89,7 @@ export function addressLines(a: StripeAddress | null | undefined, name?: string 
   return [name, a.line1, a.line2, city, a.country].filter(Boolean).join("\n") || undefined;
 }
 
-export type ProcessResult = { status: "recorded" | "duplicate" | "ignored"; reason?: string; order?: OrderRecord };
+export type ProcessResult = { status: "recorded" | "duplicate" | "ignored"; reason?: string; order?: OrderRecord; editionOf?: number | null };
 
 export async function processPaidSession(session: CheckoutSession, store: OrderStore, now = new Date()): Promise<ProcessResult> {
   if (session.payment_status !== "paid") return { status: "ignored", reason: "not paid" };
@@ -142,7 +142,7 @@ export async function processPaidSession(session: CheckoutSession, store: OrderS
     await store.setOrderFields(id, { editionNumber });
     order.editionNumber = editionNumber;
   }
-  return { status: "recorded", order };
+  return { status: "recorded", order, editionOf: piece.editionType === "numbered" ? piece.quantity : null };
 }
 
 /** A charge, as Stripe's charge.refunded event carries it. */

@@ -157,6 +157,11 @@ html:not(.js) .footer-time {
   position: relative;
   min-height: 104px;
 }
+/* With the consent note beneath the field, the note sits close to the
+   line; the postmark's room returns once it appears (and the note goes). */
+.footer-newsletter:has(> .footer-nl-note) .footer-nl-stage {
+  min-height: 0;
+}
 
 .footer-nl-form {
   position: relative;

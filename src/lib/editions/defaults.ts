@@ -33,7 +33,6 @@ export const EDITIONS_DEFAULTS = {
     { title: "Made together", text: "Small numbers, both names, a fair shared return." },
     { title: "Released", text: "In the next Collection, with your own page." },
   ],
-  notifyNote: "Only for releases and early access. Unsubscribe anytime.",
 } as const;
 
 /**

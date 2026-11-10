@@ -12,11 +12,6 @@ import type { freeUnits } from "./holds";
  */
 export const privateId = (kind: string) => `private.editions-${kind}-${randomUUID()}`;
 
-export async function saveNotify(email: string, collection: string): Promise<void> {
-  if (!writeClient) throw new Error("SANITY_API_TOKEN is not set");
-  await writeClient.create({ _id: privateId("notify"), _type: "editionsNotify", email, collection, consent: true, submittedAt: new Date().toISOString() });
-}
-
 export async function saveProposal(p: { name: string; email: string; practice: string; link: string; idea: string }): Promise<void> {
   if (!writeClient) throw new Error("SANITY_API_TOKEN is not set");
   await writeClient.create({ _id: privateId("proposal"), _type: "editionsProposal", ...p, submittedAt: new Date().toISOString() });

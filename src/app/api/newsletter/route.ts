@@ -1,6 +1,13 @@
-import { randomUUID } from "node:crypto";
+/**
+ * The footer newsletter: the email goes to Kit with the tag "Letters" and
+ * the consent given; the welcome email follows at once through Resend
+ * (docs/email.md).
+ */
 import { NextResponse } from "next/server";
-import { writeClient } from "@/sanity/writeClient";
+import { signUp, sanityPending } from "@/lib/email/signups";
+import { consentRecord } from "@/lib/email/consent";
+import { sendEmail } from "@/lib/email/outbox";
+import { welcomeEmail } from "@/lib/email/templates";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { isHoneypotFilled } from "@/lib/spam-protection";
 import { readJsonBody } from "@/lib/read-json-body";
@@ -25,7 +32,7 @@ export async function POST(request: Request) {
     const body = parsed.body;
 
     // Honeypot: a filled hidden field means a bot. Silently accept (200) so
-    // the bot can't tell it was rejected, and write nothing to Sanity.
+    // the bot can't tell it was rejected, and keep nothing.
     if (isHoneypotFilled(body)) {
       return NextResponse.json({ success: true });
     }
@@ -40,21 +47,23 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!writeClient) {
-      console.error("SANITY_API_TOKEN is not configured. Newsletter subscription was not saved.");
+    // To Kit, tagged "Letters", with the consent as shown beneath the
+    // field. If Kit cannot be reached, kept privately to retry (no one is
+    // lost); once Kit has it, the website keeps no copy of the email.
+    try {
+      await signUp(
+        { email, tag: "Letters", kind: "letters", consent: consentRecord("letters", "the newsletter form, houseofsingh.com") },
+        sanityPending(),
+      );
+    } catch (error) {
+      console.error("Newsletter sign up was not saved:", error instanceof Error ? error.message : error);
       return NextResponse.json(
         { error: "Unable to subscribe at this time. Please try again later." },
         { status: 500 },
       );
     }
-
-    // A private id (a dot in it): never readable from the public dataset.
-    await writeClient.create({
-      _id: `private.newsletter-${randomUUID()}`,
-      _type: "newsletterSubscriber",
-      email,
-      subscribedAt: new Date().toISOString(),
-    });
+    // The welcome, at once (Resend, within the daily limit).
+    await sendEmail(welcomeEmail(email));
 
     return NextResponse.json({ success: true });
   } catch {

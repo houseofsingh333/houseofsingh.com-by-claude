@@ -5,6 +5,7 @@ import TorontoTime from "@/components/TorontoTime";
 import type { SiteCopy } from "@/lib/siteCopy";
 import FooterNewsletter from "./FooterNewsletter";
 import { editionsLinked } from "@/lib/editions/enabled";
+import { CONSENT } from "@/lib/email/consent";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -86,6 +87,7 @@ export default function Footer({ copy, bookUrl }: { copy: FooterCopy; bookUrl: s
             label={copy.codaNewsletterLabel}
             placeholder={copy.codaNewsletterPlaceholder}
             thanks={copy.codaNewsletterThanks}
+            note={CONSENT.letters}
           />
         </div>
       </div>

@@ -3,14 +3,15 @@ import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { isHoneypotFilled } from "@/lib/spam-protection";
 import { readJsonBody } from "@/lib/read-json-body";
 import { saveProposal } from "@/lib/editions/records";
-import { notifyManinder } from "@/lib/editions/notify-email";
+import { sendEmail } from "@/lib/email/outbox";
+import { proposalCopyEmail, proposalReceivedEmail } from "@/lib/email/templates";
 import { editionsAllowed, editionsOff } from "@/lib/editions/enabled";
 
 const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
 /**
- * A collaboration proposal (For artists): saved privately, and an email to
- * Maninder when email is set up (lib/editions/notify-email.ts).
+ * A collaboration proposal (For artists): saved privately; the artist gets
+ * an email that it arrived, and Maninder a copy (lib/email).
  */
 export async function POST(request: Request) {
   if (!(await editionsAllowed("any"))) return editionsOff();
@@ -47,9 +48,9 @@ export async function POST(request: Request) {
     console.error("Editions proposal was not saved:", error instanceof Error ? error.message : error);
     return NextResponse.json({ error: "Unable to send that right now. Please try again later." }, { status: 500 });
   }
-  await notifyManinder(
-    `A collaboration proposal from ${p.name}`,
-    `${p.name} (${p.email})\nWhat they make: ${p.practice}\nTheir work: ${p.link || "no link"}\n\n${p.idea}\n\nIn the Studio: House of Singh Editions, Collaboration proposals.`,
-  );
+  // The artist hears at once; Maninder gets a copy (EMAIL_REPLY_TO).
+  await sendEmail(proposalReceivedEmail(p.email, p.name));
+  const copyTo = process.env.EMAIL_REPLY_TO?.trim() || process.env.EDITIONS_NOTIFY_TO?.trim();
+  if (copyTo) await sendEmail(proposalCopyEmail(copyTo, p));
   return NextResponse.json({ success: true });
 }

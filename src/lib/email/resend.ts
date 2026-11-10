@@ -1,0 +1,45 @@
+import { emailConfig } from "./config";
+
+/** One email, ready to send. */
+export type Email = {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+  /** For the daily count and the queue: order and shipping before sign ups. */
+  priority: "order" | "signup";
+  /** What it is, for the logs and the queue (never the address). */
+  kind: string;
+};
+
+export class ResendError extends Error {
+  constructor(message: string, public status: number) {
+    super(message);
+  }
+}
+
+/** Sends one email through Resend's API (plain fetch). */
+export async function resendSend(email: Email): Promise<string> {
+  const { resendKey, resendBase, from, replyTo } = emailConfig();
+  if (!resendKey) throw new ResendError("RESEND_API_KEY is not set", 0);
+  const res = await fetch(`${resendBase}/emails`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from,
+      to: [email.to],
+      subject: email.subject,
+      html: email.html,
+      text: email.text,
+      ...(replyTo ? { reply_to: replyTo } : {}),
+      tags: [{ name: "kind", value: email.kind.replace(/[^a-zA-Z0-9_-]/g, "_") }],
+    }),
+    cache: "no-store",
+    signal: AbortSignal.timeout(10000),
+  });
+  const data = (await res.json().catch(() => ({}))) as { id?: string; message?: string };
+  if (!res.ok || !data.id) throw new ResendError(data.message ?? `Resend answered ${res.status}`, res.status);
+  return data.id;
+}
+
+export const resendConfigured = () => Boolean(emailConfig().resendKey);

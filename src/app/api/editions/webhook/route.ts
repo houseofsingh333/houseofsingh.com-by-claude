@@ -3,6 +3,7 @@ import { verifyStripeSignature, type CheckoutSession } from "@/lib/editions/stri
 import { processPaidSession, processRefund, type RefundedCharge } from "@/lib/editions/orders";
 import { sanityHoldStore, sanityOrderStore } from "@/lib/editions/records";
 import { releaseHold } from "@/lib/editions/holds";
+import { sendOrderEmails } from "@/lib/email/orders";
 import { editionsAllowed, editionsOff } from "@/lib/editions/enabled";
 
 /**
@@ -51,6 +52,7 @@ export async function POST(request: Request) {
   if (!session?.id) return NextResponse.json({ error: "No session" }, { status: 400 });
   try {
     const result = await processPaidSession(session, sanityOrderStore());
+    if (result.status === "recorded" && result.order) await sendOrderEmails(result.order, result.editionOf ?? null);
     return NextResponse.json({ received: true, result: result.status });
   } catch (error) {
     // A 500 makes Stripe send the event again later.
