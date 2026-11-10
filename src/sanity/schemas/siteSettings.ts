@@ -25,6 +25,15 @@ const textFields = SITE_COPY_FIELDS.map((f) =>
   }),
 );
 
+/** The menu photographs: field, title, and the default used when empty. */
+const MENU_PHOTOS: [string, string, string][] = [
+  ["menuPhotoHome", "Menu photograph: Home", "the first homepage hero photograph"],
+  ["menuPhotoAbout", "Menu photograph: About", "the About portrait"],
+  ["menuPhotoProjects", "Menu photograph: Projects", "the first project in homepage order"],
+  ["menuPhotoJournal", "Menu photograph: Journal", "the latest journal entry's photograph, automatically"],
+  ["menuPhotoContact", "Menu photograph: Contact", "the Contact portrait"],
+];
+
 export const siteSettings = defineType({
   name: "siteSettings",
   title: "Site Settings",
@@ -161,6 +170,27 @@ export const siteSettings = defineType({
         "Optional. The photograph on the page not found (404) page. When empty, the cover of the Range day journal entry is used.",
       fields: imageAltFields,
     }),
+
+    /* ——— Menu: one photograph per page (approved 10 Nov) ——— */
+    ...MENU_PHOTOS.map(([name, title, fallback]) =>
+      defineField({
+        name,
+        title,
+        type: "image",
+        group: "menu",
+        options: { hotspot: true },
+        description: `Optional. Shown on the right half of the menu while this page is pointed at, and when the menu opens on this page. Set the hotspot on the subject. When empty, ${fallback} is used.`,
+        fields: [
+          defineField({
+            name: "alt",
+            title: "Alt Text",
+            type: "string",
+            description: "Describe the photograph for screen readers, SEO, and AI engines.",
+            validation: (rule) => rule.required().error("Alt text is required for a menu photograph."),
+          }),
+        ],
+      }),
+    ),
 
     /* ——— Every text: generated from lib/siteCopy.ts ——— */
     ...textFields,

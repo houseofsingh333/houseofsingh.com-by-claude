@@ -18,40 +18,39 @@ import type { MenuPhoto, NavItem, SanityImage, SiteSettings } from "@/lib/types"
 import { hasImageAsset } from "@/lib/sanityImage";
 import { siteCopy } from "@/lib/siteCopy";
 
-type MenuPhotoDefaults = {
-  home?: { image?: SanityImage | null; alt?: string | null; caption?: string | null } | null;
-  about?: { image?: SanityImage | null } | null;
-  projects?: { image?: SanityImage | null; title?: string | null } | null;
-  journal?: { image?: SanityImage | null; title?: string | null } | null;
-  contact?: { image?: SanityImage | null } | null;
+type Photo = { image?: SanityImage | null; alt?: string | null } | null;
+type MenuPhotoSources = {
+  /** Site Settings, Menu: each page's own photograph. */
+  set?: { home?: Photo; about?: Photo; projects?: Photo; journal?: Photo; contact?: Photo } | null;
+  home?: Photo;
+  about?: Photo;
+  projects?: Photo;
+  journal?: Photo;
+  contact?: Photo;
 };
 
 /**
- * The menu photograph for each page, by its link: the item's own Menu
- * photograph when set, else a sensible default from the page itself.
+ * The menu photograph for each page, by its link: the page's own Menu
+ * photograph in Site Settings when set, else a default from the site (the
+ * first hero, the About portrait, the first project in homepage order, the
+ * latest journal entry, the Contact portrait or else the About portrait).
  */
-function buildMenuPhotos(
-  items: NavItem[],
-  d: MenuPhotoDefaults | null,
-  aboutCaption: string,
-): Record<string, MenuPhoto> {
-  const defaults: Record<string, MenuPhoto | null> = {
-    "/": d?.home?.image ? { image: d.home.image, alt: d.home.alt, caption: d.home.caption } : null,
-    "/about": d?.about?.image ? { image: d.about.image, caption: aboutCaption } : null,
-    "/projects": d?.projects?.image ? { image: d.projects.image, caption: d.projects.title } : null,
-    "/journal": d?.journal?.image ? { image: d.journal.image, caption: d.journal.title } : null,
-    "/contact": d?.contact?.image
-      ? { image: d.contact.image, caption: "Say hello" }
-      : d?.about?.image
-        ? { image: d.about.image }
-        : null,
+function buildMenuPhotos(items: NavItem[], d: MenuPhotoSources | null): Record<string, MenuPhoto> {
+  const pick = (...options: (Photo | undefined)[]): MenuPhoto | null => {
+    for (const o of options) if (o?.image && hasImageAsset(o.image)) return { image: o.image, alt: o.alt };
+    return null;
+  };
+  const byHref: Record<string, MenuPhoto | null> = {
+    "/": pick(d?.set?.home, d?.home),
+    "/about": pick(d?.set?.about, d?.about),
+    "/projects": pick(d?.set?.projects, d?.projects),
+    "/journal": pick(d?.set?.journal, d?.journal),
+    "/contact": pick(d?.set?.contact, d?.contact, d?.about),
   };
   const photos: Record<string, MenuPhoto> = {};
   for (const item of items) {
-    if (item.external) continue;
-    const own = item.image && hasImageAsset(item.image) ? { image: item.image, caption: item.image.caption } : null;
-    const photo = own ?? defaults[item.href];
-    if (photo && hasImageAsset(photo.image)) photos[item.href] = photo;
+    const photo = item.external ? null : byHref[item.href];
+    if (photo) photos[item.href] = photo;
   }
   return photos;
 }
@@ -76,7 +75,7 @@ export default async function SiteLayout({
   const [navData, settings, menuDefaults] = await Promise.all([
     sanityFetch<{ items: NavItem[] } | null>({ query: navigationQuery }),
     sanityFetch<SiteSettings | null>({ query: siteSettingsQuery }),
-    sanityFetch<MenuPhotoDefaults | null>({ query: menuPhotosQuery }),
+    sanityFetch<MenuPhotoSources | null>({ query: menuPhotosQuery }),
   ]);
 
   const jsonLd = buildSiteJsonLd(settings);
@@ -88,7 +87,7 @@ export default async function SiteLayout({
   // The fallback nav lists the site's real routes, so it stays as a default.
   // Every editable text from Site Settings, or today's text when empty.
   const copy = siteCopy(settings);
-  const menuPhotos = buildMenuPhotos(navItems, menuDefaults, copy.artistCaption);
+  const menuPhotos = buildMenuPhotos(navItems, menuDefaults);
 
   // No preload hint for the intro video: browsers do not support
   // <link rel=preload as=video>, so it was ignored and only logged a console

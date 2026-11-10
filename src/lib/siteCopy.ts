@@ -138,7 +138,7 @@ export const SITE_COPY_FIELDS = [
   { name: "menuClose", title: "Close button", group: "menu", text: "Close" },
   { name: "menuInstagram", title: "Instagram link", group: "menu", text: "Instagram" },
   { name: "menuNewsletter", title: "Newsletter link", group: "menu", text: "Newsletter" },
-  { name: "menuTimeLabel", title: "Time label", group: "menu", text: "Toronto" },
+  { name: "menuTimeLabel", title: "Words after the time (10:42 pm in Toronto)", group: "menu", text: "in Toronto" },
 
   // ——— 404 page ———
   { name: "notFoundLabel", title: "Label", group: "notFound", text: "404" },
