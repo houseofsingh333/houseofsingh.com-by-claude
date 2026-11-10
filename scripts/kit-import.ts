@@ -91,7 +91,10 @@ async function main() {
   if (failed || imported !== confirmed) console.log("Anything not confirmed is still in Sanity; run the script again to retry it.");
 }
 
-main().catch((e) => {
-  console.error(e instanceof Error ? e.message : e);
-  process.exit(1);
-});
+main()
+  // Exit explicitly: open connections must not keep the script waiting.
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e instanceof Error ? e.message : e);
+    process.exit(1);
+  });

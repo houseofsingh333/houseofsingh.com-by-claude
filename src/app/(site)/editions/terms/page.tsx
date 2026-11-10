@@ -4,6 +4,8 @@ import { DEFAULT_TERMS } from "@/lib/editions/defaults";
 import { requireEditions } from "@/lib/editions/enabled";
 
 export const metadata: Metadata = { title: "Terms of sale" };
+// Rendered on each visit, so the Shop's mode (EDITIONS_MODE) always applies.
+export const dynamic = "force-dynamic";
 
 /** Fills {gst} and {returns}; without a GST_NUMBER the sentence naming it is left out. */
 function fill(text: string, gst: string | null, returns: string): string {

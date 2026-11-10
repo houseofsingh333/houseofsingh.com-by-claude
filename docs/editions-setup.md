@@ -15,7 +15,7 @@ How to switch the Shop on, test it, take it live, and run it from one Collection
 | Email | `KIT_API_KEY`, `RESEND_API_KEY`, `EMAIL_REPLY_TO`, `EMAIL_POSTAL_ADDRESS`, `CRON_SECRET` and the rest: see `docs/email.md`. | |
 | `EDITIONS_CLOCK` | Testing only. An ISO date (for example `2027-04-20T12:00:00Z`) that moves the Shop's clock, to see Open or Closed before the dates arrive. Ignored on the live site. | Set it on Preview only, then remove it |
 
-Never put any of these in the code or in a message. After changing a variable, redeploy the preview for it to take effect.
+Never put any of these in the code or in a message. After changing a variable (`EDITIONS_MODE` included), redeploy for it to take effect: pages built ahead of time, the footer among them, read it when they are built.
 
 ## 2. Test mode, first
 
