@@ -18,11 +18,33 @@ import { editionsEnabled, editionsOff } from "@/lib/editions/enabled";
  * and sends the visitor to it. A refusal returns to the piece with the
  * reason (?buy=…), which the page writes beside Buy.
  */
+/** Where Stripe's Checkout pages live (a local stand-in in testing). */
+const STRIPE_CHECKOUT_ORIGIN = process.env.STRIPE_API_BASE ? new URL(process.env.STRIPE_API_BASE).origin : "https://checkout.stripe.com";
+
+const escape = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+/**
+ * Without JavaScript: a page that moves on to Stripe by itself. The site's
+ * security policy lets a form post only to the site ("form-action 'self'"),
+ * and browsers apply that to a redirect after the post too, so a redirect
+ * to Stripe would be refused. A page that then moves on is not a form post.
+ */
+function toCheckout(url: string) {
+  const u = escape(url);
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=${u}"><title>Secure checkout</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;padding:48px 24px;background:#F9F7F5;color:#1A1A1A;font:16px/1.6 Arial,sans-serif"><p>Taking you to secure checkout by Stripe. <a href="${u}" style="color:#1A1A1A">Continue</a></p></body></html>`;
+  return new NextResponse(html, { status: 200, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+}
+
 export async function POST(request: Request) {
   if (!editionsEnabled()) return editionsOff();
   const origin = new URL(request.url).origin;
+  // The Buy form sends this from the page (fetch) and moves to Stripe
+  // itself; a plain form post (no JavaScript) gets redirects and pages.
+  const wantsJson = (request.headers.get("accept") ?? "").includes("application/json");
   const back = (slug: string, reason: string) =>
-    NextResponse.redirect(new URL(`/editions/${encodeURIComponent(slug)}?buy=${reason}#buy`, origin), 303);
+    wantsJson
+      ? NextResponse.json({ refusal: reason }, { status: 409 })
+      : NextResponse.redirect(new URL(`/editions/${encodeURIComponent(slug)}?buy=${reason}#buy`, origin), 303);
 
   const form = await request.formData().catch(() => null);
   const slug = String(form?.get("slug") ?? "").slice(0, 80);
@@ -57,8 +79,9 @@ export async function POST(request: Request) {
       gstNumber: process.env.GST_NUMBER || null,
     });
     const session = await stripePost<CheckoutSession>("/v1/checkout/sessions", params);
-    if (!session.url) return back(slug, "unavailable");
-    return NextResponse.redirect(session.url, 303);
+    if (!session.url || !session.url.startsWith(STRIPE_CHECKOUT_ORIGIN)) return back(slug, "unavailable");
+    if (wantsJson) return NextResponse.json({ url: session.url });
+    return toCheckout(session.url);
   } catch (error) {
     console.error("Editions checkout failed:", error instanceof Error ? error.message : error);
     return back(slug, "unavailable");

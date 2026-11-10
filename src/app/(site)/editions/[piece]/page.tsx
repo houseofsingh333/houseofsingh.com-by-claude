@@ -166,6 +166,7 @@ export default async function PiecePage({ params, searchParams }: { params: Prom
                 quiet={`${editionLine(piece)} · Secure checkout by Stripe`}
                 taxLine={EDITIONS_DEFAULTS.taxLine}
                 message={message}
+                words={BACK_WORDS}
               />
             ) : (
               <div className="ed-buy ed-buy-closed">

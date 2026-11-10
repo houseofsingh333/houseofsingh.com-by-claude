@@ -60,6 +60,20 @@
   line-height: 1.5;
   color: var(--foreground);
 }
+/* Phones: one row, sideways if it ever needs more room. */
+@media (max-width: 767px) {
+  .ed-head-nav {
+    flex-wrap: nowrap;
+    gap: 18px;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+  }
+  .ed-head-nav::-webkit-scrollbar {
+    display: none;
+  }
+}
 
 .ed-foot {
   display: flex;
@@ -258,6 +272,14 @@
 .ed-notify .footer-newsletter {
   padding-top: 0;
   border-top: 0;
+}
+/* The note sits under the line; the postmark's room is kept only once it
+   appears. */
+.ed-notify .footer-nl-stage {
+  min-height: 0;
+}
+.ed-notify .footer-nl-stage:has(.footer-nl-done) {
+  min-height: 104px;
 }
 .ed-notify .footer-nl-input::placeholder {
   color: var(--muted-foreground);

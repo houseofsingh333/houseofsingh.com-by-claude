@@ -14,26 +14,50 @@ type Props = {
   taxLine: string;
   /** Why the last try was refused (?buy=…), written beside Buy. */
   message?: string | null;
+  /** The words for each refusal, for one that comes back without a reload. */
+  words: Record<string, string>;
 };
 
 /**
  * Buy (canvas Y4b-PieceLuxe): the sizes as quiet outlined boxes (a sold
  * out size is struck through and cannot be chosen), where it ships with
  * the shipping price, then the outlined button across the panel: "Choose a
- * size" until a size is chosen, then "Buy, size M". A plain form post to
- * /api/editions/checkout, which checks stock again and sends the visitor
- * to Stripe.
+ * size" until a size is chosen, then "Buy, size M". It posts to
+ * /api/editions/checkout, which checks stock again and creates the Stripe
+ * Checkout; the page then moves to Stripe itself (the security policy does
+ * not let a form post be redirected to another site). Without JavaScript
+ * the form posts as usual and the answer moves on to Stripe.
  */
-export default function BuyForm({ slug, sizes, zones, quiet, taxLine, message }: Props) {
+export default function BuyForm({ slug, sizes, zones, quiet, taxLine, message: initialMessage, words }: Props) {
+  const [message, setMessage] = useState(initialMessage ?? null);
+  const [sending, setSending] = useState(false);
   const [size, setSize] = useState<string | null>(null);
   const firstZone = zones.find((z) => z.price !== null)?.value ?? null;
   const [zone, setZone] = useState<Zone | null>(firstZone);
   const chosen = sizes.find((s) => s.key === size);
   const needsSize = sizes.length > 0 && !chosen;
-  const label = sizes.length === 0 ? "Buy" : chosen ? `Buy, size ${chosen.label}` : "Choose a size";
+  const label = sending ? "Opening checkout" : sizes.length === 0 ? "Buy" : chosen ? `Buy, size ${chosen.label}` : "Choose a size";
+
+  async function buy(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSending(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/editions/checkout", { method: "POST", headers: { Accept: "application/json" }, body: new FormData(e.currentTarget) });
+      const data = (await res.json().catch(() => ({}))) as { url?: string; refusal?: string };
+      if (data.url) {
+        window.location.assign(data.url);
+        return;
+      }
+      setMessage(words[data.refusal ?? "unavailable"] ?? words.unavailable);
+    } catch {
+      setMessage(words.unavailable);
+    }
+    setSending(false);
+  }
 
   return (
-    <form method="post" action="/api/editions/checkout" className="ed-buy" aria-describedby={message ? "ed-buy-message" : undefined}>
+    <form method="post" action="/api/editions/checkout" onSubmit={buy} className="ed-buy" aria-describedby={message ? "ed-buy-message" : undefined}>
       <input type="hidden" name="slug" value={slug} />
       {sizes.length > 0 && (
         <fieldset className="ed-choice">
@@ -61,7 +85,7 @@ export default function BuyForm({ slug, sizes, zones, quiet, taxLine, message }:
           ))}
         </div>
       </fieldset>
-      <OutlineButton type="submit" disabled={needsSize || !zone} className="ed-buy-btn">
+      <OutlineButton type="submit" disabled={needsSize || !zone || sending} className="ed-buy-btn">
         {label}
       </OutlineButton>
       {message && (
