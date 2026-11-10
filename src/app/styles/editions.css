@@ -60,18 +60,13 @@
   line-height: 1.5;
   color: var(--foreground);
 }
-/* Phones: one row, sideways if it ever needs more room. */
+/* Phones: four names do not fit one row, so two even pairs. */
 @media (max-width: 767px) {
   .ed-head-nav {
-    flex-wrap: nowrap;
-    gap: 18px;
-    max-width: 100%;
-    overflow-x: auto;
-    scrollbar-width: none;
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 8px 32px;
     white-space: nowrap;
-  }
-  .ed-head-nav::-webkit-scrollbar {
-    display: none;
   }
 }
 
