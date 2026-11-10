@@ -60,6 +60,21 @@ The palette is deliberately tight. A warm neutral base, a soft charcoal for text
 - Do not use the brass as a large fill or a background for big areas. It is a touch, not a field.
 - Do not place charcoal text on the brass for long passages. Reserve that pairing for tiny labels only.
 
+#### The Shop palette (House of Singh Editions only)
+
+Each Collection of House of Singh Editions has its own colour, used only for its square (the opening view of the Shop) and its spine (the archive). These six colours are fixed and live in `src/lib/editions/palette.ts`; the Collection document chooses one. They are never used anywhere else on the site, never for text on the canvas, and never as a background behind a page. Each has its own ink for the words on the square, chosen so the smallest label reads at 4.5:1 or more.
+
+| Colour | Square | Ink | Quiet ink (labels) |
+|------|-----|-----|-----|
+| Saffron | `#E6CFA4` | `#3A2E1F` | `#5E4C34` |
+| Indigo | `#3E4A5C` | `#F3EFE9` | `#C9CED6` |
+| Olive | `#8A8B6A` | `#141410` | `#1F1E16` |
+| Sand | `#DCCFBA` | `#2E2820` | `#5E5446` |
+| Oxblood | `#5C2A2A` | `#F4ECE6` | `#D9C7BE` |
+| Slate | `#5A6068` | `#F3F1EE` | `#E4E5E7` |
+
+The seal on the square is brass (`--accent`) with charcoal words (5.0:1), the crest while a Collection is sealed, and an outline in the square's ink once it is sold out. The Shop's small labels are muted grey, never brass, because brass is text only at 28px or larger. The full Shop is described in `docs/shop-house-of-singh-editions.md`.
+
 ### 2.2 Typography
 
 Two typefaces, both from Google Fonts. One elegant serif for names and numbers, one quiet grotesque for everything else. The contrast between them is the brand's typographic signature.

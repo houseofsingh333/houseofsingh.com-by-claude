@@ -23,6 +23,18 @@ import {
   stickyChapter,
 } from "./sections";
 import { seo } from "./seo";
+import {
+  editionsCollection,
+  editionsCategory,
+  editionsPiece,
+  editionsCollaborator,
+  editionsShipping,
+  editionsSettings,
+  editionsNotify,
+  editionsProposal,
+  editionsOrder,
+  editionsCollector,
+} from "./editions";
 import { siteSettings } from "./siteSettings";
 import { spotlight } from "./spotlight";
 
@@ -40,6 +52,17 @@ export const schemaTypes = [
   projectInterest,
   siteSettings,
   spotlight,
+  // House of Singh Editions (the Shop): content, then private records
+  editionsCollection,
+  editionsCategory,
+  editionsPiece,
+  editionsCollaborator,
+  editionsShipping,
+  editionsSettings,
+  editionsNotify,
+  editionsProposal,
+  editionsOrder,
+  editionsCollector,
   // Section block types (used inside project.contentSections)
   textSection,
   fullWidthImage,
