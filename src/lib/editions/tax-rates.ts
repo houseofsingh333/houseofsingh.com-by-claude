@@ -39,3 +39,13 @@ export function taxForPostalCode(postal: string): { province: string; name: stri
   if (!rate) return null;
   return { province, name: province === "NT" ? "Northwest Territories or Nunavut" : rate.name, label: rate.type === "hst" ? "HST" : "GST", percentage: rate.percentage };
 }
+
+/**
+ * The tax on the piece and on shipping, each line rounded to the cent as
+ * Stripe rounds it, in dollars: the estimate before Buy is the amount the
+ * checkout charges.
+ */
+export function taxOnLines(price: number, shipping: number, percentage: number): number {
+  const line = (dollars: number) => Math.round((Math.round(dollars * 100) * percentage) / 100);
+  return (line(price) + line(shipping)) / 100;
+}

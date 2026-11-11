@@ -48,6 +48,11 @@ export type OrderRecord = {
   trackingNumber?: string;
   trackingUrl?: string;
   refundedAt?: string;
+  /** Canada: the province taxed (from the postal code) and the province shipped to. */
+  taxProvince?: string;
+  shipProvince?: string;
+  /** The two differ: the tax charged may be wrong, look at it (Studio: Orders, Check tax). */
+  checkTax?: boolean;
 };
 
 export interface OrderStore {
@@ -132,6 +137,7 @@ export async function processPaidSession(session: CheckoutSession, store: OrderS
     paidAt,
     status: "paid",
     sizeKey: sizeKey ?? undefined,
+    ...taxCheck(meta.taxProvince, shipTo?.address),
   };
 
   const { created, soldAfter } = await store.createOrderAndCount(order, piece._id, sizeKey, meta.holdKey || null);
@@ -162,4 +168,17 @@ export async function processRefund(charge: RefundedCharge, store: OrderStore, n
   if (order.status === "refunded") return { status: "ignored", reason: "already refunded" };
   const done = await store.refundAndRestock(order, now.toISOString());
   return done ? { status: "restocked" } : { status: "ignored", reason: "changed meanwhile" };
+}
+
+/**
+ * Canada: the tax was set from the postal code given before Buy. If the
+ * shipping address given at Stripe is in another province, the rate may be
+ * wrong, so the order is marked to check (never changed silently).
+ */
+export function taxCheck(taxProvince: string | undefined, address: StripeAddress | null | undefined): Pick<OrderRecord, "taxProvince" | "shipProvince" | "checkTax"> {
+  if (!taxProvince) return {};
+  const shipProvince = address?.country === "CA" ? (address.state ?? "").toUpperCase() : "";
+  // NT and NU share the X postal codes and the same 5% GST.
+  const same = shipProvince === taxProvince || (["NT", "NU"].includes(shipProvince) && ["NT", "NU"].includes(taxProvince));
+  return { taxProvince, shipProvince: shipProvince || undefined, checkTax: !same };
 }

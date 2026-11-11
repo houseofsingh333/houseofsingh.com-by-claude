@@ -1,7 +1,8 @@
 import type { OrderRecord } from "@/lib/editions/orders";
 import { ZONES } from "@/lib/editions/shipping";
 import { sendEmail } from "./outbox";
-import { certificateEmail, madeEmail, orderEmail, shippedEmail } from "./templates";
+import { certificateEmail, checkTaxEmail, madeEmail, orderEmail, shippedEmail } from "./templates";
+import { addressOf, emailConfig } from "./config";
 
 /** A short reference for an order, from its Stripe session (the last eight characters). */
 export const orderRef = (order: Pick<OrderRecord, "sessionId">) => order.sessionId.slice(-8).toUpperCase();
@@ -21,6 +22,9 @@ export async function sendOrderEmails(order: OrderRecord, editionOf: number | nu
       orderRef: orderRef(order),
     }),
   );
+  if (order.checkTax && order.taxProvince) {
+    await sendEmail(checkTaxEmail(addressOf(emailConfig().fromEditions), { pieceName: order.pieceName, orderRef: orderRef(order), taxProvince: order.taxProvince, shipProvince: order.shipProvince }));
+  }
   if (order.certificateCode) {
     await sendEmail(certificateEmail(order.email, { pieceName: order.pieceName, number: order.editionNumber ?? null, of: editionOf, code: order.certificateCode }));
   }

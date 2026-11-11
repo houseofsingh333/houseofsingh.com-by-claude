@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { OutlineButton } from "@/components/OutlineCta";
 import { cad } from "@/lib/editions/format";
-import { taxForPostalCode } from "@/lib/editions/tax-rates";
+import { taxForPostalCode, taxOnLines } from "@/lib/editions/tax-rates";
 import type { Zone } from "@/lib/editions/types";
 
 type Props = {
@@ -45,7 +45,10 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
   // from the address given at checkout.
   const shipping = zones.find((z) => z.value === zone)?.price ?? 0;
   const tax = zone === "canada" ? taxForPostalCode(postal) : null;
-  const taxAmount = tax ? Math.round((price + shipping) * tax.percentage) / 100 : 0;
+  // The same amount Stripe will charge: each line's tax rounded to the cent.
+  const taxAmount = tax ? taxOnLines(price, shipping, tax.percentage) : 0;
+  // Canada needs the postal code: it sets the province, and so the tax.
+  const needsPostal = zone === "canada" && !tax;
   const label = sending ? "Opening checkout" : sizes.length === 0 ? "Buy" : chosen ? `Buy, size ${chosen.label}` : "Choose a size";
 
   async function buy(e: React.FormEvent<HTMLFormElement>) {
@@ -98,10 +101,12 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
       {zone === "canada" && (
         <div className="ed-postal">
           <label htmlFor={`ed-postal-${slug}`} className="type-label text-muted-foreground">
-            Postal code, for the tax estimate
+            Postal code, for GST or HST
           </label>
           <input
             id={`ed-postal-${slug}`}
+            name="postal"
+            required
             value={postal}
             onChange={(e) => setPostal(e.target.value)}
             autoComplete="postal-code"
@@ -111,14 +116,14 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
           />
           <p id={`ed-tax-${slug}`} className="ed-buy-quiet" aria-live="polite">
             {tax
-              ? `Estimated ${tax.label} for ${tax.name}, ${tax.percentage}%: ${cad(taxAmount)}. Total about ${cad(price + shipping + taxAmount)}.`
+              ? `${tax.label} for ${tax.name}, ${tax.percentage}%: ${cad(taxAmount)}. Total ${cad(price + shipping + taxAmount)}.`
               : postal.trim().length >= 3
                 ? "That does not look like a Canadian postal code."
                 : ""}
           </p>
         </div>
       )}
-      <OutlineButton type="submit" disabled={needsSize || !zone || sending} className="ed-buy-btn">
+      <OutlineButton type="submit" disabled={needsSize || !zone || needsPostal || sending} className="ed-buy-btn">
         {label}
       </OutlineButton>
       {message && (

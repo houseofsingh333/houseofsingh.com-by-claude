@@ -268,3 +268,19 @@ export function shippedEmail(to: string, pieceName: string, orderRef: string, tr
     footer("editions", "You are receiving this because you bought from House of Singh Editions."),
   );
 }
+
+/** To the Shop's own address: an order taxed for one province and shipped to another. */
+export function checkTaxEmail(to: string, o: { pieceName: string; orderRef: string; taxProvince: string; shipProvince?: string }): Email {
+  return email(
+    to,
+    "check-tax",
+    "order",
+    `Check tax: ${o.pieceName}, order ${o.orderRef}`,
+    [
+      { big: "An order to check." },
+      { rows: [["Order", o.orderRef], ["Piece", o.pieceName], ["Taxed for", o.taxProvince], ["Ships to", o.shipProvince || "Unknown"]] },
+      { p: "The buyer's postal code before Buy was in one province and the shipping address at checkout is in another, so the GST or HST charged may be wrong. In the Studio: House of Singh Editions, Orders, Check tax." },
+    ],
+    footer("editions", "Sent to the Shop's own address by houseofsingh.com."),
+  );
+}

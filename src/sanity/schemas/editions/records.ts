@@ -76,13 +76,16 @@ export const editionsOrder = defineType({
     defineField({ name: "trackingNumber", title: "Tracking number", type: "string" }),
     defineField({ name: "trackingUrl", title: "Tracking address", type: "url" }),
     defineField({ name: "refundedAt", title: "Refunded", type: "datetime" }),
+    defineField({ name: "checkTax", title: "Check tax", type: "boolean", description: "The province taxed (from the postal code before Buy) differs from the province of the shipping address. Check the GST or HST charged, and refund the difference or ask for it." }),
+    defineField({ name: "taxProvince", title: "Taxed for", type: "string" }),
+    defineField({ name: "shipProvince", title: "Ships to (province)", type: "string" }),
     defineField({ name: "sizeKey", title: "Size key", type: "string", hidden: true }),
   ],
   orderings: [{ title: "Newest", name: "paid", by: [{ field: "paidAt", direction: "desc" }] }],
   preview: {
-    select: { title: "pieceName", email: "email", status: "status", test: "testMode" },
-    prepare: ({ title, email, status, test }) => ({
-      title: `${title ?? "Order"}${test ? " (test)" : ""}`,
+    select: { title: "pieceName", email: "email", status: "status", test: "testMode", checkTax: "checkTax" },
+    prepare: ({ title, email, status, test, checkTax }) => ({
+      title: `${checkTax ? "Check tax: " : ""}${title ?? "Order"}${test ? " (test)" : ""}`,
       subtitle: `${{ paid: "Paid", made: "Being made", shipped: "Shipped", refunded: "Refunded" }[status as string] ?? "Paid"} · ${email ?? ""}`,
     }),
   },

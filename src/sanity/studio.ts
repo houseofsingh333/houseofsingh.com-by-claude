@@ -67,6 +67,7 @@ const structure: StructureResolver = (S) =>
                     .title("Orders")
                     .items(
                       [
+                        ["Check tax", "checkTax == true"],
                         ["To make", 'status == "paid" || !defined(status)'],
                         ["Being made", 'status == "made"'],
                         ["Shipped", 'status == "shipped"'],

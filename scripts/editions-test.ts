@@ -13,8 +13,9 @@
 import { collectionState, available } from "../src/lib/editions/state";
 import { checkPurchase, checkoutParams } from "../src/lib/editions/checkout";
 import { shippingPrice } from "../src/lib/editions/shipping";
+import { taxForPostalCode, taxOnLines } from "../src/lib/editions/tax-rates";
 import { formEncode, signStripePayload, verifyStripeSignature, type CheckoutSession } from "../src/lib/editions/stripe";
-import { processPaidSession, processRefund, type OrderRecord, type OrderStore, type OrderPiece } from "../src/lib/editions/orders";
+import { processPaidSession, processRefund, taxCheck, type OrderRecord, type OrderStore, type OrderPiece } from "../src/lib/editions/orders";
 import { freeUnits, placeHold, releaseHold, type HoldStore } from "../src/lib/editions/holds";
 import type { EditionsHold } from "../src/lib/editions/types";
 import { gurmukhi, piecesInWords, cad } from "../src/lib/editions/format";
@@ -97,18 +98,30 @@ check(early.ok, "buying in early access with the code");
 const noShip = checkPurchase(withCol(print), null, "united-states", routes, false, now);
 check(!noShip.ok && noShip.refusal === "no-shipping", "a zone without a rate is refused, not guessed");
 
+// The province from the postal code, and the estimate to the cent
+check(taxForPostalCode("m5h 2n2")?.province === "ON" && taxForPostalCode("H2X 1Y4")?.province === "QC" && taxForPostalCode("V6B")?.province === "BC" && taxForPostalCode("B3H")?.percentage === 14, "the province from a postal code's first letter");
+check(taxForPostalCode("90210") === null && taxForPostalCode("D1A 1A1") === null && taxForPostalCode("") === null, "not a Canadian postal code: no province");
+check(taxOnLines(85, 30, 13) === 14.95 && taxOnLines(180, 18, 5) === 9.9 && taxOnLines(45.5, 18.25, 14) === 8.93, "the estimate rounds each line to the cent, as Stripe does", [taxOnLines(85, 30, 13), taxOnLines(45.5, 18.25, 14)]);
+
+// The province taxed against the province shipped to
+check(JSON.stringify(taxCheck("ON", { country: "CA", state: "ON" })) === '{"taxProvince":"ON","shipProvince":"ON","checkTax":false}', "same province: nothing to check");
+check(taxCheck("QC", { country: "CA", state: "ON" }).checkTax === true && taxCheck("NU", { country: "CA", state: "NT" }).checkTax === false, "another province: Check tax (NT and NU share a postal letter and a rate)");
+check(JSON.stringify(taxCheck("", { country: "US", state: "NY" })) === "{}", "outside Canada: no tax, nothing to check");
+
 // The Checkout Session
-const params = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "canada", shipping: 22, taxRateIds: ["txr_on", "txr_bc"], siteUrl: "https://example.test", gstNumber: "123456789RT0001", now });
+const params = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "canada", shipping: 22, taxRate: { id: "txr_on", province: "ON" }, siteUrl: "https://example.test", gstNumber: "123456789RT0001", now });
 check(params.currency === "cad" && params.line_items.length === 2 && params.line_items[0].quantity === 1, "one piece, in CAD, plus its shipping line");
 check(params.line_items[0].price_data.unit_amount === 18000 && params.line_items[1].price_data.unit_amount === 2200, "amounts in cents", [params.line_items[0].price_data.unit_amount, params.line_items[1].price_data.unit_amount]);
-check(JSON.stringify(params.line_items[0].dynamic_tax_rates) === '["txr_on","txr_bc"]' && JSON.stringify(params.line_items[1].dynamic_tax_rates) === '["txr_on","txr_bc"]', "GST/HST rates on the piece and on the shipping");
+check(JSON.stringify(params.line_items[0].tax_rates) === '["txr_on"]' && JSON.stringify(params.line_items[1].tax_rates) === '["txr_on"]' && params.metadata.taxProvince === "ON", "the province's fixed GST/HST rate on the piece and on the shipping");
+check(!JSON.stringify(params).includes("dynamic_tax_rates") && !JSON.stringify(params).includes("tax_behavior"), "no dynamic tax rates and no Stripe Tax settings are sent");
 check(params.shipping_address_collection.allowed_countries.join() === "CA", "a Canadian address only, for the Canada zone");
-const world = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "world", shipping: 48, taxRateIds: [], siteUrl: "https://example.test", now });
+const world = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "world", shipping: 48, taxRate: null, siteUrl: "https://example.test", now });
+check(world.line_items.every((l) => !("tax_rates" in l)) && world.metadata.taxProvince === "", "outside Canada: no tax");
 check(!world.shipping_address_collection.allowed_countries.includes("CA") && !world.shipping_address_collection.allowed_countries.includes("US") && world.shipping_address_collection.allowed_countries.includes("IN"), "the rest of the world excludes Canada and the United States");
 check(params.custom_text.submit.message.includes("House of Singh Studios Inc., operating House of Singh Editions") && params.custom_text.submit.message.includes("123456789RT0001"), "the seller and GST/HST number at checkout", params.custom_text.submit.message);
 check(params.success_url.endsWith("/editions/thank-you?session_id={CHECKOUT_SESSION_ID}") && params.cancel_url.endsWith("/editions/test-print"), "success to the thank you page, cancel back to the piece");
 const encoded = formEncode(params).join("&");
-check(encoded.includes("line_items%5B0%5D%5Bprice_data%5D%5Bcurrency%5D=cad") && encoded.includes("line_items%5B1%5D%5Bdynamic_tax_rates%5D%5B0%5D=txr_on"), "form encoding for Stripe");
+check(encoded.includes("line_items%5B0%5D%5Bprice_data%5D%5Bcurrency%5D=cad") && encoded.includes("line_items%5B1%5D%5Btax_rates%5D%5B0%5D=txr_on"), "form encoding for Stripe");
 
 // The webhook's signature
 const secret = "whsec_test_local";
