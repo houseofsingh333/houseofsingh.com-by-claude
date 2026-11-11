@@ -11,7 +11,8 @@
  * codes, and a repeated event changing nothing.
  */
 import { collectionState, available, releaseTimes } from "../src/lib/editions/state";
-import { gridFilters } from "../src/lib/editions/view";
+import { gridFilters, knownCollaborators, makingEntries } from "../src/lib/editions/view";
+import { editionsCollectionsQuery } from "../src/lib/editions/queries";
 import { cardDate, cityTimes, daysUntil, momentIn, releaseIcs, sealedEyebrow } from "../src/lib/editions/release";
 import { withDefaults } from "../src/lib/editions/load";
 import { CONSENT } from "../src/lib/email/consent";
@@ -261,6 +262,41 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
   const s2 = await placeHold(sizedStore, "p", "s");
   const m1 = await placeHold(sizedStore, "p", "m");
   check(s1.ok && !s2.ok && s2.reason === "held" && m1.ok, "holds are per size: the last S held, M still free", [s1.ok, s2.ok ? "ok" : s2.reason, m1.ok]);
+
+  // In the making with incomplete Journal entries (the preview crash of 11 Nov):
+  // the real query, run by Sanity's own GROQ engine, and the page's safe list.
+  {
+    const { parse, evaluate } = await import("groq-js");
+    const image = (id: string) => ({ _type: "image", asset: { _type: "reference", _ref: id }, alt: "A photograph" });
+    const dataset = [
+      { _id: "c1", _type: "editionsCollection", number: 1, season: "Vaisakhi 2027", opens: "2027-04-13T23:00:00Z", journalEntries: [
+        { _key: "a", _type: "reference", _ref: "gone" },
+        { _key: "b", _type: "reference", _ref: "j-no-slug" },
+        { _key: "c", _type: "reference", _ref: "j-no-cover" },
+        { _key: "d", _type: "reference", _ref: "j-full" },
+        { _key: "e", _type: "reference", _ref: "j-no-title" },
+        { _key: "f", _type: "reference", _ref: "j-third" },
+        { _key: "g", _type: "reference", _ref: "j-fourth" },
+      ] },
+      { _id: "j-no-slug", _type: "journalEntry", title: "No address" },
+      { _id: "j-no-cover", _type: "journalEntry", title: "No cover", slug: { current: "no-cover" } },
+      { _id: "j-full", _type: "journalEntry", title: "Full", slug: { current: "full" }, date: "2026-07-05", coverImage: image("image-abc-100x100-jpg") },
+      { _id: "j-no-title", _type: "journalEntry", slug: { current: "no-title" } },
+      { _id: "j-third", _type: "journalEntry", title: "Third", slug: { current: "third" } },
+      { _id: "j-fourth", _type: "journalEntry", title: "Fourth", slug: { current: "fourth" } },
+      { _id: "image-abc-100x100-jpg", _type: "sanity.imageAsset", url: "https://cdn.sanity.io/images/x/y/abc-100x100.jpg", metadata: { dimensions: { width: 100, height: 100, aspectRatio: 1 } } },
+      { _id: "p1", _type: "editionsPiece", name: "Piece", slug: { current: "piece" }, order: 1, collection: { _type: "reference", _ref: "c1" }, collaborators: [{ _key: "x", _type: "reference", _ref: "gone-artist" }] },
+    ];
+    const result = (await (await evaluate(parse(editionsCollectionsQuery), { dataset })).get()) as { journal: unknown[]; pieces: { collaborators: unknown[] }[] }[];
+    const journal = result[0].journal;
+    check(Array.isArray(journal) && journal.every((e) => e && typeof e === "object"), "In the making: the query returns no null entries", journal);
+    check((journal as { slug: string }[]).map((e) => e.slug).join() === "no-cover,full,third", "In the making: entries without an address or title, or that do not resolve, are skipped; at most three", journal);
+    check(result[0].pieces[0].collaborators.length === 0, "a collaborator reference that does not resolve is dropped by the query");
+    const safe = makingEntries([null, undefined, 7, { title: "No address" }, { slug: "no-title" }, { title: " ", slug: "blank" }, { _id: "a", title: "One", slug: "one", date: null, image: { url: null } }, { title: "Two", slug: "two" }, { title: "Three", slug: "three", image: { url: "https://cdn.sanity.io/x.jpg" } }, { title: "Four", slug: "four" }]);
+    check(safe.map((e) => e.slug).join() === "one,two,three" && safe[0].image === null && safe[1]._id === "two" && safe[2].image !== null, "In the making: the page keeps only whole entries, at most three, and drops a broken photograph", safe);
+    check(makingEntries(null).length === 0 && makingEntries({}).length === 0, "In the making: no list at all is an empty section, not an error");
+    check(knownCollaborators([null, { name: "A", slug: "a" }, { name: null, slug: "b" }] as never).length === 1, "a missing collaborator is skipped in the maker line");
+  }
 
   console.log(failures ? `\n${failures} failed` : "\nall passed");
   process.exit(failures ? 1 : 0);

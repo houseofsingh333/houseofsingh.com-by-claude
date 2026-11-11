@@ -10,7 +10,7 @@ const _piece = `{
   editionType, issueCertificate, quantity, price, sizes[]{ _key, label, stock, sold }, soldCount, holds[]{ _key, size, until },
   "photographs": photographs[]${_imageAsset},
   statement, story, maker,
-  "collaborators": collaborators[]->{ _id, name, "slug": slug.current },
+  "collaborators": (collaborators[]->{ _id, name, "slug": slug.current })[defined(slug) && defined(name)],
   details, sizeAndFit, care, packedWeight, shipsFrom,
   "journal": journalEntry->{ title, "slug": slug.current },
   isTestData
@@ -19,7 +19,9 @@ const _piece = `{
 const _collection = `{
   _id, number, season, colour, intro, closedLine, closedUnsoldLine, essay,
   earlyAccessOpens, opens, closes, earlyAccessCodeHash, releaseLine,
-  "journal": journalEntries[]->{ _id, title, "slug": slug.current, date, "image": coverImage${_imageAsset} }[defined(slug)][0...3],
+  // The brackets matter: without them the filter and slice apply to each
+  // entry rather than to the list, and every entry comes back null.
+  "journal": (journalEntries[]->{ _id, title, "slug": slug.current, date, "image": coverImage${_imageAsset} })[defined(slug) && defined(title)][0...3],
   "filters": filters[]{ _key, label, "category": category->${_category} },
   isTestData
 }`;

@@ -46,7 +46,9 @@ export function HowItWorks({ steps }: { steps: Step[] }) {
 }
 
 /** In the making: up to three Journal entries chosen on the Collection; nothing when none are. */
-export function InTheMaking({ entries }: { entries: NonNullable<EditionsCollection["journal"]> }) {
+export function InTheMaking({ entries: given }: { entries: NonNullable<EditionsCollection["journal"]> }) {
+  // Never let one entry break the page: anything without a title and an address is skipped.
+  const entries = (given ?? []).filter((e) => e && e.slug && e.title);
   if (!entries.length) return null;
   return (
     <section className="ed-section ed-making" aria-labelledby="ed-making-heading">
@@ -69,7 +71,7 @@ export function InTheMaking({ entries }: { entries: NonNullable<EditionsCollecti
           <li key={e._id} className="ed-making-card">
             <Link href={`/journal/${e.slug}`} className="ed-making-link">
               <span className="ed-making-photo">
-                {e.image && (
+                {e.image?.url && (
                   <SanityImage
                     image={e.image}
                     context="body"

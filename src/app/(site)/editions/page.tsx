@@ -12,7 +12,7 @@ import TextLink from "@/components/TextLink";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
 import { canBuy, shopNow, untilWords } from "@/lib/editions/state";
 import { collectionTitle, dayIn, gurmukhi } from "@/lib/editions/format";
-import { closedSentence, collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
+import { makingEntries, closedSentence, collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
 import { cardDate, cityTimes, daysUntilShort, earlyEyebrow, sealedEyebrow } from "@/lib/editions/release";
 import { keepLastWords } from "@/lib/keepLastWords";
 import { shopColour } from "@/lib/editions/palette";
@@ -154,7 +154,7 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
       )}
 
       {before && <HowItWorks steps={EDITIONS_DEFAULTS.howItWorks.map((s) => ({ ...s }))} />}
-      <InTheMaking entries={current.journal ?? []} />
+      <InTheMaking entries={makingEntries(current.journal)} />
       {below}
 
       {archived && (

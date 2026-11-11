@@ -17,7 +17,7 @@ import { available, canBuy, collectionState, shopNow, sizeAvailable } from "@/li
 import { shippingTable, ZONES } from "@/lib/editions/shipping";
 import { REFUSAL_WORDS, type BuyRefusal } from "@/lib/editions/checkout";
 import { cad, collectionTitle } from "@/lib/editions/format";
-import { editionLine } from "@/lib/editions/view";
+import { editionLine, knownCollaborators } from "@/lib/editions/view";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import type { EditionsCollection, EditionsPiece } from "@/lib/editions/types";
 import { requireEditions, viewerMode } from "@/lib/editions/enabled";
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 /** The maker line, with each collaborator's name a link to their page. */
 function makerLine(maker: string, collaborators: PieceView["collaborators"]): ReactNode {
-  const people = collaborators ?? [];
+  const people = knownCollaborators(collaborators);
   if (!people.length) return keepLastWords(maker);
   const parts: ReactNode[] = [];
   let rest = maker;
