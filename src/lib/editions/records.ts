@@ -25,7 +25,7 @@ export function sanityOrderStore(): OrderStore {
   if (!client) throw new Error("SANITY_API_TOKEN is not set");
   return {
     async getPiece(id) {
-      return client.fetch<OrderPiece | null>(`*[_id == $id][0]{ _id, name, editionType, quantity, soldCount, sizes[]{ _key, label, stock, sold } }`, { id });
+      return client.fetch<OrderPiece | null>(`*[_id == $id][0]{ _id, name, editionType, issueCertificate, quantity, soldCount, sizes[]{ _key, label, stock, sold } }`, { id });
     },
     async getOrder(id) {
       return client.getDocument<OrderRecord>(id) as Promise<OrderRecord | null>;

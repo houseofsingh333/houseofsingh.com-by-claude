@@ -108,8 +108,16 @@ export const editionsPiece = defineType({
       type: "string",
       group: "stock",
       options: { list: EDITION_TYPES, layout: "radio" },
-      description: "Numbered editions and one of one pieces carry a certificate.",
+      description: "Numbered editions and one of one pieces carry their number on each order.",
       validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "issueCertificate",
+      title: "Issue a certificate",
+      type: "boolean",
+      group: "stock",
+      initialValue: false,
+      description: "Off by default. On: each buyer gets a certificate code, the certificate email and a certificate link on the thank you page. Off: no certificate at all.",
     }),
     defineField({
       name: "quantity",

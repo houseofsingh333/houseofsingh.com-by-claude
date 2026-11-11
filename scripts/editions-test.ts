@@ -110,6 +110,7 @@ check(JSON.stringify(taxCheck("", { country: "US", state: "NY" })) === "{}", "ou
 
 // The Checkout Session
 const params = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "canada", shipping: 22, taxRate: { id: "txr_on", province: "ON" }, siteUrl: "https://example.test", gstNumber: "123456789RT0001", now });
+check(JSON.stringify(params.payment_method_types) === '["card","link"]', "cards (with Apple Pay and Google Pay) and Link only: no buy now pay later");
 check(params.currency === "cad" && params.line_items.length === 2 && params.line_items[0].quantity === 1, "one piece, in CAD, plus its shipping line");
 check(params.line_items[0].price_data.unit_amount === 18000 && params.line_items[1].price_data.unit_amount === 2200, "amounts in cents", [params.line_items[0].price_data.unit_amount, params.line_items[1].price_data.unit_amount]);
 check(JSON.stringify(params.line_items[0].tax_rates) === '["txr_on"]' && JSON.stringify(params.line_items[1].tax_rates) === '["txr_on"]' && params.metadata.taxProvince === "ON", "the province's fixed GST/HST rate on the piece and on the shipping");
@@ -161,7 +162,8 @@ function memoryStore(pieces: Record<string, OrderPiece>) {
   return { store, orders, collectors };
 }
 const pieces: Record<string, OrderPiece> = {
-  "p-print": { _id: "p-print", name: "Test print", editionType: "numbered", quantity: 25, soldCount: 7 },
+  "p-print": { _id: "p-print", name: "Test print", editionType: "numbered", issueCertificate: true, quantity: 25, soldCount: 7 },
+  "p-plain": { _id: "p-plain", name: "Test print, no certificate", editionType: "numbered", quantity: 10, soldCount: 2 },
   "p-tee": { _id: "p-tee", name: "Test tee", editionType: "limited", quantity: 40, soldCount: 3, sizes: [{ _key: "m", label: "M", stock: 3, sold: 1 }] },
 };
 const mem = memoryStore(pieces);
@@ -184,6 +186,8 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
   check(!b.order?.certificateCode && !b.order?.editionNumber, "a limited run has no certificate");
   const c = await processPaidSession(session("cs_test_c", "FIRST@example.com ", { pieceId: "p-print", price: "180", shipping: "22", zone: "canada" }), mem.store, now);
   check(c.order?.collectorNumber === 1 && c.order?.editionNumber === 9, "a returning buyer keeps collector No. 1", [c.order?.collectorNumber, c.order?.editionNumber]);
+  const plain = await processPaidSession(session("cs_test_p", "plain@example.com", { pieceId: "p-plain", price: "90", shipping: "22", zone: "world" }), mem.store, now);
+  check(plain.status === "recorded" && !plain.order?.certificateCode && plain.order?.editionNumber === 3, "Issue a certificate off: no certificate code, the edition number still given", [plain.order?.certificateCode ?? null, plain.order?.editionNumber]);
   const unpaid = await processPaidSession({ ...session("cs_test_d", "x@example.com", { pieceId: "p-print" }), payment_status: "unpaid" }, mem.store, now);
   check(unpaid.status === "ignored", "an unpaid session is not recorded");
 

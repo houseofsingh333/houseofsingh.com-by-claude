@@ -14,6 +14,7 @@ export type OrderPiece = {
   _id: string;
   name: string;
   editionType: "numbered" | "limited" | "one-of-one";
+  issueCertificate?: boolean | null;
   quantity: number;
   soldCount?: number | null;
   sizes?: { _key: string; label: string; stock: number; sold?: number | null }[] | null;
@@ -112,7 +113,11 @@ export async function processPaidSession(session: CheckoutSession, store: OrderS
   const paidAt = now.toISOString();
   const collector = await store.collectorNumber(collectorId(email), email, paidAt);
   const shipTo = session.collected_information?.shipping_details ?? session.shipping_details ?? null;
-  const certified = piece.editionType === "numbered" || piece.editionType === "one-of-one";
+  // A certificate only when the piece is set to issue one ("Issue a
+  // certificate", off by default). Numbered and one of one pieces keep their
+  // edition number either way.
+  const certified = piece.issueCertificate === true;
+  const numbered = piece.editionType === "numbered" || piece.editionType === "one-of-one";
   const sizeKey = meta.sizeKey || null;
 
   const order: OrderRecord = {
@@ -142,7 +147,7 @@ export async function processPaidSession(session: CheckoutSession, store: OrderS
 
   const { created, soldAfter } = await store.createOrderAndCount(order, piece._id, sizeKey, meta.holdKey || null);
   if (!created) return { status: "duplicate" };
-  if (certified) {
+  if (numbered) {
     // The edition number is the sale's place in the edition: 1 for a one of one.
     const editionNumber = piece.editionType === "one-of-one" ? 1 : soldAfter;
     await store.setOrderFields(id, { editionNumber });

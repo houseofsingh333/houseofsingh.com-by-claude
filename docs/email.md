@@ -37,7 +37,7 @@ In `src/lib/email/templates.ts`, where every word is kept:
 | Notify me ("You are on the list for Collection 01.") | Editions | Shop Notify me | Sign up |
 | Proposal received, and a copy to editions@ | Editions | For artists proposal | Sign up |
 | Order confirmation | Editions | Payment confirmed (Stripe webhook) | Order |
-| Certificate link | Editions | Same, for numbered and one of one pieces | Order |
+| Certificate link | Editions | Same, only for a piece set to "Issue a certificate" | Order |
 | Being made | Editions | Studio: order, Made | Order |
 | Shipped, with tracking | Editions | Studio: order, Shipped | Order |
 

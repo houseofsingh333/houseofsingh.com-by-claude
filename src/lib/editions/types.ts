@@ -35,6 +35,7 @@ export type EditionsPiece = {
   collectionId: string;
   category: EditionsCategory | null;
   editionType: "numbered" | "limited" | "one-of-one";
+  issueCertificate?: boolean | null;
   quantity: number;
   price: number;
   sizes?: EditionsSize[] | null;

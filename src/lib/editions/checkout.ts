@@ -113,6 +113,10 @@ export function checkoutParams(input: {
   return {
     mode: "payment",
     currency: "cad",
+    // Cards (Apple Pay and Google Pay come with them) and Link only, set
+    // here so it holds in sandbox and live whatever the Dashboard enables:
+    // no Affirm, Klarna or other buy now pay later methods.
+    payment_method_types: ["card", "link"],
     line_items: [
       {
         quantity: 1,
