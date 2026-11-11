@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import { requireEditions } from "@/lib/editions/enabled";
-import { loadCollections } from "@/lib/editions/load";
-import { canBuy } from "@/lib/editions/state";
+import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
+import { shopSections, showPlaceholders, visibleQuestions } from "@/lib/editions/view";
 import { gurmukhiFont } from "@/lib/editions/fonts";
 
 /**
@@ -22,27 +22,32 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
 };
 
-/** The Shop's own menu (desktop only): the sections of the Shop page. */
+/**
+ * The Shop's own menu (desktop only): the sections of the Shop page, each
+ * only when the page shows it (lib/editions/view.ts, shopSections), and
+ * the archive once a Collection has closed.
+ */
 const NAV = [
-  { href: "/editions#collection", label: "The Collection", when: "buying" },
-  { href: "/editions#how", label: "How it works", when: "before" },
-  { href: "/editions#before-you-buy", label: "Before you buy" },
-  { href: "/editions#questions", label: "Questions" },
-  { href: "/editions#for-artists", label: "For artists" },
-  { href: "/editions/archive", label: "Archive", when: "archived" },
+  { href: "/editions#collection", label: "The Collection", section: "collection" },
+  { href: "/editions#how", label: "How it works", section: "how" },
+  { href: "/editions#before-you-buy", label: "Before you buy", section: "beforeYouBuy" },
+  { href: "/editions#questions", label: "Questions", section: "questions" },
+  { href: "/editions#for-artists", label: "For artists", section: "forArtists" },
+  { href: "/editions/archive", label: "Archive", section: "archive" },
 ] as const;
 
 export default async function EditionsLayout({ children }: { children: React.ReactNode }) {
   const mode = await requireEditions("any");
-  const collections = await loadCollections();
+  const [collections, rawSettings] = await Promise.all([loadCollections(), loadSettings()]);
   const current = collections[0];
-  const state = mode === "anticipation" ? "sealed" : current?.state;
+  const anticipation = mode === "anticipation";
+  const state = current ? (anticipation ? "sealed" : current.state) : null;
+  const questions = visibleQuestions(withDefaults(rawSettings).questions, showPlaceholders()).length;
   const has = {
-    buying: Boolean(state && canBuy(state) && mode === "full"),
-    before: state === "sealed" || state === "early",
-    archived: mode === "full" && collections.some((c) => c.state === "closed"),
+    ...shopSections({ state, anticipation, questions }),
+    archive: mode === "full" && collections.some((c) => c.state === "closed"),
   };
-  const nav = NAV.filter((n) => !("when" in n) || has[n.when]);
+  const nav = NAV.filter((n) => has[n.section]);
   return (
     <div className={`ed ${gurmukhiFont.variable}`}>
       <header className="ed-head">

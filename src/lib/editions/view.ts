@@ -1,5 +1,5 @@
 import type { GridPiece } from "@/components/editions/CollectionGrid";
-import { available, editionSize } from "./state";
+import { available, canBuy, editionSize } from "./state";
 import { EDITIONS_DEFAULTS } from "./defaults";
 import { collectionTitle, dayIn, monthIn, pad2 } from "./format";
 import type { CollectionState, EditionsCollection, EditionsPiece } from "./types";
@@ -153,4 +153,28 @@ export function makingEntries(raw: unknown): MakingEntry[] {
 /** A piece's collaborators, made safe: only those that resolved with a name and an address. */
 export function knownCollaborators<T extends { name?: string | null; slug?: string | null }>(raw: (T | null)[] | null | undefined): (T & { name: string; slug: string })[] {
   return (raw ?? []).filter((c): c is T & { name: string; slug: string } => Boolean(c && typeof c.name === "string" && c.name && typeof c.slug === "string" && c.slug));
+}
+
+/** Placeholder answers (a question still to be written) show on previews and locally, never on the live site. */
+export const showPlaceholders = (env: Record<string, string | undefined> = process.env) => env.VERCEL_ENV !== "production";
+
+/** The questions the page shows: answered ones, and placeholders only where they may show. */
+export const visibleQuestions = <Q extends { answer: string }>(questions: Q[], placeholders: boolean) => questions.filter((q) => q.answer || placeholders);
+
+/**
+ * Which sections the Shop page shows, for the page and its menu alike, so
+ * the menu never offers a section that is not there: the Collection while
+ * it can be bought (not in anticipation), How the release works only while
+ * sealed, Questions when any question shows; Before you buy and For
+ * artists always.
+ */
+export function shopSections(input: { state: CollectionState | null; anticipation: boolean; questions: number }) {
+  const { state, anticipation } = input;
+  return {
+    collection: Boolean(state && canBuy(state) && !anticipation),
+    how: state === "sealed",
+    beforeYouBuy: true,
+    questions: input.questions > 0,
+    forArtists: true,
+  };
 }

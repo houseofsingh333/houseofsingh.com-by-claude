@@ -11,7 +11,7 @@
  * codes, and a repeated event changing nothing.
  */
 import { collectionState, available, releaseTimes } from "../src/lib/editions/state";
-import { fewLeft, gridFilters, gridPiece, knownCollaborators, madeBy, makingEntries, stillAvailable } from "../src/lib/editions/view";
+import { fewLeft, gridFilters, gridPiece, knownCollaborators, madeBy, makingEntries, shopSections, stillAvailable, visibleQuestions } from "../src/lib/editions/view";
 import { taxMode, TAX_CODES } from "../src/lib/editions/tax-rates";
 import { editionsCollectionsQuery } from "../src/lib/editions/queries";
 import { cardDate, cityTimes, daysUntil, momentIn, releaseIcs, sealedEyebrow } from "../src/lib/editions/release";
@@ -325,6 +325,19 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
     check(one.oneOfOne === true && one.fewLeft === null, "a one of one's card reads One of one, with no few left label");
     const g = gridPiece({ ...print, quantity: 10, soldCount: 7, collaborators: [{ _id: "a", name: "Sample Artist", slug: "s" }] } as EditionsPiece, true, 3);
     check(g.fewLeft === 3 && g.partner === "Sample Artist", "the grid card carries few left and the collaborator");
+  }
+
+  // The Shop's menu offers only sections the page shows.
+  {
+    const on = (state: Parameters<typeof shopSections>[0]["state"], anticipation = false, questions = 6) =>
+      Object.entries(shopSections({ state, anticipation, questions })).filter(([, v]) => v).map(([k]) => k).join(",");
+    check(on("sealed") === "how,beforeYouBuy,questions,forArtists", "sealed: How it works, no Collection", on("sealed"));
+    check(on("early") === "collection,beforeYouBuy,questions,forArtists", "early access: the Collection, no How it works", on("early"));
+    check(on("open") === "collection,beforeYouBuy,questions,forArtists", "open: the Collection, no How it works", on("open"));
+    check(on("closed") === "beforeYouBuy,questions,forArtists", "closed: neither the Collection nor How it works", on("closed"));
+    check(on("sealed", true) === "how,beforeYouBuy,questions,forArtists" && on(null) === "beforeYouBuy,questions,forArtists", "anticipation is sealed; no Collection at all shows neither");
+    check(on("open", false, 0) === "collection,beforeYouBuy,forArtists", "no question showing: no Questions in the menu");
+    check(visibleQuestions([{ answer: "" }, { answer: "Yes" }], false).length === 1 && visibleQuestions([{ answer: "" }], true).length === 1, "placeholder answers count only where they show");
   }
 
   console.log(failures ? `\n${failures} failed` : "\nall passed");
