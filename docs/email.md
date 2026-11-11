@@ -21,6 +21,8 @@ How email works on houseofsingh.com, what to set up, and how to check it.
 
 Those exact words, the form and the moment are kept on the person in Kit, in a custom field (`Consent, letters` or `Consent, Shop`). That is the record of consent. Every email also carries the sender, the mailing address (`EMAIL_POSTAL_ADDRESS`) and why it arrived; Kit adds its own unsubscribe link and address to every letter (set the address in Kit's account settings).
 
+**Unsubscribing.** The welcome and the Notify me confirmation carry an "Unsubscribe" link in their footer, and the List-Unsubscribe headers that mail apps show as their own unsubscribe button. The link is signed for the person it was sent to (`EMAIL_LINK_SECRET`, else the Resend key), so it cannot be changed to unsubscribe anyone else. It opens `/unsubscribe`, which asks once (mail scanners open every link, so nothing happens on opening) and, on the button, unsubscribes the person in Kit from every letter and Collection email; any sign up of theirs still waiting for Kit is dropped. A mail app's one click button unsubscribes at once. If Kit cannot be reached, the request waits in the Studio ("Sign ups waiting for Kit", action unsubscribe) and the daily job completes it. Order emails are not newsletters and carry no unsubscribe link. Letters sent from Kit carry Kit's own unsubscribe link.
+
 **No copies.** Once Kit has a sign up, the website keeps no copy of the email address. If Kit cannot be reached at that moment (or is not set up yet), the sign up is kept privately in Sanity (Studio: House of Singh Editions, "Sign ups waiting for Kit") and the daily job tries Kit again, then deletes it. Nobody is lost.
 
 **Backup.** Kit's own export (Subscribers, Export) is the ongoing backup. There is no export in the Studio.
@@ -80,6 +82,7 @@ Only fitting proposals receive a reply. The For artists page, the thank you afte
 | `EMAIL_FROM_EDITIONS` | `House of Singh Editions <editions@houseofsingh.com>` (the default) | Optional |
 | `EMAIL_POSTAL_ADDRESS` | The mailing address for the anti spam law, one line | Production, Preview |
 | `CRON_SECRET` | A long random string | Production |
+| `EMAIL_LINK_SECRET` | A long random string that signs the unsubscribe links; without it the Resend key signs them. Changing it makes older links invalid (the page then points to the contact page) | Optional, Production and Preview |
 | `RESEND_DAILY_LIMIT` | `100` (the default); raise it on a paid plan | Optional |
 | `RESEND_SIGNUP_RESERVE` | `10` (the default) | Optional |
 

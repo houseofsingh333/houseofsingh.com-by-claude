@@ -111,5 +111,16 @@ export async function kitHasTag(email: string, tag: string): Promise<boolean> {
   return (tags.tags ?? []).some((t) => t.name.toLowerCase() === tag.toLowerCase());
 }
 
+/**
+ * Unsubscribes the person in Kit (from every letter and Collection email).
+ * Someone Kit does not know is already unsubscribed: nothing to do.
+ */
+export async function kitUnsubscribe(email: string): Promise<void> {
+  const found = await kit<{ subscribers: { id: number; email_address: string }[] }>("GET", `/subscribers?email_address=${encodeURIComponent(email)}&status=all`);
+  const person = found.subscribers?.find((x) => x.email_address.toLowerCase() === email.toLowerCase());
+  if (!person) return;
+  await kit("POST", `/subscribers/${person.id}/unsubscribe`, {});
+}
+
 /** Kit is set up (a key is present). */
 export const kitConfigured = () => Boolean(emailConfig().kitKey);

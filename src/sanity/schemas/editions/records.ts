@@ -110,6 +110,7 @@ export const signupPending = defineType({
   ...readOnly,
   fields: [
     defineField({ name: "email", title: "Email", type: "string" }),
+    defineField({ name: "action", title: "Action", type: "string", description: "subscribe (the default) or unsubscribe: someone who left while Kit could not be reached." }),
     defineField({ name: "tag", title: "Tag", type: "string" }),
     defineField({ name: "kind", title: "Kind", type: "string" }),
     defineField({ name: "consent", title: "Consent as given", type: "text" }),

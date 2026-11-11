@@ -2,6 +2,7 @@ import { emailConfig } from "./config";
 import type { Email } from "./resend";
 import { cad } from "@/lib/editions/format";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
+import { unsubscribeOneClickUrl, unsubscribePageUrl } from "./unsubscribe";
 
 /**
  * The emails the website sends (through Resend), in the House of Singh
@@ -79,11 +80,24 @@ function plain(blocks: Block[], footer: string): string {
 }
 
 /** Who sent it, where from, and why it arrived (CASL). */
-function footer(who: "letters" | "editions", why: string): string {
+function footer(who: "letters" | "editions", why: string, unsubscribe?: string | null): string {
   const { postalAddress, siteUrl } = emailConfig();
   const sender = who === "letters" ? "Maninder Singh, House of Singh" : EDITIONS_DEFAULTS.seller;
   const site = siteUrl.replace(/^https?:\/\//, "");
-  return [esc(sender), postalAddress ? esc(postalAddress) : "", `<a href="${siteUrl}" style="color:${C.muted}">${esc(site)}</a>`, esc(why)].filter(Boolean).join("<br>");
+  const leave = unsubscribe ? `<a href="${esc(unsubscribe)}" style="color:${C.muted}">Unsubscribe</a>` : "";
+  return [esc(sender), postalAddress ? esc(postalAddress) : "", `<a href="${siteUrl}" style="color:${C.muted}">${esc(site)}</a>`, esc(why), leave].filter(Boolean).join("<br>");
+}
+
+/** For a sign up email: the unsubscribe link in the footer and the headers mail apps read. */
+function withUnsubscribe(e: Email, to: string): Email {
+  const page = unsubscribePageUrl(to);
+  const oneClick = unsubscribeOneClickUrl(to);
+  if (!page || !oneClick) return e;
+  return {
+    ...e,
+    text: `${e.text}\nUnsubscribe: ${page}`,
+    headers: { "List-Unsubscribe": `<${oneClick}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" },
+  };
 }
 
 function email(to: string, kind: string, priority: Email["priority"], subject: string, blocks: Block[], foot: string): Email {
@@ -95,7 +109,7 @@ function email(to: string, kind: string, priority: Email["priority"], subject: s
 // ——— Sign ups ———
 
 export function welcomeEmail(to: string): Email {
-  return email(
+  const e = email(
     to,
     "welcome",
     "signup",
@@ -106,12 +120,13 @@ export function welcomeEmail(to: string): Email {
       { p: "If you ever want to write back, reply to any letter. It comes to me." },
       { sign: "Maninder" },
     ],
-    footer("letters", "You are receiving this because you signed up for letters on houseofsingh.com. Every letter has a link to unsubscribe."),
+    footer("letters", "You are receiving this because you signed up for letters on houseofsingh.com. Every letter has a link to unsubscribe, this one too.", unsubscribePageUrl(to)),
   );
+  return withUnsubscribe(e, to);
 }
 
 export function notifyEmail(to: string, collection: string): Email {
-  return email(
+  const e = email(
     to,
     "notify",
     "signup",
@@ -120,8 +135,9 @@ export function notifyEmail(to: string, collection: string): Email {
       { big: `You are on the list for ${collection}.` },
       { p: "You will hear when it opens, with early access before everyone else. Nothing more." },
     ],
-    footer("editions", `You are receiving this because you asked to hear about ${collection} on houseofsingh.com. Unsubscribe from any email that follows.`),
+    footer("editions", `You are receiving this because you asked to hear about ${collection} on houseofsingh.com. Every email that follows has a link to unsubscribe, this one too.`, unsubscribePageUrl(to)),
   );
+  return withUnsubscribe(e, to);
 }
 
 export function proposalReceivedEmail(to: string, name: string): Email {

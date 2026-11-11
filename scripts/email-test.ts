@@ -6,7 +6,8 @@
  *   npx tsx scripts/email-test.ts
  */
 import { deliver, drain, dayOf, type OutboxStore, type Queued } from "../src/lib/email/outbox";
-import { signUp, retryPending, type PendingStore, type PendingSignup } from "../src/lib/email/signups";
+import { signUp, retryPending, leave, type PendingStore, type PendingSignup } from "../src/lib/email/signups";
+import { readUnsubscribeToken, unsubscribeToken } from "../src/lib/email/unsubscribe";
 import type { Email } from "../src/lib/email/resend";
 import { welcomeEmail, orderEmail } from "../src/lib/email/templates";
 import { consentRecord, CONSENT } from "../src/lib/email/consent";
@@ -18,6 +19,7 @@ function check(ok: boolean, label: string, detail?: unknown) {
 }
 
 process.env.RESEND_DAILY_LIMIT = "100";
+process.env.EMAIL_LINK_SECRET = "a-local-test-secret";
 process.env.RESEND_SIGNUP_RESERVE = "10";
 
 function memoryOutbox() {
@@ -98,6 +100,27 @@ const order = (n: number): Email => orderEmail(`buyer${n}@example.com`, { pieceN
   check(kit.map((k) => k.tag).join() === "Letters,Collection 01", "one person, both tags", kit.map((k) => k.tag));
   const s3 = await signUp({ email: "b@example.com", tag: "Letters", kind: "letters", consent: "x" }, pending, subscribe);
   check(s3 === "kit" && kept.length === 0, "Kit up: straight to Kit, nothing kept", s3);
+
+  // The unsubscribe link: genuine only for the address it was made for.
+  const tok = unsubscribeToken("Reader@Example.com")!;
+  check(readUnsubscribeToken(tok) === "Reader@Example.com", "an unsubscribe link reads back its own address");
+  const [data, mac] = tok.split(".");
+  const other = Buffer.from("someone.else@example.com").toString("base64url");
+  check(readUnsubscribeToken(`${other}.${mac}`) === null && readUnsubscribeToken(`${data}.x${mac.slice(1)}`) === null && readUnsubscribeToken("nonsense") === null, "a link changed to another address, or tampered with, is refused");
+
+  // Leaving: waiting sign ups are dropped; Kit down keeps the request; the daily job finishes it.
+  kept.length = 0;
+  kitUp = false;
+  await signUp({ email: "c@example.com", tag: "Letters", kind: "letters", consent: "x" }, pending, subscribe);
+  const left: string[] = [];
+  const unsubscribe = async (e: string) => { if (!kitUp) throw new Error("Kit unreachable"); left.push(e); };
+  const l1 = await leave("c@example.com", pending, unsubscribe);
+  check(l1 === "kept" && kept.length === 1 && kept[0].action === "unsubscribe", "Kit down: the waiting sign up is dropped and the request to leave is kept", kept.map((k) => k.action));
+  kitUp = true;
+  const r = await retryPending(pending, subscribe, unsubscribe);
+  check(r.moved === 1 && left.join() === "c@example.com" && !kit.some((k) => k.email === "c@example.com"), "Kit back: unsubscribed, and never signed up again", r);
+  const l2 = await leave("b@example.com", pending, unsubscribe);
+  check(l2 === "kit" && left.includes("b@example.com"), "Kit up: unsubscribed at once", l2);
 
   console.log(failures ? `\n${failures} failed` : "\nall passed");
   process.exit(failures ? 1 : 0);

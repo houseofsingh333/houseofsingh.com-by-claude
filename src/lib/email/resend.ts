@@ -14,6 +14,8 @@ export type Email = {
   sender: "letters" | "editions";
   /** Where a reply goes, when not back to the sender (the proposal copy: to the artist). */
   replyTo?: string;
+  /** Extra headers (List-Unsubscribe on the sign up emails). */
+  headers?: Record<string, string>;
 };
 
 export class ResendError extends Error {
@@ -38,6 +40,7 @@ export async function resendSend(email: Email): Promise<string> {
       html: email.html,
       text: email.text,
       reply_to: email.replyTo || addressOf(from),
+      ...(email.headers ? { headers: email.headers } : {}),
       tags: [{ name: "kind", value: email.kind.replace(/[^a-zA-Z0-9_-]/g, "_") }],
     }),
     cache: "no-store",

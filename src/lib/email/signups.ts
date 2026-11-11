@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { writeClient } from "@/sanity/writeClient";
-import { kitSubscribe, type Signup } from "./kit";
+import { kitSubscribe, kitUnsubscribe, type Signup } from "./kit";
 
 /**
  * A sign up (the footer newsletter, the Shop's Notify me) goes to Kit. Once
@@ -10,7 +10,8 @@ import { kitSubscribe, type Signup } from "./kit";
  * lost; once Kit has it, the private copy is deleted.
  */
 
-export type PendingSignup = Signup & { _id: string; createdAt: string; attempts: number; lastError?: string };
+/** A sign up (or, with action "unsubscribe", a request to leave) waiting for Kit. */
+export type PendingSignup = Signup & { _id: string; createdAt: string; attempts: number; lastError?: string; action?: "subscribe" | "unsubscribe" };
 
 export interface PendingStore {
   keep(p: PendingSignup): Promise<void>;
@@ -20,6 +21,7 @@ export interface PendingStore {
 }
 
 export type Subscribe = (s: Signup) => Promise<void>;
+export type Unsubscribe = (email: string) => Promise<void>;
 
 export async function signUp(s: Signup, store: PendingStore | null, subscribe: Subscribe = kitSubscribe, now = new Date()): Promise<"kit" | "kept"> {
   try {
@@ -35,12 +37,13 @@ export async function signUp(s: Signup, store: PendingStore | null, subscribe: S
 }
 
 /** The daily job: tries Kit again for every kept sign up. */
-export async function retryPending(store: PendingStore, subscribe: Subscribe = kitSubscribe): Promise<{ moved: number; left: number }> {
+export async function retryPending(store: PendingStore, subscribe: Subscribe = kitSubscribe, unsubscribe: Unsubscribe = kitUnsubscribe): Promise<{ moved: number; left: number }> {
   const pending = await store.list(500);
   let moved = 0;
   for (const p of pending) {
     try {
-      await subscribe({ email: p.email, tag: p.tag, kind: p.kind, consent: p.consent });
+      if (p.action === "unsubscribe") await unsubscribe(p.email);
+      else await subscribe({ email: p.email, tag: p.tag, kind: p.kind, consent: p.consent });
       await store.remove(p._id);
       moved++;
     } catch (error) {
@@ -48,6 +51,28 @@ export async function retryPending(store: PendingStore, subscribe: Subscribe = k
     }
   }
   return { moved, left: pending.length - moved };
+}
+
+/**
+ * Leaving: the person is unsubscribed in Kit. Any sign up of theirs still
+ * waiting for Kit is dropped first, so a retry never signs them up again.
+ * If Kit cannot be reached, the request is kept privately and the daily job
+ * tries again; the person is told they are unsubscribed either way.
+ */
+export async function leave(email: string, store: PendingStore | null, unsubscribe: Unsubscribe = kitUnsubscribe, now = new Date()): Promise<"kit" | "kept"> {
+  if (store) {
+    for (const p of await store.list(500)) if (p.email.toLowerCase() === email.toLowerCase() && p.action !== "unsubscribe") await store.remove(p._id);
+  }
+  try {
+    await unsubscribe(email);
+    return "kit";
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Kit unsubscribe failed, kept privately to retry:", message);
+    if (!store) throw error;
+    await store.keep({ _id: `private.signup-pending-${randomUUID()}`, email, tag: "", kind: "letters", consent: "", action: "unsubscribe", createdAt: now.toISOString(), attempts: 1, lastError: message.slice(0, 300) });
+    return "kept";
+  }
 }
 
 export function sanityPending(): PendingStore | null {
