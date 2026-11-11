@@ -12,6 +12,9 @@
  */
 import { collectionState, available, releaseTimes } from "../src/lib/editions/state";
 import { gridFilters } from "../src/lib/editions/view";
+import { cardDate, cityTimes, daysUntil, momentIn, releaseIcs, sealedEyebrow } from "../src/lib/editions/release";
+import { withDefaults } from "../src/lib/editions/load";
+import { CONSENT } from "../src/lib/email/consent";
 import { checkPurchase, checkoutParams } from "../src/lib/editions/checkout";
 import { isZone, shippingPrice, ZONES } from "../src/lib/editions/shipping";
 import { taxForPostalCode, taxOnLines } from "../src/lib/editions/tax-rates";
@@ -128,6 +131,24 @@ check(shippingPrice([...routes, { origin: "canada", zone: "india", bands: [{ upT
 check(ZONES.map((z) => z.label).join() === "Canada,United States,India,Elsewhere", "four zones, in order");
 check(releaseTimes("2027-04-14T01:00:00Z") === "9 pm in Toronto, 6:30 am on 14 April in India", "release at 9 pm in Toronto: India's next day is named", releaseTimes("2027-04-14T01:00:00Z"));
 check(releaseTimes("2027-04-14T13:00:00Z") === "9 am in Toronto, 6:30 pm in India", "same day in both places: no date", releaseTimes("2027-04-14T13:00:00Z"));
+{
+  // Shop design round 2: the release in words.
+  const opens = "2027-04-13T23:00:00Z"; // 7 pm in Toronto
+  const cities = withDefaults({}).releaseCities;
+  const t = cityTimes(opens, cities);
+  check(t.map((c) => `${c.label} ${c.time} ${c.date}`).join(" | ") === "Vancouver 4 pm 13 April | Toronto 7 pm 13 April | London 12 am 14 April | Amritsar 4:30 am 14 April | Melbourne 9 am 14 April", "five cities from one moment", t);
+  check(cardDate(opens) === "13 · 04 · 2027", "the card's date, in Toronto", cardDate(opens));
+  check(momentIn(opens, "America/Toronto") === "7 pm, Tuesday 13 April", "the visitor's own time, Toronto by default", momentIn(opens, "America/Toronto"));
+  check(daysUntil(opens, new Date("2027-04-13T12:00:00Z")) === "today" && daysUntil(opens, new Date("2027-04-12T15:00:00Z")) === "tomorrow" && daysUntil(opens, new Date("2026-11-11T15:00:00Z")) === "in 153 days", "today, tomorrow, in N days (Toronto days)");
+  check(sealedEyebrow({ releaseLine: "Released on the eve of Vaisakhi", season: "Vaisakhi 2027", opens }, new Date("2026-11-11T15:00:00Z")) === "Released on the eve of Vaisakhi · in 153 days", "the line before the release");
+  const ics = releaseIcs({ _id: "c1", number: 1, opens }, "https://houseofsingh.com", new Date("2026-11-11T00:00:00Z"));
+  check(ics.includes("DTSTART:20270413T230000Z") && ics.includes("DTEND:20270414T000000Z") && ics.includes("SUMMARY:House of Singh Editions\\, Collection 01") && ics.includes("URL:https://houseofsingh.com/editions") && ics.includes("\r\n"), "the calendar file: the moment, one hour, the title and the Shop");
+  const s = withDefaults({ releaseCities: [{ _key: "a", label: "Nowhere", timeZone: "Not/AZone" }] });
+  check(s.releaseCities.length === 5, "a city with a mistyped time zone is left out (the defaults stand when none is left)");
+  check(withDefaults({}).questions.some((q) => q.question === "Can I return a piece?" && q.answer === ""), "the returns answer is a placeholder until written");
+  check(withDefaults({}).beforeYouBuy.length === 5 && withDefaults({}).artistsWords.at(-1) === "you", "five notes; the rolling words end on you");
+  check(/House of Singh/.test(CONSENT.letters) && /Unsubscribe/.test(CONSENT.letters) && /House of Singh Editions/.test(CONSENT.shop) && /Unsubscribe/.test(CONSENT.shop), "consent wording names the sender and the way out");
+}
 {
   const cat = (id: string, plural: string, order: number) => ({ _id: id, singular: plural, plural, descriptor: plural, order });
   const prints = cat("c-print", "Prints", 10), objects = cat("c-object", "Objects", 40);

@@ -11,13 +11,44 @@ export const EDITIONS_DEFAULTS = {
   honestLine: "Made slowly, shipped in weeks. Shipping at cost.",
   taxLine: "Plus applicable tax for Canadian orders.",
   beforeYouBuyHeading: "What this is, and what it is not",
+  /** Before you buy (Shop design round 2): five short titles, one line each. */
   beforeYouBuy: [
-    "Not fast. Each piece is made and packed with care, in Canada or India. Expect weeks, not days.",
-    "Not cheap. Everything is made in small numbers and priced for what it is.",
-    "Never restocked. When a piece is gone, it is gone.",
-    "Not always open. Collections are released twice a year; between them, the Shop rests.",
-    "Made with others. Some pieces are made by hand, some with makers I trust, some with other artists. When a piece is a collaboration, both names stand on it.",
+    { title: "Not fast", text: "Made and packed with care. Weeks, not days." },
+    { title: "Not cheap", text: "Small numbers, honestly priced." },
+    { title: "Never restocked", text: "When a piece is gone, it is gone." },
+    { title: "Not always open", text: "Twice a year. Between, the Shop rests." },
+    { title: "Made with others", text: "By hand, with makers I trust, with artists." },
   ],
+  /** How the release works: three steps. */
+  howItWorks: [
+    { title: "Join the list", text: "Leave your email above. One note when the Collection is ready, nothing more." },
+    { title: "Early access", text: "The list gets in 24 hours before everyone, with a private link." },
+    { title: "Opens to everyone", text: "At the times above. When a piece is gone, it is gone." },
+  ],
+  /**
+   * Questions, folding. An empty answer is a placeholder: shown marked on
+   * previews, left out on the live site until it is written.
+   */
+  questions: [
+    { question: "Where do you ship?", answer: "Canada, the United States, India and most of the world. Shipping is charged at cost and shown before you buy." },
+    { question: "How long will my piece take?", answer: "Two to four weeks. You will have an email when it is being made, and another with tracking when it ships." },
+    { question: "Will I pay import duties?", answer: "Orders outside Canada may pay import duties on arrival, set by your country." },
+    { question: "Can I buy more than one?", answer: "One piece per person, so more people can own one." },
+    { question: "Can I return a piece?", answer: "" },
+    { question: "How can I pay?", answer: "By card, Apple Pay, Google Pay or Link, through Stripe's secure checkout." },
+  ],
+  /** The cities the release time is shown in, in order (IANA time zones). */
+  releaseCities: [
+    { label: "Vancouver", timeZone: "America/Vancouver" },
+    { label: "Toronto", timeZone: "America/Toronto" },
+    { label: "London", timeZone: "Europe/London" },
+    { label: "Amritsar", timeZone: "Asia/Kolkata" },
+    { label: "Melbourne", timeZone: "Australia/Melbourne" },
+  ],
+  /** "House of Singh × …": the rolling words, the last held longest. */
+  artistsWords: ["a weaver", "a potter", "a woodworker", "a jeweller", "you"],
+  /** Beneath "Make something with House of Singh" on the Shop page. */
+  artistsTeaser: "Collections often include pieces made with other artists. Propose one we could make together.",
   returnsLine: "Unworn pieces may be returned within 14 days.",
   soldOutLine: "Every piece has found its home.",
   shippingLine: "Made and packed with care, shipped in 2 to 4 weeks, with tracking by email. Shipping at cost; import duties paid on arrival.",

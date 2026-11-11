@@ -18,7 +18,8 @@ const _piece = `{
 
 const _collection = `{
   _id, number, season, colour, intro, closedLine, closedUnsoldLine, essay,
-  earlyAccessOpens, opens, closes, earlyAccessCodeHash,
+  earlyAccessOpens, opens, closes, earlyAccessCodeHash, releaseLine,
+  "journal": journalEntries[]->{ _id, title, "slug": slug.current, date, "image": coverImage${_imageAsset} }[defined(slug)][0...3],
   "filters": filters[]{ _key, label, "category": category->${_category} },
   isTestData
 }`;

@@ -2,8 +2,9 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 import { EDITIONS_DEFAULTS } from "../../../lib/editions/defaults";
 
 /**
- * Shop settings (one document): the honest notes, the returns line, the
- * invitation for artists and the terms of sale. Every field is optional;
+ * Shop settings (one document): the honest notes, the questions, the
+ * release cities, the returns line, the invitation for artists (with the
+ * rolling words) and the terms of sale. Every field is optional;
  * an empty one uses the approved wording in lib/editions/defaults.ts.
  */
 export const editionsSettings = defineType({
@@ -28,9 +29,61 @@ export const editionsSettings = defineType({
       title: "Before you buy",
       type: "array",
       group: "shop",
-      description: "The five notes, in order. When empty, the approved five are used (lib/editions/defaults.ts). Shipping, tax and duties are on each piece and in the terms of sale, not here.",
-      of: [defineArrayMember({ type: "text", rows: 2 })],
+      description: "Five notes, each a short title and one line. When empty, the approved five are used (lib/editions/defaults.ts). Shipping, tax and duties are on each piece and in the terms of sale, not here.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "note",
+          fields: [
+            defineField({ name: "title", title: "Title", type: "string", validation: (r) => r.required().max(30) }),
+            defineField({ name: "text", title: "One line", type: "string", validation: (r) => r.required().max(80) }),
+          ],
+        }),
+      ],
       validation: (r) => r.max(5),
+    }),
+    defineField({
+      name: "questions",
+      title: "Questions",
+      type: "array",
+      group: "shop",
+      description: "Good to know, folding questions. When empty, the approved questions are used. A question with no answer is shown marked on previews and left out on the live site.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "question",
+          fields: [
+            defineField({ name: "question", title: "Question", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "answer", title: "Answer", type: "text", rows: 3 }),
+          ],
+          preview: { select: { title: "question", subtitle: "answer" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "releaseCities",
+      title: "Release time, cities",
+      type: "array",
+      group: "shop",
+      description: "The cities the release time is shown in, in order. Empty: Vancouver, Toronto, London, Amritsar, Melbourne.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "city",
+          fields: [
+            defineField({ name: "label", title: "City", type: "string", validation: (r) => r.required() }),
+            defineField({
+              name: "timeZone",
+              title: "Time zone",
+              type: "string",
+              description: "Its time zone name, for example America/Toronto, Europe/London, Asia/Kolkata (India), Australia/Melbourne.",
+              validation: (r) => r.required().regex(/^[A-Za-z]+(\/[A-Za-z_+-]+)+$/, { name: "time zone" }),
+            }),
+          ],
+          preview: { select: { title: "label", subtitle: "timeZone" } },
+        }),
+      ],
+      validation: (r) => r.max(6),
     }),
     defineField({
       name: "returnsLine",
@@ -54,6 +107,23 @@ export const editionsSettings = defineType({
       rows: 4,
       group: "artists",
       description: `On the Shop page and on For artists. When empty: ${EDITIONS_DEFAULTS.artistsInvitation}`,
+    }),
+    defineField({
+      name: "artistsTeaser",
+      title: "On the Shop page, beneath the heading",
+      type: "text",
+      rows: 2,
+      group: "artists",
+      description: `When empty: ${EDITIONS_DEFAULTS.artistsTeaser}`,
+    }),
+    defineField({
+      name: "artistsWords",
+      title: "House of Singh × …, the rolling words",
+      type: "array",
+      group: "artists",
+      description: `In order; the last is held longest. When empty: ${EDITIONS_DEFAULTS.artistsWords.join(", ")}.`,
+      of: [defineArrayMember({ type: "string", validation: (r) => r.max(20) })],
+      validation: (r) => r.max(8),
     }),
     defineField({
       name: "artistsSteps",
