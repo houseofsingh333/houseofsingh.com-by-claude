@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import HoneypotField from "@/components/HoneypotField";
-import { OutlineButton } from "@/components/OutlineCta";
+import { TextButton } from "@/components/TextLink";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 
@@ -78,9 +78,9 @@ export default function ProposalForm({ footnote }: { footnote: string }) {
         <span className="type-label text-muted-foreground">Your idea, in a few lines</span>
         <textarea name="idea" required rows={4} value={values.idea ?? ""} onChange={set("idea")} maxLength={3000} />
       </label>
-      <OutlineButton type="submit" disabled={status === "sending"}>
+      <TextButton type="submit" disabled={status === "sending"} className="ed-proposal-send">
         {status === "sending" ? "Sending" : "Send the proposal"}
-      </OutlineButton>
+      </TextButton>
       {status === "error" && (
         <p id="ed-proposal-error" role="alert" className="ed-buy-message">
           {error}

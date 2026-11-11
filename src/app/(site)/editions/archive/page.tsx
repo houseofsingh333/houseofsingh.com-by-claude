@@ -9,6 +9,7 @@ import { available } from "@/lib/editions/state";
 import { collectionTitle, monthIn, pad2, piecesInWords } from "@/lib/editions/format";
 import { allSold, closedSentence, collectionsInWords } from "@/lib/editions/view";
 import { requireEditions } from "@/lib/editions/enabled";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = { title: "Archive" };
 
@@ -16,13 +17,16 @@ export const metadata: Metadata = { title: "Archive" };
  * The archive (canvas FL5-Shelf): every closed Collection as a spine on a
  * shelf, oldest first, then the next one's place, outlined while it is
  * sealed, with its square beside the shelf. Below, what each closed
- * Collection held, every piece marked sold or not.
+ * Collection held, every piece marked sold or not. Until a Collection has
+ * closed there is no archive: this page is a 404 and nothing links to it.
  */
 export default async function ArchivePage() {
   await requireEditions();
   const collections = await loadCollections();
   const closed = collections.filter((c) => c.state === "closed").sort((a, b) => a.number - b.number);
   const upcoming = collections.find((c) => c.state !== "closed");
+  // Hidden until a Collection has closed: nothing to show yet.
+  if (!closed.length) notFound();
 
   return (
     <div className="ed-page">

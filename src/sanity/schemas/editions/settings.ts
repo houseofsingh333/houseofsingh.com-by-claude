@@ -28,9 +28,9 @@ export const editionsSettings = defineType({
       title: "Before you buy",
       type: "array",
       group: "shop",
-      description: "The seven notes, in order. When empty, the approved seven are used (lib/editions/defaults.ts).",
+      description: "The five notes, in order. When empty, the approved five are used (lib/editions/defaults.ts). Shipping, tax and duties are on each piece and in the terms of sale, not here.",
       of: [defineArrayMember({ type: "text", rows: 2 })],
-      validation: (r) => r.max(7),
+      validation: (r) => r.max(5),
     }),
     defineField({
       name: "returnsLine",
@@ -53,7 +53,7 @@ export const editionsSettings = defineType({
       type: "text",
       rows: 4,
       group: "artists",
-      description: `When empty: ${EDITIONS_DEFAULTS.artistsInvitation}`,
+      description: `On the Shop page and on For artists. When empty: ${EDITIONS_DEFAULTS.artistsInvitation}`,
     }),
     defineField({
       name: "artistsSteps",

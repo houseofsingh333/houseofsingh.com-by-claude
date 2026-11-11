@@ -17,7 +17,7 @@ export default async function ArtistsPage() {
   await requireEditions("any");
   const [rawSettings, collections] = await Promise.all([loadSettings(), loadCollections()]);
   const s = withDefaults(rawSettings);
-  const intro = rawSettings.artistsInvitation?.trim() || EDITIONS_DEFAULTS.artistsShort;
+  const intro = s.artistsInvitation;
   const footnote =
     s.proposalsFor && s.proposalDeadline
       ? `Proposals for ${s.proposalsFor} are open until ${dayIn(s.proposalDeadline)}. ${EDITIONS_DEFAULTS.proposalPromise}`
@@ -37,7 +37,7 @@ export default async function ArtistsPage() {
       <section className="ed-artists" aria-labelledby="ed-artists-title">
         <div className="ed-artists-words">
           <span className="type-label text-muted-foreground">For artists</span>
-          <h1 id="ed-artists-title" className="font-editorial font-normal text-display-l leading-[1.05] text-foreground">
+          <h1 id="ed-artists-title" className="ed-sentence-heading">
             {s.artistsHeading}
           </h1>
           <p className="text-body-l text-muted-foreground">{intro}</p>

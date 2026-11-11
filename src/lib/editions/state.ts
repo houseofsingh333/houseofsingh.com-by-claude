@@ -49,9 +49,13 @@ export function collectionState(
 /** Whether pieces can be bought in this state. */
 export const canBuy = (state: CollectionState) => state === "open" || state === "early";
 
-/** "9 pm in Toronto, 6:30 am in India": a release time for both places. */
+/** "9 pm in Toronto, 6:30 am on 14 April in India": a release time for both places. */
 export function releaseTimes(iso: string): string {
-  return `${clockIn(iso, "America/Toronto")} in Toronto, ${clockIn(iso, "Asia/Kolkata")} in India`;
+  // India is a day ahead for an evening release in Toronto: then its date is said too.
+  const day = (zone: string) => new Intl.DateTimeFormat("en-GB", { timeZone: zone, day: "numeric", month: "long" }).format(new Date(iso));
+  const india = day("Asia/Kolkata");
+  const onDay = india === day("America/Toronto") ? "" : ` on ${india}`;
+  return `${clockIn(iso, "America/Toronto")} in Toronto, ${clockIn(iso, "Asia/Kolkata")}${onDay} in India`;
 }
 
 /** "in 23 hours", "in 3 days": how long until a moment, roughly. */

@@ -29,12 +29,12 @@ export const editionsCollectionsQuery = `*[_type == "editionsCollection" && defi
   "pieces": *[_type == "editionsPiece" && collection._ref == ^._id] | order(order asc, name asc)${_piece}
 }`;
 
-/** One piece by its address, with its Collection and the Collection's pieces (for state). */
+/** One piece by its address, with its Collection and the Collection's pieces in order (for state, and the next piece). */
 export const editionsPieceQuery = `*[_type == "editionsPiece" && slug.current == $slug][0]{
   ...${_piece},
   "collection": collection->{
     ...${_collection},
-    "pieces": *[_type == "editionsPiece" && collection._ref == ^._id]{ quantity, soldCount, sizes[]{ _key, stock, sold } }
+    "pieces": *[_type == "editionsPiece" && collection._ref == ^._id] | order(order asc, name asc){ _id, name, "slug": slug.current, quantity, soldCount, sizes[]{ _key, stock, sold } }
   }
 }`;
 

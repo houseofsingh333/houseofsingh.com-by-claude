@@ -6,7 +6,6 @@ import CollectionGrid from "@/components/editions/CollectionGrid";
 import NotifyMe from "@/components/editions/NotifyMe";
 import { Spine } from "@/components/editions/Spine";
 import TextLink from "@/components/TextLink";
-import { OutlineLink } from "@/components/OutlineCta";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
 import { canBuy, releaseTimes, shopNow, untilWords } from "@/lib/editions/state";
 import { collectionTitle, dayIn } from "@/lib/editions/format";
@@ -149,7 +148,7 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
       <section className="ed-artists-teaser" aria-labelledby="ed-artists-heading">
         <div className="ed-artists-words">
           <span className="type-label text-muted-foreground">For artists</span>
-          <h2 id="ed-artists-heading" className="font-editorial font-normal text-display-l leading-[1.05] text-foreground">
+          <h2 id="ed-artists-heading" className="ed-sentence-heading">
             {settings.artistsHeading}
           </h2>
           <p className="text-body text-muted-foreground">
@@ -158,19 +157,16 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
           </p>
         </div>
         <div className="ed-artists-act">
-          <span className="text-small text-muted-foreground">{settings.artistsSteps.map((s, i) => (i === 0 ? s.title : s.title.toLowerCase())).join(", ")}.</span>
-          <OutlineLink href="/editions/artists">Propose a collaboration</OutlineLink>
+          <TextLink href="/editions/artists">Propose a collaboration</TextLink>
         </div>
       </section>
 
-      <section className="ed-archive-line" aria-label="The archive">
-        <span className="type-label text-muted-foreground">The archive</span>
-        {closed.length > 0 || state === "closed" ? (
+      {(closed.length > 0 || state === "closed") && (
+        <section className="ed-archive-line" aria-label="The archive">
+          <span className="type-label text-muted-foreground">The archive</span>
           <TextLink href="/editions/archive">See the archive</TextLink>
-        ) : (
-          <span className="text-small text-muted-foreground">{`The archive begins when ${collectionTitle(current.number)} closes.`}</span>
-        )}
-      </section>
+        </section>
+      )}
         </>
       )}
     </div>
@@ -183,7 +179,7 @@ function BeforeYouBuy({ notes }: { notes: string[] }) {
     <section id="before-you-buy" className="ed-before ed-anchor" aria-labelledby="ed-before-heading">
       <div className="ed-before-head">
         <span className="type-label text-muted-foreground">Before you buy</span>
-        <h2 id="ed-before-heading" className="font-editorial font-normal text-display-m leading-[1.15] text-foreground">
+        <h2 id="ed-before-heading" className="ed-sentence-heading">
           {EDITIONS_DEFAULTS.beforeYouBuyHeading}
         </h2>
         <TextLink href="/editions/terms">Terms of sale</TextLink>

@@ -70,20 +70,40 @@
   }
 }
 
+/* Above the footer: one quiet line with the Shop's address, in place of
+   the sitewide closing section (hidden below on Shop pages), and the
+   seller with the terms. */
 .ed-foot {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 12px 32px;
+  flex-direction: column;
+  gap: 20px;
   margin-inline: var(--ed-gutter);
-  padding-block: 28px var(--section-space-sm);
+  padding-block: var(--section-space-sm);
   border-top: 1px solid var(--border);
-  font-size: var(--type-small);
-  line-height: 1.5;
   color: var(--muted-foreground);
 }
 .ed-foot a {
   color: var(--foreground);
+}
+.ed-foot-question {
+  font-size: var(--type-body-l);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.ed-foot-seller {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 32px;
+  font-size: var(--type-small);
+  line-height: 1.5;
+}
+body:has(.ed) .footer-top {
+  display: none;
+}
+body:has(.ed) .footer-grid {
+  padding-top: 0;
+  border-top: 0;
 }
 
 /* ——— The opening view: the square beside the Collection's words ——— */
@@ -138,10 +158,10 @@
 /* The way down to the Collection: its label over a brass hairline. */
 .ed-cue {
   grid-column: 1 / -1;
-  justify-self: center;
+  justify-self: start;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   color: var(--muted-foreground);
 }
@@ -183,8 +203,13 @@
 }
 .ed-square-top {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 12px;
+  gap: 4px 12px;
+}
+/* A label never wraps: on the narrowest squares the number moves beneath. */
+.ed-square-top > span {
+  white-space: nowrap;
 }
 .ed-square-title {
   display: flex;
@@ -301,22 +326,12 @@
   gap: 16px;
   padding: 0 var(--ed-gutter) var(--section-space-md);
 }
-@media (min-width: 1024px) {
-  .ed-notify-band {
-    padding-inline: max(var(--ed-gutter), 13.75vw);
-  }
-}
 
 /* ——— The Collection: two across, 4:5, name and price, Buy beneath ——— */
 
 .ed-collection {
   padding: var(--section-space-md) var(--ed-gutter);
   border-top: 1px solid var(--border);
-}
-@media (min-width: 1024px) {
-  .ed-collection {
-    padding-inline: max(var(--ed-gutter), 13.75vw);
-  }
 }
 .ed-collection-head {
   display: flex;
@@ -337,24 +352,15 @@
   gap: 10px 28px;
   padding-bottom: 10px;
 }
-/* Phones: the filters as one sideways row. */
+/* Phones: the filters wrap onto a second line rather than run off the
+   screen. */
 @media (max-width: 767px) {
   .ed-collection-head {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
   }
   .ed-filters {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    margin-inline: calc(-1 * var(--ed-gutter));
-    padding-inline: var(--ed-gutter);
-    scrollbar-width: none;
-  }
-  .ed-filters::-webkit-scrollbar {
-    display: none;
-  }
-  .ed-filter {
-    flex: none;
+    gap: 8px 24px;
   }
 }
 .ed-filter {
@@ -403,16 +409,24 @@
 .ed-card[data-sold] .ed-card-photo img {
   filter: grayscale(0.6);
 }
+/* The name keeps to one line where the card allows; when name and price
+   do not fit side by side, the price moves beneath rather than the name
+   breaking. */
 .ed-card-line {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
-  gap: 16px;
+  gap: 4px 16px;
 }
+/* The piece's name in Playfair, as on its own page; price and kind stay sans. */
 .ed-card-name {
-  font-size: var(--type-body);
-  line-height: 1.4;
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-s);
+  line-height: 1.25;
   color: var(--foreground);
+  text-wrap: balance;
 }
 .ed-card-price {
   flex: none;
@@ -469,8 +483,18 @@
   gap: 14px;
 }
 .ed-before-head h2 {
-  text-wrap: balance;
   margin-bottom: 8px;
+}
+/* "What this is, and what it is not" and "Make something with House of
+   Singh" are sentences: Instrument Sans at the statement size, one style
+   wherever they appear. */
+.ed-sentence-heading {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--type-statement);
+  line-height: 1.35;
+  color: var(--foreground);
+  text-wrap: balance;
 }
 .ed-before-notes {
   display: grid;
@@ -570,7 +594,9 @@
   overflow: hidden;
   background: var(--border);
 }
-.ed-piece-panel {
+.ed-piece-panel,
+.ed-piece-main,
+.ed-piece-more {
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -581,6 +607,37 @@
     position: sticky;
     top: 112px;
   }
+}
+/* Phones and tablets: the first photograph, the words and Buy, then the
+   other photographs, then the folding sections. The two columns' wrappers
+   step aside so their parts can be placed in that order. */
+@media (max-width: 1023px) {
+  .ed-piece-photos,
+  .ed-piece-panel {
+    display: contents;
+  }
+  .ed-piece-photo[data-first] {
+    order: 1;
+  }
+  .ed-piece-main {
+    order: 2;
+  }
+  .ed-piece-photo {
+    order: 3;
+  }
+  .ed-piece-more {
+    order: 4;
+  }
+}
+/* The end of a piece: the next one, and the way back to the Collection. */
+.ed-piece-next {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px 40px;
+  margin-inline: var(--ed-gutter);
+  padding-block: 32px var(--section-space-sm);
+  border-top: 1px solid var(--border);
 }
 .ed-piece-price {
   font-size: var(--type-body-l);
@@ -655,6 +712,13 @@
   min-width: 96px;
   padding-block: 10px;
 }
+/* Four zones: two even pairs where one row is too narrow. */
+@media (max-width: 559px) {
+  .ed-zones {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 .ed-zone-price {
   color: var(--muted-foreground);
 }
@@ -688,10 +752,42 @@
 .ed-size[data-sold] {
   text-decoration: line-through;
 }
+/* Buy: the Shop's one solid button (Shop design round 1). Charcoal, with
+   canvas text in the label style, the size of the outlined button; the
+   arrow moves 4px on hover and focus, as on the text link. */
 .ed-buy-btn {
-  width: 100%;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
+  gap: 14px;
+  width: 100%;
   margin-top: 6px;
+  padding: 18px 24px;
+  border: 1px solid var(--foreground);
+  background: var(--foreground);
+  color: var(--background);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.ed-buy-arrow {
+  display: inline-block;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+.ed-buy-btn:focus-visible .ed-buy-arrow {
+  transform: translateX(4px);
+}
+@media (hover: hover) {
+  .ed-buy-btn:hover:not(:disabled) .ed-buy-arrow {
+    transform: translateX(4px);
+  }
+}
+.ed-buy-btn:disabled {
+  cursor: progress;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-buy-arrow {
+    transition: none;
+  }
 }
 .ed-buy-message {
   font-size: var(--type-small);
@@ -798,7 +894,8 @@
   min-height: 44px;
   padding: 0 22px;
   border: 1px solid var(--foreground);
-  color: var(--foreground);
+  background: var(--foreground);
+  color: var(--background);
 }
 @media (min-width: 1024px) {
   .ed-bar {
@@ -1001,6 +1098,7 @@ a.ed-spine:focus-visible {
   font-size: var(--type-small);
   line-height: 1.6;
   color: var(--muted-foreground);
+  text-wrap: balance;
 }
 .ed-proposal {
   display: flex;
@@ -1134,12 +1232,28 @@ a.ed-spine:focus-visible {
 }
 
 /* "Have an early access code?": a quiet line like Notify me. */
+/* "Have an early access code?": a quiet text link that opens the field in
+   place. */
+.ed-code-reveal {
+  align-self: flex-start;
+  max-width: 440px;
+}
+.ed-code-reveal[open] {
+  align-self: stretch;
+}
+.ed-code-summary {
+  cursor: pointer;
+  list-style: none;
+}
+.ed-code-summary::-webkit-details-marker {
+  display: none;
+}
 .ed-code {
   display: flex;
   flex-direction: column;
   gap: 8px;
   max-width: 440px;
-  margin-top: 8px;
+  margin-top: 16px;
 }
 .ed-code-line {
   display: flex;
@@ -1209,7 +1323,8 @@ a.ed-spine:focus-visible {
   gap: 8px;
 }
 .ed-postal input {
-  width: 9.5em;
+  width: 12em;
+  max-width: 100%;
   padding: 8px 0;
   font-family: inherit;
   font-size: var(--type-body);
@@ -1225,6 +1340,8 @@ a.ed-spine:focus-visible {
 }
 .ed-postal input::placeholder {
   color: var(--muted-foreground);
+  letter-spacing: normal;
+  text-transform: none;
 }
 .ed-postal input:focus-visible {
   outline: none;
@@ -1234,4 +1351,9 @@ a.ed-spine:focus-visible {
   .ed-postal input {
     transition: none;
   }
+}
+
+/* The proposal form sends with the text link style, at its left edge. */
+.ed-proposal-send {
+  align-self: flex-start;
 }

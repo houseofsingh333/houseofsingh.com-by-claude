@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { OutlineButton } from "@/components/OutlineCta";
+import { useRef, useState } from "react";
 import { cad } from "@/lib/editions/format";
 import { taxForPostalCode, taxOnLines } from "@/lib/editions/tax-rates";
 import type { Zone } from "@/lib/editions/types";
@@ -24,8 +23,11 @@ type Props = {
 /**
  * Buy (canvas Y4b-PieceLuxe): the sizes as quiet outlined boxes (a sold
  * out size is struck through and cannot be chosen), where it ships with
- * the shipping price, then the outlined button across the panel: "Choose a
- * size" until a size is chosen, then "Buy, size M". It posts to
+ * the shipping price, then Buy across the panel, the Shop's one solid
+ * button (charcoal, canvas text; Shop design round 1). It names the next
+ * step until the piece can be bought: "Choose a size", then, for Canada,
+ * "Enter your postal code", then "Buy, size M"; pressed early, it takes
+ * the visitor to that step instead of submitting. It posts to
  * /api/editions/checkout, which checks stock again and creates the Stripe
  * Checkout; the page then moves to Stripe itself (the security policy does
  * not let a form post be redirected to another site). Without JavaScript
@@ -36,6 +38,8 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
   const [message, setMessage] = useState(initialMessage ?? null);
   const [sending, setSending] = useState(false);
   const [size, setSize] = useState<string | null>(null);
+  const sizesRef = useRef<HTMLDivElement>(null);
+  const postalRef = useRef<HTMLInputElement>(null);
   const firstZone = zones.find((z) => z.price !== null)?.value ?? null;
   const [zone, setZone] = useState<Zone | null>(firstZone);
   const chosen = sizes.find((s) => s.key === size);
@@ -49,10 +53,27 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
   const taxAmount = tax ? taxOnLines(price, shipping, tax.percentage) : 0;
   // Canada needs the postal code: it sets the province, and so the tax.
   const needsPostal = zone === "canada" && !tax;
-  const label = sending ? "Opening checkout" : sizes.length === 0 ? "Buy" : chosen ? `Buy, size ${chosen.label}` : "Choose a size";
+  const label = sending
+    ? "Opening checkout"
+    : needsSize
+      ? "Choose a size"
+      : needsPostal
+        ? "Enter your postal code"
+        : chosen
+          ? `Buy, size ${chosen.label}`
+          : "Buy";
 
   async function buy(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // Not ready yet: the button leads to the missing step.
+    if (needsSize) {
+      sizesRef.current?.querySelector<HTMLInputElement>("input:not(:disabled)")?.focus();
+      return;
+    }
+    if (needsPostal) {
+      postalRef.current?.focus();
+      return;
+    }
     setSending(true);
     setMessage(null);
     try {
@@ -70,12 +91,12 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
   }
 
   return (
-    <form method="post" action="/api/editions/checkout" onSubmit={buy} className="ed-buy" aria-describedby={message ? "ed-buy-message" : undefined}>
+    <form method="post" action="/api/editions/checkout" onSubmit={buy} noValidate className="ed-buy" aria-describedby={message ? "ed-buy-message" : undefined}>
       <input type="hidden" name="slug" value={slug} />
       {sizes.length > 0 && (
         <fieldset className="ed-choice">
           <legend className="type-label text-muted-foreground">Size</legend>
-          <div className="ed-sizes">
+          <div className="ed-sizes" ref={sizesRef}>
             {sizes.map((s) => (
               <label key={s.key} className="ed-size" data-sold={s.left === 0 ? "" : undefined}>
                 <input type="radio" name="size" value={s.key} disabled={s.left === 0} checked={size === s.key} onChange={() => setSize(s.key)} />
@@ -104,6 +125,7 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
             Postal code, for GST or HST
           </label>
           <input
+            ref={postalRef}
             id={`ed-postal-${slug}`}
             name="postal"
             required
@@ -111,7 +133,7 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
             onChange={(e) => setPostal(e.target.value)}
             autoComplete="postal-code"
             maxLength={7}
-            placeholder="M5H 2N2"
+            placeholder="Your postal code"
             aria-describedby={`ed-tax-${slug}`}
           />
           <p id={`ed-tax-${slug}`} className="ed-buy-quiet" aria-live="polite">
@@ -123,9 +145,12 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
           </p>
         </div>
       )}
-      <OutlineButton type="submit" disabled={needsSize || !zone || needsPostal || sending} className="ed-buy-btn">
-        {label}
-      </OutlineButton>
+      <button type="submit" disabled={!zone || sending} className="ed-buy-btn type-label">
+        <span>{label}</span>
+        <span aria-hidden="true" className="ed-buy-arrow">
+          {"\u2192"}
+        </span>
+      </button>
       {message && (
         <p id="ed-buy-message" role="alert" className="ed-buy-message">
           {message}

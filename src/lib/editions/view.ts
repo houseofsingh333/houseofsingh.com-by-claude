@@ -20,9 +20,14 @@ export function gridPiece(p: EditionsPiece, buyable = true): GridPiece {
   };
 }
 
-/** The Collection's filters: its own list, else every category it holds, in order. */
+/**
+ * The Collection's filters: its own list, else every category it holds, in
+ * order; only categories with at least one piece in the Collection. The
+ * grid shows no filters at all for a single category.
+ */
 export function gridFilters(c: EditionsCollection, pieces: EditionsPiece[]): { id: string; label: string }[] {
-  const own = (c.filters ?? []).filter((f) => f.category).map((f) => ({ id: f.category!._id, label: f.label?.trim() || f.category!.plural }));
+  const held = new Set(pieces.map((p) => p.category?._id).filter(Boolean));
+  const own = (c.filters ?? []).filter((f) => f.category && held.has(f.category._id)).map((f) => ({ id: f.category!._id, label: f.label?.trim() || f.category!.plural }));
   if (own.length) return own;
   const seen = new Map<string, { id: string; label: string; order: number }>();
   for (const p of pieces) {

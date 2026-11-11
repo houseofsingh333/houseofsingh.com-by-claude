@@ -10,9 +10,10 @@
  * collector numbers in order and reused, edition numbers and certificate
  * codes, and a repeated event changing nothing.
  */
-import { collectionState, available } from "../src/lib/editions/state";
+import { collectionState, available, releaseTimes } from "../src/lib/editions/state";
+import { gridFilters } from "../src/lib/editions/view";
 import { checkPurchase, checkoutParams } from "../src/lib/editions/checkout";
-import { shippingPrice } from "../src/lib/editions/shipping";
+import { isZone, shippingPrice, ZONES } from "../src/lib/editions/shipping";
 import { taxForPostalCode, taxOnLines } from "../src/lib/editions/tax-rates";
 import { formEncode, signStripePayload, verifyStripeSignature, type CheckoutSession } from "../src/lib/editions/stripe";
 import { processPaidSession, processRefund, taxCheck, type OrderRecord, type OrderStore, type OrderPiece } from "../src/lib/editions/orders";
@@ -118,7 +119,23 @@ check(!JSON.stringify(params).includes("dynamic_tax_rates") && !JSON.stringify(p
 check(params.shipping_address_collection.allowed_countries.join() === "CA", "a Canadian address only, for the Canada zone");
 const world = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "world", shipping: 48, taxRate: null, siteUrl: "https://example.test", now });
 check(world.line_items.every((l) => !("tax_rates" in l)) && world.metadata.taxProvince === "", "outside Canada: no tax");
-check(!world.shipping_address_collection.allowed_countries.includes("CA") && !world.shipping_address_collection.allowed_countries.includes("US") && world.shipping_address_collection.allowed_countries.includes("IN"), "the rest of the world excludes Canada and the United States");
+check(["CA", "US", "IN"].every((c) => !world.shipping_address_collection.allowed_countries.includes(c)) && world.shipping_address_collection.allowed_countries.includes("GB"), "the rest of the world excludes Canada, the United States and India");
+const india = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "india", shipping: 48, taxRate: null, siteUrl: "https://example.test", now });
+check(india.shipping_address_collection.allowed_countries.join() === "IN" && india.line_items.every((l) => !("tax_rates" in l)), "India: an Indian address only, no Canadian tax");
+check(isZone("india") && !isZone("mars"), "India is a zone of its own");
+check(shippingPrice(routes, "canada", "india", 1) === 48, "no India route yet: India is charged the Elsewhere price");
+check(shippingPrice([...routes, { origin: "canada", zone: "india", bands: [{ upToKg: 2, price: 30 }] }], "canada", "india", 1) === 30, "an India route, once set, is used");
+check(ZONES.map((z) => z.label).join() === "Canada,United States,India,Elsewhere", "four zones, in order");
+check(releaseTimes("2027-04-14T01:00:00Z") === "9 pm in Toronto, 6:30 am on 14 April in India", "release at 9 pm in Toronto: India's next day is named", releaseTimes("2027-04-14T01:00:00Z"));
+check(releaseTimes("2027-04-14T13:00:00Z") === "9 am in Toronto, 6:30 pm in India", "same day in both places: no date", releaseTimes("2027-04-14T13:00:00Z"));
+{
+  const cat = (id: string, plural: string, order: number) => ({ _id: id, singular: plural, plural, descriptor: plural, order });
+  const prints = cat("c-print", "Prints", 10), objects = cat("c-object", "Objects", 40);
+  const held = [{ category: prints }, { category: prints }] as unknown as EditionsPiece[];
+  const own = { filters: [{ _key: "a", category: prints }, { _key: "b", category: objects }] } as unknown as EditionsCollection;
+  check(gridFilters(own, held).map((f) => f.label).join() === "Prints", "filters: only categories with a piece in the Collection");
+  check(gridFilters({} as EditionsCollection, [...held, { category: objects }] as unknown as EditionsPiece[]).length === 2, "filters: every held category, in order");
+}
 check(params.custom_text.submit.message.includes("House of Singh Studios Inc., operating House of Singh Editions") && params.custom_text.submit.message.includes("123456789RT0001"), "the seller and GST/HST number at checkout", params.custom_text.submit.message);
 check(params.success_url.endsWith("/editions/thank-you?session_id={CHECKOUT_SESSION_ID}") && params.cancel_url.endsWith("/editions/test-print"), "success to the thank you page, cancel back to the piece");
 const encoded = formEncode(params).join("&");
