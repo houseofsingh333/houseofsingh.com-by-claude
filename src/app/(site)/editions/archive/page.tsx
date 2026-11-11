@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
-import CollectionSquare from "@/components/editions/CollectionSquare";
+import CollectionCard from "@/components/editions/CollectionCard";
+import { cardDate } from "@/lib/editions/release";
 import { Spine, SpineSealed } from "@/components/editions/Spine";
 import { hotspotPosition } from "@/lib/projectHero";
 import { loadCollections } from "@/lib/editions/load";
 import { available } from "@/lib/editions/state";
-import { collectionTitle, monthIn, pad2, piecesInWords } from "@/lib/editions/format";
-import { allSold, closedSentence, collectionsInWords } from "@/lib/editions/view";
+import { collectionTitle, dayIn, monthIn, pad2, piecesInWords } from "@/lib/editions/format";
+import { closedSentence, collectionsInWords } from "@/lib/editions/view";
 import { requireEditions } from "@/lib/editions/enabled";
+import { keepLastWords } from "@/lib/keepLastWords";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = { title: "Archive" };
@@ -59,7 +61,7 @@ export default async function ArchivePage() {
         {upcoming && (
           <div className="ed-shelf-square">
             <Link href="/editions" aria-label={`${collectionTitle(upcoming.number)}, in the Shop`} className="ed-shelf-square-link">
-              <CollectionSquare number={upcoming.number} season={upcoming.season} colour={upcoming.colour} pieces={upcoming.pieces.length} state={upcoming.state} soldOut={allSold(upcoming.pieces)} />
+              <CollectionCard number={upcoming.number} colour={upcoming.colour} date={cardDate(upcoming.opens)} label={`${collectionTitle(upcoming.number)}, released once, on ${dayIn(upcoming.opens)}`} />
             </Link>
           </div>
         )}
@@ -85,7 +87,7 @@ export default async function ArchivePage() {
                     )}
                   </Link>
                   <Link href={`/editions/${p.slug}`} className="ed-card-name hairline">
-                    {p.name}
+                    {keepLastWords(p.name)}
                   </Link>
                   <span className="type-label text-muted-foreground">{sold ? "Sold" : "Not sold"}</span>
                 </li>

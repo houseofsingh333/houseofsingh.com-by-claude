@@ -7,6 +7,7 @@ import TextLink from "@/components/TextLink";
 import { hotspotPosition } from "@/lib/projectHero";
 import { cad, piecesInWords } from "@/lib/editions/format";
 import type { SanityImageAsset } from "@/lib/sanityImage";
+import { keepLastWords } from "@/lib/keepLastWords";
 
 export type GridPiece = {
   _id: string;
@@ -82,7 +83,7 @@ export default function CollectionGrid({ pieces, filters, label, next }: { piece
             </Link>
             <div className="ed-card-line">
               <Link href={`/editions/${p.slug}`} className="ed-card-name hairline">
-                {p.name}
+                {keepLastWords(p.name)}
               </Link>
               <span className="ed-card-price">{p.soldOut ? "Sold out" : cad(p.price)}</span>
             </div>

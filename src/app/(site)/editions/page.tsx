@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import CollectionSquare from "@/components/editions/CollectionSquare";
 import CollectionCard from "@/components/editions/CollectionCard";
 import CollectionGrid from "@/components/editions/CollectionGrid";
 import NotifyMe from "@/components/editions/NotifyMe";
@@ -13,7 +12,7 @@ import TextLink from "@/components/TextLink";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
 import { canBuy, shopNow, untilWords } from "@/lib/editions/state";
 import { collectionTitle, dayIn, gurmukhi } from "@/lib/editions/format";
-import { allSold, closedSentence, collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
+import { closedSentence, collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
 import { cardDate, cityTimes, daysUntilShort, earlyEyebrow, sealedEyebrow } from "@/lib/editions/release";
 import { keepLastWords } from "@/lib/keepLastWords";
 import { shopColour } from "@/lib/editions/palette";
@@ -33,12 +32,12 @@ export async function generateMetadata(): Promise<Metadata> {
 const showPlaceholders = () => process.env.VERCEL_ENV !== "production";
 
 /**
- * The Shop. Sealed and in early access (Shop design round 2): the
- * Collection card beside the line before the release, the title, the
- * sentence, the release time in five cities, Add to my calendar, Notify me
- * (sealed) and the early access link; then, sealed, How the release works.
- * Open and closed: the square beside the Collection's words, and the
- * Collection itself while it can be bought. Every state then has In the
+ * The Shop (Shop design round 2). In every state the Collection card
+ * beside the line above the title, the title and the sentence. Sealed and
+ * in early access: the release time in five cities and Add to my
+ * calendar; sealed: Notify me and the early access link, then How the
+ * release works. Open: the Collection itself while it can be bought.
+ * Closed: Notify me for the next, and the way to what it held. Every state then has In the
  * making (when Journal entries are chosen), Before you buy, Questions,
  * For artists and, once a Collection has closed, the archive. On phones a
  * floating bar leads back to Notify me (or the Collection). The current
@@ -91,81 +90,53 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
   const askForCode = !anticipation && state === "sealed" && Boolean(current.earlyAccessCodeHash) && Boolean(current.earlyAccessOpens) && now.getTime() >= Date.parse(current.earlyAccessOpens!);
   const archived = closed.length > 0 || state === "closed";
   const gold = shopColour(current.colour).square;
+  // Sealed: the list for this Collection; closed: for the next.
+  const notifyFor = collectionTitle(state === "closed" ? current.number + 1 : current.number);
 
   return (
     <div className="ed-page">
-      {before ? (
-        <section className="ed-open2" aria-labelledby="ed-title">
-          <CollectionCard number={current.number} colour={current.colour} date={cardDate(current.opens)} label={`${title}, released once, on ${dayIn(current.opens)}`} />
-          <div className="ed-open2-text">
-            <span className="type-label text-muted-foreground ed-open2-eyebrow">{state === "early" ? earlyEyebrow(current, now) : sealedEyebrow(current, now)}</span>
-            <h1 id="ed-title" className="font-editorial font-normal text-display-xl leading-none text-foreground">
-              {title}
-            </h1>
-            <p className="ed-open2-sentence">{keepLastWords(current.intro)}</p>
-            <ReleaseTimes opens={current.opens} times={cityTimes(current.opens, settings.releaseCities)} />
-            <a href="/api/editions/calendar" download className="ed-calendar">
-              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <rect x="3.5" y="5" width="17" height="15.5" rx="1" />
-                <path d="M3.5 10h17M8 3v4M16 3v4" />
-              </svg>
-              <span>Add to my calendar</span>
-            </a>
-            {state === "sealed" && (
-              <div id="notify" className="ed-notify2 ed-anchor">
-                <h2 className="ed-notify2-heading">Be the first to know</h2>
-                <NotifyMe collection={title} thanks={`You are on the list for ${title}.`} idSuffix="shop" />
-                {askForCode && <EarlyAccessForm wrong={code === "wrong"} />}
-              </div>
-            )}
-          </div>
-          {buying && (
-            <a href="#collection" className="ed-cue">
-              <span className="type-label">The Collection</span>
-              <span aria-hidden="true" className="ed-cue-line" />
-            </a>
+      <section className="ed-open2" aria-labelledby="ed-title">
+        <CollectionCard number={current.number} colour={current.colour} date={cardDate(current.opens)} label={`${title}, released once, on ${dayIn(current.opens)}`} />
+        <div className="ed-open2-text">
+          <span className="type-label text-muted-foreground ed-open2-eyebrow">
+            {state === "early" ? earlyEyebrow(current, now) : state === "sealed" ? sealedEyebrow(current, now) : stateLine(current, state, now, untilWords(current.opens, now))}
+          </span>
+          <h1 id="ed-title" className="font-editorial font-normal text-display-xl leading-none text-foreground">
+            {title}
+          </h1>
+          <p className="ed-open2-sentence">{keepLastWords(state === "closed" ? closedSentence(current, current.pieces) : current.intro)}</p>
+          {before && (
+            <>
+              <ReleaseTimes opens={current.opens} times={cityTimes(current.opens, settings.releaseCities)} />
+              <a href="/api/editions/calendar" download className="ed-calendar">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="3.5" y="5" width="17" height="15.5" rx="1" />
+                  <path d="M3.5 10h17M8 3v4M16 3v4" />
+                </svg>
+                <span>Add to my calendar</span>
+              </a>
+            </>
           )}
-        </section>
-      ) : (
-        <section className="ed-open" aria-labelledby="ed-title">
-          <CollectionSquare number={current.number} season={current.season} colour={current.colour} pieces={current.pieces.length} state={state} soldOut={allSold(current.pieces)} />
-          <div className="ed-open-text">
-            <div className="ed-open-words">
-              <span className="type-label text-muted-foreground">{stateLine(current, state, now, untilWords(current.opens, now))}</span>
-              <h1 id="ed-title" className="font-editorial font-normal text-display-xl leading-none text-foreground">
-                {title}
-              </h1>
-              <p className="ed-open-sentence">{state === "closed" ? closedSentence(current, current.pieces) : current.intro}</p>
-              {state === "closed" && (
-                <div id="notify" className="ed-anchor">
-                  <NotifyMe collection={collectionTitle(current.number + 1)} thanks={`You are on the list for ${collectionTitle(current.number + 1)}.`} idSuffix="shop" />
-                </div>
-              )}
+          {(state === "sealed" || state === "closed") && (
+            <div id="notify" className="ed-notify2 ed-anchor">
+              <h2 className="ed-notify2-heading">Be the first to know</h2>
+              <NotifyMe collection={notifyFor} thanks={`You are on the list for ${notifyFor}.`} idSuffix="shop" />
+              {askForCode && <EarlyAccessForm wrong={code === "wrong"} />}
             </div>
-            <div className="ed-open-foot">
-              {state === "closed" ? (
-                <>
-                  <span>{`Collectors of ${title} hear first.`}</span>
-                  <Link href="/editions/archive" className="hairline text-foreground">{`See what ${title} held`}</Link>
-                </>
-              ) : (
-                <>
-                  <span>{settings.honestLine}</span>
-                  <a href="#before-you-buy" className="hairline text-foreground">
-                    Before you buy
-                  </a>
-                </>
-              )}
-            </div>
-          </div>
-          {buying && (
-            <a href="#collection" className="ed-cue">
-              <span className="type-label">The Collection</span>
-              <span aria-hidden="true" className="ed-cue-line" />
-            </a>
           )}
-        </section>
-      )}
+          {state === "closed" && (
+            <Link href="/editions/archive" className="ed-calendar">
+              <span>{`See what ${title} held`}</span>
+            </Link>
+          )}
+        </div>
+        {buying && (
+          <a href="#collection" className="ed-cue">
+            <span className="type-label">The Collection</span>
+            <span aria-hidden="true" className="ed-cue-line" />
+          </a>
+        )}
+      </section>
 
       {buying && !anticipation && (
         <CollectionGrid
