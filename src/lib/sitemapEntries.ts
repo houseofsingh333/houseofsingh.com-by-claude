@@ -4,6 +4,7 @@ import { placeholdersEnabled } from "@/lib/placeholders";
 import { parseSanityDate } from "@/lib/dates";
 import { journalMonthHref } from "@/lib/journalLinks";
 import { PRIVACY_UPDATED, TERMS_UPDATED } from "@/lib/legalDates";
+import { siteMode } from "@/lib/editions/enabled";
 
 const BASE_URL = "https://houseofsingh.com";
 
@@ -148,6 +149,9 @@ export async function sitemapEntries(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/contact`, ...at(dates.contact), changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE_URL}/privacy`, lastModified: PRIVACY_UPDATED.iso, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE_URL}/terms`, lastModified: TERMS_UPDATED.iso, changeFrequency: "monthly", priority: 0.5 },
+    // The sealed Shop, while the live site is in anticipation: /editions
+    // alone (every other Shop page stays out of the sitemap).
+    ...(siteMode() === "anticipation" ? [{ url: `${BASE_URL}/editions`, changeFrequency: "weekly" as const, priority: 0.6 }] : []),
   ];
 
   return [...staticRoutes, ...projectRoutes, ...journalRoutes, ...monthRoutes];

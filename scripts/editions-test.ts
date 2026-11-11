@@ -340,6 +340,44 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
     check(visibleQuestions([{ answer: "" }, { answer: "Yes" }], false).length === 1 && visibleQuestions([{ answer: "" }], true).length === 1, "placeholder answers count only where they show");
   }
 
+  // The sample removal before launch: only sample data, never the real Collection or live records.
+  {
+    const { parse, evaluate } = await import("groq-js");
+    const { SAMPLE_GROUPS, KEEP } = await import("./editions-samples.mjs");
+    const dataset = [
+      { _id: "editions-collection-01", _type: "editionsCollection", number: 1, isTestData: false },
+      { _id: "editions-test-collection-01", _type: "editionsCollection", number: 1, isTestData: true },
+      { _id: "drafts.editions-test-piece-1", _type: "editionsPiece", isTestData: true },
+      { _id: "editions-test-piece-1", _type: "editionsPiece", isTestData: true },
+      { _id: "editions-test-collaborator", _type: "editionsCollaborator" },
+      { _id: "editions-category-print", _type: "editionsCategory" },
+      { _id: "editionsSettings", _type: "editionsSettings" },
+      { _id: "editionsShipping", _type: "editionsShipping", isTestData: true },
+      { _id: "private.editions-order-a", _type: "editionsOrder", testMode: true, email: "A@x.test" },
+      { _id: "private.editions-collector-a", _type: "editionsCollector", email: "a@x.test" },
+      { _id: "private.editions-counter", _type: "editionsCounter", next: 4 },
+      { _id: "private.editions-proposal-1", _type: "editionsProposal" },
+      { _id: "private.email-queue-1", _type: "emailQueued", email: { sender: "editions" } },
+      { _id: "private.email-queue-2", _type: "emailQueued", email: { sender: "letters" } },
+      { _id: "private.signup-pending-1", _type: "signupPending", kind: "shop" },
+      { _id: "private.signup-pending-2", _type: "signupPending", kind: "letters" },
+      { _id: "private.email-day-2026-11-11", _type: "emailDay" },
+      { _id: "subscriber-1", _type: "newsletterSubscriber" },
+    ];
+    const hit = new Set<string>();
+    for (const [, q] of SAMPLE_GROUPS as [string, string][]) for (const d of (await (await evaluate(parse(q), { dataset })).get()) as { _id: string }[]) if (!KEEP.includes(d._id)) hit.add(d._id);
+    const removed = [...hit].sort().join(",");
+    check(
+      removed === "drafts.editions-test-piece-1,editions-test-collaborator,editions-test-collection-01,editions-test-piece-1,private.editions-collector-a,private.editions-counter,private.editions-order-a,private.editions-proposal-1,private.email-queue-1,private.signup-pending-1",
+      "sample removal: sample content, test orders, their collectors and the counter, Shop email records; nothing else",
+      removed,
+    );
+    const real = [...dataset, { _id: "private.editions-order-b", _type: "editionsOrder", testMode: false, email: "a@x.test" }];
+    const keptWithReal = new Set<string>();
+    for (const [, q] of SAMPLE_GROUPS as [string, string][]) for (const d of (await (await evaluate(parse(q), { dataset: real })).get()) as { _id: string }[]) keptWithReal.add(d._id);
+    check(!keptWithReal.has("private.editions-collector-a") && !keptWithReal.has("private.editions-counter"), "a collector or the counter with a real order is kept");
+  }
+
   console.log(failures ? `\n${failures} failed` : "\nall passed");
   process.exit(failures ? 1 : 0);
 })();

@@ -43,6 +43,11 @@ export type FooterCopy = Pick<
  * bottom on phone. Every link draws the shared hairline.
  */
 export default function Footer({ copy, bookUrl }: { copy: FooterCopy; bookUrl: string }) {
+  // The Shop, once the site links it (EDITIONS_MODE anticipation or full):
+  // one more page name, between Journal and Contact. Never in the menu.
+  const pages = editionsLinked()
+    ? [...NAV_LINKS.slice(0, 4), { label: "Shop", href: "/editions" }, ...NAV_LINKS.slice(4)]
+    : NAV_LINKS;
   return (
     <footer className="footer-wrap">
       <div className="footer-main">
@@ -68,7 +73,7 @@ export default function Footer({ copy, bookUrl }: { copy: FooterCopy; bookUrl: s
               {copy.codaPagesLabel}
             </span>
             <ul className="footer-nav" role="list">
-              {NAV_LINKS.map((link) => (
+              {pages.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="footer-nav-link hairline">
                     {link.label}
@@ -94,13 +99,6 @@ export default function Footer({ copy, bookUrl }: { copy: FooterCopy; bookUrl: s
 
       <div className="footer-bottom">
         <span className="footer-bottom-copyright">&copy; 2026 House of Singh</span>
-        {/* The Shop, while in development: linked from here only, never
-            indexed, and only where EDITIONS_MODE is not "off". */}
-        {editionsLinked() && (
-          <Link href="/editions" className="footer-bottom-link hairline">
-            Shop
-          </Link>
-        )}
         <Link href="/privacy" className="footer-bottom-link hairline">
           Privacy
         </Link>
