@@ -4,8 +4,13 @@ import { EDITIONS_DEFAULTS } from "./defaults";
 import { collectionTitle, dayIn, monthIn, pad2 } from "./format";
 import type { CollectionState, EditionsCollection, EditionsPiece } from "./types";
 
-/** How many are left when it is few (at or under the threshold), else null; sold out is not "few". */
-export function fewLeft(p: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes">, threshold: number): number | null {
+/**
+ * How many are left when it is few (at or under the threshold), else null;
+ * sold out is not "few", and a one of one never shows a count (it reads
+ * "One of one" instead).
+ */
+export function fewLeft(p: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes"> & { editionType?: EditionsPiece["editionType"] }, threshold: number): number | null {
+  if (p.editionType === "one-of-one") return null;
   const left = available(p);
   return left > 0 && left <= threshold ? left : null;
 }
@@ -38,6 +43,7 @@ export function stillAvailable(pieces: Pick<EditionsPiece, "quantity" | "soldCou
 export function gridPiece(p: EditionsPiece, buyable = true, threshold = 3): GridPiece {
   return {
     fewLeft: fewLeft(p, threshold),
+    oneOfOne: p.editionType === "one-of-one",
     partner: madeBy(p).partner,
     _id: p._id,
     name: p.name,

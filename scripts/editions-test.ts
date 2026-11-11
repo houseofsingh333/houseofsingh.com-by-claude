@@ -320,6 +320,9 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
     check(madeBy({ collaborators: [], madeWith: " a bindery in Toronto " }).partner === "a bindery in Toronto" && madeBy({ collaborators: null, madeWith: "a bindery" }).about === null, "Made by: a maker without a page");
     check(madeBy({ collaborators: [null] as never, madeWith: "" }).partner === null, "Made by: House of Singh alone");
     check(stillAvailable([{ quantity: 1, soldCount: 1 }, { quantity: 5, soldCount: 0 }, { quantity: 2, soldCount: 1 }] as EditionsPiece[]) === "2 of 3 pieces", "still available: pieces with any left, of all");
+    check(fewLeft({ quantity: 1, soldCount: 0, editionType: "one-of-one" } as EditionsPiece, 3) === null, "a one of one never shows a count");
+    const one = gridPiece({ ...print, editionType: "one-of-one", quantity: 1, soldCount: 0 } as EditionsPiece, true, 3);
+    check(one.oneOfOne === true && one.fewLeft === null, "a one of one's card reads One of one, with no few left label");
     const g = gridPiece({ ...print, quantity: 10, soldCount: 7, collaborators: [{ _id: "a", name: "Sample Artist", slug: "s" }] } as EditionsPiece, true, 3);
     check(g.fewLeft === 3 && g.partner === "Sample Artist", "the grid card carries few left and the collaborator");
   }

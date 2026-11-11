@@ -135,7 +135,7 @@ export default async function PiecePage({ params, searchParams }: { params: Prom
           </h1>
           <p className="ed-piece-price">
             <span>{left === 0 ? "Sold out" : cad(piece.price)}</span>
-            {few ? <span className="ed-few">{`${few} left`}</span> : null}
+            {piece.editionType === "one-of-one" ? <span className="ed-piece-one">One of one</span> : few ? <span className="ed-few">{`${few} left`}</span> : null}
           </p>
 
           <div className="ed-madeby">

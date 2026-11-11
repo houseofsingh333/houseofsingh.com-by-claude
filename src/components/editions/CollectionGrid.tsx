@@ -22,8 +22,10 @@ export type GridPiece = {
   image: SanityImageAsset | null;
   /** False where the piece's Collection is not open (a collaborator's page): no Buy. */
   buyable?: boolean;
-  /** How many are left, when few. */
+  /** How many are left, when few (never for a one of one). */
   fewLeft?: number | null;
+  /** A one of one: its type line reads "One of one", never a count. */
+  oneOfOne?: boolean;
   /** Made with: a collaborator or maker, shown after the kind with the drawn ×. */
   partner?: string | null;
 };
@@ -94,7 +96,7 @@ export default function CollectionGrid({ pieces, filters, label, next }: { piece
             </div>
             <span className="type-label text-muted-foreground ed-card-kind">
               <span>{p.descriptor}</span>
-              {!p.soldOut && p.fewLeft ? <span className="ed-few">{` · ${p.fewLeft} left`}</span> : null}
+              {p.oneOfOne ? <span>{" · One of one"}</span> : !p.soldOut && p.fewLeft ? <span className="ed-few">{` · ${p.fewLeft} left`}</span> : null}
               {p.partner ? (
                 <span>
                   {" · "}

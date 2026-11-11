@@ -422,8 +422,13 @@ body:has(.ed) .footer-grid {
   line-height: 1.4;
   color: var(--foreground);
 }
-.ed-piece-price .ed-few {
+.ed-piece-price .ed-few,
+.ed-piece-price .ed-piece-one {
   font-size: var(--type-small);
+}
+/* A one of one says so, quietly: not a count, not in brass. */
+.ed-piece-one {
+  color: var(--muted-foreground);
 }
 .ed-piece-statement {
   font-size: var(--type-body);
