@@ -12,10 +12,9 @@ import TextLink from "@/components/TextLink";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
 import { canBuy, shopNow, untilWords } from "@/lib/editions/state";
 import { collectionTitle, dayIn, gurmukhi } from "@/lib/editions/format";
-import { makingEntries, closedSentence, collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
+import { makingEntries, stillAvailable, closedSentence, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
 import { cardDate, cityTimes, daysUntilShort, earlyEyebrow, sealedEyebrow } from "@/lib/editions/release";
 import { keepLastWords } from "@/lib/keepLastWords";
-import { shopColour } from "@/lib/editions/palette";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import { requireEditions, siteMode } from "@/lib/editions/enabled";
 
@@ -83,29 +82,58 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
   // Anticipation: always the sealed Collection, whatever its dates say.
   const state = anticipation ? "sealed" : current.state;
   const buying = canBuy(state);
-  const before = state === "sealed" || state === "early";
+  const until = current.closes ? dayIn(current.closes) : null;
+  const eyebrow =
+    state === "early"
+      ? earlyEyebrow(current, now)
+      : state === "sealed"
+        ? sealedEyebrow(current, now)
+        : state === "open"
+          ? until
+            ? `Open · until ${until}`
+            : "Open"
+          : stateLine(current, state, now, untilWords(current.opens, now));
+  const nextName = settings.nextCollection;
   const title = collectionTitle(current.number);
   const numeral = gurmukhi(current.number).padStart(2, "੦");
   // The fallback for an early access link that did not arrive: a field for the code, once early access has opened.
   const askForCode = !anticipation && state === "sealed" && Boolean(current.earlyAccessCodeHash) && Boolean(current.earlyAccessOpens) && now.getTime() >= Date.parse(current.earlyAccessOpens!);
   const archived = closed.length > 0 || state === "closed";
-  const gold = shopColour(current.colour).square;
   // Sealed: the list for this Collection; closed: for the next.
   const notifyFor = collectionTitle(state === "closed" ? current.number + 1 : current.number);
 
   return (
     <div className="ed-page">
-      <section className="ed-open2" aria-labelledby="ed-title">
+      <section className="ed-open2" data-state={state} aria-labelledby="ed-title">
         <CollectionCard number={current.number} colour={current.colour} date={cardDate(current.opens)} label={`${title}, released once, on ${dayIn(current.opens)}`} />
         <div className="ed-open2-text">
-          <span className="type-label text-muted-foreground ed-open2-eyebrow">
-            {state === "early" ? earlyEyebrow(current, now) : state === "sealed" ? sealedEyebrow(current, now) : stateLine(current, state, now, untilWords(current.opens, now))}
-          </span>
+          <span className="type-label text-muted-foreground ed-open2-eyebrow">{eyebrow}</span>
           <h1 id="ed-title" className="font-editorial font-normal text-display-xl leading-none text-foreground">
             {title}
           </h1>
           <p className="ed-open2-sentence">{keepLastWords(state === "closed" ? closedSentence(current, current.pieces) : current.intro)}</p>
-          {before && (
+          {buying && (
+            <>
+              <p className="ed-open2-avail">{keepLastWords(`${stillAvailable(current.pieces)} still available, ${until ? `until ${until} or until gone` : "until gone"}.`)}</p>
+              <dl className="ed-facts">
+                <div>
+                  <dt className="type-label text-muted-foreground">Still available</dt>
+                  <dd>{stillAvailable(current.pieces)}</dd>
+                </div>
+                <div>
+                  <dt className="type-label text-muted-foreground">Open until</dt>
+                  <dd>{until ? `${until}, or until gone` : "Until gone"}</dd>
+                </div>
+              </dl>
+              <a href="#collection" className="text-link ed-see">
+                <span className="text-link-text">See the Collection</span>
+                <span aria-hidden="true" className="text-link-arrow">
+                  {"\u2193"}
+                </span>
+              </a>
+            </>
+          )}
+          {state === "sealed" && (
             <>
               <ReleaseTimes opens={current.opens} times={cityTimes(current.opens, settings.releaseCities)} />
               <a href="/api/editions/calendar" download className="ed-calendar">
@@ -130,30 +158,24 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
             </Link>
           )}
         </div>
-        {buying && (
-          <a href="#collection" className="ed-cue">
-            <span className="type-label">The Collection</span>
-            <span aria-hidden="true" className="ed-cue-line" />
-          </a>
-        )}
       </section>
 
       {buying && !anticipation && (
         <CollectionGrid
-          pieces={current.pieces.map((p) => gridPiece(p))}
+          pieces={current.pieces.map((p) => gridPiece(p, true, settings.fewLeft))}
           filters={gridFilters(current, current.pieces)}
-          label={collectionLine(current)}
-          next={`Notify me of ${collectionTitle(current.number + 1)}`}
+          label={title}
+          next={`Notify me of ${nextName}`}
         />
       )}
-      {buying && !anticipation && state === "open" && (
+      {buying && !anticipation && (
         <div id="notify" className="ed-anchor ed-notify-band">
           <span className="type-label text-muted-foreground">The next Collection</span>
           <NotifyMe collection={collectionTitle(current.number + 1)} thanks={`You are on the list for ${collectionTitle(current.number + 1)}.`} idSuffix="next" />
         </div>
       )}
 
-      {before && <HowItWorks steps={EDITIONS_DEFAULTS.howItWorks.map((s) => ({ ...s }))} />}
+      {state === "sealed" && <HowItWorks steps={EDITIONS_DEFAULTS.howItWorks.map((s) => ({ ...s }))} />}
       <InTheMaking entries={makingEntries(current.journal)} />
       {below}
 
@@ -164,10 +186,8 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
         </section>
       )}
 
-      {state === "sealed" && <ShopBar numeral={numeral} title={title} when={daysUntilShort(current.opens, now)} action="Notify me" target="notify" colour={gold} />}
-      {buying && !anticipation && (
-        <ShopBar numeral={numeral} title={title} when={state === "early" ? "Early access" : "Open now"} action="Shop the Collection" target="collection" colour={gold} />
-      )}
+      {state === "sealed" && <ShopBar numeral={numeral} title={title} when={daysUntilShort(current.opens, now)} action="Notify me" target="notify" />}
+
     </div>
   );
 }

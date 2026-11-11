@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import DrawnTimes from "./DrawnTimes";
 
 /** Each craft holds, then slides on; the last word ("you") slides in slower and holds longest. */
 const HOLD_MS = 1500;
@@ -27,21 +28,6 @@ const watchMotion = (change: () => void) => {
  * again; the window is one and a half lines tall, so no letter is
  * clipped. With reduced motion the last word ("you") stays. Screen readers hear "Propose a collaboration".
  */
-/**
- * The brass ×, drawn rather than typed: the font's × is a thin, small mark
- * that reads as a close button at this size. Two strokes as thick as the
- * surrounding Playfair letters' stems (about 0.093 of the type size), the
- * same size as the × it replaces, centred on the x height (vertical-align:
- * middle) on the desktop line, and on its own line in the phone panel.
- */
-function Times() {
-  return (
-    <svg className="ed-invite-x" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-      <path d="M8 8 92 92M92 8 8 92" />
-    </svg>
-  );
-}
-
 export default function ArtistsInvite({ words, href }: { words: string[]; href: string }) {
   const list = words.length ? words : ["you"];
   const last = list.length - 1;
@@ -91,7 +77,7 @@ export default function ArtistsInvite({ words, href }: { words: string[]; href: 
       <Link href={href} className="ed-invite-line" aria-label="Propose a collaboration">
         <span aria-hidden="true" className="ed-invite-words">
           House of Singh
-          <Times />
+          <DrawnTimes className="ed-invite-x" />
           {reel}
         </span>
         <span aria-hidden="true" className="ed-invite-arrow">
@@ -105,7 +91,7 @@ export default function ArtistsInvite({ words, href }: { words: string[]; href: 
         <span aria-hidden="true" className="ed-invite-panel-name">
           House of Singh
         </span>
-        <Times />
+        <DrawnTimes className="ed-invite-x" />
         {reel}
         <Link href={href} className="text-link ed-invite-panel-link">
           <span className="text-link-text">Propose a collaboration</span>

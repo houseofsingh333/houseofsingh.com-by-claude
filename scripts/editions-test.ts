@@ -11,7 +11,8 @@
  * codes, and a repeated event changing nothing.
  */
 import { collectionState, available, releaseTimes } from "../src/lib/editions/state";
-import { gridFilters, knownCollaborators, makingEntries } from "../src/lib/editions/view";
+import { fewLeft, gridFilters, gridPiece, knownCollaborators, madeBy, makingEntries, stillAvailable } from "../src/lib/editions/view";
+import { taxMode, TAX_CODES } from "../src/lib/editions/tax-rates";
 import { editionsCollectionsQuery } from "../src/lib/editions/queries";
 import { cardDate, cityTimes, daysUntil, momentIn, releaseIcs, sealedEyebrow } from "../src/lib/editions/release";
 import { withDefaults } from "../src/lib/editions/load";
@@ -296,6 +297,34 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
     check(safe.map((e) => e.slug).join() === "one,two,three" && safe[0].image === null && safe[1]._id === "two" && safe[2].image !== null, "In the making: the page keeps only whole entries, at most three, and drops a broken photograph", safe);
     check(makingEntries(null).length === 0 && makingEntries({}).length === 0, "In the making: no list at all is an empty section, not an error");
     check(knownCollaborators([null, { name: "A", slug: "a" }, { name: null, slug: "b" }] as never).length === 1, "a missing collaborator is skipped in the maker line");
+  }
+
+  // Shop design round 3: Stripe Tax behind TAX_MODE, few left, Made by, availability.
+  {
+    check(taxMode({ TAX_MODE: "stripe" }) === "stripe" && taxMode({ TAX_MODE: "fixed", VERCEL_ENV: "preview" }) === "fixed", "TAX_MODE chooses the tax");
+    check(taxMode({ VERCEL_ENV: "production" }) === "fixed" && taxMode({ VERCEL_ENV: "preview" }) === "stripe" && taxMode({}) === "stripe", "unset: fixed on the live site, Stripe Tax on previews and locally");
+    const st = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "canada", shipping: 22, taxRate: { id: "txr_on", province: "ON" }, taxMode: "stripe", siteUrl: "https://example.test", now });
+    const [pieceLine, shipLine] = st.line_items as { price_data: { tax_behavior?: string; product_data: { tax_code?: string } } }[];
+    check((st as { automatic_tax?: { enabled: boolean } }).automatic_tax?.enabled === true, "Stripe Tax: automatic tax on the session");
+    check(st.line_items.every((l) => !("tax_rates" in l)), "Stripe Tax: no fixed rates on any line");
+    check(pieceLine.price_data.tax_behavior === "exclusive" && shipLine.price_data.tax_behavior === "exclusive", "Stripe Tax: prices exclusive of tax");
+    check(pieceLine.price_data.product_data.tax_code === TAX_CODES.goods && shipLine.price_data.product_data.tax_code === TAX_CODES.shipping, "Stripe Tax: physical goods and shipping tax codes");
+    check(st.metadata.taxProvince === "" && st.metadata.taxMode === "stripe", "Stripe Tax: no province to compare afterwards (no Check tax)");
+    const fx = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "canada", shipping: 22, taxRate: { id: "txr_on", province: "ON" }, taxMode: "fixed", siteUrl: "https://example.test", now });
+    check(!("automatic_tax" in fx) && fx.line_items.every((l) => (l as { tax_rates?: string[] }).tax_rates?.[0] === "txr_on") && fx.metadata.taxProvince === "ON", "fixed: unchanged, the province's rate on both lines");
+    check(taxCheck("", { country: "CA", state: "QC" }).checkTax === undefined, "Stripe Tax orders are never marked Check tax");
+
+    const two = { quantity: 10, soldCount: 8 } as EditionsPiece;
+    check(fewLeft(two, 3) === 2 && fewLeft({ quantity: 10, soldCount: 2 } as EditionsPiece, 3) === null && fewLeft({ quantity: 10, soldCount: 10 } as EditionsPiece, 3) === null, "few left: at or under the setting, never when sold out");
+    check(JSON.stringify(madeBy({ collaborators: [{ _id: "a", name: "Sample Artist", slug: "sample-artist" }], madeWith: "a bindery" })) === JSON.stringify({ partner: "Sample Artist", about: { href: "/editions/collaborators/sample-artist", first: "Sample" } }), "Made by: a collaborator with a page, and About with the first name");
+    check(madeBy({ collaborators: [], madeWith: " a bindery in Toronto " }).partner === "a bindery in Toronto" && madeBy({ collaborators: null, madeWith: "a bindery" }).about === null, "Made by: a maker without a page");
+    check(madeBy({ collaborators: [null] as never, madeWith: "" }).partner === null, "Made by: House of Singh alone");
+    check(stillAvailable([{ quantity: 1, soldCount: 1 }, { quantity: 5, soldCount: 0 }, { quantity: 2, soldCount: 1 }] as EditionsPiece[]) === "2 of 3 pieces", "still available: pieces with any left, of all");
+    check(fewLeft({ quantity: 1, soldCount: 0, editionType: "one-of-one" } as EditionsPiece, 3) === null, "a one of one never shows a count");
+    const one = gridPiece({ ...print, editionType: "one-of-one", quantity: 1, soldCount: 0 } as EditionsPiece, true, 3);
+    check(one.oneOfOne === true && one.fewLeft === null, "a one of one's card reads One of one, with no few left label");
+    const g = gridPiece({ ...print, quantity: 10, soldCount: 7, collaborators: [{ _id: "a", name: "Sample Artist", slug: "s" }] } as EditionsPiece, true, 3);
+    check(g.fewLeft === 3 && g.partner === "Sample Artist", "the grid card carries few left and the collaborator");
   }
 
   console.log(failures ? `\n${failures} failed` : "\nall passed");

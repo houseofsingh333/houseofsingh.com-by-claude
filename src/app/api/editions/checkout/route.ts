@@ -8,7 +8,7 @@ import { freshPiece, freshShipping } from "@/lib/editions/fresh";
 import { isZone } from "@/lib/editions/shipping";
 import { stripeConfigured, stripePost, type CheckoutSession } from "@/lib/editions/stripe";
 import { taxRateFor } from "@/lib/editions/tax";
-import { taxForPostalCode } from "@/lib/editions/tax-rates";
+import { taxMode, taxForPostalCode } from "@/lib/editions/tax-rates";
 import { placeHold, releaseHold } from "@/lib/editions/holds";
 import { sanityHoldStore } from "@/lib/editions/records";
 import { editionsAllowed, editionsOff } from "@/lib/editions/enabled";
@@ -55,9 +55,11 @@ export async function POST(request: Request) {
   const zone = String(form?.get("zone") ?? "");
   if (!slug) return NextResponse.redirect(new URL("/editions", origin), 303);
   if (!isZone(zone)) return back(slug, "no-zone");
-  // Canada: the postal code sets the province, and so the GST/HST.
-  const tax = zone === "canada" ? taxForPostalCode(String(form?.get("postal") ?? "").slice(0, 10)) : null;
-  if (zone === "canada" && !tax) return back(slug, "postal-needed");
+  // Fixed tax: for Canada the postal code sets the province, and so the
+  // GST/HST. Stripe Tax works it out from the address given at checkout.
+  const mode = taxMode();
+  const tax = mode === "fixed" && zone === "canada" ? taxForPostalCode(String(form?.get("postal") ?? "").slice(0, 10)) : null;
+  if (mode === "fixed" && zone === "canada" && !tax) return back(slug, "postal-needed");
 
   const limit = rateLimit(`editions-checkout:${getClientIp(request)}`, { max: 20 });
   if (!limit.success) return back(slug, "busy");
@@ -89,6 +91,7 @@ export async function POST(request: Request) {
       zone,
       shipping: check.shipping,
       taxRate: taxRate ? { id: taxRate.id, province: taxRate.province } : null,
+      taxMode: mode,
       siteUrl: origin,
       imageUrl: piece!.photographs?.[0]?.url ? `${piece!.photographs[0].url}?w=1200&fit=max&auto=format` : null,
       gstNumber: process.env.GST_NUMBER || null,

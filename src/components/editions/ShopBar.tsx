@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   /** "੦੧". */
@@ -13,19 +13,17 @@ type Props = {
   action: string;
   /** The section it leads to, and that it waits for: "notify" or "collection". */
   target: string;
-  /** The card's colour. */
-  colour: string;
 };
 
 /**
- * Phones only, on the Shop page (Shop design round 2): a floating bar in
- * the card's gold, the Collection's number in Gurmukhi, its title and when
+ * Phones only, on the sealed Shop page (Shop design rounds 2 and 3): a
+ * floating bar in warm stone (the Collection's colour stays on its card), the Collection's number in Gurmukhi, its title and when
  * it opens, and the way to Notify me (or, once open, to the Collection).
  * Hidden at the top of the page; it rises once the section it leads to
  * has scrolled past, and steps away while that section is on screen.
  * With reduced motion it appears and goes without sliding.
  */
-export default function ShopBar({ numeral, title, when, action, target, colour }: Props) {
+export default function ShopBar({ numeral, title, when, action, target }: Props) {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
@@ -52,7 +50,7 @@ export default function ShopBar({ numeral, title, when, action, target, colour }
   }, [target]);
 
   return (
-    <div className="ed-shopbar" data-shown={shown ? "" : undefined} inert={!shown} style={{ "--sq": colour } as CSSProperties}>
+    <div className="ed-shopbar" data-shown={shown ? "" : undefined} inert={!shown}>
       <span aria-hidden="true" className="ed-shopbar-numeral" lang="pa">
         {numeral}
       </span>

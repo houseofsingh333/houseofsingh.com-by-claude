@@ -4,6 +4,7 @@ import { shippingPrice, zoneCountries, ZONES } from "./shipping";
 import type { CollectionState, EditionsCollection, EditionsPiece, ShippingRoute, Zone } from "./types";
 import { collectionTitle } from "./format";
 import { EDITIONS_DEFAULTS } from "./defaults";
+import { TAX_CODES, type TaxMode } from "./tax-rates";
 
 /**
  * Buying a piece: the checks before Stripe, then the Checkout Session's
@@ -82,8 +83,10 @@ export function checkoutParams(input: {
   size: { _key: string; label: string } | null;
   zone: Zone;
   shipping: number;
-  /** Canada: the province's Stripe tax rate (from the postal code), and the province. */
+  /** Canada, fixed mode: the province's Stripe tax rate (from the postal code), and the province. */
   taxRate?: { id: string; province: string } | null;
+  /** "stripe": Stripe Tax works the tax out from the shipping address; "fixed": taxRate. Default "fixed". */
+  taxMode?: TaxMode;
   siteUrl: string;
   imageUrl?: string | null;
   gstNumber?: string | null;
@@ -93,8 +96,10 @@ export function checkoutParams(input: {
 }) {
   const { piece, size, zone, shipping, siteUrl } = input;
   const zoneLabel = ZONES.find((z) => z.value === zone)?.label ?? zone;
-  // Canada: the province's GST/HST, fixed, on the piece and on shipping.
-  const taxes = input.taxRate ? { tax_rates: [input.taxRate.id] } : {};
+  const stripeTax = input.taxMode === "stripe";
+  // Fixed: the province's GST/HST on the piece and on shipping. Stripe Tax:
+  // prices exclusive of tax, each line with its product tax code.
+  const taxes = !stripeTax && input.taxRate ? { tax_rates: [input.taxRate.id] } : {};
   const metadata = {
     pieceId: piece._id,
     pieceSlug: piece.slug,
@@ -105,7 +110,8 @@ export function checkoutParams(input: {
     price: String(piece.price),
     shipping: String(shipping),
     holdKey: input.holdKey ?? "",
-    taxProvince: input.taxRate?.province ?? "",
+    taxProvince: stripeTax ? "" : (input.taxRate?.province ?? ""),
+    taxMode: stripeTax ? "stripe" : "fixed",
     collection: String(input.collectionNumber),
   };
   const seller = `Sold by ${EDITIONS_DEFAULTS.seller}${input.gstNumber ? `. GST/HST ${input.gstNumber}` : ""}.`;
@@ -122,10 +128,12 @@ export function checkoutParams(input: {
         price_data: {
           currency: "cad",
           unit_amount: cents(piece.price),
+          ...(stripeTax ? { tax_behavior: "exclusive" } : {}),
           product_data: {
             name: size ? `${piece.name}, size ${size.label}` : piece.name,
             description: `${EDITIONS_DEFAULTS.brand}, ${collectionTitle(input.collectionNumber)}`,
             ...(input.imageUrl ? { images: [input.imageUrl] } : {}),
+            ...(stripeTax ? { tax_code: TAX_CODES.goods } : {}),
           },
         },
         ...taxes,
@@ -135,12 +143,18 @@ export function checkoutParams(input: {
         price_data: {
           currency: "cad",
           unit_amount: cents(shipping),
-          product_data: { name: `Shipping to ${zoneLabel === "Elsewhere" ? "the rest of the world" : zoneLabel}` },
+          ...(stripeTax ? { tax_behavior: "exclusive" } : {}),
+          product_data: {
+            name: `Shipping to ${zoneLabel === "Elsewhere" ? "the rest of the world" : zoneLabel}`,
+            ...(stripeTax ? { tax_code: TAX_CODES.shipping } : {}),
+          },
         },
         ...taxes,
       },
     ],
     shipping_address_collection: { allowed_countries: zoneCountries(zone) },
+    // Stripe Tax: the tax from the shipping address given at checkout.
+    ...(stripeTax ? { automatic_tax: { enabled: true } } : {}),
     billing_address_collection: "auto",
     customer_creation: "if_required",
     metadata,
