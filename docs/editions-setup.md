@@ -75,12 +75,19 @@ Shipping is charged at cost as its own line on the checkout, so GST/HST applies 
 
 The notify requests are under House of Singh Editions, Notify requests (email, Collection, date). They are private.
 
+### Shop settings and the Collection (Shop design round 2)
+
+- **Collection:** "Before the release, the line above the title" (for example "Released on the eve of Vaisakhi"; the days left are added), and "In the making: Journal entries" (up to three; the section is hidden when none are chosen).
+- **Shop settings, The Shop:** Before you buy (five notes, a title and one line each), Questions (question and answer; an empty answer is a placeholder, shown marked on previews and left out of the live site, so write the returns answer before launch), Release time, cities (a city and its time zone name, for example Europe/London; a mistyped zone is left out).
+- **Shop settings, For artists:** the line beneath the heading on the Shop page, and the rolling words after "House of Singh ×" (the last is held longest).
+- Every empty field uses the approved wording in `src/lib/editions/defaults.ts`.
+
 ## 6. The sample content
 
-A test Collection 01 (Vaisakhi 2027) with eight sample pieces, a sample collaborator, four categories and a sample shipping table, all clearly marked as test data, so the preview shows every state. Its early access opened on 1 November 2026, it opens to everyone at 9 pm in Toronto on 13 April 2027 (6:30 am on 14 April in India), and closes at the end of May 2027. One piece is sold out (Eclipse) and one size is sold out (Mending Tee, size S).
+A test Collection 01 (Vaisakhi 2027) with eight sample pieces, a sample collaborator, four categories and a sample shipping table, all clearly marked as test data, so the preview shows every state. Its early access opened on 1 November 2026, it opens to everyone at 7 pm in Toronto on 13 April 2027 (4:30 am on 14 April in India), and closes at the end of May 2027. One piece is sold out (Eclipse) and one size is sold out (Mending Tee, size S).
 
 - To create or restore it: `SANITY_WRITE_TOKEN=... node scripts/editions-seed.mjs` (add `EDITIONS_TEST_CODE_HASH=<fingerprint>` to give it an early access code).
-- To bring sample content seeded before 11 Nov 2026 up to date (release at 9 pm in Toronto on 13 April 2027, the first person sentence, India in the shipping table) without replacing it: `SANITY_WRITE_TOKEN=... node scripts/editions-round1.mjs` (looks only), then again with `--apply`. It changes only those fields, so an early access code and sold counts stay.
+- To bring sample content seeded earlier up to date (release at 7 pm in Toronto on 13 April 2027, the new line and sentence, In the making from the three latest Journal entries, India in the shipping table) without replacing it: `SANITY_WRITE_TOKEN=... node scripts/editions-sample-update.mjs` (looks only), then again with `--apply`. It changes only those fields, so an early access code and sold counts stay.
 - To delete all of it before launch: `SANITY_WRITE_TOKEN=... node scripts/editions-seed.mjs --delete`. This removes every Shop document marked as test data, the four sample categories and the sample shipping table.
 
 ## 7. Private records

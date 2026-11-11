@@ -16,10 +16,10 @@ How email works on houseofsingh.com, what to set up, and how to check it.
 
 **Consent (Canada's anti spam law, CASL).** Beneath each field the visitor sees what they are agreeing to, who sends it and that they can leave (`src/lib/email/consent.ts`):
 
-- Footer: "Occasional letters from Maninder Singh at House of Singh, Toronto. Unsubscribe anytime, from any letter."
-- Notify me: "Emails from House of Singh Editions, Toronto, about this Collection's release and early access. Unsubscribe anytime."
+- Footer: "Occasional letters from House of Singh. Unsubscribe anytime."
+- Notify me: "Release news and early access only, from House of Singh Editions. Unsubscribe anytime."
 
-Those exact words, the form and the moment are kept on the person in Kit, in a custom field (`Consent, letters` or `Consent, Shop`). That is the record of consent. Every email also carries the sender, the mailing address (`EMAIL_POSTAL_ADDRESS`) and why it arrived; Kit adds its own unsubscribe link and address to every letter (set the address in Kit's account settings).
+The wording was shortened in Shop design round 2 and still names the sender, the purpose and the way out; the Contact and Privacy pages, linked in every footer, are how to reach the sender. Those exact words, the sender in full (Maninder Singh at House of Singh, Toronto; House of Singh Editions, House of Singh Studios Inc., Toronto), the form and the moment are kept on the person in Kit, in a custom field (`Consent, letters` or `Consent, Shop`). That is the record of consent. Every email also carries the sender, the mailing address (`EMAIL_POSTAL_ADDRESS`) and why it arrived; Kit adds its own unsubscribe link and address to every letter (set the address in Kit's account settings).
 
 **Unsubscribing.** The welcome and the Notify me confirmation carry an "Unsubscribe" link in their footer, and the List-Unsubscribe headers that mail apps show as their own unsubscribe button. The link is signed for the person it was sent to (`EMAIL_LINK_SECRET`, else the Resend key), so it cannot be changed to unsubscribe anyone else. It opens `/unsubscribe`, which asks once (mail scanners open every link, so nothing happens on opening) and, on the button, unsubscribes the person in Kit from every letter and Collection email; any sign up of theirs still waiting for Kit is dropped. A mail app's one click button unsubscribes at once. If Kit cannot be reached, the request waits in the Studio ("Sign ups waiting for Kit", action unsubscribe) and the daily job completes it. Order emails are not newsletters and carry no unsubscribe link. Letters sent from Kit carry Kit's own unsubscribe link.
 
