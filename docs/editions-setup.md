@@ -32,6 +32,15 @@ Never put any of these in the code or in a message. After changing a variable (`
    - Vercel's preview protection blocks Stripe: in Vercel, Deployment Protection, add a bypass for automation, or test the webhook on a preview without protection.
 5. Buy something on the preview with the test card `4242 4242 4242 4242`, any future date, any CVC, a Canadian address. You should land on the thank you page; within a few seconds the collector number appears, the piece's sold count goes up in the Studio (per size for clothing), and an order appears under House of Singh Editions, Orders.
 
+### Payment methods (Stripe Dashboard)
+
+Stripe no longer lets the website choose payment methods on each checkout; they are set in the Dashboard, and must be set the same way **in sandbox and in live** (each has its own settings): Settings, Payments, Payment methods.
+
+- **On:** Cards (Apple Pay and Google Pay come with cards) and Link.
+- **Off:** Affirm, Klarna, Afterpay and every other buy now pay later method, and any other method you do not want.
+
+Check both after any change in the Dashboard: a method switched on there appears at checkout at once.
+
 ## 3. Going live
 
 Only when the test purchase has worked end to end.

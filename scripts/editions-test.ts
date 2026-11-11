@@ -110,7 +110,7 @@ check(JSON.stringify(taxCheck("", { country: "US", state: "NY" })) === "{}", "ou
 
 // The Checkout Session
 const params = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "canada", shipping: 22, taxRate: { id: "txr_on", province: "ON" }, siteUrl: "https://example.test", gstNumber: "123456789RT0001", now });
-check(JSON.stringify(params.payment_method_types) === '["card","link"]', "cards (with Apple Pay and Google Pay) and Link only: no buy now pay later");
+check(!("payment_method_types" in params), "payment methods are left to the Stripe Dashboard (no payment_method_types sent)");
 check(params.currency === "cad" && params.line_items.length === 2 && params.line_items[0].quantity === 1, "one piece, in CAD, plus its shipping line");
 check(params.line_items[0].price_data.unit_amount === 18000 && params.line_items[1].price_data.unit_amount === 2200, "amounts in cents", [params.line_items[0].price_data.unit_amount, params.line_items[1].price_data.unit_amount]);
 check(JSON.stringify(params.line_items[0].tax_rates) === '["txr_on"]' && JSON.stringify(params.line_items[1].tax_rates) === '["txr_on"]' && params.metadata.taxProvince === "ON", "the province's fixed GST/HST rate on the piece and on the shipping");
