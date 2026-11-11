@@ -12,7 +12,7 @@ import TextLink from "@/components/TextLink";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
 import { canBuy, shopNow, untilWords } from "@/lib/editions/state";
 import { collectionTitle, dayIn, gurmukhi } from "@/lib/editions/format";
-import { makingEntries, stillAvailable, closedSentence, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
+import { makingEntries, shopSections, showPlaceholders, stillAvailable, visibleQuestions, closedSentence, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
 import { cardDate, cityTimes, daysUntilShort, earlyEyebrow, sealedEyebrow } from "@/lib/editions/release";
 import { keepLastWords } from "@/lib/keepLastWords";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
@@ -27,8 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/** Placeholder answers (a question still to be written) show on previews and locally, never on the live site. */
-const showPlaceholders = () => process.env.VERCEL_ENV !== "production";
 
 /**
  * The Shop (Shop design round 2). In every state the Collection card
@@ -81,6 +79,8 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
 
   // Anticipation: always the sealed Collection, whatever its dates say.
   const state = anticipation ? "sealed" : current.state;
+  // The same rule the Shop's menu uses (layout.tsx), so it only offers what is here.
+  const sections = shopSections({ state, anticipation, questions: visibleQuestions(settings.questions, showPlaceholders()).length });
   const buying = canBuy(state);
   const until = current.closes ? dayIn(current.closes) : null;
   const eyebrow =
@@ -160,7 +160,7 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
         </div>
       </section>
 
-      {buying && !anticipation && (
+      {sections.collection && (
         <CollectionGrid
           pieces={current.pieces.map((p) => gridPiece(p, true, settings.fewLeft))}
           filters={gridFilters(current, current.pieces)}
@@ -175,7 +175,7 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
         </div>
       )}
 
-      {state === "sealed" && <HowItWorks steps={EDITIONS_DEFAULTS.howItWorks.map((s) => ({ ...s }))} />}
+      {sections.how && <HowItWorks steps={EDITIONS_DEFAULTS.howItWorks.map((s) => ({ ...s }))} />}
       <InTheMaking entries={makingEntries(current.journal)} />
       {below}
 

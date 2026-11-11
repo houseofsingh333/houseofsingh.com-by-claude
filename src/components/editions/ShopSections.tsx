@@ -5,6 +5,7 @@ import { pad2 } from "@/lib/editions/format";
 import { keepLastWords } from "@/lib/keepLastWords";
 import type { EditionsCollection } from "@/lib/editions/types";
 import ArtistsInvite from "./ArtistsInvite";
+import { visibleQuestions } from "@/lib/editions/view";
 
 /**
  * The Shop page's sections below the opening (Shop design round 2): How
@@ -117,7 +118,7 @@ export function BeforeYouBuy({ heading, notes }: { heading: string; notes: Step[
  * marked as such on previews, left out on the live site.
  */
 export function Questions({ questions, showPlaceholders }: { questions: { question: string; answer: string }[]; showPlaceholders: boolean }) {
-  const shown = questions.filter((q) => q.answer || showPlaceholders);
+  const shown = visibleQuestions(questions, showPlaceholders);
   if (!shown.length) return null;
   return (
     <section id="questions" className="ed-section ed-questions ed-anchor" aria-labelledby="ed-questions-heading">
