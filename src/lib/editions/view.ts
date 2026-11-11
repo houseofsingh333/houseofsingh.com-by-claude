@@ -20,9 +20,14 @@ export function gridPiece(p: EditionsPiece, buyable = true): GridPiece {
   };
 }
 
-/** The Collection's filters: its own list, else every category it holds, in order. */
+/**
+ * The Collection's filters: its own list, else every category it holds, in
+ * order; only categories with at least one piece in the Collection. The
+ * grid shows no filters at all for a single category.
+ */
 export function gridFilters(c: EditionsCollection, pieces: EditionsPiece[]): { id: string; label: string }[] {
-  const own = (c.filters ?? []).filter((f) => f.category).map((f) => ({ id: f.category!._id, label: f.label?.trim() || f.category!.plural }));
+  const held = new Set(pieces.map((p) => p.category?._id).filter(Boolean));
+  const own = (c.filters ?? []).filter((f) => f.category && held.has(f.category._id)).map((f) => ({ id: f.category!._id, label: f.label?.trim() || f.category!.plural }));
   if (own.length) return own;
   const seen = new Map<string, { id: string; label: string; order: number }>();
   for (const p of pieces) {
@@ -78,4 +83,36 @@ export const allSold = (pieces: Pick<EditionsPiece, "quantity" | "soldCount" | "
 export function closedSentence(c: Pick<EditionsCollection, "number" | "closedLine" | "closedUnsoldLine">, pieces: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes">[]): string {
   if (allSold(pieces)) return c.closedLine?.trim() || EDITIONS_DEFAULTS.soldOutLine;
   return c.closedUnsoldLine?.trim() || `${collectionTitle(c.number)} has closed.`;
+}
+
+type MakingEntry = NonNullable<EditionsCollection["journal"]>[number];
+
+/**
+ * In the making, made safe: only entries that resolved and have a title and
+ * an address, at most three; a missing date or photograph is left out of
+ * that entry rather than breaking the section. A reference to a deleted or
+ * unpublished entry, or an incomplete one, is skipped.
+ */
+export function makingEntries(raw: unknown): MakingEntry[] {
+  if (!Array.isArray(raw)) return [];
+  const out: MakingEntry[] = [];
+  for (const e of raw) {
+    if (!e || typeof e !== "object") continue;
+    const { _id, title, slug, date, image } = e as Partial<MakingEntry>;
+    if (typeof title !== "string" || !title.trim() || typeof slug !== "string" || !slug.trim()) continue;
+    out.push({
+      _id: typeof _id === "string" && _id ? _id : slug,
+      title: title.trim(),
+      slug,
+      date: typeof date === "string" && date ? date : null,
+      image: image && typeof image === "object" && typeof (image as { url?: unknown }).url === "string" ? image : null,
+    });
+    if (out.length === 3) break;
+  }
+  return out;
+}
+
+/** A piece's collaborators, made safe: only those that resolved with a name and an address. */
+export function knownCollaborators<T extends { name?: string | null; slug?: string | null }>(raw: (T | null)[] | null | undefined): (T & { name: string; slug: string })[] {
+  return (raw ?? []).filter((c): c is T & { name: string; slug: string } => Boolean(c && typeof c.name === "string" && c.name && typeof c.slug === "string" && c.slug));
 }

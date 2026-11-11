@@ -38,12 +38,30 @@ export async function loadShipping(): Promise<ShippingRoute[]> {
   return (await sanityFetch<ShippingRoute[] | null>({ query: editionsShippingQuery, revalidate: 60 })) ?? [];
 }
 
+/** Whether a time zone name is one this server knows (a mistyped city is left out, not shown wrong). */
+function validZone(zone: string | null | undefined): boolean {
+  if (!zone) return false;
+  try {
+    new Intl.DateTimeFormat("en-GB", { timeZone: zone });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Shop settings with the approved wording wherever a field is empty. */
 export function withDefaults(s: EditionsSettings) {
-  const notes = s.beforeYouBuy?.filter((n) => n?.trim()) ?? [];
+  const notes = (s.beforeYouBuy ?? []).filter((n) => n?.title?.trim() && n?.text?.trim()).map(({ title, text }) => ({ title, text }));
+  const questions = (s.questions ?? []).filter((q) => q?.question?.trim()).map(({ question, answer }) => ({ question, answer: answer?.trim() || "" }));
+  const cities = (s.releaseCities ?? []).filter((c) => c?.label?.trim() && validZone(c.timeZone)).map(({ label, timeZone }) => ({ label, timeZone }));
+  const words = (s.artistsWords ?? []).map((w) => w?.trim()).filter(Boolean) as string[];
   return {
     honestLine: s.honestLine?.trim() || EDITIONS_DEFAULTS.honestLine,
-    beforeYouBuy: notes.length ? notes : [...EDITIONS_DEFAULTS.beforeYouBuy],
+    beforeYouBuy: notes.length ? notes : EDITIONS_DEFAULTS.beforeYouBuy.map((n) => ({ ...n })),
+    questions: questions.length ? questions : EDITIONS_DEFAULTS.questions.map((q) => ({ ...q })),
+    releaseCities: cities.length ? cities : EDITIONS_DEFAULTS.releaseCities.map((c) => ({ ...c })),
+    artistsWords: words.length ? words : [...EDITIONS_DEFAULTS.artistsWords],
+    artistsTeaser: s.artistsTeaser?.trim() || EDITIONS_DEFAULTS.artistsTeaser,
     returnsLine: s.returnsLine?.trim() || EDITIONS_DEFAULTS.returnsLine,
     artistsHeading: s.artistsHeading?.trim() || EDITIONS_DEFAULTS.artistsHeading,
     artistsInvitation: s.artistsInvitation?.trim() || EDITIONS_DEFAULTS.artistsInvitation,

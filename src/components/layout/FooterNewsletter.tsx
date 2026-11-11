@@ -26,6 +26,8 @@ type Props = {
   note?: string;
   /** Distinguishes the honeypot when two forms share a page. */
   idSuffix?: string;
+  /** The browser's autofill hint (the Shop's Notify me: "email"). */
+  autoComplete?: string;
 };
 
 /** Today in Toronto, as the postmark reads it: "8 NOV" and "MMXXVI". */
@@ -56,6 +58,7 @@ export default function FooterNewsletter({
   buttonText,
   note,
   idSuffix = "footer",
+  autoComplete,
 }: Props) {
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState(""); // honeypot
@@ -104,6 +107,7 @@ export default function FooterNewsletter({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={placeholder}
+            autoComplete={autoComplete}
             aria-label={fieldLabel}
             aria-invalid={status === "error" ? true : undefined}
             aria-describedby={status === "error" ? `${idSuffix}-nl-error` : undefined}

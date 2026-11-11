@@ -55,6 +55,23 @@ export const editionsCollection = defineType({
       validation: (rule) => rule.required().max(260),
     }),
     defineField({
+      name: "releaseLine",
+      title: "Before the release, the line above the title",
+      type: "string",
+      group: "main",
+      description: "While sealed, followed by how many days are left. For example: Released on the eve of Vaisakhi. Empty: Releasing for the season.",
+      validation: (rule) => rule.max(80),
+    }),
+    defineField({
+      name: "journalEntries",
+      title: "In the making: Journal entries",
+      type: "array",
+      group: "main",
+      description: "Up to three Journal entries about this Collection, shown as In the making. Empty: the section is hidden.",
+      of: [defineArrayMember({ type: "reference", to: [{ type: "journalEntry" }] })],
+      validation: (rule) => rule.max(3).unique(),
+    }),
+    defineField({
       name: "closedLine",
       title: "When closed, every piece sold",
       type: "text",

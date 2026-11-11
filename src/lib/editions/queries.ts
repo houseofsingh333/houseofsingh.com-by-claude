@@ -10,7 +10,7 @@ const _piece = `{
   editionType, issueCertificate, quantity, price, sizes[]{ _key, label, stock, sold }, soldCount, holds[]{ _key, size, until },
   "photographs": photographs[]${_imageAsset},
   statement, story, maker,
-  "collaborators": collaborators[]->{ _id, name, "slug": slug.current },
+  "collaborators": (collaborators[]->{ _id, name, "slug": slug.current })[defined(slug) && defined(name)],
   details, sizeAndFit, care, packedWeight, shipsFrom,
   "journal": journalEntry->{ title, "slug": slug.current },
   isTestData
@@ -18,7 +18,10 @@ const _piece = `{
 
 const _collection = `{
   _id, number, season, colour, intro, closedLine, closedUnsoldLine, essay,
-  earlyAccessOpens, opens, closes, earlyAccessCodeHash,
+  earlyAccessOpens, opens, closes, earlyAccessCodeHash, releaseLine,
+  // The brackets matter: without them the filter and slice apply to each
+  // entry rather than to the list, and every entry comes back null.
+  "journal": (journalEntries[]->{ _id, title, "slug": slug.current, date, "image": coverImage${_imageAsset} })[defined(slug) && defined(title)][0...3],
   "filters": filters[]{ _key, label, "category": category->${_category} },
   isTestData
 }`;
@@ -29,12 +32,12 @@ export const editionsCollectionsQuery = `*[_type == "editionsCollection" && defi
   "pieces": *[_type == "editionsPiece" && collection._ref == ^._id] | order(order asc, name asc)${_piece}
 }`;
 
-/** One piece by its address, with its Collection and the Collection's pieces (for state). */
+/** One piece by its address, with its Collection and the Collection's pieces in order (for state, and the next piece). */
 export const editionsPieceQuery = `*[_type == "editionsPiece" && slug.current == $slug][0]{
   ...${_piece},
   "collection": collection->{
     ...${_collection},
-    "pieces": *[_type == "editionsPiece" && collection._ref == ^._id]{ quantity, soldCount, sizes[]{ _key, stock, sold } }
+    "pieces": *[_type == "editionsPiece" && collection._ref == ^._id] | order(order asc, name asc){ _id, name, "slug": slug.current, quantity, soldCount, sizes[]{ _key, stock, sold } }
   }
 }`;
 

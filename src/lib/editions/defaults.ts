@@ -11,24 +11,55 @@ export const EDITIONS_DEFAULTS = {
   honestLine: "Made slowly, shipped in weeks. Shipping at cost.",
   taxLine: "Plus applicable tax for Canadian orders.",
   beforeYouBuyHeading: "What this is, and what it is not",
+  /** Before you buy (Shop design round 2): five short titles, one line each. */
   beforeYouBuy: [
-    "This is not fast. Pieces ship from Canada or India, made and packed with care. Expect weeks, not days.",
-    "This is not cheap. Everything is made in small quantities, and priced for what it is.",
-    "This will not return. When a piece is gone, it is gone. No restocks.",
-    "Not always open. Collections are released twice a year; between them, the Shop rests.",
-    "Shipping is charged at what it costs. Prices are shown before tax, plus applicable tax for Canadian orders. Import duties are paid on arrival.",
-    "Not everything is handmade. Some pieces are made by hand, some with makers we trust; every one is designed and overseen by House of Singh.",
-    "Made with others. When a piece is a collaboration, both names stand on it.",
+    { title: "Not fast", text: "Made and packed with care. Weeks, not days." },
+    { title: "Not cheap", text: "Small numbers, honestly priced." },
+    { title: "Never restocked", text: "When a piece is gone, it is gone." },
+    { title: "Not always open", text: "Twice a year. Between, the Shop rests." },
+    { title: "Made with others", text: "By hand, with makers I trust, with artists." },
   ],
+  /** How the release works: three steps. */
+  howItWorks: [
+    { title: "Join the list", text: "Leave your email above. One note when the Collection is ready, nothing more." },
+    { title: "Early access", text: "The list gets in 24 hours before everyone, with a private link." },
+    { title: "Opens to everyone", text: "At the times above. When a piece is gone, it is gone." },
+  ],
+  /**
+   * Questions, folding. An empty answer is a placeholder: shown marked on
+   * previews, left out on the live site until it is written.
+   */
+  questions: [
+    { question: "Where do you ship?", answer: "Canada, the United States, India and most of the world. Shipping is charged at cost and shown before you buy." },
+    { question: "How long will my piece take?", answer: "Two to four weeks. You will have an email when it is being made, and another with tracking when it ships." },
+    { question: "Will I pay import duties?", answer: "Orders outside Canada may pay import duties on arrival, set by your country." },
+    { question: "Can I buy more than one?", answer: "One piece per person, so more people can own one." },
+    { question: "Can I return a piece?", answer: "" },
+    { question: "How can I pay?", answer: "By card, Apple Pay, Google Pay or Link, through Stripe's secure checkout." },
+  ],
+  /** The cities the release time is shown in, in order (IANA time zones). */
+  releaseCities: [
+    { label: "Vancouver", timeZone: "America/Vancouver" },
+    { label: "Toronto", timeZone: "America/Toronto" },
+    { label: "London", timeZone: "Europe/London" },
+    { label: "Amritsar", timeZone: "Asia/Kolkata" },
+    { label: "Melbourne", timeZone: "Australia/Melbourne" },
+  ],
+  /** "House of Singh × …": the rolling words, the last held longest. */
+  artistsWords: ["a weaver", "a potter", "a woodworker", "a jeweller", "you"],
+  /** Beneath "Make something with House of Singh" on the Shop page. */
+  artistsTeaser: "Collections often include pieces made with other artists. Propose one we could make together.",
   returnsLine: "Unworn pieces may be returned within 14 days.",
   soldOutLine: "Every piece has found its home.",
   shippingLine: "Made and packed with care, shipped in 2 to 4 weeks, with tracking by email. Shipping at cost; import duties paid on arrival.",
   artistsHeading: "Make something with House of Singh",
   artistsInvitation:
-    "Every Collection holds pieces made with other artists. If you work with your hands, a camera, cloth or metal, and something here speaks to you, propose an idea.",
+    "Collections often include pieces made with other artists. If you work with your hands, a camera, cloth or metal, and something here speaks to you, propose an idea.",
+  /** Above the footer on every Shop page, the address a link. */
+  questionLine: "A question about a piece?",
+  questionEmail: "editions@houseofsingh.com",
   /** Under the proposal form, after sending, and in the proposal email: only fitting proposals receive a reply. */
   proposalPromise: "Every proposal is read. If your idea fits a coming Collection, I will be in touch to talk it through.",
-  artistsShort: "Every Collection holds pieces made with other artists. If something here speaks to you, propose an idea.",
   artistsSteps: [
     { title: "Propose", text: "Your work and an idea, in a few lines." },
     { title: "A conversation", text: "If it fits a Collection, we talk and sketch together." },
@@ -57,10 +88,10 @@ export const DEFAULT_TERMS = [
   },
   {
     title: "Returns",
-    text: "{returns} Write to us before sending anything back, and we will tell you how.",
+    text: "{returns} Write to me before sending anything back, and I will tell you how.",
   },
   {
     title: "Contact",
-    text: "A question about an order or a piece: write through the contact page, with your order number if you have one.",
+    text: "A question about an order or a piece: write to editions@houseofsingh.com, with your order number if you have one.",
   },
 ] as const;

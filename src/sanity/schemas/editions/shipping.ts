@@ -3,9 +3,10 @@ import { ORIGINS, ZONES } from "./fields";
 
 /**
  * The shipping table: for each origin (Canada, India) and zone (Canada,
- * United States, rest of the world), weight bands with a price in CAD,
+ * United States, India, rest of the world), weight bands with a price in CAD,
  * filled by hand from Canada Post's standard prices (docs/editions-setup.md).
- * A piece's packed weight picks the first band it fits in.
+ * A piece's packed weight picks the first band it fits in. An origin with
+ * no India route charges its rest of the world route for India.
  */
 export const editionsShipping = defineType({
   name: "editionsShipping",

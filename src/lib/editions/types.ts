@@ -68,17 +68,25 @@ export type EditionsCollection = {
   opens: string;
   closes?: string | null;
   earlyAccessCodeHash?: string | null;
+  /** The eyebrow before the release, for example "Released on the eve of Vaisakhi". */
+  releaseLine?: string | null;
+  /** Journal entries about the Collection's making (up to three shown). */
+  journal?: { _id: string; title: string; slug: string; date?: string | null; image?: SanityImageAsset | null }[] | null;
   filters?: { _key: string; label?: string | null; category: EditionsCategory | null }[] | null;
   isTestData?: boolean | null;
 };
 
 export type ShippingBand = { upToKg: number; price: number };
 export type ShippingRoute = { origin: "canada" | "india"; zone: Zone; bands: ShippingBand[] };
-export type Zone = "canada" | "united-states" | "world";
+export type Zone = "canada" | "united-states" | "india" | "world";
 
 export type EditionsSettings = {
   honestLine?: string | null;
-  beforeYouBuy?: string[] | null;
+  beforeYouBuy?: { _key: string; title: string; text: string }[] | null;
+  questions?: { _key: string; question: string; answer?: string | null }[] | null;
+  releaseCities?: { _key: string; label: string; timeZone: string }[] | null;
+  artistsWords?: string[] | null;
+  artistsTeaser?: string | null;
   returnsLine?: string | null;
   artistsHeading?: string | null;
   artistsInvitation?: string | null;

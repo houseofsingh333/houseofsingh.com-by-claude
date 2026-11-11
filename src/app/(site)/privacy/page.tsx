@@ -11,6 +11,8 @@ import { siteSettingsQuery } from "@/sanity/queries";
 import type { SiteSettings } from "@/lib/types";
 
 const TITLE = "Privacy Policy";
+/** The mailing address the newsletter and Notify me name, as Canada's anti spam law asks (EMAIL_POSTAL_ADDRESS, the same line every email carries). */
+const POSTAL_ADDRESS = process.env.EMAIL_POSTAL_ADDRESS?.trim() || "";
 const DESCRIPTION = PRIVACY_DESCRIPTION;
 
 export async function generateMetadata(
@@ -110,6 +112,19 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
           kept in Kit with that Collection, the words you agreed to, where
           and when, and a confirmation is sent at once through Resend.
         </p>
+        {POSTAL_ADDRESS && (
+          <p>
+            <strong className="text-foreground">Who sends these emails.</strong>{" "}
+            The newsletter comes from Maninder Singh at House of Singh, and
+            Notify me from House of Singh Editions, both in Toronto. Our
+            mailing address is {POSTAL_ADDRESS}. You can unsubscribe from
+            any email at any time, or write to us through the{" "}
+            <Link href="/contact" className="text-foreground hairline-rest">
+              contact page
+            </Link>
+            .
+          </p>
+        )}
         <p>
           <strong className="text-foreground">The Shop: orders.</strong>{" "}
           When you buy a piece, payment happens on Stripe&apos;s checkout

@@ -10,9 +10,14 @@
  * collector numbers in order and reused, edition numbers and certificate
  * codes, and a repeated event changing nothing.
  */
-import { collectionState, available } from "../src/lib/editions/state";
+import { collectionState, available, releaseTimes } from "../src/lib/editions/state";
+import { gridFilters, knownCollaborators, makingEntries } from "../src/lib/editions/view";
+import { editionsCollectionsQuery } from "../src/lib/editions/queries";
+import { cardDate, cityTimes, daysUntil, momentIn, releaseIcs, sealedEyebrow } from "../src/lib/editions/release";
+import { withDefaults } from "../src/lib/editions/load";
+import { CONSENT } from "../src/lib/email/consent";
 import { checkPurchase, checkoutParams } from "../src/lib/editions/checkout";
-import { shippingPrice } from "../src/lib/editions/shipping";
+import { isZone, shippingPrice, ZONES } from "../src/lib/editions/shipping";
 import { taxForPostalCode, taxOnLines } from "../src/lib/editions/tax-rates";
 import { formEncode, signStripePayload, verifyStripeSignature, type CheckoutSession } from "../src/lib/editions/stripe";
 import { processPaidSession, processRefund, taxCheck, type OrderRecord, type OrderStore, type OrderPiece } from "../src/lib/editions/orders";
@@ -118,7 +123,41 @@ check(!JSON.stringify(params).includes("dynamic_tax_rates") && !JSON.stringify(p
 check(params.shipping_address_collection.allowed_countries.join() === "CA", "a Canadian address only, for the Canada zone");
 const world = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "world", shipping: 48, taxRate: null, siteUrl: "https://example.test", now });
 check(world.line_items.every((l) => !("tax_rates" in l)) && world.metadata.taxProvince === "", "outside Canada: no tax");
-check(!world.shipping_address_collection.allowed_countries.includes("CA") && !world.shipping_address_collection.allowed_countries.includes("US") && world.shipping_address_collection.allowed_countries.includes("IN"), "the rest of the world excludes Canada and the United States");
+check(["CA", "US", "IN"].every((c) => !world.shipping_address_collection.allowed_countries.includes(c)) && world.shipping_address_collection.allowed_countries.includes("GB"), "the rest of the world excludes Canada, the United States and India");
+const india = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "india", shipping: 48, taxRate: null, siteUrl: "https://example.test", now });
+check(india.shipping_address_collection.allowed_countries.join() === "IN" && india.line_items.every((l) => !("tax_rates" in l)), "India: an Indian address only, no Canadian tax");
+check(isZone("india") && !isZone("mars"), "India is a zone of its own");
+check(shippingPrice(routes, "canada", "india", 1) === 48, "no India route yet: India is charged the Elsewhere price");
+check(shippingPrice([...routes, { origin: "canada", zone: "india", bands: [{ upToKg: 2, price: 30 }] }], "canada", "india", 1) === 30, "an India route, once set, is used");
+check(ZONES.map((z) => z.label).join() === "Canada,United States,India,Elsewhere", "four zones, in order");
+check(releaseTimes("2027-04-14T01:00:00Z") === "9 pm in Toronto, 6:30 am on 14 April in India", "release at 9 pm in Toronto: India's next day is named", releaseTimes("2027-04-14T01:00:00Z"));
+check(releaseTimes("2027-04-14T13:00:00Z") === "9 am in Toronto, 6:30 pm in India", "same day in both places: no date", releaseTimes("2027-04-14T13:00:00Z"));
+{
+  // Shop design round 2: the release in words.
+  const opens = "2027-04-13T23:00:00Z"; // 7 pm in Toronto
+  const cities = withDefaults({}).releaseCities;
+  const t = cityTimes(opens, cities);
+  check(t.map((c) => `${c.label} ${c.time} ${c.date}`).join(" | ") === "Vancouver 4 pm 13 April | Toronto 7 pm 13 April | London 12 am 14 April | Amritsar 4:30 am 14 April | Melbourne 9 am 14 April", "five cities from one moment", t);
+  check(cardDate(opens) === "13 · 04 · 2027", "the card's date, in Toronto", cardDate(opens));
+  check(momentIn(opens, "America/Toronto") === "7 pm, Tuesday 13 April", "the visitor's own time, Toronto by default", momentIn(opens, "America/Toronto"));
+  check(daysUntil(opens, new Date("2027-04-13T12:00:00Z")) === "today" && daysUntil(opens, new Date("2027-04-12T15:00:00Z")) === "tomorrow" && daysUntil(opens, new Date("2026-11-11T15:00:00Z")) === "in 153 days", "today, tomorrow, in N days (Toronto days)");
+  check(sealedEyebrow({ releaseLine: "Released on the eve of Vaisakhi", season: "Vaisakhi 2027", opens }, new Date("2026-11-11T15:00:00Z")) === "Released on the eve of Vaisakhi · in 153 days", "the line before the release");
+  const ics = releaseIcs({ _id: "c1", number: 1, opens }, "https://houseofsingh.com", new Date("2026-11-11T00:00:00Z"));
+  check(ics.includes("DTSTART:20270413T230000Z") && ics.includes("DTEND:20270414T000000Z") && ics.includes("SUMMARY:House of Singh Editions\\, Collection 01") && ics.includes("URL:https://houseofsingh.com/editions") && ics.includes("\r\n"), "the calendar file: the moment, one hour, the title and the Shop");
+  const s = withDefaults({ releaseCities: [{ _key: "a", label: "Nowhere", timeZone: "Not/AZone" }] });
+  check(s.releaseCities.length === 5, "a city with a mistyped time zone is left out (the defaults stand when none is left)");
+  check(withDefaults({}).questions.some((q) => q.question === "Can I return a piece?" && q.answer === ""), "the returns answer is a placeholder until written");
+  check(withDefaults({}).beforeYouBuy.length === 5 && withDefaults({}).artistsWords.at(-1) === "you", "five notes; the rolling words end on you");
+  check(/House of Singh/.test(CONSENT.letters) && /Unsubscribe/.test(CONSENT.letters) && /House of Singh Editions/.test(CONSENT.shop) && /Unsubscribe/.test(CONSENT.shop), "consent wording names the sender and the way out");
+}
+{
+  const cat = (id: string, plural: string, order: number) => ({ _id: id, singular: plural, plural, descriptor: plural, order });
+  const prints = cat("c-print", "Prints", 10), objects = cat("c-object", "Objects", 40);
+  const held = [{ category: prints }, { category: prints }] as unknown as EditionsPiece[];
+  const own = { filters: [{ _key: "a", category: prints }, { _key: "b", category: objects }] } as unknown as EditionsCollection;
+  check(gridFilters(own, held).map((f) => f.label).join() === "Prints", "filters: only categories with a piece in the Collection");
+  check(gridFilters({} as EditionsCollection, [...held, { category: objects }] as unknown as EditionsPiece[]).length === 2, "filters: every held category, in order");
+}
 check(params.custom_text.submit.message.includes("House of Singh Studios Inc., operating House of Singh Editions") && params.custom_text.submit.message.includes("123456789RT0001"), "the seller and GST/HST number at checkout", params.custom_text.submit.message);
 check(params.success_url.endsWith("/editions/thank-you?session_id={CHECKOUT_SESSION_ID}") && params.cancel_url.endsWith("/editions/test-print"), "success to the thank you page, cancel back to the piece");
 const encoded = formEncode(params).join("&");
@@ -223,6 +262,41 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
   const s2 = await placeHold(sizedStore, "p", "s");
   const m1 = await placeHold(sizedStore, "p", "m");
   check(s1.ok && !s2.ok && s2.reason === "held" && m1.ok, "holds are per size: the last S held, M still free", [s1.ok, s2.ok ? "ok" : s2.reason, m1.ok]);
+
+  // In the making with incomplete Journal entries (the preview crash of 11 Nov):
+  // the real query, run by Sanity's own GROQ engine, and the page's safe list.
+  {
+    const { parse, evaluate } = await import("groq-js");
+    const image = (id: string) => ({ _type: "image", asset: { _type: "reference", _ref: id }, alt: "A photograph" });
+    const dataset = [
+      { _id: "c1", _type: "editionsCollection", number: 1, season: "Vaisakhi 2027", opens: "2027-04-13T23:00:00Z", journalEntries: [
+        { _key: "a", _type: "reference", _ref: "gone" },
+        { _key: "b", _type: "reference", _ref: "j-no-slug" },
+        { _key: "c", _type: "reference", _ref: "j-no-cover" },
+        { _key: "d", _type: "reference", _ref: "j-full" },
+        { _key: "e", _type: "reference", _ref: "j-no-title" },
+        { _key: "f", _type: "reference", _ref: "j-third" },
+        { _key: "g", _type: "reference", _ref: "j-fourth" },
+      ] },
+      { _id: "j-no-slug", _type: "journalEntry", title: "No address" },
+      { _id: "j-no-cover", _type: "journalEntry", title: "No cover", slug: { current: "no-cover" } },
+      { _id: "j-full", _type: "journalEntry", title: "Full", slug: { current: "full" }, date: "2026-07-05", coverImage: image("image-abc-100x100-jpg") },
+      { _id: "j-no-title", _type: "journalEntry", slug: { current: "no-title" } },
+      { _id: "j-third", _type: "journalEntry", title: "Third", slug: { current: "third" } },
+      { _id: "j-fourth", _type: "journalEntry", title: "Fourth", slug: { current: "fourth" } },
+      { _id: "image-abc-100x100-jpg", _type: "sanity.imageAsset", url: "https://cdn.sanity.io/images/x/y/abc-100x100.jpg", metadata: { dimensions: { width: 100, height: 100, aspectRatio: 1 } } },
+      { _id: "p1", _type: "editionsPiece", name: "Piece", slug: { current: "piece" }, order: 1, collection: { _type: "reference", _ref: "c1" }, collaborators: [{ _key: "x", _type: "reference", _ref: "gone-artist" }] },
+    ];
+    const result = (await (await evaluate(parse(editionsCollectionsQuery), { dataset })).get()) as { journal: unknown[]; pieces: { collaborators: unknown[] }[] }[];
+    const journal = result[0].journal;
+    check(Array.isArray(journal) && journal.every((e) => e && typeof e === "object"), "In the making: the query returns no null entries", journal);
+    check((journal as { slug: string }[]).map((e) => e.slug).join() === "no-cover,full,third", "In the making: entries without an address or title, or that do not resolve, are skipped; at most three", journal);
+    check(result[0].pieces[0].collaborators.length === 0, "a collaborator reference that does not resolve is dropped by the query");
+    const safe = makingEntries([null, undefined, 7, { title: "No address" }, { slug: "no-title" }, { title: " ", slug: "blank" }, { _id: "a", title: "One", slug: "one", date: null, image: { url: null } }, { title: "Two", slug: "two" }, { title: "Three", slug: "three", image: { url: "https://cdn.sanity.io/x.jpg" } }, { title: "Four", slug: "four" }]);
+    check(safe.map((e) => e.slug).join() === "one,two,three" && safe[0].image === null && safe[1]._id === "two" && safe[2].image !== null, "In the making: the page keeps only whole entries, at most three, and drops a broken photograph", safe);
+    check(makingEntries(null).length === 0 && makingEntries({}).length === 0, "In the making: no list at all is an empty section, not an error");
+    check(knownCollaborators([null, { name: "A", slug: "a" }, { name: null, slug: "b" }] as never).length === 1, "a missing collaborator is skipped in the maker line");
+  }
 
   console.log(failures ? `\n${failures} failed` : "\nall passed");
   process.exit(failures ? 1 : 0);

@@ -29,7 +29,7 @@ export const REFUSAL_WORDS: Record<BuyRefusal, string> = {
   "size-sold-out": "This size is sold out.",
   "postal-needed": "Enter your Canadian postal code: it sets the GST or HST for your province.",
   held: "The last one is in someone's checkout just now. If it is not bought, it comes back within half an hour.",
-  "no-shipping": "This piece cannot ship there yet. Write to us and we will find a way.",
+  "no-shipping": "This piece cannot ship there yet. Write to me and I will find a way.",
 };
 
 type PieceWithCollection = EditionsPiece & {

@@ -1,36 +1,47 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import CollectionSquare from "@/components/editions/CollectionSquare";
+import CollectionCard from "@/components/editions/CollectionCard";
 import CollectionGrid from "@/components/editions/CollectionGrid";
 import NotifyMe from "@/components/editions/NotifyMe";
-import { Spine } from "@/components/editions/Spine";
-import TextLink from "@/components/TextLink";
-import { OutlineLink } from "@/components/OutlineCta";
-import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
-import { canBuy, releaseTimes, shopNow, untilWords } from "@/lib/editions/state";
-import { collectionTitle, dayIn } from "@/lib/editions/format";
-import { allSold, closedSentence, collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
-import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
+import ReleaseTimes from "@/components/editions/ReleaseTimes";
+import ShopBar from "@/components/editions/ShopBar";
 import EarlyAccessForm from "@/components/editions/EarlyAccessForm";
+import { BeforeYouBuy, ForArtists, HowItWorks, InTheMaking, Questions } from "@/components/editions/ShopSections";
+import TextLink from "@/components/TextLink";
+import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
+import { canBuy, shopNow, untilWords } from "@/lib/editions/state";
+import { collectionTitle, dayIn, gurmukhi } from "@/lib/editions/format";
+import { makingEntries, closedSentence, collectionLine, gridFilters, gridPiece, stateLine } from "@/lib/editions/view";
+import { cardDate, cityTimes, daysUntilShort, earlyEyebrow, sealedEyebrow } from "@/lib/editions/release";
+import { keepLastWords } from "@/lib/keepLastWords";
+import { shopColour } from "@/lib/editions/palette";
+import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import { requireEditions, siteMode } from "@/lib/editions/enabled";
 
 /** In anticipation the live site lets /editions be indexed; otherwise noindex (the layout's). */
 export async function generateMetadata(): Promise<Metadata> {
   const indexable = siteMode() === "anticipation";
   return {
-    title: { absolute: "House of Singh Editions" },
+    title: { absolute: "Shop, House of Singh Editions" },
     ...(indexable ? { robots: { index: true, follow: true }, alternates: { canonical: "/editions" } } : {}),
   };
 }
 
+/** Placeholder answers (a question still to be written) show on previews and locally, never on the live site. */
+const showPlaceholders = () => process.env.VERCEL_ENV !== "production";
+
 /**
- * The Shop (canvas "Shop, the flow", SF-ShopFinal, FL3-Closed and
- * FL4-Second): the current Collection's square beside its title and
- * sentence; Notify me while it is sealed or once it has closed; the
- * Collection itself in early access and open; then Before you buy, For
- * artists and the archive line. The current Collection is the one with
- * the highest number.
+ * The Shop (Shop design round 2). In every state the Collection card
+ * beside the line above the title, the title and the sentence. Sealed and
+ * in early access: the release time in five cities and Add to my
+ * calendar; sealed: Notify me and the early access link, then How the
+ * release works. Open: the Collection itself while it can be bought.
+ * Closed: Notify me for the next, and the way to what it held. Every state then has In the
+ * making (when Journal entries are chosen), Before you buy, Questions,
+ * For artists and, once a Collection has closed, the archive. On phones a
+ * floating bar leads back to Notify me (or the Collection). The current
+ * Collection is the one with the highest number.
  */
 export default async function EditionsPage({ searchParams }: { searchParams: Promise<{ access?: string; preview?: string; code?: string }> }) {
   const mode = await requireEditions("any");
@@ -45,17 +56,26 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
   const closed = collections.filter((c) => c.state === "closed" && c !== current);
   const now = shopNow();
 
+  const below = (
+    <>
+      <BeforeYouBuy heading={EDITIONS_DEFAULTS.beforeYouBuyHeading} notes={settings.beforeYouBuy} />
+      <Questions questions={settings.questions} showPlaceholders={showPlaceholders()} />
+      <ForArtists heading={settings.artistsHeading} teaser={settings.artistsTeaser} words={settings.artistsWords} />
+    </>
+  );
+
   if (!current) {
     return (
       <div className="ed-page">
         <section className="ed-open ed-open-empty">
           <div className="ed-open-text">
             <h1 className="font-editorial font-normal text-display-xl leading-[1.05] text-foreground">{EDITIONS_DEFAULTS.brand}</h1>
-            <p className="text-body-l text-muted-foreground">{EDITIONS_DEFAULTS.beforeYouBuy[3]}</p>
-            <NotifyMe collection="Collection 01" thanks="You are on the list for Collection 01." idSuffix="shop" />
+            <div id="notify" className="ed-anchor">
+              <NotifyMe collection="Collection 01" thanks="You are on the list for Collection 01." idSuffix="shop" />
+            </div>
           </div>
         </section>
-        {!anticipation && <BeforeYouBuy notes={settings.beforeYouBuy} />}
+        {below}
       </div>
     );
   }
@@ -63,61 +83,52 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
   // Anticipation: always the sealed Collection, whatever its dates say.
   const state = anticipation ? "sealed" : current.state;
   const buying = canBuy(state);
-  const nextNumber = state === "closed" ? current.number + 1 : current.number;
-  const nextTitle = collectionTitle(nextNumber);
-  const sentence =
-    state === "closed"
-      ? closedSentence(current, current.pieces)
-      : state === "sealed"
-        ? `${current.intro} Opens at ${releaseTimes(current.opens)}.`
-        : current.intro;
-  const previous = state === "sealed" && !anticipation ? closed[0] : undefined;
+  const before = state === "sealed" || state === "early";
+  const title = collectionTitle(current.number);
+  const numeral = gurmukhi(current.number).padStart(2, "੦");
   // The fallback for an early access link that did not arrive: a field for the code, once early access has opened.
   const askForCode = !anticipation && state === "sealed" && Boolean(current.earlyAccessCodeHash) && Boolean(current.earlyAccessOpens) && now.getTime() >= Date.parse(current.earlyAccessOpens!);
+  const archived = closed.length > 0 || state === "closed";
+  const gold = shopColour(current.colour).square;
+  // Sealed: the list for this Collection; closed: for the next.
+  const notifyFor = collectionTitle(state === "closed" ? current.number + 1 : current.number);
 
   return (
     <div className="ed-page">
-      <section className="ed-open" aria-labelledby="ed-title">
-        <CollectionSquare number={current.number} season={current.season} colour={current.colour} pieces={current.pieces.length} state={state} soldOut={allSold(current.pieces)} />
-        <div className="ed-open-text">
-          <div className="ed-open-words">
-            <span className="type-label text-muted-foreground">{stateLine(current, state, now, untilWords(current.opens, now))}</span>
-            <h1 id="ed-title" className="font-editorial font-normal text-display-xl leading-none text-foreground">
-              {collectionTitle(current.number)}
-            </h1>
-            <p className="ed-open-sentence">{sentence}</p>
-            {(state === "sealed" || state === "closed") && (
-              <div id="notify" className="ed-anchor">
-                <NotifyMe collection={nextTitle} thanks={`You are on the list for ${nextTitle}.`} idSuffix="shop" />
-              </div>
-            )}
-            {askForCode && <EarlyAccessForm wrong={code === "wrong"} />}
-          </div>
-          <div className="ed-open-foot">
-            {state === "closed" ? (
-              <>
-                <span>{`Collectors of ${collectionTitle(current.number)} hear first.`}</span>
-                <Link href="/editions/archive" className="hairline text-foreground">{`See what ${collectionTitle(current.number)} held`}</Link>
-              </>
-            ) : previous ? (
-              <>
-                <span className="ed-open-archive">
-                  <span className="type-label">Archive</span>
-                  <Spine number={previous.number} season={previous.season} colour={previous.colour} href="/editions/archive" small />
-                </span>
-                <span>{`Collectors of ${collectionTitle(previous.number)} enter first.`}</span>
-              </>
-            ) : anticipation ? (
-              <span>{settings.honestLine}</span>
-            ) : (
-              <>
-                <span>{settings.honestLine}</span>
-                <a href="#before-you-buy" className="hairline text-foreground">
-                  Before you buy
-                </a>
-              </>
-            )}
-          </div>
+      <section className="ed-open2" aria-labelledby="ed-title">
+        <CollectionCard number={current.number} colour={current.colour} date={cardDate(current.opens)} label={`${title}, released once, on ${dayIn(current.opens)}`} />
+        <div className="ed-open2-text">
+          <span className="type-label text-muted-foreground ed-open2-eyebrow">
+            {state === "early" ? earlyEyebrow(current, now) : state === "sealed" ? sealedEyebrow(current, now) : stateLine(current, state, now, untilWords(current.opens, now))}
+          </span>
+          <h1 id="ed-title" className="font-editorial font-normal text-display-xl leading-none text-foreground">
+            {title}
+          </h1>
+          <p className="ed-open2-sentence">{keepLastWords(state === "closed" ? closedSentence(current, current.pieces) : current.intro)}</p>
+          {before && (
+            <>
+              <ReleaseTimes opens={current.opens} times={cityTimes(current.opens, settings.releaseCities)} />
+              <a href="/api/editions/calendar" download className="ed-calendar">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="3.5" y="5" width="17" height="15.5" rx="1" />
+                  <path d="M3.5 10h17M8 3v4M16 3v4" />
+                </svg>
+                <span>Add to my calendar</span>
+              </a>
+            </>
+          )}
+          {(state === "sealed" || state === "closed") && (
+            <div id="notify" className="ed-notify2 ed-anchor">
+              <h2 className="ed-notify2-heading">Be the first to know</h2>
+              <NotifyMe collection={notifyFor} thanks={`You are on the list for ${notifyFor}.`} idSuffix="shop" />
+              {askForCode && <EarlyAccessForm wrong={code === "wrong"} />}
+            </div>
+          )}
+          {state === "closed" && (
+            <Link href="/editions/archive" className="ed-calendar">
+              <span>{`See what ${title} held`}</span>
+            </Link>
+          )}
         </div>
         {buying && (
           <a href="#collection" className="ed-cue">
@@ -127,9 +138,7 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
         )}
       </section>
 
-      {!anticipation && (
-        <>
-      {buying && (
+      {buying && !anticipation && (
         <CollectionGrid
           pieces={current.pieces.map((p) => gridPiece(p))}
           filters={gridFilters(current, current.pieces)}
@@ -137,67 +146,28 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
           next={`Notify me of ${collectionTitle(current.number + 1)}`}
         />
       )}
-      {buying && (
+      {buying && !anticipation && state === "open" && (
         <div id="notify" className="ed-anchor ed-notify-band">
           <span className="type-label text-muted-foreground">The next Collection</span>
           <NotifyMe collection={collectionTitle(current.number + 1)} thanks={`You are on the list for ${collectionTitle(current.number + 1)}.`} idSuffix="next" />
         </div>
       )}
 
-      <BeforeYouBuy notes={settings.beforeYouBuy} />
+      {before && <HowItWorks steps={EDITIONS_DEFAULTS.howItWorks.map((s) => ({ ...s }))} />}
+      <InTheMaking entries={makingEntries(current.journal)} />
+      {below}
 
-      <section className="ed-artists-teaser" aria-labelledby="ed-artists-heading">
-        <div className="ed-artists-words">
-          <span className="type-label text-muted-foreground">For artists</span>
-          <h2 id="ed-artists-heading" className="font-editorial font-normal text-display-l leading-[1.05] text-foreground">
-            {settings.artistsHeading}
-          </h2>
-          <p className="text-body text-muted-foreground">
-            {settings.artistsInvitation}
-            {settings.proposalsFor && settings.proposalDeadline && ` Proposals for ${settings.proposalsFor} are open until ${dayIn(settings.proposalDeadline)}.`}
-          </p>
-        </div>
-        <div className="ed-artists-act">
-          <span className="text-small text-muted-foreground">{settings.artistsSteps.map((s, i) => (i === 0 ? s.title : s.title.toLowerCase())).join(", ")}.</span>
-          <OutlineLink href="/editions/artists">Propose a collaboration</OutlineLink>
-        </div>
-      </section>
-
-      <section className="ed-archive-line" aria-label="The archive">
-        <span className="type-label text-muted-foreground">The archive</span>
-        {closed.length > 0 || state === "closed" ? (
+      {archived && (
+        <section className="ed-archive-line" aria-label="The archive">
+          <span className="type-label text-muted-foreground">The archive</span>
           <TextLink href="/editions/archive">See the archive</TextLink>
-        ) : (
-          <span className="text-small text-muted-foreground">{`The archive begins when ${collectionTitle(current.number)} closes.`}</span>
-        )}
-      </section>
-        </>
+        </section>
+      )}
+
+      {state === "sealed" && <ShopBar numeral={numeral} title={title} when={daysUntilShort(current.opens, now)} action="Notify me" target="notify" colour={gold} />}
+      {buying && !anticipation && (
+        <ShopBar numeral={numeral} title={title} when={state === "early" ? "Early access" : "Open now"} action="Shop the Collection" target="collection" colour={gold} />
       )}
     </div>
-  );
-}
-
-/** Before you buy: what this is, and what it is not (numbered notes), and the terms of sale. */
-function BeforeYouBuy({ notes }: { notes: string[] }) {
-  return (
-    <section id="before-you-buy" className="ed-before ed-anchor" aria-labelledby="ed-before-heading">
-      <div className="ed-before-head">
-        <span className="type-label text-muted-foreground">Before you buy</span>
-        <h2 id="ed-before-heading" className="font-editorial font-normal text-display-m leading-[1.15] text-foreground">
-          {EDITIONS_DEFAULTS.beforeYouBuyHeading}
-        </h2>
-        <TextLink href="/editions/terms">Terms of sale</TextLink>
-      </div>
-      <ol className="ed-before-notes">
-        {notes.map((n, i) => (
-          <li key={i}>
-            <span aria-hidden="true" className="ed-before-numeral">
-              {i + 1}
-            </span>
-            <span>{n}</span>
-          </li>
-        ))}
-      </ol>
-    </section>
   );
 }

@@ -17,13 +17,14 @@ import { available, canBuy, collectionState, shopNow, sizeAvailable } from "@/li
 import { shippingTable, ZONES } from "@/lib/editions/shipping";
 import { REFUSAL_WORDS, type BuyRefusal } from "@/lib/editions/checkout";
 import { cad, collectionTitle } from "@/lib/editions/format";
-import { editionLine } from "@/lib/editions/view";
+import { editionLine, knownCollaborators } from "@/lib/editions/view";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import type { EditionsCollection, EditionsPiece } from "@/lib/editions/types";
 import { requireEditions, viewerMode } from "@/lib/editions/enabled";
+import { keepLastWords } from "@/lib/keepLastWords";
 
 type PieceView = EditionsPiece & {
-  collection: (EditionsCollection & { pieces: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes">[] }) | null;
+  collection: (EditionsCollection & { pieces: Pick<EditionsPiece, "_id" | "name" | "slug" | "quantity" | "soldCount" | "sizes">[] }) | null;
 };
 
 type Params = { piece: string };
@@ -52,8 +53,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 /** The maker line, with each collaborator's name a link to their page. */
 function makerLine(maker: string, collaborators: PieceView["collaborators"]): ReactNode {
-  const people = collaborators ?? [];
-  if (!people.length) return maker;
+  const people = knownCollaborators(collaborators);
+  if (!people.length) return keepLastWords(maker);
   const parts: ReactNode[] = [];
   let rest = maker;
   const missing = [];
@@ -99,8 +100,11 @@ function Fold({ title, children }: { title: string; children: ReactNode }) {
  * A piece (canvas Y4b-PieceLuxe): its photographs stacked on the left; on
  * the right, held in place while they scroll, the category and Collection,
  * the name, the price, the statement, the maker, Buy, and the folding
- * sections. Phones: one column, with the price and Buy held at the foot.
- * A piece of a sealed Collection is not shown (404).
+ * sections. Phones: one column in the order a buyer reads it: the first
+ * photograph, the words and Buy, then the other photographs and the
+ * folding sections, with the price and Buy held at the foot. At the end,
+ * the next piece in the Collection (after the last, the first) and the way
+ * back. A piece of a sealed Collection is not shown (404).
  */
 export default async function PiecePage({ params, searchParams }: { params: Promise<Params>; searchParams: Promise<{ buy?: string }> }) {
   await requireEditions();
@@ -120,6 +124,9 @@ export default async function PiecePage({ params, searchParams }: { params: Prom
   const message = buy ? (BACK_WORDS[buy as BuyRefusal] ?? null) : null;
   const next = collectionTitle(c.number + 1);
   const photos = piece.photographs ?? [];
+  const order = c.pieces ?? [];
+  const at = order.findIndex((p) => p._id === piece._id);
+  const following = order.length > 1 && at !== -1 ? order[(at + 1) % order.length] : null;
 
   return (
     <div className="ed-page">
@@ -131,7 +138,7 @@ export default async function PiecePage({ params, searchParams }: { params: Prom
       <article className="ed-piece" aria-labelledby="ed-piece-name">
         <div className="ed-piece-photos">
           {photos.map((p, i) => (
-            <div key={p.url + i} className="ed-piece-photo">
+            <div key={p.url + i} className="ed-piece-photo" data-first={i === 0 ? "" : undefined}>
               <SanityImage
                 image={p}
                 context="hero"
@@ -146,71 +153,80 @@ export default async function PiecePage({ params, searchParams }: { params: Prom
           ))}
         </div>
         <div className="ed-piece-panel">
-          <span className="type-label text-muted-foreground">
-            {piece.category ? `${piece.category.singular} · ` : ""}
-            {collectionTitle(c.number)}
-          </span>
-          <h1 id="ed-piece-name" className="font-editorial font-normal text-display-m leading-[1.1] text-foreground">
-            {piece.name}
-          </h1>
-          <span className="ed-piece-price">{left === 0 ? "Sold out" : cad(piece.price)}</span>
-          <p className="ed-piece-statement">{piece.statement}</p>
-          <span className="ed-piece-maker">{makerLine(piece.maker, piece.collaborators)}</span>
+          <div className="ed-piece-main">
+            <span className="type-label text-muted-foreground">
+              {piece.category ? `${piece.category.singular} · ` : ""}
+              {collectionTitle(c.number)}
+            </span>
+            <h1 id="ed-piece-name" className="font-editorial font-normal text-display-m leading-[1.1] text-foreground">
+              {piece.name}
+            </h1>
+            <span className="ed-piece-price">{left === 0 ? "Sold out" : cad(piece.price)}</span>
+            <p className="ed-piece-statement">{piece.statement}</p>
+            <span className="ed-piece-maker">{makerLine(piece.maker, piece.collaborators)}</span>
 
-          <div id="buy" className="ed-anchor">
-            {buying ? (
-              <BuyForm
-                slug={piece.slug}
-                price={piece.price}
-                sizes={sizes}
-                zones={ZONES.map((z) => ({ value: z.value, label: z.label, price: prices[z.value] }))}
-                quiet={`${editionLine(piece)} · Secure checkout by Stripe`}
-                taxLine={EDITIONS_DEFAULTS.taxLine}
-                message={message}
-                words={BACK_WORDS}
-              />
-            ) : (
-              <div className="ed-buy ed-buy-closed">
-                <p className="ed-buy-quiet">{left === 0 ? editionLine(piece) : `${collectionTitle(c.number)} has closed.`}</p>
-                <TextLink href="/editions#notify">{`Notify me of ${next}`}</TextLink>
-              </div>
-            )}
+            <div id="buy" className="ed-anchor">
+              {buying ? (
+                <BuyForm
+                  slug={piece.slug}
+                  price={piece.price}
+                  sizes={sizes}
+                  zones={ZONES.map((z) => ({ value: z.value, label: z.label, price: prices[z.value] }))}
+                  quiet={`${editionLine(piece)} · Secure checkout by Stripe`}
+                  taxLine={EDITIONS_DEFAULTS.taxLine}
+                  message={message}
+                  words={BACK_WORDS}
+                />
+              ) : (
+                <div className="ed-buy ed-buy-closed">
+                  <p className="ed-buy-quiet">{left === 0 ? editionLine(piece) : `${collectionTitle(c.number)} has closed.`}</p>
+                  <TextLink href="/editions#notify">{`Notify me of ${next}`}</TextLink>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="ed-folds">
-            {piece.story && piece.story.length > 0 && (
-              <Fold title="The story">
-                <PortableText value={piece.story} components={proseComponents} />
+          <div className="ed-piece-more">
+            <div className="ed-folds">
+              {piece.story && piece.story.length > 0 && (
+                <Fold title="The story">
+                  <PortableText value={piece.story} components={proseComponents} />
+                </Fold>
+              )}
+              {piece.details && <Fold title="Details">{piece.details}</Fold>}
+              {piece.sizeAndFit && <Fold title="Size and fit">{piece.sizeAndFit}</Fold>}
+              <Fold title="Shipping and returns">
+                {`Ships from ${ORIGIN_WORDS[piece.shipsFrom] ?? "Canada"}. ${EDITIONS_DEFAULTS.shippingLine} ${settings.returnsLine}`}
               </Fold>
-            )}
-            {piece.details && <Fold title="Details">{piece.details}</Fold>}
-            {piece.sizeAndFit && <Fold title="Size and fit">{piece.sizeAndFit}</Fold>}
-            <Fold title="Shipping and returns">
-              {`Ships from ${ORIGIN_WORDS[piece.shipsFrom] ?? "Canada"}. ${EDITIONS_DEFAULTS.shippingLine} ${settings.returnsLine}`}
-            </Fold>
-            {piece.care && <Fold title="Care">{piece.care}</Fold>}
-          </div>
+              {piece.care && <Fold title="Care">{piece.care}</Fold>}
+            </div>
 
-          <p className="ed-piece-foot">
-            A question about this piece?{" "}
-            <Link href="/contact" className="hairline-rest text-foreground">
-              Write to Maninder
-            </Link>
-            {" · "}
-            <Link href="/editions#before-you-buy" className="hairline-rest text-foreground">
-              Before you buy
-            </Link>
-            {piece.journal && (
-              <>
-                {" · "}
-                <Link href={`/journal/${piece.journal.slug}`} className="hairline-rest text-foreground">
-                  From the Journal
-                </Link>
-              </>
-            )}
-          </p>
+            <p className="ed-piece-foot">
+              <Link href="/editions#before-you-buy" className="hairline-rest text-foreground">
+                Before you buy
+              </Link>
+              {piece.journal && (
+                <>
+                  {" · "}
+                  <Link href={`/journal/${piece.journal.slug}`} className="hairline-rest text-foreground">
+                    From the Journal
+                  </Link>
+                </>
+              )}
+            </p>
+          </div>
         </div>
       </article>
+      <nav className="ed-piece-next" aria-label="More from the Collection">
+        {following && (
+          <TextLink href={`/editions/${following.slug}`}>
+            Next piece<span className="sr-only">{`: ${following.name}`}</span>
+          </TextLink>
+        )}
+        <TextLink href="/editions#collection" back>
+          Back to the Collection
+        </TextLink>
+      </nav>
       {buying && <PhoneBuyBar price={cad(piece.price)} label={sizes.length ? "Choose a size" : "Buy"} />}
     </div>
   );

@@ -16,7 +16,7 @@
  * The early access code is never stored: pass the fingerprint of one with
  * EDITIONS_TEST_CODE_HASH, or the Collection is left without early access.
  * The sample dates: early access from 1 November 2026, open to everyone at
- * 9 pm in Toronto on 12 April 2027 (6:30 am on 13 April in India), closing
+ * 7 pm in Toronto on 13 April 2027 (4:30 am on 14 April in India), closing
  * at the end of May 2027.
  */
 import { createClient } from "@sanity/client";
@@ -75,10 +75,11 @@ const collection = {
   number: 1,
   season: "Vaisakhi 2027",
   colour: "saffron",
-  intro: "Eight pieces for Vaisakhi: prints, clothing and objects, some made by hand, some with makers we trust. Released once, never restocked.",
+  intro: "Prints, clothing and objects. Released once, never restocked.",
+  releaseLine: "Released on the eve of Vaisakhi",
   closedLine: "Every piece has found its home. Collection 02 is being made, for winter.",
   earlyAccessOpens: "2026-11-01T14:00:00Z",
-  opens: "2027-04-13T01:00:00Z",
+  opens: "2027-04-13T23:00:00Z",
   closes: "2027-05-31T03:59:00Z",
   ...(process.env.EDITIONS_TEST_CODE_HASH ? { earlyAccessCodeHash: process.env.EDITIONS_TEST_CODE_HASH } : {}),
   isTestData: true,
@@ -92,9 +93,11 @@ const shipping = {
   routes: [
     route("cc", "canada", "canada", 18, 28),
     route("cu", "canada", "united-states", 26, 40),
+    route("ci", "canada", "india", 34, 52),
     route("cw", "canada", "world", 38, 60),
     route("ic", "india", "canada", 30, 48),
     route("iu", "india", "united-states", 32, 50),
+    route("ii", "india", "india", 8, 14),
     route("iw", "india", "world", 28, 45),
   ],
 };

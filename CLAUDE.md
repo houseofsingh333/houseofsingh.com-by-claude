@@ -70,7 +70,7 @@ These are approved and settled. Do not change them as a side effect of other wor
    - Journal: J4 on desktop, Phone B on phones.
    - The project page ("Zamana, refined").
    - The automatic photograph layout.
-3. **The brand palette and the two fonts:** the colour tokens in `src/app/styles/tokens.css`, Playfair Display and Instrument Sans.
+3. **The brand palette and the two fonts:** the colour tokens in `src/app/styles/tokens.css`, Playfair Display and Instrument Sans. (The Shop alone adds Noto Serif Gurmukhi for the Collection's Gurmukhi numerals and a few Shop only colours, approved 11 Nov 2026 and recorded in `BRAND_BOOK.md`, The Shop palette.)
 4. **The typography hierarchy and the italic rule:** the type scale and the one label style (`BRAND_BOOK.md` 2.2, `--type-label-*`), and Playfair italic only for Maninder's quote beside his portrait.
 5. **The motion tokens:** the `--ease-*` and `--dur-*` values and how they are used.
 6. **The security policy exception:** `'unsafe-eval'` for Spotify on the home page only; never widened, never removed without a replacement for the record.
@@ -93,7 +93,7 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 - Do not introduce colors outside this palette without updating `BRAND_BOOK.md` first.
 
 ### Type
-- **Serif for names and numbers, sans for sentences.** Playfair Display (`--font-editorial`, weight 400 only) is only for page, chapter, project and journal titles (including in lists, cards and the studio panels), Roman numerals, Journey years and journal dates, the Toronto time, and the About portrait quote. Every sentence is Instrument Sans, with one approved exception: the site's opening statement, the first sentence of the homepage introduction, in Playfair 400 at display-m (34/26).
+- **Serif for names and numbers, sans for sentences.** Playfair Display (`--font-editorial`, weight 400 only) is only for page, chapter, project and journal titles (including in lists, cards and the studio panels), Roman numerals, Journey years and journal dates, the Toronto time, and the About portrait quote. Every sentence is Instrument Sans, with two approved exceptions: the site's opening statement, the first sentence of the homepage introduction, in Playfair 400 at display-m (34/26); and, in the Shop only, the four section headings "In the making", "What this is, and what it is not", "Good to know" and "Make something with House of Singh" (and the "House of Singh × you" line) in Playfair 400 at display-l (`BRAND_BOOK.md`, The Shop's headings).
 - One type scale, every size a token (`--type-*` in `src/app/styles/tokens.css`, Tailwind `text-display-xl`, `text-display-l`, `text-display-m`, `text-display-s`, `text-numeral`, `text-date`, `text-statement`, `text-body-l`, `text-body`, `text-small`, `text-legal`, and `type-label`). Never a one off size; map anything new to the nearest token.
 - Body and interface: Instrument Sans, live on every page (regular 400 and medium 500), self hosted from `public/fonts` through next/font in `src/app/layout.tsx` (`--font-instrument`, with a size adjusted Arial fallback so nothing shifts). The Studio keeps its own font.
 - Labels and eyebrows: one style everywhere, the label token (`--type-label-size` 12px, `--type-label-leading` 1.5, `--type-label-tracking` 0.12em, uppercase, regular; the `type-label` class in components). Muted grey at rest, charcoal with the drawn hairline when active. Never a one off label size; a label never wraps.
@@ -119,7 +119,7 @@ The full detail is in `BRAND_BOOK.md`. The essentials Claude Code must honor:
 - Calm over dense. Less per screen. One clear focus.
 - Restraint in interaction. Standard, predictable patterns. The brand expresses through type, space, and photography, not novel controls.
 - Buttons and links are quiet and typographic, often a label with a hairline or subtle hover, not heavy filled shapes.
-- Calls to action: primary actions (Book a call, Visit House of Singh Studios) use the outlined button (`OutlineCta`); every secondary action uses the one text link (`TextLink`: 14px, 500, uppercase, 0.12em, a permanent hairline and an arrow that moves 4px on hover; `back` puts the arrow on the left; `TextButton` for actions that are not pages). A form's step forward (Next, Review, Submit) uses `OutlineButton`. Never a third style.
+- Calls to action: primary actions (Book a call, Visit House of Singh Studios) use the outlined button (`OutlineCta`); every secondary action uses the one text link (`TextLink`: 14px, 500, uppercase, 0.12em, a permanent hairline and an arrow that moves 4px on hover; `back` puts the arrow on the left; `TextButton` for actions that are not pages). A form's step forward (Next, Review, Submit) uses `OutlineButton`. Never a third style, with one approved exception: the Shop's Buy is a solid charcoal button (`BRAND_BOOK.md`, Calls to action), and every other Shop action is a text link.
 - Chapter marks: every chapter opens with `ChapterMark`, the Roman numeral in brass (30px) and a visible label in the label token beside it, editable in Sanity; a chapter title, where there is one, sits below.
 - Cards let the image and a small caption do the work. Avoid borders, heavy shadows, busy chrome.
 - Accessibility is non negotiable: contrast, keyboard navigation, alt text, reduced motion.

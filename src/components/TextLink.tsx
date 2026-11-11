@@ -76,14 +76,19 @@ export function TextButton({
   onClick,
   back,
   className,
+  type = "button",
+  disabled,
 }: {
   children: ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
   back?: boolean;
   className?: string;
+  /** "submit" for a form's own send (the Shop's proposal form). */
+  type?: "button" | "submit";
+  disabled?: boolean;
 }) {
   return (
-    <button type="button" onClick={onClick} className={textLinkClass({ back, className })}>
+    <button type={type} onClick={onClick} disabled={disabled} className={textLinkClass({ back, className })}>
       <LinkContent back={back}>{children}</LinkContent>
     </button>
   );
