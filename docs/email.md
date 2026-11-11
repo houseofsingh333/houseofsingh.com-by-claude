@@ -23,6 +23,8 @@ Those exact words, the form and the moment are kept on the person in Kit, in a c
 
 **Unsubscribing.** The welcome and the Notify me confirmation carry an "Unsubscribe" link in their footer, and the List-Unsubscribe headers that mail apps show as their own unsubscribe button. The link is signed for the person it was sent to (`EMAIL_LINK_SECRET`, else the Resend key), so it cannot be changed to unsubscribe anyone else. It opens `/unsubscribe`, which asks once (mail scanners open every link, so nothing happens on opening) and, on the button, unsubscribes the person in Kit from every letter and Collection email; any sign up of theirs still waiting for Kit is dropped. A mail app's one click button unsubscribes at once. If Kit cannot be reached, the request waits in the Studio ("Sign ups waiting for Kit", action unsubscribe) and the daily job completes it. Order emails are not newsletters and carry no unsubscribe link. Letters sent from Kit carry Kit's own unsubscribe link.
 
+**Links and images on a preview.** Links in an email sent from a preview (unsubscribe, certificate) point to that preview, so they can be tried before merging. Images and fonts (the crest, the typefaces) always load from houseofsingh.com, previews included, since previews are protected and Gmail cannot fetch from them.
+
 **No copies.** Once Kit has a sign up, the website keeps no copy of the email address. If Kit cannot be reached at that moment (or is not set up yet), the sign up is kept privately in Sanity (Studio: House of Singh Editions, "Sign ups waiting for Kit") and the daily job tries Kit again, then deletes it. Nobody is lost.
 
 **Backup.** Kit's own export (Subscribers, Export) is the ongoing backup. There is no export in the Studio.

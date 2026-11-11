@@ -122,6 +122,22 @@ const order = (n: number): Email => orderEmail(`buyer${n}@example.com`, { pieceN
   const l2 = await leave("b@example.com", pending, unsubscribe);
   check(l2 === "kit" && left.includes("b@example.com"), "Kit up: unsubscribed at once", l2);
 
+  // On a preview: links point to the preview, images and fonts to houseofsingh.com.
+  {
+    const saved = { env: process.env.VERCEL_ENV, branch: process.env.VERCEL_BRANCH_URL, site: process.env.EMAIL_SITE_URL };
+    process.env.VERCEL_ENV = "preview";
+    process.env.VERCEL_BRANCH_URL = "preview-branch.example.vercel.app";
+    delete process.env.EMAIL_SITE_URL;
+    const html = welcomeEmail("reader@example.com").html;
+    check(html.includes('src="https://houseofsingh.com/images/email-crest.png"'), "preview email: the crest loads from houseofsingh.com");
+    check(html.includes("url(https://houseofsingh.com/fonts/") && !html.includes("preview-branch.example.vercel.app/fonts"), "preview email: fonts load from houseofsingh.com");
+    check(html.includes("https://preview-branch.example.vercel.app/unsubscribe"), "preview email: links point to the preview");
+    for (const [k, v] of [["VERCEL_ENV", saved.env], ["VERCEL_BRANCH_URL", saved.branch], ["EMAIL_SITE_URL", saved.site]] as const) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  }
+
   console.log(failures ? `\n${failures} failed` : "\nall passed");
   process.exit(failures ? 1 : 0);
 })();

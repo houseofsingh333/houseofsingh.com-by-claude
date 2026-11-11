@@ -41,12 +41,18 @@ export const emailConfig = () => ({
   dailyLimit: Math.max(1, Number(process.env.RESEND_DAILY_LIMIT) || 100),
   signupReserve: Math.max(0, Number(process.env.RESEND_SIGNUP_RESERVE ?? 10)),
   /**
-   * Absolute addresses in emails (unsubscribe, certificate, crest, fonts):
-   * houseofsingh.com on the live site; on a Vercel preview the preview's
-   * own address (its branch address, else the deployment's), so links work
-   * before a change is merged. EMAIL_SITE_URL overrides it off production.
+   * Links in emails (unsubscribe, certificate, pages): houseofsingh.com on
+   * the live site; on a Vercel preview the preview's own address (its
+   * branch address, else the deployment's), so links work before a change
+   * is merged. EMAIL_SITE_URL overrides it off production.
    */
   siteUrl: emailSiteUrl(),
+  /**
+   * Images and fonts in emails (the crest, the typefaces): always
+   * houseofsingh.com, previews included. Previews are protected, so Gmail
+   * and other mail apps cannot fetch from them.
+   */
+  assetUrl: SITE_URL,
 });
 
 /** The bare address in "Name <address>" (or the address itself). */

@@ -47,7 +47,7 @@ Only when the test purchase has worked end to end.
 
 1. In Stripe, switch to **Live mode** and complete the account (business details as House of Singh Studios Inc., bank account, statement descriptor such as `HOS EDITIONS`).
 2. Run the tax rate script again with the live key: `STRIPE_SECRET_KEY=sk_live_... npx tsx scripts/editions-tax-rates.ts`.
-3. Add the live webhook endpoint (`https://houseofsingh.com/api/editions/webhook`, same two events) and copy its live signing secret.
+3. Add the live webhook endpoint (`https://houseofsingh.com/api/editions/webhook`) with the same five events as in test mode (section 2, step 4) and copy its live signing secret.
 4. In Vercel, for **Production** only: `STRIPE_SECRET_KEY` = the live key, `STRIPE_WEBHOOK_SECRET` = the live signing secret, `GST_NUMBER`.
 5. Delete the sample content (section 6), remove `EDITIONS_CLOCK` everywhere, and redeploy.
 6. Before launch, the live site can sit in anticipation: set `EDITIONS_MODE` to `anticipation` on Production and redeploy. /editions then shows the sealed Collection with Notify me, linked from the footer, and you can see the whole Shop yourself with `/editions?preview=EDITIONS_PREVIEW_SECRET`.
