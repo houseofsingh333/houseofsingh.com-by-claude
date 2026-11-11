@@ -80,9 +80,12 @@
 .ed-foot a {
   color: var(--foreground);
 }
+/* "A question about a piece? Write to editions@…": small and grey, the
+   address in charcoal with a light underline (the link's hairline-rest). */
 .ed-foot-question {
-  font-size: var(--type-body-l);
-  line-height: 1.5;
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--muted-foreground);
   overflow-wrap: anywhere;
 }
 .ed-foot-seller {
@@ -271,8 +274,13 @@ body:has(.ed) .footer-grid {
 .ed-card:hover .ed-card-photo img {
   transform: scale(1.04);
 }
+/* Sold out: the photograph greys and softens; name and price turn grey. */
 .ed-card[data-sold] .ed-card-photo img {
   filter: grayscale(0.6);
+  opacity: 0.55;
+}
+.ed-card[data-sold] .ed-card-name {
+  color: var(--muted-foreground);
 }
 /* The name keeps to one line where the card allows; when name and price
    do not fit side by side, the price moves beneath rather than the name
@@ -354,7 +362,20 @@ body:has(.ed) .footer-grid {
 /* ——— A piece ——— */
 
 .ed-piece-back {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
   padding: 56px var(--ed-gutter) 0;
+}
+/* "1 of 3" follows the phone's photograph rail; desktop shows them all. */
+.ed-photo-count {
+  white-space: nowrap;
+}
+@media (min-width: 1024px) {
+  .ed-photo-count {
+    display: none;
+  }
 }
 .ed-piece {
   display: grid;
@@ -393,41 +414,16 @@ body:has(.ed) .footer-grid {
     top: 112px;
   }
 }
-/* Phones and tablets: the first photograph, the words and Buy, then the
-   other photographs, then the folding sections. The two columns' wrappers
-   step aside so their parts can be placed in that order. */
-@media (max-width: 1023px) {
-  .ed-piece-photos,
-  .ed-piece-panel {
-    display: contents;
-  }
-  .ed-piece-photo[data-first] {
-    order: 1;
-  }
-  .ed-piece-main {
-    order: 2;
-  }
-  .ed-piece-photo {
-    order: 3;
-  }
-  .ed-piece-more {
-    order: 4;
-  }
-}
-/* The end of a piece: the next one, and the way back to the Collection. */
-.ed-piece-next {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 24px 40px;
-  margin-inline: var(--ed-gutter);
-  padding-block: 32px var(--section-space-sm);
-  border-top: 1px solid var(--border);
-}
 .ed-piece-price {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
   font-size: var(--type-body-l);
   line-height: 1.4;
   color: var(--foreground);
+}
+.ed-piece-price .ed-few {
+  font-size: var(--type-small);
 }
 .ed-piece-statement {
   font-size: var(--type-body);
@@ -643,57 +639,6 @@ body:has(.ed) .footer-grid {
   .ed-fold-mark::after,
   .ed-size,
   .ed-zone {
-    transition: none;
-  }
-}
-
-/* Phones: the price and Buy held at the foot of the screen. */
-.ed-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 30;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 12px var(--ed-gutter) calc(12px + env(safe-area-inset-bottom));
-  background: var(--background);
-  border-top: 1px solid var(--border);
-  transition:
-    transform var(--dur-hover) var(--ease-soft-out),
-    opacity var(--dur-hover) var(--ease-soft-out);
-}
-.ed-bar[data-away] {
-  transform: translateY(100%);
-  opacity: 0;
-}
-.ed-bar-price {
-  font-size: var(--type-body);
-  color: var(--foreground);
-}
-.ed-bar-buy {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 22px;
-  border: 1px solid var(--foreground);
-  background: var(--foreground);
-  color: var(--background);
-}
-@media (min-width: 1024px) {
-  .ed-bar {
-    display: none;
-  }
-}
-@media (max-width: 1023px) {
-  .ed-page:has(.ed-bar) {
-    padding-bottom: 72px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ed-bar {
     transition: none;
   }
 }
@@ -1864,18 +1809,25 @@ a.ed-spine:focus-visible {
     transition: none;
   }
 }
-/* The ×: two brass strokes as thick as the Playfair stems beside them
-   (0.093em of the line's size, measured from Playfair Display 400), the
-   size of the typed × it replaced (0.39 of 1.6 times the line). The stroke
-   is set in the drawing's own units: --ed-x-stroke is the stem divided by
-   the drawing's size, times 100. */
-.ed-invite-x {
+/* The drawn ×: two brass strokes as thick as the letter stems beside it
+   (Playfair Display 400 and Instrument Sans both about 0.093em), set in
+   the drawing's own units: --ed-x-stroke is the stem divided by the
+   drawing's size, times 100. Centred on the x height by vertical-align. */
+.ed-x {
   display: inline-block;
   overflow: visible;
+  width: 0.62em;
+  height: 0.62em;
+  vertical-align: middle;
   fill: none;
   stroke: var(--ed-brass-x);
   stroke-width: var(--ed-x-stroke, 15);
   stroke-linecap: butt;
+}
+/* The ×'s size beside the "House of Singh × you" line: that of the typed
+   × it replaced (0.39 of 1.6 times the line). */
+.ed-invite-x {
+  vertical-align: middle;
 }
 /* Desktop: one line, the round arrow at its end. */
 .ed-invite-line {
@@ -1977,37 +1929,11 @@ a.ed-spine:focus-visible {
 
 /* ——— Phones: the floating bar ——— */
 
-.ed-shopbar {
-  position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: calc(12px + env(safe-area-inset-bottom));
-  z-index: 30;
-  display: none;
-  align-items: center;
-  gap: 12px;
-  min-height: 68px;
-  padding: 10px 16px;
-  background: var(--sq);
-  color: var(--ed-seal-ink);
-  box-shadow: 0 10px 30px color-mix(in srgb, var(--foreground) 18%, transparent);
-  transform: translateY(calc(100% + 24px));
-  opacity: 0;
-  transition:
-    transform var(--dur-page) var(--ease-slow),
-    opacity var(--dur-page) var(--ease-slow);
-}
-.ed-shopbar[data-shown] {
-  transform: none;
-  opacity: 1;
-}
 @media (max-width: 767px) {
   .ed-shopbar {
     display: flex;
   }
-  .ed-page:has(.ed-shopbar) {
-    padding-bottom: 96px;
-  }
+
 }
 @media (prefers-reduced-motion: reduce) {
   .ed-shopbar {
@@ -2053,4 +1979,388 @@ a.ed-spine:focus-visible {
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--ed-seal-ink);
+}
+
+
+/* ═══ Shop design round 3 (approved on the canvas) ═══ */
+
+.ed {
+  /* Few left: dark brass, 4.51:1 on the canvas (AA for small text). */
+  --ed-brass-dark: #8a6d47;
+  /* The phone bars: warm stone with a hairline. */
+  --ed-bar-border: #e4ded5;
+  --ed-dur-settle: 1100ms;
+}
+
+/* The type line: the kind, then "· 2 left" and "· × Sample Artist". Each
+   part keeps together; on the narrowest cards a part moves beneath. */
+.ed-card-kind {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.35em;
+}
+.ed-card-kind > span {
+  white-space: nowrap;
+}
+.ed-few {
+  color: var(--ed-brass-dark);
+}
+/* The × in a label: the label's own stem weight (Instrument Sans). */
+.ed-x-label {
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 0.45em;
+  --ed-x-stroke: 13;
+}
+
+/* ——— Open and early access: the card at 340px, two facts, the way down ——— */
+
+@media (min-width: 1024px) {
+  .ed-open2[data-state="open"],
+  .ed-open2[data-state="early"] {
+    grid-template-columns: 340px minmax(0, 1fr);
+  }
+}
+.ed-facts {
+  display: none;
+}
+.ed-open2-avail {
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+@media (min-width: 768px) {
+  .ed-open2-avail {
+    display: none;
+  }
+  .ed-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    gap: 8px 64px;
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .ed-facts > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ed-facts dd {
+    font-size: var(--type-body);
+    line-height: 1.4;
+    color: var(--foreground);
+  }
+}
+.ed-see {
+  align-self: flex-start;
+  margin-top: 8px;
+}
+.ed-see:hover .text-link-arrow,
+.ed-see:focus-visible .text-link-arrow {
+  transform: translateY(4px);
+}
+
+/* Phones: the card full width, room beneath it, a softer resting shadow. */
+@media (max-width: 767px) {
+  .ed-card2-stage {
+    max-width: none;
+  }
+  .ed-open2 {
+    row-gap: 48px;
+  }
+  .ed-card2:not([data-pressed]) {
+    box-shadow: 0 10px 22px color-mix(in srgb, var(--foreground) 9%, transparent);
+  }
+}
+
+/* ——— The piece page (round 3) ——— */
+
+/* Phones: the photographs as a rail to swipe, one at a time, snapping, the
+   page's margins kept on both sides. */
+@media (max-width: 1023px) {
+  .ed-gallery {
+    flex-direction: row;
+    gap: 12px;
+    margin-inline: calc(-1 * var(--ed-gutter));
+    padding-inline: var(--ed-gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--ed-gutter);
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .ed-gallery::-webkit-scrollbar {
+    display: none;
+  }
+  .ed-gallery > .ed-piece-photo {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+  }
+}
+
+/* Made by, between two hairlines. */
+.ed-madeby {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-block: 18px;
+  border-block: 1px solid var(--border);
+}
+.ed-madeby-line {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-s);
+  line-height: 1.3;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+.ed-x-madeby {
+  margin-inline: 0.3em;
+  --ed-x-stroke: 15;
+}
+.ed-madeby-about {
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+/* Buy with room above, and more below before the folding sections. */
+.ed-piece-buy {
+  margin-top: 26px;
+  margin-bottom: 46px;
+}
+.ed-folds2 {
+  border-top: 1px solid var(--border);
+}
+.ed-fold2-body {
+  white-space: pre-line;
+}
+.ed-size-note {
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--foreground);
+}
+
+/* The end of a piece: the way back on the left, the next piece on the right. */
+.ed-piece-next2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-inline: var(--ed-gutter);
+  margin-bottom: var(--section-space-sm);
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.ed-back-small {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+  transition: color var(--dur-hover) var(--ease-soft-out);
+}
+.ed-back-small:hover,
+.ed-back-small:focus-visible {
+  color: var(--foreground);
+}
+.ed-back-narrow {
+  display: none;
+}
+.ed-next {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  text-align: right;
+}
+.ed-next-name {
+  font-family: var(--font-editorial);
+  font-size: var(--type-display-s);
+  line-height: 1.25;
+  color: var(--foreground);
+}
+.ed-next-photo {
+  position: relative;
+  display: block;
+  width: 160px;
+  aspect-ratio: 4 / 5;
+  margin-top: 6px;
+  overflow: hidden;
+  background: var(--border);
+}
+.ed-next-photo img {
+  transition: transform var(--dur-reveal) var(--ease-soft-out);
+}
+.ed-next:hover .ed-next-photo img {
+  transform: scale(1.04);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-next-photo img {
+    transition: none;
+  }
+  .ed-next:hover .ed-next-photo img {
+    transform: none;
+  }
+}
+@media (max-width: 767px) {
+  .ed-piece-buy {
+    margin-top: 44px;
+    margin-bottom: 64px;
+  }
+  .ed-back-wide {
+    display: none;
+  }
+  .ed-back-narrow {
+    display: inline;
+  }
+  .ed-next-photo {
+    width: 120px;
+  }
+  .ed-piece-next2 {
+    margin-bottom: 80px;
+  }
+}
+
+/* ——— Phone bars: warm stone, a hairline, a soft shadow, charcoal words ——— */
+
+.ed-bar2,
+.ed-shopbar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  z-index: 30;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  padding: 10px 12px 10px 16px;
+  background: var(--ed-tint);
+  border: 1px solid var(--ed-bar-border);
+  color: var(--foreground);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--foreground) 10%, transparent);
+  transform: translateY(calc(100% + 24px));
+  opacity: 0;
+  transition:
+    transform var(--dur-page) var(--ease-slow),
+    opacity var(--dur-page) var(--ease-slow);
+}
+.ed-bar2[data-shown],
+.ed-shopbar[data-shown] {
+  transform: none;
+  opacity: 1;
+}
+/* Room for the bar beneath the whole Shop page, footer line included, so
+   it never covers the last words. */
+@media (max-width: 767px) {
+  .ed-bar2,
+  .ed-shopbar {
+    display: flex;
+  }
+  .ed:has(.ed-bar2, .ed-shopbar) {
+    padding-bottom: 96px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-bar2,
+  .ed-shopbar {
+    transform: none;
+    transition: none;
+  }
+  .ed-bar2:not([data-shown]),
+  .ed-shopbar:not([data-shown]) {
+    visibility: hidden;
+  }
+}
+.ed-bar2-words {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.ed-bar2-name {
+  overflow: hidden;
+  font-family: var(--font-editorial);
+  font-size: var(--type-body);
+  line-height: 1.3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ed-bar2-price {
+  font-size: var(--type-small);
+  line-height: 1.4;
+  color: var(--ed-ink-soft);
+}
+.ed-bar2-buy {
+  flex: none;
+  min-height: 44px;
+  padding: 0 22px;
+  border: 1px solid var(--foreground);
+  background: var(--foreground);
+  color: var(--background);
+  cursor: pointer;
+}
+/* The sealed page's bar takes the same stone; its words in charcoal. */
+.ed-shopbar .ed-shopbar-title,
+.ed-shopbar .ed-shopbar-when,
+.ed-shopbar .ed-shopbar-action {
+  color: var(--foreground);
+}
+
+/* ——— The card on a touch screen (round 3) ——— */
+
+/* Vertical scrolling across the card is never blocked; a long press shows
+   no callout or selection. */
+.ed-card2-stage {
+  touch-action: pan-y;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+/* Pressed and held: toward the finger, 98.5%, a tighter shadow; it follows
+   quickly and eases back on release. */
+.ed-card2[data-touched] {
+  transform: rotateX(var(--rx)) rotateY(var(--ry)) scale(0.985);
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--foreground) 14%, transparent);
+  transition:
+    transform var(--dur-hover) var(--ease-soft-out),
+    box-shadow var(--dur-hover) var(--ease-soft-out);
+}
+/* Once, on first view: from slightly lifted and tilted to flat. */
+.ed-card2[data-settle] {
+  animation: ed-card2-settle var(--ed-dur-settle) var(--ease-slow) both;
+}
+@keyframes ed-card2-settle {
+  from {
+    transform: translateY(-10px) rotateX(6deg);
+    box-shadow: 0 22px 40px color-mix(in srgb, var(--foreground) 14%, transparent);
+  }
+  to {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-card2[data-touched],
+  .ed-card2[data-settle] {
+    transform: none;
+    animation: none;
+    transition: none;
+  }
+}
+
+/* The photograph rail takes keyboard focus (to scroll with the arrows). */
+.ed-gallery:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 4px;
+}
+/* A long "Notify me of …" beside a sold out piece may wrap on a phone. */
+.ed-buy-closed .text-link {
+  white-space: normal;
 }

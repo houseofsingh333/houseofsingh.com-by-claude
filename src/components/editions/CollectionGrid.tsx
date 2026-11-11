@@ -5,7 +5,8 @@ import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
 import TextLink from "@/components/TextLink";
 import { hotspotPosition } from "@/lib/projectHero";
-import { cad, piecesInWords } from "@/lib/editions/format";
+import { cad } from "@/lib/editions/format";
+import DrawnTimes from "./DrawnTimes";
 import type { SanityImageAsset } from "@/lib/sanityImage";
 import { keepLastWords } from "@/lib/keepLastWords";
 
@@ -21,31 +22,35 @@ export type GridPiece = {
   image: SanityImageAsset | null;
   /** False where the piece's Collection is not open (a collaborator's page): no Buy. */
   buyable?: boolean;
+  /** How many are left, when few. */
+  fewLeft?: number | null;
+  /** Made with: a collaborator or maker, shown after the kind with the drawn ×. */
+  partner?: string | null;
 };
 
 type Filter = { id: string; label: string };
 
 /**
- * The Collection (canvas "Shop, decisions": two across, full bleed 4:5
- * with generous white space; name and price, the kind beneath; Buy on
- * pointing, always shown on touch). Filters are the Collection's
- * categories; the heading counts what is shown ("Eight pieces", "Prints,
- * three pieces"). Sold out: the price reads Sold out, the photograph
- * softens, and the action becomes Notify me of the next Collection.
+ * The Collection (canvas "Shop, decisions" and Shop design round 3): the
+ * Collection's label over "The pieces"; filters for the categories it
+ * holds; two across, each card whole on one screen; name in Playfair and
+ * price, the kind beneath, then " · 2 left" in dark brass when few are
+ * left and " · × Sample Artist" for a collaboration. Buy on pointing,
+ * always shown on touch. Sold out: the photograph greys and softens, name
+ * and price turn grey, the price reads Sold out, and the action becomes
+ * Notify me of the next Collection, leading to the field.
  */
 export default function CollectionGrid({ pieces, filters, label, next }: { pieces: GridPiece[]; filters: Filter[]; label: string; next: string }) {
   const [active, setActive] = useState<string>("all");
   const shown = useMemo(() => (active === "all" ? pieces : pieces.filter((p) => p.categoryId === active)), [active, pieces]);
-  const activeLabel = filters.find((f) => f.id === active)?.label;
-  const heading = active === "all" ? piecesInWords(pieces.length) : `${activeLabel}, ${piecesInWords(shown.length).toLowerCase()}`;
 
   return (
     <section id="collection" aria-labelledby="ed-collection-heading" className="ed-collection">
       <div className="ed-collection-head">
         <div className="ed-collection-title">
           <span className="type-label text-muted-foreground">{label}</span>
-          <h2 id="ed-collection-heading" className="font-editorial font-normal text-display-l leading-[1.05] text-foreground" aria-live="polite">
-            {heading}
+          <h2 id="ed-collection-heading" className="font-editorial font-normal text-display-l leading-[1.05] text-foreground">
+            The pieces
           </h2>
         </div>
         {filters.length > 1 && (
@@ -87,11 +92,22 @@ export default function CollectionGrid({ pieces, filters, label, next }: { piece
               </Link>
               <span className="ed-card-price">{p.soldOut ? "Sold out" : cad(p.price)}</span>
             </div>
-            <span className="type-label text-muted-foreground">{p.descriptor}</span>
+            <span className="type-label text-muted-foreground ed-card-kind">
+              <span>{p.descriptor}</span>
+              {!p.soldOut && p.fewLeft ? <span className="ed-few">{` · ${p.fewLeft} left`}</span> : null}
+              {p.partner ? (
+                <span>
+                  {" · "}
+                  <DrawnTimes className="ed-x-label" />
+                  <span className="sr-only">with </span>
+                  {p.partner}
+                </span>
+              ) : null}
+            </span>
             {p.buyable !== false && (
               <div className="ed-card-action">
                 {p.soldOut ? (
-                  <TextLink href="/editions#notify">{next}</TextLink>
+                  <TextLink href="#notify">{next}</TextLink>
                 ) : (
                   <TextLink href={p.hasSizes ? `/editions/${p.slug}` : `/editions/${p.slug}#buy`}>{p.hasSizes ? "Choose a size" : "Buy"}</TextLink>
                 )}

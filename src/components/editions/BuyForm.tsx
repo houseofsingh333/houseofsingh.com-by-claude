@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { cad } from "@/lib/editions/format";
 import { taxForPostalCode, taxOnLines } from "@/lib/editions/tax-rates";
 import type { Zone } from "@/lib/editions/types";
+import type { TaxMode } from "@/lib/editions/tax-rates";
 
 type Props = {
   slug: string;
@@ -11,9 +12,8 @@ type Props = {
   price: number;
   sizes: { key: string; label: string; left: number }[];
   zones: { value: Zone; label: string; price: number | null }[];
-  /** The edition and Stripe line beneath Buy. */
-  quiet: string;
-  taxLine: string;
+  /** "stripe": Stripe Tax takes the address at checkout, so no postal code here; "fixed": the postal code sets the GST/HST. */
+  taxMode: TaxMode;
   /** Why the last try was refused (?buy=…), written beside Buy. */
   message?: string | null;
   /** The words for each refusal, for one that comes back without a reload. */
@@ -27,17 +27,20 @@ type Props = {
  * button (charcoal, canvas text; Shop design round 1). It names the next
  * step until the piece can be bought: "Choose a size", then, for Canada,
  * "Enter your postal code", then "Buy, size M"; pressed early, it takes
- * the visitor to that step instead of submitting. It posts to
+ * the visitor to that step instead of submitting (the sizes, with "Choose a
+ * size"). With Stripe Tax (TAX_MODE "stripe") there is no postal code:
+ * Stripe takes the address at checkout. It posts to
  * /api/editions/checkout, which checks stock again and creates the Stripe
  * Checkout; the page then moves to Stripe itself (the security policy does
  * not let a form post be redirected to another site). Without JavaScript
  * the form posts as usual and the answer moves on to Stripe.
  */
-export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, message: initialMessage, words }: Props) {
+export default function BuyForm({ slug, price, sizes, zones, taxMode, message: initialMessage, words }: Props) {
   const [postal, setPostal] = useState("");
   const [message, setMessage] = useState(initialMessage ?? null);
   const [sending, setSending] = useState(false);
   const [size, setSize] = useState<string | null>(null);
+  const [sizeNote, setSizeNote] = useState(false);
   const sizesRef = useRef<HTMLDivElement>(null);
   const postalRef = useRef<HTMLInputElement>(null);
   const firstZone = zones.find((z) => z.price !== null)?.value ?? null;
@@ -48,11 +51,12 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
   // code, on the piece and its shipping. Stripe charges the exact amount
   // from the address given at checkout.
   const shipping = zones.find((z) => z.value === zone)?.price ?? 0;
-  const tax = zone === "canada" ? taxForPostalCode(postal) : null;
+  const fixed = taxMode === "fixed";
+  const tax = fixed && zone === "canada" ? taxForPostalCode(postal) : null;
   // The same amount Stripe will charge: each line's tax rounded to the cent.
   const taxAmount = tax ? taxOnLines(price, shipping, tax.percentage) : 0;
   // Canada needs the postal code: it sets the province, and so the tax.
-  const needsPostal = zone === "canada" && !tax;
+  const needsPostal = fixed && zone === "canada" && !tax;
   const label = sending
     ? "Opening checkout"
     : needsSize
@@ -67,7 +71,11 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
     e.preventDefault();
     // Not ready yet: the button leads to the missing step.
     if (needsSize) {
-      sizesRef.current?.querySelector<HTMLInputElement>("input:not(:disabled)")?.focus();
+      // From here or from the phone's bar: to the sizes, with a word.
+      setSizeNote(true);
+      const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      sizesRef.current?.scrollIntoView({ block: "center", behavior: still ? "auto" : "smooth" });
+      sizesRef.current?.querySelector<HTMLInputElement>("input:not(:disabled)")?.focus({ preventScroll: true });
       return;
     }
     if (needsPostal) {
@@ -91,11 +99,16 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
   }
 
   return (
-    <form method="post" action="/api/editions/checkout" onSubmit={buy} noValidate className="ed-buy" aria-describedby={message ? "ed-buy-message" : undefined}>
+    <form id="ed-buy-form" method="post" action="/api/editions/checkout" onSubmit={buy} noValidate className="ed-buy" aria-describedby={message ? "ed-buy-message" : undefined}>
       <input type="hidden" name="slug" value={slug} />
       {sizes.length > 0 && (
         <fieldset className="ed-choice">
           <legend className="type-label text-muted-foreground">Size</legend>
+          {sizeNote && !chosen && (
+            <p className="ed-size-note" role="status">
+              Choose a size
+            </p>
+          )}
           <div className="ed-sizes" ref={sizesRef}>
             {sizes.map((s) => (
               <label key={s.key} className="ed-size" data-sold={s.left === 0 ? "" : undefined}>
@@ -119,7 +132,7 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
           ))}
         </div>
       </fieldset>
-      {zone === "canada" && (
+      {fixed && zone === "canada" && (
         <div className="ed-postal">
           <label htmlFor={`ed-postal-${slug}`} className="type-label text-muted-foreground">
             Postal code, for GST or HST
@@ -156,11 +169,6 @@ export default function BuyForm({ slug, price, sizes, zones, quiet, taxLine, mes
           {message}
         </p>
       )}
-      <p className="ed-buy-quiet">
-        {quiet}
-        <br />
-        {taxLine}
-      </p>
     </form>
   );
 }
