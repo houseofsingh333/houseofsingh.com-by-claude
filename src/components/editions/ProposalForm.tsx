@@ -4,6 +4,7 @@ import { useState } from "react";
 import HoneypotField from "@/components/HoneypotField";
 import { OutlineButton } from "@/components/OutlineCta";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
+import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 
 const FIELDS = [
   { name: "name", label: "Your name", type: "text", autoComplete: "name", required: true },
@@ -48,7 +49,8 @@ export default function ProposalForm({ footnote }: { footnote: string }) {
   if (status === "sent") {
     return (
       <div className="ed-proposal" role="status">
-        <p className="text-statement text-foreground">Thank you. Your proposal is in, and every proposal is read.</p>
+        <p className="text-statement text-foreground">Thank you. Your proposal is in.</p>
+        <p className="text-body text-muted-foreground">{EDITIONS_DEFAULTS.proposalPromise}</p>
       </div>
     );
   }

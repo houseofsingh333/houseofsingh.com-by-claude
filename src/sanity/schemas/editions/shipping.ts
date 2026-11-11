@@ -35,7 +35,7 @@ export const editionsShipping = defineType({
                     defineField({ name: "upToKg", title: "Up to (kg)", type: "number", validation: (r) => r.required().min(0.01) }),
                     defineField({ name: "price", title: "Price (CAD)", type: "number", validation: (r) => r.required().min(0) }),
                   ],
-                  preview: { select: { kg: "upToKg", price: "price" }, prepare: ({ kg, price }) => ({ title: `Up to ${kg} kg`, subtitle: `CA$${price}` }) },
+                  preview: { select: { kg: "upToKg", price: "price" }, prepare: ({ kg, price }) => ({ title: `Up to ${kg} kg`, subtitle: `$${price} CAD` }) },
                 }),
               ],
               validation: (r) => r.required().min(1),

@@ -21,10 +21,13 @@ export const EDITIONS_DEFAULTS = {
     "Made with others. When a piece is a collaboration, both names stand on it.",
   ],
   returnsLine: "Unworn pieces may be returned within 14 days.",
+  soldOutLine: "Every piece has found its home.",
   shippingLine: "Made and packed with care, shipped in 2 to 4 weeks, with tracking by email. Shipping at cost; import duties paid on arrival.",
   artistsHeading: "Make something with House of Singh",
   artistsInvitation:
     "Every Collection holds pieces made with other artists. If you work with your hands, a camera, cloth or metal, and something here speaks to you, propose an idea.",
+  /** Under the proposal form, after sending, and in the proposal email: only fitting proposals receive a reply. */
+  proposalPromise: "Every proposal is read. If your idea fits a coming Collection, I will be in touch to talk it through.",
   artistsShort: "Every Collection holds pieces made with other artists. If something here speaks to you, propose an idea.",
   artistsSteps: [
     { title: "Propose", text: "Your work and an idea, in a few lines." },
@@ -32,7 +35,6 @@ export const EDITIONS_DEFAULTS = {
     { title: "Made together", text: "Small numbers, both names, a fair shared return." },
     { title: "Released", text: "In the next Collection, with your own page." },
   ],
-  notifyNote: "Only for releases and early access. Unsubscribe anytime.",
 } as const;
 
 /**

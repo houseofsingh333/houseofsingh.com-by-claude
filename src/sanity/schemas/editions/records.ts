@@ -64,9 +64,31 @@ export const editionsOrder = defineType({
     defineField({ name: "editionNumber", title: "Edition number", type: "number", description: "Numbered editions: this piece's number in the edition." }),
     defineField({ name: "certificateCode", title: "Certificate code", type: "string" }),
     defineField({ name: "paidAt", title: "Paid", type: "datetime" }),
+    defineField({
+      name: "status",
+      title: "Status",
+      type: "string",
+      description: "Paid, then Made and Shipped (the actions at the foot of this order, each of which emails the buyer). Refunded when the payment is returned in full.",
+      options: { list: [{ title: "Paid", value: "paid" }, { title: "Being made", value: "made" }, { title: "Shipped", value: "shipped" }, { title: "Refunded", value: "refunded" }] },
+    }),
+    defineField({ name: "madeAt", title: "Marked as being made", type: "datetime" }),
+    defineField({ name: "shippedAt", title: "Shipped", type: "datetime" }),
+    defineField({ name: "trackingNumber", title: "Tracking number", type: "string" }),
+    defineField({ name: "trackingUrl", title: "Tracking address", type: "url" }),
+    defineField({ name: "refundedAt", title: "Refunded", type: "datetime" }),
+    defineField({ name: "checkTax", title: "Check tax", type: "boolean", description: "The province taxed (from the postal code before Buy) differs from the province of the shipping address. Check the GST or HST charged, and refund the difference or ask for it." }),
+    defineField({ name: "taxProvince", title: "Taxed for", type: "string" }),
+    defineField({ name: "shipProvince", title: "Ships to (province)", type: "string" }),
+    defineField({ name: "sizeKey", title: "Size key", type: "string", hidden: true }),
   ],
   orderings: [{ title: "Newest", name: "paid", by: [{ field: "paidAt", direction: "desc" }] }],
-  preview: { select: { title: "pieceName", subtitle: "email", n: "collectorNumber" } },
+  preview: {
+    select: { title: "pieceName", email: "email", status: "status", test: "testMode", checkTax: "checkTax" },
+    prepare: ({ title, email, status, test, checkTax }) => ({
+      title: `${checkTax ? "Check tax: " : ""}${title ?? "Order"}${test ? " (test)" : ""}`,
+      subtitle: `${{ paid: "Paid", made: "Being made", shipped: "Shipped", refunded: "Refunded" }[status as string] ?? "Paid"} · ${email ?? ""}`,
+    }),
+  },
 });
 
 export const editionsCollector = defineType({
@@ -81,4 +103,61 @@ export const editionsCollector = defineType({
   ],
   orderings: [{ title: "Number", name: "number", by: [{ field: "number", direction: "asc" }] }],
   preview: { select: { title: "email", n: "number" }, prepare: ({ title, n }) => ({ title, subtitle: `Collector No. ${n ?? "?"}` }) },
+});
+
+/** A sign up kept while Kit could not be reached; deleted once Kit has it (lib/email/signups.ts). */
+export const signupPending = defineType({
+  name: "signupPending",
+  title: "Email: Sign up waiting for Kit",
+  type: "document",
+  ...readOnly,
+  fields: [
+    defineField({ name: "email", title: "Email", type: "string" }),
+    defineField({ name: "action", title: "Action", type: "string", description: "subscribe (the default) or unsubscribe: someone who left while Kit could not be reached." }),
+    defineField({ name: "tag", title: "Tag", type: "string" }),
+    defineField({ name: "kind", title: "Kind", type: "string" }),
+    defineField({ name: "consent", title: "Consent as given", type: "text" }),
+    defineField({ name: "createdAt", title: "Signed up", type: "datetime" }),
+    defineField({ name: "attempts", title: "Tries", type: "number" }),
+    defineField({ name: "lastError", title: "Last error", type: "string" }),
+  ],
+  preview: { select: { title: "email", subtitle: "tag" } },
+});
+
+/** An email waiting for the next day's allowance (lib/email/outbox.ts). */
+export const emailQueued = defineType({
+  name: "emailQueued",
+  title: "Email: Waiting to send",
+  type: "document",
+  ...readOnly,
+  fields: [
+    defineField({ name: "priority", title: "Priority", type: "number", description: "1: order and shipping; 2: sign ups and proposals." }),
+    defineField({ name: "createdAt", title: "Queued", type: "datetime" }),
+    defineField({
+      name: "email",
+      title: "Email",
+      type: "object",
+      fields: [
+        defineField({ name: "to", title: "To", type: "string" }),
+        defineField({ name: "subject", title: "Subject", type: "string" }),
+        defineField({ name: "kind", title: "Kind", type: "string" }),
+        defineField({ name: "sender", title: "From", type: "string", description: "letters: Maninder; editions: the Shop." }),
+        defineField({ name: "priority", title: "Priority", type: "string" }),
+        defineField({ name: "text", title: "Text", type: "text" }),
+        defineField({ name: "html", title: "HTML", type: "text", hidden: true }),
+      ],
+    }),
+  ],
+  orderings: [{ title: "Next to send", name: "next", by: [{ field: "priority", direction: "asc" }, { field: "createdAt", direction: "asc" }] }],
+  preview: { select: { title: "email.subject", subtitle: "email.to" } },
+});
+
+/** The day's count of emails sent (lib/email/outbox.ts). */
+export const emailDay = defineType({
+  name: "emailDay",
+  title: "Email: Sent that day",
+  type: "document",
+  ...readOnly,
+  fields: [defineField({ name: "day", title: "Day (UTC)", type: "string" }), defineField({ name: "count", title: "Sent", type: "number" })],
+  preview: { select: { title: "day", n: "count" }, prepare: ({ title, n }) => ({ title, subtitle: `${n ?? 0} sent` }) },
 });

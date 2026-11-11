@@ -12,7 +12,13 @@ import { createHmac, timingSafeEqual } from "node:crypto";
  */
 const API_BASE = process.env.STRIPE_API_BASE || "https://api.stripe.com";
 /** One fixed API version, so Stripe's answers keep their shape. */
-const API_VERSION = "2025-03-31.basil";
+/**
+ * The Stripe API version: the account's own. STRIPE_API_VERSION pins it to
+ * the exact name the Stripe Dashboard shows (Developers, API version, for
+ * example "2026-10-28.name"); unset, no version is sent and Stripe uses the
+ * account's default, which is the same version until it is upgraded there.
+ */
+const API_VERSION = process.env.STRIPE_API_VERSION?.trim() || "";
 
 export const stripeConfigured = () => Boolean(process.env.STRIPE_SECRET_KEY);
 export const stripeTestMode = () => (process.env.STRIPE_SECRET_KEY ?? "").startsWith("sk_test_");
@@ -57,7 +63,7 @@ async function call<T>(method: "GET" | "POST", path: string, params?: Params): P
     method,
     headers: {
       Authorization: `Bearer ${key}`,
-      "Stripe-Version": API_VERSION,
+      ...(API_VERSION ? { "Stripe-Version": API_VERSION } : {}),
       ...(method === "POST" ? { "Content-Type": "application/x-www-form-urlencoded" } : {}),
     },
     body: method === "POST" ? body : undefined,

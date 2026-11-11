@@ -1,4 +1,5 @@
 import { available, canBuy, collectionState, sizeAvailable } from "./state";
+import { freeUnits } from "./holds";
 import { shippingPrice, zoneCountries, ZONES } from "./shipping";
 import type { CollectionState, EditionsCollection, EditionsPiece, ShippingRoute, Zone } from "./types";
 import { collectionTitle } from "./format";
@@ -16,6 +17,8 @@ export type BuyRefusal =
   | "sold-out"
   | "size-needed"
   | "size-sold-out"
+  | "held"
+  | "postal-needed"
   | "no-shipping";
 
 export const REFUSAL_WORDS: Record<BuyRefusal, string> = {
@@ -24,6 +27,8 @@ export const REFUSAL_WORDS: Record<BuyRefusal, string> = {
   "sold-out": "This piece is sold out.",
   "size-needed": "Choose a size first.",
   "size-sold-out": "This size is sold out.",
+  "postal-needed": "Enter your Canadian postal code: it sets the GST or HST for your province.",
+  held: "The last one is in someone's checkout just now. If it is not bought, it comes back within half an hour.",
   "no-shipping": "This piece cannot ship there yet. Write to us and we will find a way.",
 };
 
@@ -55,6 +60,9 @@ export function checkPurchase(
     if (sizeAvailable(piece, sizeKey) === 0) return { ok: false, refusal: "size-sold-out" };
     size = { _key: s._key, label: s.label };
   }
+  // Units in someone's checkout are not free, though not sold either
+  // (holds run on real time, not the test clock).
+  if (freeUnits(piece, size?._key ?? null, Date.now()) === 0) return { ok: false, refusal: "held" };
   const shipping = shippingPrice(routes, piece.shipsFrom, zone, piece.packedWeight);
   if (shipping === null) return { ok: false, refusal: "no-shipping" };
   return { ok: true, state, shipping, size };
@@ -74,15 +82,19 @@ export function checkoutParams(input: {
   size: { _key: string; label: string } | null;
   zone: Zone;
   shipping: number;
-  taxRateIds: string[];
+  /** Canada: the province's Stripe tax rate (from the postal code), and the province. */
+  taxRate?: { id: string; province: string } | null;
   siteUrl: string;
   imageUrl?: string | null;
   gstNumber?: string | null;
+  /** The stock held for this checkout (lib/editions/holds.ts). */
+  holdKey?: string | null;
   now?: Date;
 }) {
-  const { piece, size, zone, shipping, taxRateIds, siteUrl } = input;
+  const { piece, size, zone, shipping, siteUrl } = input;
   const zoneLabel = ZONES.find((z) => z.value === zone)?.label ?? zone;
-  const taxes = taxRateIds.length > 0 ? { dynamic_tax_rates: taxRateIds } : {};
+  // Canada: the province's GST/HST, fixed, on the piece and on shipping.
+  const taxes = input.taxRate ? { tax_rates: [input.taxRate.id] } : {};
   const metadata = {
     pieceId: piece._id,
     pieceSlug: piece.slug,
@@ -92,6 +104,8 @@ export function checkoutParams(input: {
     zone,
     price: String(piece.price),
     shipping: String(shipping),
+    holdKey: input.holdKey ?? "",
+    taxProvince: input.taxRate?.province ?? "",
     collection: String(input.collectionNumber),
   };
   const seller = `Sold by ${EDITIONS_DEFAULTS.seller}${input.gstNumber ? `. GST/HST ${input.gstNumber}` : ""}.`;
@@ -99,13 +113,15 @@ export function checkoutParams(input: {
   return {
     mode: "payment",
     currency: "cad",
+    // Payment methods are not set here: Stripe no longer accepts them on a
+    // Checkout Session. They are managed in the Stripe Dashboard (cards and
+    // Link on, Affirm and Klarna off, in sandbox and live: docs/editions-setup.md).
     line_items: [
       {
         quantity: 1,
         price_data: {
           currency: "cad",
           unit_amount: cents(piece.price),
-          tax_behavior: "exclusive",
           product_data: {
             name: size ? `${piece.name}, size ${size.label}` : piece.name,
             description: `${EDITIONS_DEFAULTS.brand}, ${collectionTitle(input.collectionNumber)}`,
@@ -119,7 +135,6 @@ export function checkoutParams(input: {
         price_data: {
           currency: "cad",
           unit_amount: cents(shipping),
-          tax_behavior: "exclusive",
           product_data: { name: `Shipping to ${zoneLabel === "Elsewhere" ? "the rest of the world" : zoneLabel}` },
         },
         ...taxes,

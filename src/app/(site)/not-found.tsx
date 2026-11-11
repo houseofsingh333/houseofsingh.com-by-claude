@@ -9,18 +9,10 @@ import type { SanityImage as SanityImageData } from "@/lib/types";
 type NotFoundData = {
   image?: SanityImageData | null;
   latest?: { title?: string | null; slug?: string | null } | null;
-  projects?: number | null;
   /** Site Settings, for the page's editable texts (404 page tab). */
   settings?: object | null;
 };
 
-const NUMBERS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
-
-/** "Four projects", "One project", or "12 projects". */
-function projectCount(n: number): string {
-  const word = NUMBERS[n] ?? String(n);
-  return `${word} project${n === 1 ? "" : "s"}`;
-}
 
 /**
  * The page not found (404): a photograph on the left (Site Settings, else
@@ -42,7 +34,9 @@ export default async function NotFound() {
     latest
       ? { href: `/journal/${latest.slug}`, label: copy.notFoundLatest, note: latest.title ?? "" }
       : { href: "/journal", label: copy.notFoundJournal, note: "" },
-    { href: "/projects", label: copy.notFoundWork, note: data?.projects ? projectCount(data.projects) : "" },
+    // No count beside the work: a number here read as fixed and did not
+    // match the three projects the home page shows.
+    { href: "/projects", label: copy.notFoundWork, note: "" },
     { href: "/", label: copy.notFoundHome, note: copy.notFoundHomeNote },
   ];
 

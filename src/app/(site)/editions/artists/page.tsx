@@ -14,14 +14,14 @@ export const metadata: Metadata = { title: "For artists" };
  * artists already in a released Collection, each with their own page.
  */
 export default async function ArtistsPage() {
-  requireEditions();
+  await requireEditions("any");
   const [rawSettings, collections] = await Promise.all([loadSettings(), loadCollections()]);
   const s = withDefaults(rawSettings);
   const intro = rawSettings.artistsInvitation?.trim() || EDITIONS_DEFAULTS.artistsShort;
   const footnote =
     s.proposalsFor && s.proposalDeadline
-      ? `Proposals for ${s.proposalsFor} are open until ${dayIn(s.proposalDeadline)}. Every proposal is read.`
-      : "Every proposal is read.";
+      ? `Proposals for ${s.proposalsFor} are open until ${dayIn(s.proposalDeadline)}. ${EDITIONS_DEFAULTS.proposalPromise}`
+      : EDITIONS_DEFAULTS.proposalPromise;
 
   const released = collections.filter((c) => c.state !== "sealed");
   const artists = released

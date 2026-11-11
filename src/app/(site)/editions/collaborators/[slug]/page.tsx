@@ -9,7 +9,7 @@ import { editionsCollaboratorQuery } from "@/lib/editions/queries";
 import { canBuy, collectionState, shopNow } from "@/lib/editions/state";
 import { gridPiece } from "@/lib/editions/view";
 import type { EditionsCollaborator, EditionsCollection, EditionsPiece } from "@/lib/editions/types";
-import { editionsEnabled, requireEditions } from "@/lib/editions/enabled";
+import { requireEditions, viewerMode } from "@/lib/editions/enabled";
 
 type Collaborator = EditionsCollaborator & {
   pieces: (EditionsPiece & { collection: Pick<EditionsCollection, "number" | "season" | "opens" | "closes" | "earlyAccessOpens"> | null })[];
@@ -21,7 +21,7 @@ async function load(slug: string) {
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  if (!editionsEnabled()) return {};
+  if ((await viewerMode()) !== "full") return {};
   const c = await load((await params).slug);
   return c ? { title: c.name } : {};
 }
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
  * their links, and the pieces made together that have been released.
  */
 export default async function CollaboratorPage({ params }: { params: Promise<{ slug: string }> }) {
-  requireEditions();
+  await requireEditions();
   const c = await load((await params).slug);
   if (!c) notFound();
   const now = shopNow();

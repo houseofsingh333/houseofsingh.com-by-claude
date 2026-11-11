@@ -92,7 +92,7 @@ export default function CollectionGrid({ pieces, filters, label, next }: { piece
                 {p.soldOut ? (
                   <TextLink href="/editions#notify">{next}</TextLink>
                 ) : (
-                  <TextLink href={`/editions/${p.slug}#buy`}>{p.hasSizes ? "Choose a size" : "Buy"}</TextLink>
+                  <TextLink href={p.hasSizes ? `/editions/${p.slug}` : `/editions/${p.slug}#buy`}>{p.hasSizes ? "Choose a size" : "Buy"}</TextLink>
                 )}
               </div>
             )}

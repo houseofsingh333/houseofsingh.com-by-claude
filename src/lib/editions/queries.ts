@@ -7,7 +7,7 @@ const _category = `{ _id, singular, plural, descriptor, order }`;
 const _piece = `{
   _id, name, "slug": slug.current, order, "collectionId": collection._ref,
   "category": category->${_category},
-  editionType, quantity, price, sizes[]{ _key, label, stock, sold }, soldCount,
+  editionType, issueCertificate, quantity, price, sizes[]{ _key, label, stock, sold }, soldCount, holds[]{ _key, size, until },
   "photographs": photographs[]${_imageAsset},
   statement, story, maker,
   "collaborators": collaborators[]->{ _id, name, "slug": slug.current },
@@ -17,7 +17,7 @@ const _piece = `{
 }`;
 
 const _collection = `{
-  _id, number, season, colour, intro, closedLine, essay,
+  _id, number, season, colour, intro, closedLine, closedUnsoldLine, essay,
   earlyAccessOpens, opens, closes, earlyAccessCodeHash,
   "filters": filters[]{ _key, label, "category": category->${_category} },
   isTestData

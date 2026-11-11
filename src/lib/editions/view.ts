@@ -1,5 +1,6 @@
 import type { GridPiece } from "@/components/editions/CollectionGrid";
 import { available, editionSize } from "./state";
+import { EDITIONS_DEFAULTS } from "./defaults";
 import { collectionTitle, dayIn, monthIn, pad2 } from "./format";
 import type { CollectionState, EditionsCollection, EditionsPiece } from "./types";
 
@@ -65,3 +66,16 @@ const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eig
 
 /** 2 → "Two Collections". */
 export const collectionsInWords = (n: number) => `${WORDS[n] ?? n} ${n === 1 ? "Collection" : "Collections"}`;
+
+/** Whether every piece of a Collection has been sold. */
+export const allSold = (pieces: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes">[]) => pieces.length > 0 && pieces.every((p) => available(p) === 0);
+
+/**
+ * The closed Collection's sentence, true to what happened: "every piece
+ * found its home" only when every piece sold; otherwise the line for a
+ * Collection that closed with pieces left.
+ */
+export function closedSentence(c: Pick<EditionsCollection, "number" | "closedLine" | "closedUnsoldLine">, pieces: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes">[]): string {
+  if (allSold(pieces)) return c.closedLine?.trim() || EDITIONS_DEFAULTS.soldOutLine;
+  return c.closedUnsoldLine?.trim() || `${collectionTitle(c.number)} has closed.`;
+}

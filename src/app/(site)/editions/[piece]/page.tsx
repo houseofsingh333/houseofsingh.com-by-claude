@@ -20,7 +20,7 @@ import { cad, collectionTitle } from "@/lib/editions/format";
 import { editionLine } from "@/lib/editions/view";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import type { EditionsCollection, EditionsPiece } from "@/lib/editions/types";
-import { editionsEnabled, requireEditions } from "@/lib/editions/enabled";
+import { requireEditions, viewerMode } from "@/lib/editions/enabled";
 
 type PieceView = EditionsPiece & {
   collection: (EditionsCollection & { pieces: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes">[] }) | null;
@@ -44,7 +44,7 @@ async function load(slug: string) {
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
-  if (!editionsEnabled()) return {};
+  if ((await viewerMode()) !== "full") return {};
   const piece = await load((await params).piece);
   if (!piece) return {};
   return { title: piece.name, description: piece.statement };
@@ -103,7 +103,7 @@ function Fold({ title, children }: { title: string; children: ReactNode }) {
  * A piece of a sealed Collection is not shown (404).
  */
 export default async function PiecePage({ params, searchParams }: { params: Promise<Params>; searchParams: Promise<{ buy?: string }> }) {
-  requireEditions();
+  await requireEditions();
   const [{ piece: slug }, { buy }] = await Promise.all([params, searchParams]);
   const [piece, rawSettings, routes, cookie] = await Promise.all([load(slug), loadSettings(), loadShipping(), accessCookie()]);
   if (!piece || !piece.collection) notFound();
@@ -161,6 +161,7 @@ export default async function PiecePage({ params, searchParams }: { params: Prom
             {buying ? (
               <BuyForm
                 slug={piece.slug}
+                price={piece.price}
                 sizes={sizes}
                 zones={ZONES.map((z) => ({ value: z.value, label: z.label, price: prices[z.value] }))}
                 quiet={`${editionLine(piece)} · Secure checkout by Stripe`}

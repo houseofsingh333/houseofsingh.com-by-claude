@@ -56,11 +56,20 @@ export const editionsCollection = defineType({
     }),
     defineField({
       name: "closedLine",
-      title: "When closed",
+      title: "When closed, every piece sold",
       type: "text",
       rows: 2,
       group: "main",
-      description: "Beside the square once the Collection has closed. For example: Every piece has found its home. Collection 02 is being made, for winter.",
+      description: "Beside the square once every piece is sold. For example: Every piece has found its home. Collection 02 is being made, for winter.",
+      validation: (rule) => rule.max(200),
+    }),
+    defineField({
+      name: "closedUnsoldLine",
+      title: "When closed, pieces left",
+      type: "text",
+      rows: 2,
+      group: "main",
+      description: "Beside the square when the closing date passes with pieces unsold. For example: Collection 01 has closed. Collection 02 is being made, for winter. Empty: \"Collection 01 has closed.\"",
       validation: (rule) => rule.max(200),
     }),
     defineField({

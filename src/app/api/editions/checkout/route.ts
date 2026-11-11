@@ -7,8 +7,11 @@ import { shopNow } from "@/lib/editions/state";
 import { freshPiece, freshShipping } from "@/lib/editions/fresh";
 import { isZone } from "@/lib/editions/shipping";
 import { stripeConfigured, stripePost, type CheckoutSession } from "@/lib/editions/stripe";
-import { shopTaxRateIds } from "@/lib/editions/tax";
-import { editionsEnabled, editionsOff } from "@/lib/editions/enabled";
+import { taxRateFor } from "@/lib/editions/tax";
+import { taxForPostalCode } from "@/lib/editions/tax-rates";
+import { placeHold, releaseHold } from "@/lib/editions/holds";
+import { sanityHoldStore } from "@/lib/editions/records";
+import { editionsAllowed, editionsOff } from "@/lib/editions/enabled";
 
 /**
  * Buy: a plain form post from a piece's page (no client script). Checks,
@@ -36,7 +39,7 @@ function toCheckout(url: string) {
 }
 
 export async function POST(request: Request) {
-  if (!editionsEnabled()) return editionsOff();
+  if (!(await editionsAllowed("full"))) return editionsOff();
   const origin = new URL(request.url).origin;
   // The Buy form sends this from the page (fetch) and moves to Stripe
   // itself; a plain form post (no JavaScript) gets redirects and pages.
@@ -52,6 +55,9 @@ export async function POST(request: Request) {
   const zone = String(form?.get("zone") ?? "");
   if (!slug) return NextResponse.redirect(new URL("/editions", origin), 303);
   if (!isZone(zone)) return back(slug, "no-zone");
+  // Canada: the postal code sets the province, and so the GST/HST.
+  const tax = zone === "canada" ? taxForPostalCode(String(form?.get("postal") ?? "").slice(0, 10)) : null;
+  if (zone === "canada" && !tax) return back(slug, "postal-needed");
 
   const limit = rateLimit(`editions-checkout:${getClientIp(request)}`, { max: 20 });
   if (!limit.success) return back(slug, "busy");
@@ -60,30 +66,42 @@ export async function POST(request: Request) {
     return back(slug, "unavailable");
   }
 
+  let holdKey: string | null = null;
+  let heldPiece: string | null = null;
   try {
     const [piece, routes, jar] = await Promise.all([freshPiece(slug), freshShipping(), cookies()]);
     const early = hasAccess(jar.get(ACCESS_COOKIE)?.value, piece?.collection?.earlyAccessCodeHash);
     const check = checkPurchase(piece, sizeKey, zone, routes, early, shopNow());
     if (!check.ok) return back(slug, check.refusal);
 
-    const taxRateIds = await shopTaxRateIds();
+    // Hold the unit (and size) for this checkout, so it cannot be sold twice.
+    const hold = await placeHold(sanityHoldStore(), piece!._id, check.size?._key ?? null);
+    if (!hold.ok) return back(slug, hold.reason === "busy" ? "busy" : hold.reason);
+    holdKey = hold.key;
+    heldPiece = piece!._id;
+
+    const taxRate = tax ? await taxRateFor(tax.province) : null;
+    if (tax && !taxRate) throw new Error(`No Stripe tax rate for ${tax.province}: run scripts/editions-tax-rates.ts`);
     const params = checkoutParams({
       piece: piece!,
       collectionNumber: piece!.collection!.number,
       size: check.size,
       zone,
       shipping: check.shipping,
-      taxRateIds,
+      taxRate: taxRate ? { id: taxRate.id, province: taxRate.province } : null,
       siteUrl: origin,
       imageUrl: piece!.photographs?.[0]?.url ? `${piece!.photographs[0].url}?w=1200&fit=max&auto=format` : null,
       gstNumber: process.env.GST_NUMBER || null,
+      holdKey,
     });
     const session = await stripePost<CheckoutSession>("/v1/checkout/sessions", params);
-    if (!session.url || !session.url.startsWith(STRIPE_CHECKOUT_ORIGIN)) return back(slug, "unavailable");
+    if (!session.url || !session.url.startsWith(STRIPE_CHECKOUT_ORIGIN)) throw new Error("Stripe gave no checkout address");
     if (wantsJson) return NextResponse.json({ url: session.url });
     return toCheckout(session.url);
   } catch (error) {
     console.error("Editions checkout failed:", error instanceof Error ? error.message : error);
+    // No checkout: let the hold go at once rather than in half an hour.
+    if (holdKey && heldPiece) await releaseHold(sanityHoldStore(), heldPiece, holdKey).catch(() => {});
     return back(slug, "unavailable");
   }
 }

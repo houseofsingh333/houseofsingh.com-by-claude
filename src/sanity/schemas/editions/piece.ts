@@ -108,8 +108,16 @@ export const editionsPiece = defineType({
       type: "string",
       group: "stock",
       options: { list: EDITION_TYPES, layout: "radio" },
-      description: "Numbered editions and one of one pieces carry a certificate.",
+      description: "Numbered editions and one of one pieces carry their number on each order.",
       validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "issueCertificate",
+      title: "Issue a certificate",
+      type: "boolean",
+      group: "stock",
+      initialValue: false,
+      description: "Off by default. On: each buyer gets a certificate code, the certificate email and a certificate link on the thank you page. Off: no certificate at all.",
     }),
     defineField({
       name: "quantity",
@@ -154,6 +162,25 @@ export const editionsPiece = defineType({
       initialValue: 0,
       description: "Kept up to date by the checkout; adjust by hand only to correct it.",
       validation: (r) => r.integer().min(0),
+    }),
+    defineField({
+      name: "holds",
+      title: "Held during checkout",
+      type: "array",
+      group: "stock",
+      readOnly: true,
+      description: "Units someone is paying for right now, each for about thirty minutes. Written by the checkout; they clear themselves.",
+      of: [
+        defineArrayMember({
+          name: "hold",
+          type: "object",
+          fields: [
+            defineField({ name: "size", title: "Size", type: "string" }),
+            defineField({ name: "until", title: "Held until", type: "datetime" }),
+          ],
+          preview: { select: { size: "size", until: "until" }, prepare: ({ size, until }) => ({ title: size ? `Size ${size}` : "One unit", subtitle: until ? `Until ${new Date(until).toLocaleString("en-CA", { timeZone: "America/Toronto" })}` : "" }) },
+        }),
+      ],
     }),
     defineField({
       name: "packedWeight",

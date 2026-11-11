@@ -3,41 +3,39 @@ import { stripeGet } from "./stripe";
 /**
  * GST/HST, charged by House of Singh Studios Inc. (registered for GST/HST)
  * on orders shipped to an address in Canada, at the rate of the province
- * or territory: Stripe Checkout's dynamic tax rates (no paid tax service).
- * The rates live in Stripe, created once by scripts/editions-tax-rates.mjs
- * (metadata app = hos-editions); Checkout picks the one matching the
- * shipping address. Addresses outside Canada match none: no Canadian tax.
+ * or territory, as fixed tax rates (Stripe retired dynamic tax rates). The
+ * rates live in Stripe, created once by scripts/editions-tax-rates.ts
+ * (metadata app = hos-editions, province = ON and so on). The buyer gives a
+ * postal code before Buy; its first letter gives the province, and that
+ * province's rate is applied to the piece and to shipping. The webhook
+ * compares it with the province of the shipping address (lib/editions/orders.ts).
+ * Orders outside Canada carry no Canadian tax.
  *
  * This table is the source the script creates the rates from. Check it
  * against the CRA's rates before launch (docs/editions-setup.md).
  */
-export const CANADA_TAX_RATES: { province: string; name: string; type: "gst" | "hst"; percentage: number }[] = [
-  { province: "AB", name: "Alberta", type: "gst", percentage: 5 },
-  { province: "BC", name: "British Columbia", type: "gst", percentage: 5 },
-  { province: "MB", name: "Manitoba", type: "gst", percentage: 5 },
-  { province: "NB", name: "New Brunswick", type: "hst", percentage: 15 },
-  { province: "NL", name: "Newfoundland and Labrador", type: "hst", percentage: 15 },
-  { province: "NS", name: "Nova Scotia", type: "hst", percentage: 14 },
-  { province: "NT", name: "Northwest Territories", type: "gst", percentage: 5 },
-  { province: "NU", name: "Nunavut", type: "gst", percentage: 5 },
-  { province: "ON", name: "Ontario", type: "hst", percentage: 13 },
-  { province: "PE", name: "Prince Edward Island", type: "hst", percentage: 15 },
-  { province: "QC", name: "Quebec", type: "gst", percentage: 5 },
-  { province: "SK", name: "Saskatchewan", type: "gst", percentage: 5 },
-  { province: "YT", name: "Yukon", type: "gst", percentage: 5 },
-];
+export { CANADA_TAX_RATES } from "./tax-rates";
 
 export const TAX_RATE_APP = "hos-editions";
 
-type TaxRate = { id: string; active: boolean; metadata?: Record<string, string> | null };
+type TaxRate = { id: string; active: boolean; percentage: number; state?: string | null; inclusive?: boolean; metadata?: Record<string, string> | null };
+export type ShopTaxRate = { id: string; province: string; percentage: number };
 
-let cached: { at: number; ids: string[] } | null = null;
+let cached: { at: number; rates: ShopTaxRate[] } | null = null;
 
-/** The Shop's active GST/HST rates in Stripe (cached for ten minutes). */
-export async function shopTaxRateIds(): Promise<string[]> {
-  if (cached && Date.now() - cached.at < 600_000) return cached.ids;
+/** The Shop's active GST/HST rates in Stripe, by province (cached for ten minutes). */
+export async function shopTaxRates(): Promise<ShopTaxRate[]> {
+  if (cached && Date.now() - cached.at < 600_000) return cached.rates;
   const list = await stripeGet<{ data: TaxRate[] }>("/v1/tax_rates", { active: true, limit: 100 });
-  const ids = list.data.filter((r) => r.active && r.metadata?.app === TAX_RATE_APP).map((r) => r.id);
-  cached = { at: Date.now(), ids };
-  return ids;
+  const rates = list.data
+    .filter((r) => r.active && !r.inclusive && r.metadata?.app === TAX_RATE_APP)
+    .map((r) => ({ id: r.id, province: (r.metadata?.province || r.state || "").toUpperCase(), percentage: r.percentage }))
+    .filter((r) => r.province);
+  cached = { at: Date.now(), rates };
+  return rates;
+}
+
+/** The Stripe tax rate for a province, or null when none was created for it. */
+export async function taxRateFor(province: string): Promise<ShopTaxRate | null> {
+  return (await shopTaxRates()).find((r) => r.province === province) ?? null;
 }

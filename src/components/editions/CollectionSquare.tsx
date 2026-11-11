@@ -13,6 +13,8 @@ type Props = {
   state: CollectionState;
   /** No pointer tilt (the archive's small square). */
   still?: boolean;
+  /** Every piece sold: a closed seal reads "Sold out", else "Closed". */
+  soldOut?: boolean;
 };
 
 const SEAL: Record<CollectionState, string> = {
@@ -26,11 +28,12 @@ const SEAL: Record<CollectionState, string> = {
  * A Collection's square (canvas "Shop, the flow"): its colour, "House of
  * Singh Editions", "No. 01 · ੧", the season large in Playfair, the number
  * of pieces, and the seal. The seal breathes like the brass dot (2.8s);
- * Early access and Open in brass, Sealed with the crest, Sold out in
- * outline. The square tilts gently toward the pointer (a fine pointer and
+ * Early access and Open in brass, Sealed with the crest, Sold out (or
+ * Closed, when it closed with pieces left) in outline. The square tilts gently toward the pointer (a fine pointer and
  * motion allowed only).
  */
-export default function CollectionSquare({ number, season, colour, pieces, state, still }: Props) {
+export default function CollectionSquare({ number, season, colour, pieces, state, still, soldOut }: Props) {
+  const seal = state === "closed" && !soldOut ? "Closed" : SEAL[state];
   const c = shopColour(colour);
   const ref = useRef<HTMLDivElement>(null);
   const style = { "--sq": c.square, "--sq-ink": c.ink, "--sq-quiet": c.quiet } as CSSProperties;
@@ -52,7 +55,7 @@ export default function CollectionSquare({ number, season, colour, pieces, state
 
   return (
     <div className="ed-square-stage" onPointerMove={tilt} onPointerLeave={untilt}>
-      <div ref={ref} className="ed-square" style={style} role="img" aria-label={`Collection ${pad2(number)}, ${season}: ${SEAL[state].toLowerCase()}`}>
+      <div ref={ref} className="ed-square" style={style} role="img" aria-label={`Collection ${pad2(number)}, ${season}: ${seal.toLowerCase()}`}>
         <div className="ed-square-top" aria-hidden="true">
           <span>House of Singh Editions</span>
           <span>
@@ -70,7 +73,7 @@ export default function CollectionSquare({ number, season, colour, pieces, state
             Released once
           </span>
           <span className="ed-seal" data-state={state}>
-            {state === "sealed" ? <span className="ed-seal-crest" /> : SEAL[state].split(" ").map((w) => <span key={w}>{w}</span>)}
+            {state === "sealed" ? <span className="ed-seal-crest" /> : seal.split(" ").map((w) => <span key={w}>{w}</span>)}
           </span>
         </div>
       </div>

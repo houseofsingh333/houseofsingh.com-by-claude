@@ -24,6 +24,9 @@ export default function HoneypotField({ value, onChange, idSuffix }: Props) {
   return (
     <div
       aria-hidden="true"
+      // inert: never focusable or announced, whatever the screen reader
+      // (aria-hidden alone left the field reachable in some of them).
+      inert
       style={{
         position: "absolute",
         left: "-9999px",
@@ -32,7 +35,7 @@ export default function HoneypotField({ value, onChange, idSuffix }: Props) {
         overflow: "hidden",
       }}
     >
-      <label htmlFor={fieldId}>Company (leave this empty)</label>
+      <label htmlFor={fieldId}>Leave empty</label>
       <input
         id={fieldId}
         name={HONEYPOT_FIELD}

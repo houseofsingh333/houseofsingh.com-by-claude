@@ -16,11 +16,11 @@ const SESSION = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
 /**
  * After paying (Stripe's success address): the piece is yours, what was
  * paid, what happens next, and, once the order is recorded by the webhook,
- * the collector number and the certificate. Read from Stripe by the
+ * the collector number and, for a piece that issues one, the certificate. Read from Stripe by the
  * session in the address; the email is never shown here.
  */
 export default async function ThankYouPage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
-  requireEditions();
+  await requireEditions();
   const { session_id: id } = await searchParams;
   if (!id || !SESSION.test(id) || !stripeConfigured()) notFound();
 
@@ -68,7 +68,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Pro
             {order.certificateCode && <TextLink href={`/editions/verify/${order.certificateCode}`}>Your certificate</TextLink>}
           </div>
         ) : (
-          paid && <p className="text-small text-muted-foreground">Your collector number and certificate appear here in a moment. Refresh this page to see them.</p>
+          paid && <p className="text-small text-muted-foreground">Your collector number appears here in a moment. Refresh this page to see it.</p>
         )}
         <TextLink href="/editions" back>
           The Shop

@@ -76,7 +76,6 @@ export const notFoundQuery = `{
     *[_type == "journalEntry" && title match "Range day"] | order(date desc)[0].coverImage
   ) ${_imageAsset},
   "latest": *[_type == "journalEntry"] | order(date desc)[0]{ title, "slug": slug.current },
-  "projects": count(*[_type == "project"]),
   "settings": *[_type == "siteSettings"][0]
 }`;
 
