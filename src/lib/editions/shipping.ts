@@ -3,10 +3,11 @@ import type { ShippingRoute, Zone } from "./types";
 export const ZONES: { value: Zone; label: string }[] = [
   { value: "canada", label: "Canada" },
   { value: "united-states", label: "United States" },
+  { value: "india", label: "India" },
   { value: "world", label: "Elsewhere" },
 ];
 
-export const isZone = (z: unknown): z is Zone => z === "canada" || z === "united-states" || z === "world";
+export const isZone = (z: unknown): z is Zone => ZONES.some((x) => x.value === z);
 
 /** Countries Stripe Checkout can collect a shipping address for (its documented list). */
 const STRIPE_COUNTRIES =
@@ -18,27 +19,26 @@ const STRIPE_COUNTRIES =
 export function zoneCountries(zone: Zone): string[] {
   if (zone === "canada") return ["CA"];
   if (zone === "united-states") return ["US"];
-  return STRIPE_COUNTRIES.filter((c) => c !== "CA" && c !== "US");
+  if (zone === "india") return ["IN"];
+  return STRIPE_COUNTRIES.filter((c) => c !== "CA" && c !== "US" && c !== "IN");
 }
 
 /**
  * The shipping price in CAD for a piece: the first weight band of its
  * route (origin to zone) that its packed weight fits in. Null when the
  * table has no route or no band heavy enough: the piece cannot ship there
- * yet, and Buy says so instead of guessing.
+ * yet, and Buy says so instead of guessing. India came later as its own
+ * zone: an origin with no India route yet uses its Elsewhere route.
  */
 export function shippingPrice(routes: ShippingRoute[] | null | undefined, origin: string, zone: Zone, kg: number): number | null {
-  const route = routes?.find((r) => r.origin === origin && r.zone === zone);
+  const find = (z: Zone) => routes?.find((r) => r.origin === origin && r.zone === z);
+  const route = find(zone) ?? (zone === "india" ? find("world") : undefined);
   if (!route) return null;
   const band = [...route.bands].sort((a, b) => a.upToKg - b.upToKg).find((b) => kg <= b.upToKg);
   return band ? band.price : null;
 }
 
-/** All three zones' prices for a piece (null where it cannot ship). */
+/** Every zone's price for a piece (null where it cannot ship). */
 export function shippingTable(routes: ShippingRoute[] | null | undefined, origin: string, kg: number): Record<Zone, number | null> {
-  return {
-    canada: shippingPrice(routes, origin, "canada", kg),
-    "united-states": shippingPrice(routes, origin, "united-states", kg),
-    world: shippingPrice(routes, origin, "world", kg),
-  };
+  return Object.fromEntries(ZONES.map((z) => [z.value, shippingPrice(routes, origin, z.value, kg)])) as Record<Zone, number | null>;
 }

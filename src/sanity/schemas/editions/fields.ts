@@ -40,9 +40,10 @@ export const ORIGINS = [
   { title: "India", value: "india" },
 ];
 
-/** The three shipping zones a buyer chooses between. */
+/** The four shipping zones a buyer chooses between. A route left out for India uses that origin's Rest of the world route. */
 export const ZONES = [
   { title: "Canada", value: "canada" },
   { title: "United States", value: "united-states" },
+  { title: "India", value: "india" },
   { title: "Rest of the world", value: "world" },
 ];

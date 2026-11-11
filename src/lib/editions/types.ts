@@ -74,7 +74,7 @@ export type EditionsCollection = {
 
 export type ShippingBand = { upToKg: number; price: number };
 export type ShippingRoute = { origin: "canada" | "india"; zone: Zone; bands: ShippingBand[] };
-export type Zone = "canada" | "united-states" | "world";
+export type Zone = "canada" | "united-states" | "india" | "world";
 
 export type EditionsSettings = {
   honestLine?: string | null;
