@@ -1,8 +1,8 @@
 /**
  * "Have an early access code?" (the fallback for an early access link that
- * did not arrive or was copied without its code): a quiet text link that
- * opens the field in place (Shop design round 1), so Notify me stays the
- * only visible form. A native disclosure, so it opens without JavaScript;
+ * did not arrive or was copied without its code): a quiet grey link that
+ * opens the field in place (Shop design rounds 1 and 2), so Notify me
+ * stays the only visible form. A native disclosure, so it opens without JavaScript;
  * the form is a plain GET to /api/editions/access. A code that opens
  * nothing comes back with ?code=wrong, and the field is shown open with
  * the reason.
@@ -10,10 +10,11 @@
 export default function EarlyAccessForm({ wrong }: { wrong: boolean }) {
   return (
     <details className="ed-code-reveal ed-anchor" id="early-access" open={wrong || undefined}>
-      <summary className="text-link ed-code-summary">
-        <span className="text-link-text">Have an early access code?</span>
-        <span aria-hidden="true" className="text-link-arrow">
-          {"→"}
+      {/* A quiet grey link: "Have an early access code?" on desktop, "Already have a code? Enter it here" on phones. */}
+      <summary className="ed-code-summary">
+        <span className="ed-code-wide">Have an early access code?</span>
+        <span className="ed-code-narrow">
+          Already have a code? <span className="ed-code-here">Enter it here</span>
         </span>
       </summary>
       <form action="/api/editions/access" method="get" className="ed-code" aria-describedby={wrong ? "ed-code-error" : undefined}>

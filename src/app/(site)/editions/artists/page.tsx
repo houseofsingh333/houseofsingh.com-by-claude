@@ -5,6 +5,7 @@ import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import { collectionTitle, dayIn, pad2 } from "@/lib/editions/format";
 import { requireEditions } from "@/lib/editions/enabled";
+import { keepLastWords } from "@/lib/keepLastWords";
 
 export const metadata: Metadata = { title: "For artists" };
 
@@ -37,7 +38,7 @@ export default async function ArtistsPage() {
       <section className="ed-artists" aria-labelledby="ed-artists-title">
         <div className="ed-artists-words">
           <span className="type-label text-muted-foreground">For artists</span>
-          <h1 id="ed-artists-title" className="ed-sentence-heading">
+          <h1 id="ed-artists-title" className="ed-serif-heading">
             {s.artistsHeading}
           </h1>
           <p className="text-body-l text-muted-foreground">{intro}</p>
@@ -48,7 +49,7 @@ export default async function ArtistsPage() {
                   {pad2(i + 1)}
                 </span>
                 <span className="ed-step-title">{step.title}</span>
-                <span className="ed-step-text">{step.text}</span>
+                <span className="ed-step-text">{keepLastWords(step.text)}</span>
               </li>
             ))}
           </ol>

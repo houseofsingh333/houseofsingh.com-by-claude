@@ -19,9 +19,10 @@
     padding-top: 232px;
   }
 }
-@media (min-width: 1280px) {
+/* The same left edge as the sitewide footer beneath (styles/layout.css). */
+@media (min-width: 1024px) {
   .ed {
-    --ed-gutter: 96px;
+    --ed-gutter: max(64px, 7.5vw);
   }
 }
 
@@ -40,33 +41,27 @@
   gap: 16px 40px;
   padding-inline: var(--ed-gutter);
 }
-.ed-head-brand {
-  display: flex;
-  align-items: baseline;
-  gap: 20px;
-}
+/* The name alone, Playfair at display-m. */
 .ed-head-name {
   font-family: var(--font-editorial);
   font-weight: 400;
-  font-size: var(--type-display-s);
-  line-height: 1.2;
+  font-size: var(--type-display-m);
+  line-height: 1.15;
   color: var(--foreground);
 }
 .ed-head-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 26px;
+  justify-content: flex-end;
+  gap: 8px 28px;
   font-size: var(--type-small);
   line-height: 1.5;
   color: var(--foreground);
 }
-/* Phones: four names do not fit one row, so two even pairs. */
+/* Phones: no Shop menu; the page is one calm scroll. */
 @media (max-width: 767px) {
   .ed-head-nav {
-    display: grid;
-    grid-template-columns: repeat(2, max-content);
-    gap: 8px 32px;
-    white-space: nowrap;
+    display: none;
   }
 }
 
@@ -76,7 +71,7 @@
 .ed-foot {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 40px;
   margin-inline: var(--ed-gutter);
   padding-block: var(--section-space-sm);
   border-top: 1px solid var(--border);
@@ -95,6 +90,8 @@
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 8px 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
   font-size: var(--type-small);
   line-height: 1.5;
 }
@@ -149,11 +146,6 @@ body:has(.ed) .footer-grid {
   font-size: var(--type-small);
   line-height: 1.5;
   color: var(--muted-foreground);
-}
-.ed-open-archive {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 14px;
 }
 /* The way down to the Collection: its label over a brass hairline. */
 .ed-cue {
@@ -379,10 +371,19 @@ body:has(.ed) .footer-grid {
   display: grid;
   gap: 96px;
 }
+/* Desktop and tablet (Shop design round 2): every card, photograph, name,
+   price and kind, fits whole on one screen. Each column is as wide as the
+   screen's height allows for a 4:5 photograph and the words beneath, below
+   the wordmark bar and with room above and below (--ed-card-words), and
+   never wider than half the row; the pair sits on the page's left and
+   right edges. */
 @media (min-width: 768px) {
   .ed-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(96px, 14vw, 180px) clamp(40px, 9.4vw, 120px);
+    --ed-card-words: 280px;
+    --ed-card-w: min(calc((100% - 40px) / 2), calc((100svh - var(--ed-card-words)) * 0.8));
+    grid-template-columns: repeat(2, var(--ed-card-w));
+    justify-content: space-between;
+    gap: clamp(96px, 14vw, 180px) 40px;
   }
 }
 .ed-card {
@@ -462,82 +463,8 @@ body:has(.ed) .footer-grid {
   }
 }
 
-/* ——— Before you buy ——— */
+/* ——— For artists (the page): the invitation beside the form ——— */
 
-.ed-before {
-  display: grid;
-  gap: 40px;
-  padding: var(--section-space-md) var(--ed-gutter);
-  border-top: 1px solid var(--border);
-}
-@media (min-width: 1024px) {
-  .ed-before {
-    grid-template-columns: 300px minmax(0, 1fr);
-    column-gap: 96px;
-  }
-}
-.ed-before-head {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-}
-.ed-before-head h2 {
-  margin-bottom: 8px;
-}
-/* "What this is, and what it is not" and "Make something with House of
-   Singh" are sentences: Instrument Sans at the statement size, one style
-   wherever they appear. */
-.ed-sentence-heading {
-  font-family: var(--font-sans);
-  font-weight: 400;
-  font-size: var(--type-statement);
-  line-height: 1.35;
-  color: var(--foreground);
-  text-wrap: balance;
-}
-.ed-before-notes {
-  display: grid;
-  gap: 26px 56px;
-  list-style: none;
-}
-@media (min-width: 768px) {
-  .ed-before-notes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-.ed-before-notes li {
-  display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: 8px;
-  font-size: var(--type-body);
-  line-height: 1.6;
-  color: var(--foreground);
-  text-wrap: pretty;
-}
-.ed-before-numeral {
-  font-family: var(--font-editorial);
-  font-size: var(--type-body-l);
-  line-height: 1.4;
-  color: var(--muted-foreground);
-}
-
-/* ——— For artists, on the Shop page ——— */
-
-.ed-artists-teaser {
-  display: grid;
-  gap: 40px;
-  margin-inline: var(--ed-gutter);
-  padding-block: var(--section-space-md);
-  border-top: 1px solid var(--border);
-}
-@media (min-width: 1024px) {
-  .ed-artists-teaser {
-    grid-template-columns: minmax(0, 1fr) 360px;
-    column-gap: 96px;
-    align-items: end;
-  }
-}
 .ed-artists-words {
   display: flex;
   flex-direction: column;
@@ -547,12 +474,6 @@ body:has(.ed) .footer-grid {
 .ed-artists-words h1,
 .ed-artists-words h2 {
   text-wrap: balance;
-}
-.ed-artists-act {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 18px;
 }
 
 .ed-archive-line {
@@ -1356,4 +1277,880 @@ a.ed-spine:focus-visible {
 /* The proposal form sends with the text link style, at its left edge. */
 .ed-proposal-send {
   align-self: flex-start;
+}
+
+/* ═══ Shop design round 2 (approved on the canvas, 11 Nov 2026) ═══
+   The sealed Shop and its sections. Shop only colours, recorded in
+   BRAND_BOOK.md ("The Shop palette"): the seal's dark brown, the tint of
+   the phone's boxes, the sentence's soft charcoal and the brass of the ×.
+   Shop only timings, from the canvas: the card's press (700ms) and the
+   seal's turn (one a minute); the roll timings live in the components. */
+
+.ed {
+  --ed-seal-ink: #3a2e22;
+  --ed-tint: #f1ece4;
+  --ed-ink-soft: #3a3530;
+  --ed-brass-x: #b0916a;
+  --ed-dur-press: 700ms;
+  --ed-dur-turn: 60s;
+}
+
+/* Sections: a label, a heading where there is one, and room around. */
+.ed-section {
+  margin-inline: var(--ed-gutter);
+  padding-block: var(--section-space-md);
+  border-top: 1px solid var(--border);
+}
+/* "In the making", "What this is, and what it is not", "Good to know" and
+   "Make something with House of Singh": Playfair at display-l, the Shop's
+   approved exception to serif for names only (BRAND_BOOK.md). */
+.ed-serif-heading {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-l);
+  line-height: 1.1;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+
+/* ——— The opening, sealed and in early access ——— */
+
+.ed-open2 {
+  display: grid;
+  gap: 48px;
+  padding: 72px var(--ed-gutter) var(--section-space-sm);
+}
+@media (min-width: 1024px) {
+  .ed-open2 {
+    grid-template-columns: min(460px, 36vw) minmax(0, 1fr);
+    column-gap: clamp(64px, 7.5vw, 120px);
+    align-items: start;
+    padding-top: 96px;
+  }
+}
+.ed-open2-text {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+.ed-open2-sentence {
+  max-width: 620px;
+  font-size: var(--type-body-l);
+  line-height: 1.6;
+  color: var(--ed-ink-soft);
+  text-wrap: pretty;
+}
+
+/* The card: the square in its colour, the Gurmukhi number large, the seal. */
+.ed-card2-stage {
+  width: 100%;
+  max-width: 460px;
+  perspective: 1400px;
+}
+.ed-card2 {
+  --rx: 0deg;
+  --ry: 0deg;
+  container-type: inline-size;
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(22px, 7.8%, 36px);
+  background: var(--sq);
+  color: var(--sq-ink);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 14%, transparent);
+  transform: translateY(0) rotateX(var(--rx)) rotateY(var(--ry));
+  transition:
+    transform var(--ed-dur-press) var(--ease-soft-out),
+    box-shadow var(--ed-dur-press) var(--ease-soft-out);
+}
+.ed-card2[data-pressed] {
+  transform: translateY(-6px) rotateX(var(--rx)) rotateY(var(--ry));
+  box-shadow: 0 30px 60px color-mix(in srgb, var(--foreground) 22%, transparent);
+}
+.ed-card2-label {
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--sq-quiet);
+}
+.ed-card2-number {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+/* About 168px on a 460px card, 124px on a phone's: a share of the card's
+   inner width. */
+.ed-card2-gurmukhi {
+  font-family: var(--font-gurmukhi), serif;
+  font-weight: 400;
+  font-size: clamp(96px, 45cqi, 168px);
+  line-height: 1;
+  color: var(--sq-ink);
+}
+.ed-card2-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-card2,
+  .ed-card2[data-pressed] {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* The seal: the crest in a ring of words that turns once a minute. */
+.ed-seal2 {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(108px, 33cqi, 128px);
+  aspect-ratio: 1;
+  color: var(--ed-seal-ink);
+}
+.ed-seal2-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.ed-seal2-text {
+  font-family: var(--font-sans);
+  font-size: 8px;
+  font-weight: 500;
+  fill: currentColor;
+}
+.ed-seal2-ring circle {
+  fill: currentColor;
+}
+.ed-seal2-turn {
+  transform-box: view-box;
+  transform-origin: 64px 64px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ed-seal2-turn {
+    animation: ed-seal2-turn var(--ed-dur-turn) linear infinite;
+  }
+}
+@keyframes ed-seal2-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ed-seal2-crest {
+  width: 57.8%;
+  aspect-ratio: 1;
+  background: currentColor;
+  -webkit-mask: url(/images/hos-logo.svg) center / contain no-repeat;
+  mask: url(/images/hos-logo.svg) center / contain no-repeat;
+}
+
+/* ——— When it opens: five cities on desktop, the tinted box on phones ——— */
+
+.ed-times {
+  margin-top: 8px;
+}
+.ed-times-row {
+  display: none;
+  list-style: none;
+}
+.ed-times-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: var(--ed-tint);
+}
+.ed-times-box-label {
+  color: var(--ed-ink-soft);
+}
+.ed-times-local {
+  min-height: calc(2 * 1.25em);
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-m);
+  line-height: 1.25;
+  color: var(--foreground);
+}
+.ed-times-same {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 6px;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--ed-ink-soft);
+}
+.ed-times-window {
+  display: inline-block;
+  height: 1.5em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.ed-times-reel {
+  display: flex;
+  flex-direction: column;
+  color: var(--foreground);
+  transition: transform var(--dur-hover) var(--ease-slow);
+}
+.ed-times-reel > span {
+  height: 1.5em;
+  white-space: nowrap;
+}
+.ed-times-reel[data-snap] {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-times-reel {
+    transition: none;
+    transform: none !important;
+  }
+}
+@media (min-width: 768px) {
+  .ed-times-row {
+    display: grid;
+    grid-template-columns: repeat(var(--cities, 5), minmax(0, 1fr));
+    gap: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+  .ed-times-row li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .ed-times-clock {
+    font-size: var(--type-body);
+    line-height: 1.4;
+    color: var(--foreground);
+    white-space: nowrap;
+  }
+  .ed-times-date {
+    font-size: var(--type-small);
+    line-height: 1.4;
+    color: var(--muted-foreground);
+    white-space: nowrap;
+  }
+  .ed-times-box {
+    display: none;
+  }
+}
+
+/* Add to my calendar: quiet, grey, a hairline. Phones: right aligned. */
+.ed-calendar {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+.ed-calendar span {
+  border-bottom: 1px solid var(--border);
+  transition: border-color var(--dur-hover) var(--ease-soft-out), color var(--dur-hover) var(--ease-soft-out);
+}
+.ed-calendar:hover,
+.ed-calendar:focus-visible {
+  color: var(--foreground);
+}
+.ed-calendar:hover span,
+.ed-calendar:focus-visible span {
+  border-color: currentColor;
+}
+@media (min-width: 768px) {
+  .ed-calendar {
+    align-self: flex-start;
+  }
+}
+
+/* ——— Notify me: the field and "Notify me →" on one charcoal line ——— */
+
+.ed-notify2 {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+.ed-notify2-heading {
+  display: none;
+}
+.ed-notify2 .ed-notify {
+  max-width: 480px;
+  margin-top: 0;
+}
+.ed-notify2 .footer-nl-form {
+  min-height: 52px;
+  background: linear-gradient(var(--foreground), var(--foreground)) 0 100% / 100% 1px no-repeat;
+}
+.ed-notify2 .footer-nl-line {
+  display: none;
+}
+.ed-notify2 .footer-nl-btn {
+  align-items: center;
+  height: auto;
+  min-height: 44px;
+}
+.ed-notify2 .footer-nl-word {
+  border-bottom: 0;
+  background: none;
+}
+.ed-notify2 .footer-nl-note {
+  font-size: var(--type-small);
+  color: var(--muted-foreground);
+}
+@media (max-width: 767px) {
+  .ed-notify2 {
+    margin-top: 40px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+  .ed-notify2-heading {
+    display: block;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: var(--type-statement);
+    line-height: 1.3;
+    color: var(--foreground);
+  }
+}
+
+/* The early access link: quiet and grey; one wording per width. */
+.ed-code-summary {
+  display: inline-block;
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+  min-height: 44px;
+  padding-block: 11px;
+}
+.ed-code-summary::-webkit-details-marker {
+  display: none;
+}
+.ed-code-wide,
+.ed-code-here {
+  border-bottom: 1px solid var(--border);
+  transition: border-color var(--dur-hover) var(--ease-soft-out), color var(--dur-hover) var(--ease-soft-out);
+}
+.ed-code-summary:hover .ed-code-wide,
+.ed-code-summary:hover .ed-code-here,
+.ed-code-summary:focus-visible .ed-code-wide,
+.ed-code-summary:focus-visible .ed-code-here {
+  color: var(--foreground);
+  border-color: currentColor;
+}
+.ed-code-narrow {
+  display: none;
+}
+@media (max-width: 767px) {
+  .ed-code-reveal {
+    margin-top: 32px;
+  }
+  .ed-code-wide {
+    display: none;
+  }
+  .ed-code-narrow {
+    display: inline;
+  }
+}
+
+/* ——— How the release works ——— */
+
+.ed-steps2 {
+  display: grid;
+  list-style: none;
+}
+.ed-steps2 li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 6px;
+}
+.ed-steps2-numeral {
+  grid-row: span 2;
+  font-family: var(--font-editorial);
+  font-size: var(--type-body-l);
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+.ed-steps2-title {
+  font-size: var(--type-body-l);
+  line-height: 1.4;
+  color: var(--foreground);
+}
+.ed-steps2-text {
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+.ed-how {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+/* Phones: a timeline, the numbers joined by a fine line. */
+.ed-how-steps {
+  gap: 32px;
+}
+.ed-how-steps li {
+  position: relative;
+}
+.ed-how-steps li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 34px;
+  bottom: -26px;
+  width: 1px;
+  background: var(--border);
+}
+@media (min-width: 768px) {
+  .ed-how-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px;
+  }
+  .ed-how-steps li {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .ed-how-steps li::after {
+    display: none;
+  }
+  .ed-how-steps .ed-steps2-numeral {
+    grid-row: auto;
+  }
+}
+
+/* ——— In the making ——— */
+
+.ed-making-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+.ed-making-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ed-making-rail {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(24px, 3vw, 40px);
+  list-style: none;
+}
+.ed-making-link {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ed-making-photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--border);
+}
+.ed-making-photo img {
+  transition: transform var(--dur-reveal) var(--ease-soft-out);
+}
+.ed-making-link:hover .ed-making-photo img {
+  transform: scale(1.04);
+}
+.ed-making-title {
+  font-family: var(--font-editorial);
+  font-size: var(--type-display-s);
+  line-height: 1.25;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+.ed-making-more {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-making-photo img {
+    transition: none;
+  }
+  .ed-making-link:hover .ed-making-photo img {
+    transform: none;
+  }
+}
+/* Phones: a rail to swipe, the cards snapping to the page's margin. */
+@media (max-width: 767px) {
+  .ed-making-head .ed-making-all {
+    display: none;
+  }
+  .ed-making-rail {
+    display: flex;
+    gap: 16px;
+    margin-inline: calc(-1 * var(--ed-gutter));
+    padding-inline: var(--ed-gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: var(--ed-gutter);
+    scrollbar-width: none;
+  }
+  .ed-making-rail::-webkit-scrollbar {
+    display: none;
+  }
+  .ed-making-card {
+    flex: none;
+    width: 268px;
+    scroll-snap-align: start;
+  }
+  .ed-making-more {
+    display: block;
+  }
+  .ed-making-more-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    height: 100%;
+    min-height: 200px;
+    padding: 24px;
+    border: 1px solid var(--foreground);
+    font-size: var(--type-small);
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: var(--type-label-tracking);
+    text-transform: uppercase;
+    color: var(--foreground);
+  }
+}
+
+/* ——— Before you buy ——— */
+
+.ed-before2 {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.ed-before-steps {
+  margin-top: 28px;
+}
+.ed-before-steps li {
+  padding-block: 18px;
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 1024px) {
+  .ed-before-steps {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 32px;
+  }
+  .ed-before-steps li {
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: 20px 0;
+    transition: border-color var(--dur-hover) var(--ease-soft-out);
+  }
+  .ed-before-steps li:hover {
+    border-top-color: var(--foreground);
+  }
+  .ed-before-steps .ed-steps2-numeral {
+    grid-row: auto;
+  }
+}
+
+/* ——— Questions ——— */
+
+.ed-questions {
+  display: grid;
+  gap: 32px;
+}
+@media (min-width: 1024px) {
+  .ed-questions {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    column-gap: clamp(56px, 7.5vw, 120px);
+  }
+}
+.ed-questions-head {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ed-questions-list {
+  border-top: 1px solid var(--border);
+}
+.ed-question {
+  border-bottom: 1px solid var(--border);
+}
+.ed-question summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  min-height: 56px;
+  padding-block: 14px;
+  font-size: var(--type-body);
+  line-height: 1.5;
+  color: var(--foreground);
+  cursor: pointer;
+  list-style: none;
+}
+.ed-question summary::-webkit-details-marker {
+  display: none;
+}
+/* The plus turns to a cross as it opens. */
+.ed-question-mark {
+  position: relative;
+  flex: none;
+  width: 13px;
+  height: 13px;
+  transition: transform var(--dur-hover) var(--ease-soft-out);
+}
+.ed-question-mark::before,
+.ed-question-mark::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 13px;
+  height: 1px;
+  background: var(--foreground);
+}
+.ed-question-mark::after {
+  transform: rotate(90deg);
+}
+.ed-question[open] .ed-question-mark {
+  transform: rotate(45deg);
+}
+.ed-question-answer {
+  max-width: 620px;
+  padding-bottom: 20px;
+  font-size: var(--type-body);
+  line-height: 1.65;
+  color: var(--ed-ink-soft);
+}
+.ed-question-answer[data-placeholder] {
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  border: 1px dashed var(--error);
+  color: var(--error);
+  font-size: var(--type-small);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-question-mark {
+    transition: none;
+  }
+}
+
+/* ——— For artists: House of Singh × the rolling word ——— */
+
+.ed-artists2 {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ed-artists2-teaser {
+  max-width: 460px;
+  font-size: var(--type-body);
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+.ed-roll {
+  display: inline-block;
+  height: 1.5em;
+  overflow: hidden;
+  vertical-align: bottom;
+  border-bottom: 1px solid var(--border);
+  transition: border-color var(--dur-hover) var(--ease-soft-out);
+}
+.ed-roll-reel {
+  display: flex;
+  flex-direction: column;
+  transition-property: transform;
+  transition-timing-function: var(--ease-slow);
+}
+.ed-roll-reel > span {
+  height: 1.5em;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-roll-reel {
+    transition: none;
+  }
+}
+.ed-invite-x {
+  color: var(--ed-brass-x);
+  font-family: var(--font-editorial);
+  line-height: 1;
+}
+/* Desktop: one line, the round arrow at its end. */
+.ed-invite-line {
+  display: none;
+}
+@media (min-width: 768px) {
+  .ed-invite-line {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 0.32em;
+    margin-top: 40px;
+    font-family: var(--font-editorial);
+    font-weight: 400;
+    font-size: var(--type-display-l);
+    line-height: 1.5;
+    color: var(--foreground);
+  }
+  .ed-invite-line .ed-invite-x {
+    font-size: 1.6em;
+  }
+  .ed-invite-line:hover .ed-roll,
+  .ed-invite-line:focus-visible .ed-roll {
+    border-color: var(--foreground);
+  }
+  .ed-invite-arrow {
+    display: inline-grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-left: 0.3em;
+    border: 1px solid var(--foreground);
+    border-radius: 50%;
+    color: var(--foreground);
+    transition:
+      background-color var(--dur-hover) var(--ease-soft-out),
+      color var(--dur-hover) var(--ease-soft-out),
+      transform var(--dur-hover) var(--ease-soft-out);
+  }
+  .ed-invite-line:hover .ed-invite-arrow,
+  .ed-invite-line:focus-visible .ed-invite-arrow {
+    background: var(--foreground);
+    color: var(--background);
+    transform: translateX(4px);
+  }
+  .ed-artists2 .ed-invite-panel {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-invite-arrow,
+  .ed-roll {
+    transition: none;
+  }
+  .ed-invite-line:hover .ed-invite-arrow,
+  .ed-invite-line:focus-visible .ed-invite-arrow {
+    transform: none;
+  }
+}
+/* Phones: a tinted panel, centred. */
+.ed-invite-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  padding: 48px 24px;
+  background: var(--ed-tint);
+  text-align: center;
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-l);
+  line-height: 1.5;
+  color: var(--foreground);
+}
+.ed-invite-panel .ed-invite-x {
+  font-size: 64px;
+  line-height: 1;
+}
+.ed-invite-panel-link {
+  margin-top: 18px;
+}
+
+/* ——— Phones: the floating bar ——— */
+
+.ed-shopbar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  z-index: 30;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  padding: 10px 16px;
+  background: var(--sq);
+  color: var(--ed-seal-ink);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--foreground) 18%, transparent);
+  transform: translateY(calc(100% + 24px));
+  opacity: 0;
+  transition:
+    transform var(--dur-page) var(--ease-slow),
+    opacity var(--dur-page) var(--ease-slow);
+}
+.ed-shopbar[data-shown] {
+  transform: none;
+  opacity: 1;
+}
+@media (max-width: 767px) {
+  .ed-shopbar {
+    display: flex;
+  }
+  .ed-page:has(.ed-shopbar) {
+    padding-bottom: 96px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-shopbar {
+    transform: none;
+    transition: none;
+  }
+  .ed-shopbar:not([data-shown]) {
+    visibility: hidden;
+  }
+}
+.ed-shopbar-numeral {
+  font-family: var(--font-gurmukhi), serif;
+  font-size: var(--type-numeral);
+  line-height: 1;
+}
+.ed-shopbar-words {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.ed-shopbar-title {
+  font-family: var(--font-editorial);
+  font-size: var(--type-body);
+  line-height: 1.3;
+  color: var(--ed-seal-ink);
+}
+.ed-shopbar-when {
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--ed-seal-ink);
+}
+.ed-shopbar-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: var(--type-small);
+  font-weight: 500;
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ed-seal-ink);
 }
