@@ -864,6 +864,7 @@ a.ed-spine:focus-visible {
 .ed-steps li {
   display: grid;
   grid-template-columns: 36px minmax(0, 1fr);
+  align-content: start;
   gap: 4px 8px;
 }
 .ed-step-numeral {
@@ -1289,9 +1290,11 @@ a.ed-spine:focus-visible {
 }
 .ed-seal2-text {
   font-family: var(--font-sans);
-  font-size: 8px;
+  font-size: 7.6px; /* with SIZE in EditionsSeal.tsx */
   font-weight: 500;
   fill: currentColor;
+  /* No rounding of letter positions at small sizes. */
+  text-rendering: geometricPrecision;
 }
 .ed-seal2-ring circle {
   fill: currentColor;
@@ -1537,9 +1540,13 @@ a.ed-spine:focus-visible {
   display: grid;
   list-style: none;
 }
+/* Every item's number, title and line start at the top, so titles share
+   one line however long each description runs (an item stretched to its
+   row's height keeps its rows at their own height). */
 .ed-steps2 li {
   display: grid;
   grid-template-columns: 40px minmax(0, 1fr);
+  align-content: start;
   column-gap: 12px;
   row-gap: 6px;
 }
@@ -1625,10 +1632,12 @@ a.ed-spine:focus-visible {
   flex-direction: column;
   gap: 12px;
 }
+/* Desktop: 4:3, cropped from the centre. Phones keep 4:5 at the rail's
+   268px (335px tall, within the 340px limit). */
 .ed-making-photo {
   position: relative;
   display: block;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: var(--border);
 }
@@ -1678,6 +1687,9 @@ a.ed-spine:focus-visible {
     flex: none;
     width: 268px;
     scroll-snap-align: start;
+  }
+  .ed-making-photo {
+    aspect-ratio: 4 / 5;
   }
   .ed-making-more {
     display: block;
@@ -1852,10 +1864,18 @@ a.ed-spine:focus-visible {
     transition: none;
   }
 }
+/* The ×: two brass strokes as thick as the Playfair stems beside them
+   (0.093em of the line's size, measured from Playfair Display 400), the
+   size of the typed × it replaced (0.39 of 1.6 times the line). The stroke
+   is set in the drawing's own units: --ed-x-stroke is the stem divided by
+   the drawing's size, times 100. */
 .ed-invite-x {
-  color: var(--ed-brass-x);
-  font-family: var(--font-editorial);
-  line-height: 1;
+  display: inline-block;
+  overflow: visible;
+  fill: none;
+  stroke: var(--ed-brass-x);
+  stroke-width: var(--ed-x-stroke, 15);
+  stroke-linecap: butt;
 }
 /* Desktop: one line, the round arrow at its end. */
 .ed-invite-line {
@@ -1874,8 +1894,20 @@ a.ed-spine:focus-visible {
     line-height: 1.5;
     color: var(--foreground);
   }
+  /* Desktop: the words run as one line of type, so the × can sit on the x
+     height (vertical-align: middle centres it at half the x height). */
+  .ed-invite-words {
+    display: inline;
+  }
   .ed-invite-line .ed-invite-x {
-    font-size: 1.6em;
+    width: 0.624em;
+    height: 0.624em;
+    margin-inline: 0.3em;
+    vertical-align: middle;
+    --ed-x-stroke: 14.9;
+  }
+  .ed-invite-words .ed-roll {
+    margin-left: 0.04em;
   }
   .ed-invite-line:hover .ed-roll,
   .ed-invite-line:focus-visible .ed-roll {
@@ -1931,9 +1963,13 @@ a.ed-spine:focus-visible {
   line-height: 1.5;
   color: var(--foreground);
 }
+/* The phone's ×, on its own line: the size of the typed × it replaced
+   (25px), its strokes as thick as the panel's letter stems (0.093 of 34px). */
 .ed-invite-panel .ed-invite-x {
-  font-size: 64px;
-  line-height: 1;
+  width: 25px;
+  height: 25px;
+  margin-block: 6px;
+  --ed-x-stroke: 12.6;
 }
 .ed-invite-panel-link {
   margin-top: 18px;

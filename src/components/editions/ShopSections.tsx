@@ -1,6 +1,5 @@
 import Link from "next/link";
 import SanityImage from "@/components/SanityImage";
-import { hotspotPosition } from "@/lib/projectHero";
 import { formatEntryDate } from "@/lib/dates";
 import { pad2 } from "@/lib/editions/format";
 import { keepLastWords } from "@/lib/keepLastWords";
@@ -79,7 +78,7 @@ export function InTheMaking({ entries: given }: { entries: NonNullable<EditionsC
                     fill
                     sizes="(min-width: 768px) 30vw, 268px"
                     className="object-cover"
-                    objectPosition={hotspotPosition(e.image)}
+                    objectPosition="50% 50%"
                     develop={false}
                   />
                 )}
