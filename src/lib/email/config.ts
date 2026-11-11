@@ -23,6 +23,13 @@ const notProduction = process.env.VERCEL_ENV !== "production";
 
 export const SITE_URL = "https://houseofsingh.com";
 
+function emailSiteUrl(): string {
+  if (!notProduction) return SITE_URL;
+  if (process.env.EMAIL_SITE_URL) return process.env.EMAIL_SITE_URL.replace(/\/$/, "");
+  const host = process.env.VERCEL_ENV === "preview" ? process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL : "";
+  return host ? `https://${host}` : SITE_URL;
+}
+
 export const emailConfig = () => ({
   kitKey: process.env.KIT_API_KEY?.trim() || "",
   kitBase: (notProduction && process.env.KIT_API_BASE) || "https://api.kit.com",
@@ -33,8 +40,13 @@ export const emailConfig = () => ({
   postalAddress: process.env.EMAIL_POSTAL_ADDRESS?.trim() || "",
   dailyLimit: Math.max(1, Number(process.env.RESEND_DAILY_LIMIT) || 100),
   signupReserve: Math.max(0, Number(process.env.RESEND_SIGNUP_RESERVE ?? 10)),
-  /** Absolute addresses in emails: the site's own (a preview's in testing). */
-  siteUrl: (notProduction && process.env.EMAIL_SITE_URL) || SITE_URL,
+  /**
+   * Absolute addresses in emails (unsubscribe, certificate, crest, fonts):
+   * houseofsingh.com on the live site; on a Vercel preview the preview's
+   * own address (its branch address, else the deployment's), so links work
+   * before a change is merged. EMAIL_SITE_URL overrides it off production.
+   */
+  siteUrl: emailSiteUrl(),
 });
 
 /** The bare address in "Name <address>" (or the address itself). */
