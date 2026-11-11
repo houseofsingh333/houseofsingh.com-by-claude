@@ -130,6 +130,7 @@ const pieces = [
     sizes: [size("s", "S", 10, 10), size("m", "M", 12, 4), size("l", "L", 10, 2), size("xl", "XL", 8, 0)],
     photographs: photos("betweenShots", "whiteWall", "mending"),
     maker: "Designed by Maninder Singh, made in Ludhiana",
+    madeWith: "a workshop in Ludhiana",
     shipsFrom: "india",
     packedWeight: 0.4,
     details: "Heavyweight cotton, garment dyed, printed by hand. Test data.",
@@ -141,7 +142,7 @@ const pieces = [
   piece(5, { name: "Still Water Tray", slug: { _type: "slug", current: "still-water-tray" }, category: ref("editions-category-object"), editionType: "limited", quantity: 30, price: 140, soldCount: 4, packedWeight: 1.4, photographs: photos("stillWater", "watcher"), maker: "Sample Artist with Maninder Singh", collaborators: [{ ...ref(collaborator._id), _key: "c1" }], details: "Glazed stoneware. Test data." }),
   piece(6, { name: "Corner Overshirt", slug: { _type: "slug", current: "corner-overshirt" }, category: ref("editions-category-clothing"), editionType: "limited", quantity: 24, price: 160, sizes: [size("m", "M", 8, 3), size("l", "L", 8, 1), size("xl", "XL", 8, 0)], photographs: photos("corner", "whiteWall"), packedWeight: 0.8, details: "Washed cotton twill. Test data." }),
   piece(7, { name: "Look Up", slug: { _type: "slug", current: "look-up" }, category: ref("editions-category-print"), editionType: "numbered", quantity: 20, price: 150, soldCount: 11, photographs: photos("lookUp"), details: "Archival pigment print, 30 by 40 cm. Test data." }),
-  piece(8, { name: "Paper Box Notebook", slug: { _type: "slug", current: "paper-box-notebook" }, category: ref("editions-category-object"), editionType: "limited", quantity: 50, price: 45, soldCount: 3, packedWeight: 0.3, photographs: photos("paperBox", "goodEarth"), maker: "Made with a bindery in Toronto", details: "Cloth bound, 96 pages. Test data." }),
+  piece(8, { name: "Paper Box Notebook", slug: { _type: "slug", current: "paper-box-notebook" }, category: ref("editions-category-object"), editionType: "limited", quantity: 50, price: 45, soldCount: 3, packedWeight: 0.3, photographs: photos("paperBox", "goodEarth"), maker: "Made with a bindery in Toronto", madeWith: "a bindery in Toronto", details: "Cloth bound, 96 pages. Test data." }),
 ];
 
 const ALL = [...categories, collaborator, collection, shipping, ...pieces];

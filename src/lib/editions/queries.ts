@@ -9,7 +9,7 @@ const _piece = `{
   "category": category->${_category},
   editionType, issueCertificate, quantity, price, sizes[]{ _key, label, stock, sold }, soldCount, holds[]{ _key, size, until },
   "photographs": photographs[]${_imageAsset},
-  statement, story, maker,
+  statement, story, maker, madeWith,
   "collaborators": (collaborators[]->{ _id, name, "slug": slug.current })[defined(slug) && defined(name)],
   details, sizeAndFit, care, packedWeight, shipsFrom,
   "journal": journalEntry->{ title, "slug": slug.current },
@@ -37,7 +37,7 @@ export const editionsPieceQuery = `*[_type == "editionsPiece" && slug.current ==
   ...${_piece},
   "collection": collection->{
     ...${_collection},
-    "pieces": *[_type == "editionsPiece" && collection._ref == ^._id] | order(order asc, name asc){ _id, name, "slug": slug.current, quantity, soldCount, sizes[]{ _key, stock, sold } }
+    "pieces": *[_type == "editionsPiece" && collection._ref == ^._id] | order(order asc, name asc){ _id, name, "slug": slug.current, quantity, soldCount, sizes[]{ _key, stock, sold }, "photo": photographs[0]${_imageAsset} }
   }
 }`;
 

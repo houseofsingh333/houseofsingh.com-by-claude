@@ -49,3 +49,25 @@ export function taxOnLines(price: number, shipping: number, percentage: number):
   const line = (dollars: number) => Math.round((Math.round(dollars * 100) * percentage) / 100);
   return (line(price) + line(shipping)) / 100;
 }
+
+/**
+ * How tax is worked out at checkout (Shop design round 3), from TAX_MODE:
+ * - "stripe": Stripe Tax. No postal code on the piece page; Stripe takes
+ *   the shipping address at checkout and works out the tax itself
+ *   (automatic tax, prices exclusive of tax, each line with its product tax
+ *   code). It charges tax only where Stripe Tax has a registration (Canada,
+ *   GST/HST), so orders abroad carry none.
+ * - "fixed": the postal code before Buy and the fixed provincial rates
+ *   (lib/editions/tax.ts), as before.
+ * Unset: "fixed" on the live site, "stripe" on previews and locally.
+ */
+export type TaxMode = "stripe" | "fixed";
+
+export function taxMode(env: Record<string, string | undefined> = process.env): TaxMode {
+  const set = env.TAX_MODE?.trim().toLowerCase();
+  if (set === "stripe" || set === "fixed") return set;
+  return env.VERCEL_ENV === "production" ? "fixed" : "stripe";
+}
+
+/** Stripe's product tax codes: physical goods, and shipping. */
+export const TAX_CODES = { goods: "txcd_99999999", shipping: "txcd_92010001" } as const;

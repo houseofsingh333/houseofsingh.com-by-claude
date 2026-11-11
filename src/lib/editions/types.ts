@@ -45,6 +45,8 @@ export type EditionsPiece = {
   statement: string;
   story?: PortableTextBlock[] | null;
   maker: string;
+  /** A maker or workshop without a page: Made by House of Singh × this. */
+  madeWith?: string | null;
   collaborators?: Pick<EditionsCollaborator, "_id" | "name" | "slug">[] | null;
   details?: string | null;
   sizeAndFit?: string | null;
@@ -82,6 +84,8 @@ export type Zone = "canada" | "united-states" | "india" | "world";
 
 export type EditionsSettings = {
   honestLine?: string | null;
+  fewLeft?: number | null;
+  nextCollection?: string | null;
   beforeYouBuy?: { _key: string; title: string; text: string }[] | null;
   questions?: { _key: string; question: string; answer?: string | null }[] | null;
   releaseCities?: { _key: string; label: string; timeZone: string }[] | null;

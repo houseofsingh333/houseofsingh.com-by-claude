@@ -6,7 +6,8 @@
  * clothing and objects. Released once, never restocked."; In the making
  * shows the three latest Journal entries (if none are chosen yet); and the
  * sample shipping table gains India as a zone (from Canada and from
- * India). Changes only those fields, so an early access code generated in
+ * India), and "Made with" for the two sample pieces made with a workshop
+ * (Shop design round 3). Changes only those fields, so an early access code generated in
  * the Studio, sold counts and everything else stay as they are.
  *
  *   SANITY_WRITE_TOKEN=... node scripts/editions-sample-update.mjs           looks only
@@ -81,6 +82,16 @@ else {
     tx.patch("editionsShipping", (p) => p.setIfMissing({ routes: [] }).append("routes", missing));
     changes += missing.length;
   }
+}
+
+// Made by (round 3): the sample pieces made with a workshop that has no page.
+const MADE_WITH = { "editions-test-piece-8": "a bindery in Toronto", "editions-test-piece-2": "a workshop in Ludhiana" };
+const madeWith = await client.fetch(`*[_id in $ids]{ _id, madeWith, isTestData }`, { ids: Object.keys(MADE_WITH) });
+for (const p of madeWith) {
+  if (!p.isTestData || p.madeWith) continue;
+  console.log(`${p._id}: Made with "${MADE_WITH[p._id]}"`);
+  tx.patch(p._id, (patch) => patch.set({ madeWith: MADE_WITH[p._id] }));
+  changes++;
 }
 
 if (!changes) console.log("Nothing to change.");

@@ -57,6 +57,8 @@ export function withDefaults(s: EditionsSettings) {
   const words = (s.artistsWords ?? []).map((w) => w?.trim()).filter(Boolean) as string[];
   return {
     honestLine: s.honestLine?.trim() || EDITIONS_DEFAULTS.honestLine,
+    fewLeft: typeof s.fewLeft === "number" && s.fewLeft >= 1 ? Math.floor(s.fewLeft) : 3,
+    nextCollection: s.nextCollection?.trim() || "the next Collection",
     beforeYouBuy: notes.length ? notes : EDITIONS_DEFAULTS.beforeYouBuy.map((n) => ({ ...n })),
     questions: questions.length ? questions : EDITIONS_DEFAULTS.questions.map((q) => ({ ...q })),
     releaseCities: cities.length ? cities : EDITIONS_DEFAULTS.releaseCities.map((c) => ({ ...c })),

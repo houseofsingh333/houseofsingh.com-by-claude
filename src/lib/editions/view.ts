@@ -4,9 +4,41 @@ import { EDITIONS_DEFAULTS } from "./defaults";
 import { collectionTitle, dayIn, monthIn, pad2 } from "./format";
 import type { CollectionState, EditionsCollection, EditionsPiece } from "./types";
 
+/** How many are left when it is few (at or under the threshold), else null; sold out is not "few". */
+export function fewLeft(p: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes">, threshold: number): number | null {
+  const left = available(p);
+  return left > 0 && left <= threshold ? left : null;
+}
+
+export type MadeBy = { partner: string | null; about: { href: string; first: string } | null };
+
+/**
+ * Who made a piece, for Made by: House of Singh × a collaborator (with
+ * "About" and their first name, linking to their page), × a maker or
+ * workshop without a page (Made with), or House of Singh alone.
+ */
+export function madeBy(p: Pick<EditionsPiece, "collaborators" | "madeWith">): MadeBy {
+  const people = knownCollaborators(p.collaborators);
+  if (people.length) {
+    const names = people.map((c) => c.name);
+    const partner = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+    return { partner, about: { href: `/editions/collaborators/${people[0].slug}`, first: people[0].name.split(/\s+/)[0] } };
+  }
+  const own = p.madeWith?.trim();
+  return { partner: own || null, about: null };
+}
+
+/** "7 of 8 pieces": how many pieces of the Collection are still available. */
+export function stillAvailable(pieces: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes">[]): string {
+  const left = pieces.filter((p) => available(p) > 0).length;
+  return `${left} of ${pieces.length} ${pieces.length === 1 ? "piece" : "pieces"}`;
+}
+
 /** A piece as the Collection grid shows it. */
-export function gridPiece(p: EditionsPiece, buyable = true): GridPiece {
+export function gridPiece(p: EditionsPiece, buyable = true, threshold = 3): GridPiece {
   return {
+    fewLeft: fewLeft(p, threshold),
+    partner: madeBy(p).partner,
     _id: p._id,
     name: p.name,
     slug: p.slug,

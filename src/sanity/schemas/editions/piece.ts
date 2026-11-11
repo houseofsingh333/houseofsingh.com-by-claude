@@ -81,8 +81,16 @@ export const editionsPiece = defineType({
       title: "Maker line",
       type: "string",
       group: "words",
-      description: "For example: Designed by Maninder Singh, made in Ludhiana. Collaborators below are linked after it.",
+      description: "For the record (orders and the Studio). The piece page's Made by is built from the collaborators below, or else Made with.",
       validation: (r) => r.required().max(120),
+    }),
+    defineField({
+      name: "madeWith",
+      title: "Made with (a maker or workshop without a page)",
+      type: "string",
+      group: "words",
+      description: "Shown as Made by: House of Singh × this name, for example \"a bindery in Toronto\". Leave empty when a collaborator below has a page (their name is used), or when House of Singh made it alone.",
+      validation: (r) => r.max(60),
     }),
     defineField({
       name: "collaborators",

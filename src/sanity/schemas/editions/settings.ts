@@ -18,6 +18,22 @@ export const editionsSettings = defineType({
   ],
   fields: [
     defineField({
+      name: "fewLeft",
+      title: "Few left, at or under",
+      type: "number",
+      group: "shop",
+      description: "When a piece has this many or fewer left, its card and page say so (\"2 left\"). Empty: 3.",
+      validation: (r) => r.min(1).max(20).integer(),
+    }),
+    defineField({
+      name: "nextCollection",
+      title: "The next Collection, by name",
+      type: "string",
+      group: "shop",
+      description: "For a sold out piece: Notify me of this name, for example \"Collection 02\". Empty: the next Collection.",
+      validation: (r) => r.max(40),
+    }),
+    defineField({
       name: "honestLine",
       title: "The honest line",
       type: "string",
