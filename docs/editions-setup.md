@@ -137,3 +137,18 @@ Two ways to charge GST/HST, chosen by `TAX_MODE` (Shop design round 3):
 **The fee.** Stripe Tax is charged per transaction on which it calculates tax: for Checkout, on Stripe's pay as you go pricing, about 0.5% of the transaction. Check the current rate for Canada on Stripe's Tax pricing page before switching live; test mode is free. The fixed rates cost nothing beyond Stripe's card fees.
 
 To go back at any time: set `TAX_MODE` to `fixed` and redeploy; the postal code returns on the piece page and the fixed rates apply again.
+
+## 12. Launching the sealed Shop (anticipation) on the live site
+
+No payments: Production keeps `TAX_MODE` and its Stripe keys as they are, and in anticipation nothing can be bought. In this order:
+
+1. **Schema.** `npx sanity@latest schema deploy` (if not done since the last Shop change).
+2. **Remove the sample data.** `SANITY_WRITE_TOKEN=... node scripts/editions-remove-samples.mjs` lists everything it would remove and writes a JSON backup to `~/house-of-singh-backups/` (outside the repository): the test Collection, sample pieces (and their holds), the sample artist, test orders with the collectors and collector counter they made (so the first real collector is No. 0001), notify requests and proposals from testing, and the Shop's email records (emails waiting, sign ups waiting for Kit). Check the list, then run it again with `--apply`: it writes a fresh backup and deletes exactly what that backup holds, and refuses if anything changed in between. It keeps Shop settings, shipping rates, the categories, the daily email counts and every newsletter record. The backup holds email addresses from testing: keep it private and delete it once satisfied.
+3. **Create the real Collection 01.** `SANITY_WRITE_TOKEN=... node scripts/editions-collection-01.mjs` shows it, then `--apply` creates `editions-collection-01`: release at 7 pm in Toronto on 13 April 2027, "Released on the eve of Vaisakhi", "Prints, clothing and objects. Released once, never restocked.", open until 30 May 2027, early access from 7 pm on 12 April (with a code generated in the Studio), no pieces, no In the making entries. Run it after step 2, so only one Collection 01 exists.
+4. **Vercel, Production:** set `EDITIONS_MODE` to `anticipation`. Make sure `KIT_API_KEY`, `RESEND_API_KEY`, `EMAIL_POSTAL_ADDRESS` and `EMAIL_LINK_SECRET` are set on Production (Notify me, the proposal emails and the unsubscribe links use them).
+5. **Redeploy Production** (Deployments, the latest, Redeploy), since pages built ahead of time read `EDITIONS_MODE` when they are built.
+6. **Check on the live site:** the footer's Pages list reads Home, About, Projects, Journal, Shop, Contact; /editions shows the sealed Collection; Notify me with your own address (Kit: the tag "Collection 01" and the Shop consent; the confirmation email with its unsubscribe link); /sitemap.xml lists /editions; the share preview (paste https://houseofsingh.com/editions into opengraph.xyz, or LinkedIn's Post Inspector) shows the card, "Collection 01 · House of Singh Editions" and the sentence.
+
+In anticipation: the footer links the Shop (in its Pages list; never the site menu); /editions is indexed and in the sitemap; For artists, the terms of sale and Questions are reachable; pieces, prices, the archive, collaborators, checkout, the thank you page, certificates and early access answer 404 or stay closed; a question with no answer (returns) is left out of the live site.
+
+**The share image** is `public/images/og-editions-collection-01.png` (1200 by 630, the card on the canvas), made from the page itself; a later Collection needs its own image, added to `SHARE_IMAGES` in `src/app/(site)/editions/page.tsx` (without one, the site's own share image is used).

@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
+import { shareCard } from "@/lib/share-metadata";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import CollectionCard from "@/components/editions/CollectionCard";
@@ -18,15 +19,30 @@ import { keepLastWords } from "@/lib/keepLastWords";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import { requireEditions, siteMode } from "@/lib/editions/enabled";
 
-/** In anticipation the live site lets /editions be indexed; otherwise noindex (the layout's). */
-export async function generateMetadata(): Promise<Metadata> {
+/** The share image for Collection 01 (public/images): its card on the canvas, 1200 by 630. */
+const SHARE_IMAGES: Record<number, string> = { 1: "/images/og-editions-collection-01.png" };
+
+/**
+ * In anticipation the live site lets /editions be indexed; otherwise
+ * noindex (the layout's). The share card: "Collection 01 · House of Singh
+ * Editions", its sentence and when it opens, and the Collection's card.
+ */
+export async function generateMetadata(_props: unknown, parent: ResolvingMetadata): Promise<Metadata> {
   const indexable = siteMode() === "anticipation";
+  const current = (await loadCollections().catch(() => []))[0];
+  const share = current
+    ? await shareCard(parent, `${collectionTitle(current.number)} · ${EDITIONS_DEFAULTS.brand}`, `${current.intro.trim()} Opens ${dayIn(current.opens)}.`)
+    : {};
+  const image = current && SHARE_IMAGES[current.number];
+  const images = image ? [{ url: image, width: 1200, height: 630, alt: `${collectionTitle(current!.number)}, ${EDITIONS_DEFAULTS.brand}: the Collection's card` }] : undefined;
   return {
     title: { absolute: "Shop, House of Singh Editions" },
+    ...(current ? { description: `${current.intro.trim()} Opens ${dayIn(current.opens)}.` } : {}),
+    ...share,
+    ...(images ? { openGraph: { ...share.openGraph, url: "/editions", images }, twitter: { ...share.twitter, card: "summary_large_image", images } } : {}),
     ...(indexable ? { robots: { index: true, follow: true }, alternates: { canonical: "/editions" } } : {}),
   };
 }
-
 
 /**
  * The Shop (Shop design round 2). In every state the Collection card
