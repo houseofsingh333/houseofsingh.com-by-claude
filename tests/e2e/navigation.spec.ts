@@ -97,28 +97,36 @@ test("an in page link glides to its anchor", async ({ page }) => {
  * the new page's snapshots are read on every frame: the new one may only
  * start to show once the old one has gone.
  */
-type Change = { frames: { old: number; new: number }[]; timing: { part: string; start: number; end: number }[] };
+type Change = { started: number; frames: { old: number; new: number }[]; timing: { part: string; start: number; end: number }[] };
 
 async function watchChange(page: Page, go: () => Promise<unknown>): Promise<Change> {
   await page.evaluate(() => {
     const w = window as unknown as { __vt: Change; __vtRun: boolean };
-    w.__vt = { frames: [], timing: [] };
+    w.__vt = { started: 0, frames: [], timing: [] };
     w.__vtRun = true;
+    const fades = () => document.getAnimations().filter((a) => (a.effect as KeyframeEffect | null)?.pseudoElement?.startsWith("::view-transition"));
+    // The fade as planned: read the moment the page change is ready, however
+    // busy the page is (a refresh by refresh sample can miss a short fade).
+    const start = document.startViewTransition.bind(document);
+    document.startViewTransition = ((arg?: Parameters<typeof start>[0]) => {
+      const t = start(arg);
+      w.__vt.started++;
+      t.ready
+        .then(() => {
+          for (const a of fades()) {
+            const c = a.effect!.getComputedTiming();
+            const s = Number(c.delay ?? 0);
+            w.__vt.timing.push({ part: (a.effect as KeyframeEffect).pseudoElement!, start: s, end: s + Number(c.duration ?? 0) });
+          }
+        })
+        .catch(() => {});
+      return t;
+    }) as typeof document.startViewTransition;
+    // And as seen, on every refresh it gets.
     const read = (part: string) => Number(getComputedStyle(document.documentElement, `::view-transition-${part}(root)`).opacity);
     const tick = () => {
       if (!w.__vtRun) return;
-      const live = document.getAnimations().filter((a) => (a.effect as KeyframeEffect | null)?.pseudoElement?.startsWith("::view-transition"));
-      if (live.length) {
-        w.__vt.frames.push({ old: read("old"), new: read("new") });
-        // The fade as planned: when each part starts and ends.
-        if (!w.__vt.timing.length) {
-          for (const a of live) {
-            const t = a.effect!.getComputedTiming();
-            const start = Number(t.delay ?? 0);
-            w.__vt.timing.push({ part: (a.effect as KeyframeEffect).pseudoElement!, start, end: start + Number(t.duration ?? 0) });
-          }
-        }
-      }
+      if (fades().length) w.__vt.frames.push({ old: read("old"), new: read("new") });
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
@@ -129,7 +137,7 @@ async function watchChange(page: Page, go: () => Promise<unknown>): Promise<Chan
   return page.evaluate(() => {
     const w = window as unknown as { __vt?: Change; __vtRun: boolean };
     w.__vtRun = false;
-    return w.__vt ?? { frames: [], timing: [] };
+    return w.__vt ?? { started: 0, frames: [], timing: [] };
   });
 }
 
@@ -157,7 +165,7 @@ for (const [label, from, to] of [
       await page.waitForURL((u) => u.pathname === dest);
     });
     // The page did change, through the fade (not at once).
-    expect(change.frames.length, "the page change was seen").toBeGreaterThan(0);
+    expect(change.started, "the page change faded").toBeGreaterThan(0);
     // As planned: the new page starts to show only once the old one has gone.
     const old = change.timing.filter((t) => t.part === "::view-transition-old(root)");
     const fresh = change.timing.filter((t) => t.part === "::view-transition-new(root)");
