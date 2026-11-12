@@ -1,0 +1,74 @@
+name: sanity backup
+
+# Every Sunday: the whole production dataset (every document, drafts and
+# private records included, and every image and file), encrypted, kept for
+# 90 days as an artifact of this run. Restore guide: docs/backup-and-restore.md.
+#
+# The repository is public, and any signed in GitHub user can download a
+# public repository's artifacts. So the export is encrypted (AES-256)
+# before it is uploaded, with a passphrase only Maninder holds. Without the
+# passphrase the file is unreadable, to anyone, including us.
+#
+# Needs two repository secrets:
+#   SANITY_BACKUP_TOKEN  a Sanity token with the Viewer role (read only)
+#   BACKUP_PASSPHRASE    a long passphrase, also kept in a password manager
+
+on:
+  schedule:
+    # Sundays, 03:17 UTC (late Saturday evening in Toronto).
+    - cron: "17 3 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SANITY_AUTH_TOKEN: ${{ secrets.SANITY_BACKUP_TOKEN }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+    steps:
+      - name: Both secrets are set
+        run: |
+          missing=""
+          [ -n "$SANITY_AUTH_TOKEN" ] || missing="$missing SANITY_BACKUP_TOKEN"
+          [ -n "$BACKUP_PASSPHRASE" ] || missing="$missing BACKUP_PASSPHRASE"
+          if [ -n "$missing" ]; then
+            echo "No backup was made: the secret(s)$missing are not set. See docs/backup-and-restore.md." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          # A short passphrase would make the encryption weak.
+          [ ${#BACKUP_PASSPHRASE} -ge 20 ] || { echo "BACKUP_PASSPHRASE must be at least 20 characters." | tee -a "$GITHUB_STEP_SUMMARY"; exit 1; }
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Export the dataset (documents, drafts, images and files)
+        run: |
+          npx sanity dataset export production backup.tar.gz --overwrite
+          echo "NAME=sanity-production-$(date -u +%Y-%m-%d)" >> "$GITHUB_ENV"
+      - name: Check it is whole
+        run: |
+          tar -xzf backup.tar.gz
+          dir=$(find . -maxdepth 2 -name data.ndjson -printf '%h\n' | head -1)
+          docs=$(wc -l < "$dir/data.ndjson")
+          files=$(find "$dir" -type f \( -path '*/images/*' -o -path '*/files/*' \) | wc -l)
+          [ "$docs" -gt 50 ] || { echo "Only $docs documents: refusing to keep a suspiciously small backup."; exit 1; }
+          echo "Documents: $docs; images and files: $files; size: $(du -h backup.tar.gz | cut -f1)" | tee -a "$GITHUB_STEP_SUMMARY"
+          rm -rf "$dir"
+      - name: Encrypt it
+        run: |
+          openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt -in backup.tar.gz -out "$NAME.tar.gz.enc" -pass env:BACKUP_PASSPHRASE
+          # Proof it opens again with the same passphrase, then the plain copy goes.
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -in "$NAME.tar.gz.enc" -pass env:BACKUP_PASSPHRASE | cmp - backup.tar.gz
+          rm backup.tar.gz
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.NAME }}
+          path: ${{ env.NAME }}.tar.gz.enc
+          retention-days: 90
+          compression-level: 0

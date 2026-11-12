@@ -34,6 +34,7 @@ Maninder is the founder and creative director. He is not a developer. This means
 - **Dependencies:** Use npm ci, never npm install.
 - **CI:** Every pull request must show the ci check green before merging. ci runs the type check, lint, build and every automated check in `tests/` (see the Definition of done in section 7, and `tests/README.md`).
 - **Language:** TypeScript throughout.
+- **Reliability:** a weekly, encrypted backup of the Sanity dataset (`docs/backup-and-restore.md`); uptime and error alerts by email through GitHub (`docs/monitoring.md`); one Studio registration, pinned in `sanity.cli.ts` (`docs/sanity-studio.md`).
 
 **Architecture rules:**
 - Keep components modular and separated by responsibility.

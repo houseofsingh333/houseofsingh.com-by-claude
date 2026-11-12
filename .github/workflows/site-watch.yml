@@ -1,0 +1,132 @@
+name: site watch
+
+# Alerts by email for houseofsingh.com (docs/monitoring.md), with nothing
+# but GitHub: no outside service, no new dependency.
+# - Every 15 minutes: the key pages answer, and show what they should. When
+#   they do not (twice, a minute apart), an issue "houseofsingh.com is down"
+#   is opened and assigned to Maninder, which GitHub emails him. When the
+#   site is back, the issue is closed with the time.
+# - Every morning: the crawl of the live site (tests/e2e/crawl.spec.ts):
+#   broken links, console errors, failed requests. Problems open an issue
+#   "Errors on houseofsingh.com", closed again once a crawl is clean.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+    # 07:41 Toronto time (11:41 UTC in winter, 10:41 in summer is fine too).
+    - cron: "41 11 * * *"
+  workflow_dispatch:
+    inputs:
+      check:
+        description: "Which check to run now"
+        type: choice
+        options: [pages, crawl]
+        default: pages
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: site-watch-${{ github.event.schedule || inputs.check }}
+  cancel-in-progress: false
+
+env:
+  SITE: https://houseofsingh.com
+  ALERT_TO: houseofsingh333
+  GH_TOKEN: ${{ github.token }}
+  GH_REPO: ${{ github.repository }}
+
+jobs:
+  pages:
+    if: github.event.schedule == '*/15 * * * *' || inputs.check == 'pages'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: The key pages answer and show their words
+        id: check
+        run: |
+          # path^what the page must contain (its title: an error page has another)
+          checks='/^<title>House of Singh | Maninder Singh
+          /about^<title>About Maninder Singh
+          /projects^<title>Projects |
+          /journal^<title>Journal |
+          /contact^<title>Contact |
+          /editions^<title>Shop, House of Singh Editions
+          /sitemap.xml^<urlset'
+          probe() {
+            failed=""
+            while IFS='^' read -r path words; do
+              path=$(echo "$path" | xargs)
+              body=$(curl -sS -L --max-time 30 -A "houseofsingh-site-watch" -w '\n%{http_code}' "$SITE$path" 2>&1) || true
+              code=$(echo "$body" | tail -1)
+              if [ "$code" != "200" ]; then failed="$failed\n- \`$path\` answered $code"
+              elif ! echo "$body" | grep -qF "$words"; then failed="$failed\n- \`$path\` answered 200 but without \"$words\""
+              fi
+            done <<< "$checks"
+            echo "$failed"
+          }
+          first=$(probe)
+          if [ -n "$first" ]; then sleep 60; second=$(probe); else second=""; fi
+          if [ -n "$second" ]; then
+            echo "down=yes" >> "$GITHUB_OUTPUT"
+            { echo "report<<END"; echo -e "$second"; echo "END"; } >> "$GITHUB_OUTPUT"
+            echo -e "Down:$second" | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            echo "down=no" >> "$GITHUB_OUTPUT"
+            echo "All pages answer." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Open, or close, the alert
+        env:
+          DOWN: ${{ steps.check.outputs.down }}
+          REPORT: ${{ steps.check.outputs.report }}
+        run: |
+          gh label create site-down --color 9B4B3B --description "houseofsingh.com is not answering (site-watch.yml)" 2>/dev/null || true
+          open=$(gh issue list --label site-down --state open --json number --jq '.[0].number')
+          now="$(TZ=America/Toronto date '+%-d %b %Y, %H:%M') Toronto time"
+          if [ "$DOWN" = "yes" ] && [ -z "$open" ]; then
+            gh issue create --title "houseofsingh.com is down" --label site-down --assignee "$ALERT_TO" \
+              --body "$(printf 'Noticed %s, checked twice a minute apart:\n%s\n\nThis closes by itself once the pages answer again. What to look at: docs/monitoring.md.\n\n[The run](%s/%s/actions/runs/%s)' "$now" "$REPORT" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")"
+          elif [ "$DOWN" = "no" ] && [ -n "$open" ]; then
+            gh issue close "$open" --comment "Back up: every page answers again ($now)."
+          fi
+
+  crawl:
+    if: github.event.schedule == '41 11 * * *' || inputs.check == 'crawl'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Crawl the live site
+        id: crawl
+        env:
+          BASE_URL: https://houseofsingh.com
+          EXPECT_EDITIONS: anticipation
+        run: |
+          set +e
+          npx playwright test crawl --project desktop --retries 1 --reporter=line > crawl.log 2>&1
+          status=$?
+          tail -60 crawl.log
+          echo "failed=$([ $status -eq 0 ] && echo no || echo yes)" >> "$GITHUB_OUTPUT"
+      - name: Open, or close, the alert
+        env:
+          FAILED: ${{ steps.crawl.outputs.failed }}
+        run: |
+          gh label create site-errors --color A8895C --description "The daily crawl of houseofsingh.com found problems (site-watch.yml)" 2>/dev/null || true
+          open=$(gh issue list --label site-errors --state open --json number --jq '.[0].number')
+          now="$(TZ=America/Toronto date '+%-d %b %Y') "
+          if [ "$FAILED" = "yes" ]; then
+            details=$(grep -E "^\s+(\+|[0-9]{3} |console:|script error:|failed request:|did not load:)" crawl.log | head -40)
+            body="$(printf 'The crawl of %s found problems (%s):\n\n```\n%s\n```\n\n[The run, with the full list](%s/%s/actions/runs/%s). What to do: docs/monitoring.md.' "$SITE" "$now" "$details" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")"
+            if [ -z "$open" ]; then gh issue create --title "Errors on houseofsingh.com" --label site-errors --assignee "$ALERT_TO" --body "$body"
+            else gh issue comment "$open" --body "$body"; fi
+            exit 1
+          elif [ -n "$open" ]; then
+            gh issue close "$open" --comment "Today's crawl is clean ($now)."
+          fi
