@@ -32,7 +32,7 @@ Maninder is the founder and creative director. He is not a developer. This means
 - **Styling:** Tailwind CSS v4. Configuration lives in the `@theme` block in `src/app/styles/tokens.css`; `globals.css` only imports the area stylesheets in `src/app/styles/` (tokens, base, layout and footer, home, about, journal, projects, contact, legal, motion), and their order is the cascade order. There is no `tailwind.config` file. Do not add one. Do not introduce a different styling system.
 - **Hosting:** Vercel. Production deploys from `main`. All work happens on `feature/next-work`, is pushed there (creating a Vercel preview), and reaches production only through a pull request into `main` that Maninder merges after checking the preview. Never push directly to `main`. Old branches were deleted on 4 Nov 2026; only main and feature/next-work exist.
 - **Dependencies:** Use npm ci, never npm install.
-- **CI:** Every pull request must show the ci check green before merging.
+- **CI:** Every pull request must show the ci check green before merging. ci runs the type check, lint, build and every automated check in `tests/` (see the Definition of done in section 7, and `tests/README.md`).
 - **Language:** TypeScript throughout.
 
 **Architecture rules:**
@@ -51,14 +51,14 @@ Maninder is the founder and creative director. He is not a developer. This means
 2. **Do not commit until Maninder confirms on the preview.** Build the change, report it, and wait. Commit only when told, unless he has said otherwise for that task.
 3. **`main` deploys to production.** Be deliberate about what lands there. Use the working branch for in progress work.
 4. **Work in stages for large changes, and checkpoint each stage** with its own commit once the build is verified clean. Do not hold a huge multi part change as one uncommitted blob.
-5. **Verify before declaring done.** Run `npm run build` and `npx tsc --noEmit` and confirm both are clean before reporting a task complete.
+5. **Verify before declaring done.** Run `npm run build` and `npx tsc --noEmit` and confirm both are clean before reporting a task complete, then the checks in the Definition of done (section 7).
 6. **Render rich text through the shared `proseComponents` PortableText renderer.** Do not rely on fragile descendant selectors like `[&>p]` for paragraph spacing. That approach broke once already; use explicit components.
 7. **Parse Sanity dates with the local timezone utility,** not raw UTC parsing, to avoid off by one day bugs.
 8. **Respect `prefers-reduced-motion` on every animation.** Provide a calm static fallback. This is mandatory, not optional.
 9. **Alt text is hard required on meaningful images** in the schema. Do not reintroduce silent empty alt fallbacks. Decorative images must be explicitly marked decorative.
 10. **Local development:** either reach Sanity, or run `NEXT_PUBLIC_USE_PLACEHOLDERS=1 npm run dev`.
 11. **The Content Security Policy is strict and lives in `next.config.ts`** (`contentSecurityPolicy`). The one exception: the home page alone allows `'unsafe-eval'` in `script-src`, because Spotify's iFrame API (which tells the record in Chapter VI when the music plays) calls eval and is refused without it. Never widen that to other routes or sitewide; add any new host to the policy deliberately and document why.
-12. **Never put `scroll-behavior: smooth` on `<html>`.** It made every new page glide up from the previous page's depth (pages seemed to open where the last one was left) and made Back glide instead of arriving. Pages scroll instantly; only same page anchor links glide, through `src/components/SmoothAnchors.tsx`. `tests/navigation-scroll.mjs` checks where pages open, Back and Forward, the Projects return and anchors (`node tests/navigation-scroll.mjs <url>`).
+12. **Never put `scroll-behavior: smooth` on `<html>`.** It made every new page glide up from the previous page's depth (pages seemed to open where the last one was left) and made Back glide instead of arriving. Pages scroll instantly; only same page anchor links glide, through `src/components/SmoothAnchors.tsx`. Every forward page change opens at the top through `src/components/PageTransition.tsx` (Next.js alone misjudged project pages entered from a page left a little scrolled). `tests/e2e/navigation.spec.ts` checks where pages open, Back and Forward, the Projects return, anchors, and that a page change never shows two pages at once (`npm test -- navigation`).
 
 ### Protected: never change without Maninder's explicit approval
 
@@ -156,6 +156,21 @@ When writing any user facing copy, captions, or content:
 When fixes do not resolve on the first attempt, stop patching and diagnose the root cause.
 
 ---
+
+### Definition of done
+
+Before Maninder is asked to merge, every change passes all of this. CI runs it on every pull request (`.github/workflows/ci.yml`); the required check, ci, is green only when all of it is. How to run it on a Mac: `tests/README.md`.
+
+1. **Type check, lint and build** are clean: `npx tsc --noEmit`, `npm run lint`, `npm run build`.
+2. **Journeys** pass on a phone (390) and a desktop (1440): every page type opens, the menu, every form state, the sealed Shop and Notify me, For artists, unsubscribe, the 404.
+3. **Page changes:** every new page opens at its top, Back and Forward return to where the reader was, and no frame shows two pages.
+4. **Screenshots** match the approved ones. An intended change is approved with the `approve-visuals` label, after looking at the differences, never by loosening the check.
+5. **Accessibility:** axe finds zero violations on every page type and state (the only exceptions are listed in `tests/e2e/a11y.spec.ts`, awaiting Maninder's approval).
+6. **No sideways scroll** at any width from 320 to 2560.
+7. **The crawl:** zero broken internal links, zero console errors.
+8. **Budgets:** each page within its JavaScript size and Lighthouse limits (`tests/budgets.json`). A limit is raised only deliberately, with the reason in the pull request.
+9. **The Vercel preview** passes the same browser checks (once the bypass key is set), and Maninder has looked at it.
+10. **Reported honestly:** what changed, what was checked, and anything that did not pass or was skipped.
 
 ## 8. Frontend craft standard (avoid generic AI output)
 

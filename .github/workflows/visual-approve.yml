@@ -1,0 +1,61 @@
+name: approve screenshots
+
+# Approving an intended change to how a page looks (tests/README.md):
+# add the label "approve-visuals" to the pull request. This makes new
+# approved screenshots from the pull request's own build, commits them to
+# its branch, removes the label and starts the checks again.
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+env:
+  NEXT_PUBLIC_SANITY_PROJECT_ID: 31g7gu7n
+  NEXT_PUBLIC_SANITY_DATASET: production
+  EDITIONS_MODE: anticipation
+
+jobs:
+  approve:
+    # Only for this repository's own branches, never a fork.
+    if: github.event.label.name == 'approve-visuals' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: ${{ github.event.pull_request.head.ref }}
+      PR: ${{ github.event.pull_request.number }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: New approved screenshots
+        run: npx playwright test visual --update-snapshots=all
+      - name: Commit them to the pull request
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/e2e/visual
+          if git diff --cached --quiet; then
+            echo "The screenshots already match: nothing to approve." >> "$GITHUB_STEP_SUMMARY"
+          else
+            git commit -m "Approve the screenshots (label approve-visuals on #$PR)"
+            git push origin "HEAD:$BRANCH"
+            git diff --stat HEAD~1 -- tests/e2e/visual >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Remove the label and run the checks again
+        if: always()
+        run: |
+          gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --remove-label approve-visuals || true
+          gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"

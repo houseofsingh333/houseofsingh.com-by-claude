@@ -1,35 +1,159 @@
 name: ci
 
+# Every pull request into main must pass all of this before Maninder is asked
+# to merge (CLAUDE.md, Definition of done; tests/README.md). The required
+# check is the last job, "ci": it passes only when every other job has.
+
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
+  # Started by the screenshot approval (visual-approve.yml), whose own commit
+  # cannot start a run by itself.
+  workflow_dispatch:
 
 permissions:
   contents: read
+  deployments: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Public Sanity identifiers, the same values the browser already sees.
+  NEXT_PUBLIC_SANITY_PROJECT_ID: 31g7gu7n
+  NEXT_PUBLIC_SANITY_DATASET: production
+  # Built as the live site is: the Shop sealed.
+  EDITIONS_MODE: anticipation
 
 jobs:
-  ci:
-    name: ci
+  # Type check, lint, build, then every check in the browser on that build:
+  # journeys, screenshots, accessibility, sideways scroll, the crawl and the
+  # JavaScript budget, on a phone and a desktop.
+  site:
+    name: build and browser checks
     runs-on: ubuntu-latest
-    env:
-      # Public Sanity identifiers, the same values the browser already sees.
-      # No tokens or secrets are needed to type check and build.
-      NEXT_PUBLIC_SANITY_PROJECT_ID: 31g7gu7n
-      NEXT_PUBLIC_SANITY_DATASET: production
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
-
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
-
       - run: npm ci
-
       - run: npx tsc --noEmit
-
       - run: npm run lint
-
       - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Browser checks
+        run: npx playwright test
+      - name: The report (screenshots of any difference)
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 14
+
+  # Lighthouse, mobile and desktop, median of three runs per page.
+  performance:
+    name: lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Start the site
+        run: |
+          npx next start -p 3100 &
+          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3100/about && exit 0; sleep 2; done
+          echo "the site did not start"; exit 1
+      - name: Lighthouse
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: node tests/lighthouse.mjs http://localhost:3100
+
+  # The pull request's own Vercel preview: the same checks on the real
+  # deployment (its headers, its content security policy, the full Shop).
+  # Previews sit behind Vercel's login; the key that lets this check in is
+  # the GitHub secret VERCEL_AUTOMATION_BYPASS_SECRET (tests/README.md).
+  preview:
+    name: checks on the vercel preview
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Without the key, say so and stop
+        id: key
+        run: |
+          if [ -z "$BYPASS" ]; then
+            echo "ready=no" >> "$GITHUB_OUTPUT"
+            echo "### The preview was not checked" >> "$GITHUB_STEP_SUMMARY"
+            echo "The secret VERCEL_AUTOMATION_BYPASS_SECRET is not set, so this check cannot get past Vercel's login. Everything ran on the CI build instead. See tests/README.md, Previews." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ready=yes" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Wait for the preview of this commit
+        if: steps.key.outputs.ready == 'yes'
+        id: preview
+        run: |
+          for i in $(seq 1 60); do
+            for id in $(gh api "repos/$GITHUB_REPOSITORY/deployments?sha=$SHA&per_page=20" --jq '.[] | select(.environment | test("Preview")) | .id'); do
+              read -r state url < <(gh api "repos/$GITHUB_REPOSITORY/deployments/$id/statuses?per_page=1" --jq '.[0] | "\(.state) \(.environment_url // .target_url)"')
+              if [ "$state" = "success" ]; then echo "url=$url" >> "$GITHUB_OUTPUT"; echo "Preview: $url"; exit 0; fi
+              if [ "$state" = "failure" ] || [ "$state" = "error" ]; then echo "The Vercel preview failed to build"; exit 1; fi
+            done
+            sleep 20
+          done
+          echo "No preview after 20 minutes"; exit 1
+      - uses: actions/checkout@v7
+        if: steps.key.outputs.ready == 'yes'
+      - uses: actions/setup-node@v7
+        if: steps.key.outputs.ready == 'yes'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - if: steps.key.outputs.ready == 'yes'
+        run: npm ci
+      - if: steps.key.outputs.ready == 'yes'
+        run: npx playwright install --with-deps chromium
+      - name: Browser checks on the preview
+        if: steps.key.outputs.ready == 'yes'
+        env:
+          BASE_URL: ${{ steps.preview.outputs.url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: npx playwright test
+      - name: The report
+        if: failure() && steps.key.outputs.ready == 'yes'
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-preview
+          path: playwright-report
+          retention-days: 14
+
+  # The required check: green only when every job above is.
+  ci:
+    name: ci
+    if: always()
+    needs: [site, performance, preview]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every check passed
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          # Skipped is allowed only for the preview on a push to main.
+          bad=$(echo "$RESULTS" | jq -r 'to_entries[] | select(.value.result != "success" and .value.result != "skipped") | .key')
+          if [ -n "$bad" ]; then echo "Not passed: $bad"; exit 1; fi
