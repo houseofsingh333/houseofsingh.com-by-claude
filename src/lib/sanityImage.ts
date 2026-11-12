@@ -44,14 +44,14 @@ const profiles: Record<
     aspectRatio: 3 / 4,
   },
   body: {
-    widths: [640, 960, 1280],
+    widths: [640, 750, 828, 960, 1280],
     quality: 75,
     fit: "max",
     sizes: "(min-width: 768px) 640px, 100vw",
     aspectRatio: 16 / 9,
   },
   hero: {
-    widths: [640, 960, 1280, 1600, 1920],
+    widths: [640, 750, 828, 960, 1280, 1600, 1920],
     quality: 75,
     fit: "crop",
     sizes: "100vw",
@@ -64,7 +64,7 @@ const profiles: Record<
    * 1600–1920px variants only wasted bandwidth.
    */
   banner: {
-    widths: [640, 960, 1280],
+    widths: [640, 750, 828, 960, 1280],
     quality: 70,
     fit: "crop",
     sizes: "100vw",
