@@ -227,17 +227,18 @@ Motion is calm and minimal. It supports the content, never performs for its own 
 
 | Token | Value | Use |
 |---|---|---|
-| `--ease-slow` | `cubic-bezier(0.37, 0, 0.63, 1)`, a soft sine | The default curve: scroll reveals, fades, crossfades, image fade ins and the page fade in. Tailwind: `ease-(--ease-slow)`. |
+| `--ease-slow` | `cubic-bezier(0.37, 0, 0.63, 1)`, a soft sine | The default curve: scroll reveals, fades, crossfades, image fade ins and the old page fading out. Tailwind: `ease-(--ease-slow)`. |
 | `--ease-soft-out` | `cubic-bezier(0.33, 1, 0.68, 1)` | Hover and focus changes. Tailwind: `ease-(--ease-soft-out)`. |
 | `--dur-reveal` | 1400ms, with `--rise-reveal` 12px | Scroll reveals: a slow fade with a gentle 12px rise. Pure fades (photos, the logo) do not rise. Staggered siblings keep their delays. |
 | `--dur-image` | 1000ms | Image fade ins and grey to colour reveals. Crossfades between photos may run longer. |
 | `--dur-hover` | 500ms | Hover and focus changes: colour, underline, a small nudge or zoom. Tailwind: `duration-(--dur-hover)`. |
-| `--dur-page` | 600ms | The page fade in on navigation, and content swapped by a click (form steps, filters). |
+| `--dur-page` | 600ms | A whole page change (out, then in), and content swapped by a click (form steps, filters). |
+| `--dur-page-out`, `--dur-page-in` | 200ms, 400ms | A page change, one page after the other and never both at once (approved 12 Nov): the old page, header and all, fades out to the canvas over 200ms on `--ease-slow`; the new page, already at its top (or where Back left it), fades in over 400ms on `--editorial-ease`. The Shop's phone bars leave at once. Back and Forward return at once to where the page was left. Reduced motion: no transition, the page changes at once. The Projects view switch keeps its own crossfade over `--dur-page`. |
 | `--dur-develop` | 1400ms | A content photograph developing like a print the first time it is in view: from a warm, pale, low contrast state to full tone, on `--ease-slow`. It runs alongside the blur up dissolve, never on priority images (the hero's first slide, page covers), and not on photos with their own grey to colour reveal. Reduced motion and no JavaScript: full tone from the start. |
 | `--dur-plate` | 1400ms | One photograph crossfading to the next on a Projects page plate, on `--ease-slow`, every 8 s while nothing pauses it. Reduced motion: the plate does not cycle. |
 
 - Kept quick on purpose, for usability: focus rings appear at once, form error messages appear at once, and the popup and the Projects filter open in at most 500ms. The menu (approved 10 Nov, after slowness.com) is a canvas panel that slides in from the left over 750ms on `--ease-slow` (`--dur-menu-panel`). From 1024 wide it covers the left half while the right half fills with one photograph, inset 24px, fading in over `--dur-menu-photo` and settling from a 1.04 scale over `--dur-reveal`, both after `--delay-menu-photo`; the page is fully covered. The photograph changes only when a page name is pointed at or focused (`--dur-menu-crossfade`), never on a timer. Closing, the photograph fades first (`--dur-menu-photo-out`), then the panel slides out (`--dur-menu-panel-out` after `--delay-menu-out`); a click on the photograph closes it. Below 1024 the panel covers 85 percent of the width with a soft shadow, no photograph, over an 18 percent charcoal veil on the strip of page, which closes it when tapped. The page header fades out with the panel and back as it closes; reduced motion shows and hides everything at once, with no slide and no zoom. Tap feedback on touch screens and anything that follows the scroll position stay immediate.
-- The earlier fast curve, `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`), is no longer the default. It remains only for the popup opening.
+- The earlier fast curve, `cubic-bezier(0.22, 1, 0.36, 1)` (`--editorial-ease`), is no longer the default. It remains for the popup opening and, since 12 Nov, for a new page fading in (`--dur-page-in`).
 - The upcoming dot pulse runs at 2.8s, infinite, the slow breathing reference.
 - Every animation has a `prefers-reduced-motion` fallback that resolves to a static state. This is mandatory for anything new.
 
@@ -305,7 +306,7 @@ The voice is the same calm, grounded, reflective voice used across the brand. (D
 
 **Feel:** Calm, editorial, crafted, grounded, timeless.
 
-**Motion:** Tokens in `src/app/styles/tokens.css`: `--ease-slow` `cubic-bezier(0.37, 0, 0.63, 1)` for reveals, fades and the page fade in; `--ease-soft-out` `cubic-bezier(0.33, 1, 0.68, 1)` for hover and focus; `--dur-reveal` 1400ms with a 12px rise, `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-text-link` 400ms (the text call to action), `--dur-record-turn` 3600ms (one turn of the homepage record, half of 33 1/3 rpm), `--dur-page` 600ms, `--dur-develop` 1400ms (photographs developing to full tone), `--dur-plate` 1400ms (a Projects plate crossfading to its next photograph). Focus rings, form errors and the menu and popup opening stay quick. Slow, gentle, minimal. Respect reduced motion. The 2.8s breathing brass dot is the reference.
+**Motion:** Tokens in `src/app/styles/tokens.css`: `--ease-slow` `cubic-bezier(0.37, 0, 0.63, 1)` for reveals, fades and the page fade in; `--ease-soft-out` `cubic-bezier(0.33, 1, 0.68, 1)` for hover and focus; `--dur-reveal` 1400ms with a 12px rise, `--dur-image` 1000ms, `--dur-hover` 500ms, `--dur-text-link` 400ms (the text call to action), `--dur-record-turn` 3600ms (one turn of the homepage record, half of 33 1/3 rpm), `--dur-page` 600ms (a page change: `--dur-page-out` 200ms to the canvas, then `--dur-page-in` 400ms on `--editorial-ease`, never both pages at once), `--dur-develop` 1400ms (photographs developing to full tone), `--dur-plate` 1400ms (a Projects plate crossfading to its next photograph). Focus rings, form errors and the menu and popup opening stay quick. Slow, gentle, minimal. Respect reduced motion. The 2.8s breathing brass dot is the reference.
 
 **The test:** Calm, considered, crafted, or loud, rushed, generic? Ship only the former.
 

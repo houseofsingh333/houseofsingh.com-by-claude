@@ -198,6 +198,8 @@ export default function Monograph({ projects, categories, copy, startIndex, init
       if (canShare) {
         from!.style.viewTransitionName = SHARED;
         setVt(true);
+        // Keeps this view switch a crossfade, not a page change (styles/motion.css).
+        document.documentElement.dataset.vt = "mono";
         const t = document.startViewTransition(() => {
           flushSync(apply);
           from!.style.viewTransitionName = "";
@@ -206,6 +208,7 @@ export default function Monograph({ projects, categories, copy, startIndex, init
         });
         void t.finished.finally(() => {
           document.querySelectorAll<HTMLElement>(".mono-plate-frame, .mono-card-plate").forEach((el) => (el.style.viewTransitionName = ""));
+          delete document.documentElement.dataset.vt;
           setVt(false);
         });
         return;

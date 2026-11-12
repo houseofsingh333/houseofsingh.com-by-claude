@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { useInView } from "@/hooks/useInView";
 import DrawnTimes from "./DrawnTimes";
 
 /** Each craft holds, then slides on; the last word ("you") slides in slower and holds longest. */
@@ -27,37 +28,49 @@ const watchMotion = (change: () => void) => {
  * craft and roll through to "you", which holds longest, then go round
  * again; the window is one and a half lines tall, so no letter is
  * clipped. With reduced motion the last word ("you") stays. Screen readers hear "Propose a collaboration".
+ * The words roll only while they are on screen (the desktop line or the
+ * phone panel, whichever the screen shows); elsewhere nothing runs.
  */
 export default function ArtistsInvite({ words, href }: { words: string[]; href: string }) {
   const list = words.length ? words : ["you"];
   const last = list.length - 1;
   const [roll, setRoll] = useState({ at: 0, slide: false });
   const timer = useRef<number | undefined>(undefined);
+  /** The word showing now, so the roll carries on from it after a pause. */
+  const showing = useRef(0);
   const still = useSyncExternalStore(watchMotion, prefersStill, () => false);
+  const lineRef = useRef<HTMLAnchorElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const lineSeen = useInView(lineRef, { once: false });
+  const panelSeen = useInView(panelRef, { once: false });
+  const onScreen = lineSeen || panelSeen;
 
   useEffect(() => {
-    if (list.length < 2 || still) return;
+    if (list.length < 2 || still || !onScreen) return;
     // It opens on the first craft ("a weaver"), rolls through to "you", holds,
     // then the first craft slides in again and the reel jumps back to its start unseen.
-    let at = 0;
+    let at = showing.current;
+    const show = (to: number, slide: boolean) => {
+      at = showing.current = to;
+      setRoll({ at: to, slide });
+    };
     const next = () => {
-      const hold = at === last ? LAST_HOLD_MS : HOLD_MS;
+      if (at > last) {
+        // The repeated first word has slid in: jump back to the real first, unseen.
+        timer.current = window.setTimeout(() => {
+          show(0, false);
+          next();
+        }, SLIDE_MS);
+        return;
+      }
       timer.current = window.setTimeout(() => {
-        at = at + 1;
-        setRoll({ at, slide: true });
-        if (at > last) {
-          // The repeated first word has slid in: jump back to the real first, unseen.
-          timer.current = window.setTimeout(() => {
-            at = 0;
-            setRoll({ at: 0, slide: false });
-            next();
-          }, SLIDE_MS);
-        } else next();
-      }, hold);
+        show(at + 1, true);
+        next();
+      }, at === last ? LAST_HOLD_MS : HOLD_MS);
     };
     next();
     return () => window.clearTimeout(timer.current);
-  }, [list.length, last, still]);
+  }, [list.length, last, still, onScreen]);
 
   // With reduced motion the last word ("you") stays.
   const at = still ? last : roll.at;
@@ -74,7 +87,7 @@ export default function ArtistsInvite({ words, href }: { words: string[]; href: 
 
   return (
     <>
-      <Link href={href} className="ed-invite-line" aria-label="Propose a collaboration">
+      <Link ref={lineRef} href={href} className="ed-invite-line" aria-label="Propose a collaboration">
         <span aria-hidden="true" className="ed-invite-words">
           House of Singh
           <DrawnTimes className="ed-invite-x" />
@@ -87,7 +100,7 @@ export default function ArtistsInvite({ words, href }: { words: string[]; href: 
           </svg>
         </span>
       </Link>
-      <div className="ed-invite-panel">
+      <div ref={panelRef} className="ed-invite-panel">
         <span aria-hidden="true" className="ed-invite-panel-name">
           House of Singh
         </span>

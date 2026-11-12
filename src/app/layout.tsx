@@ -121,7 +121,11 @@ export default function RootLayout({
   return (
     // suppressHydrationWarning: the script below adds the "js" class to
     // <html> before React hydrates, which is intended.
-    <html lang="en-CA" className={`${playfair.variable} ${instrument.variable}`} suppressHydrationWarning>
+    // The inline view-transition-name keeps the whole screen in each page
+    // change (styles/motion.css, Page transitions): without it React leaves
+    // the header, footer and canvas out of the transition, so the new
+    // header appeared over the old page while it was still fading.
+    <html lang="en-CA" className={`${playfair.variable} ${instrument.variable}`} style={{ viewTransitionName: "root" }} suppressHydrationWarning>
       <head>
         {/* Pre paint script. Scroll reveals start hidden only under the "js"
             class (and only when the visitor allows motion), so without

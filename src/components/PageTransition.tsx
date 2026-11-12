@@ -2,6 +2,7 @@
 
 import { ViewTransition } from "react";
 import { usePathname } from "next/navigation";
+import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 /**
  * Global page transition on every client side navigation, using the
@@ -9,11 +10,13 @@ import { usePathname } from "next/navigation";
  * animation library, no script timing).
  *
  * Keyed by path, so each navigation is an exit of the old page and an enter
- * of the new one. The browser crossfades the two (see "Page transitions"
- * in styles/motion.css: --dur-page on --ease-slow). Header and footer are
- * outside the boundary and stay put. Nothing runs on the first page load; browsers
- * without View Transitions change page normally; with reduced motion the
- * change is instant (the CSS turns the animations off).
+ * of the new one. One follows the other, never both at once (see "Page
+ * transitions" in styles/motion.css): the old page, header and all, fades
+ * out to the canvas over --dur-page-out; the new page, already at its top
+ * (or where Back left it), fades in over --dur-page-in. Nothing runs on the
+ * first page load; browsers without View Transitions change page normally.
+ * With reduced motion no transition starts at all ("none"), so the page
+ * changes at once, with no frame of the old and new pages together.
  */
 export default function PageTransition({
   children,
@@ -21,11 +24,13 @@ export default function PageTransition({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const still = usePrefersReducedMotion();
+  const kind = still ? "none" : "page";
   return (
     <ViewTransition
       key={pathname}
-      enter="page"
-      exit="page"
+      enter={kind}
+      exit={kind}
       default="none"
     >
       <div>{children}</div>
