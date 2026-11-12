@@ -113,9 +113,12 @@ const nextConfig: NextConfig = {
       },
     ],
     // Aligned with sanityImage.ts profiles:
-    // thumbnail: 320, 480, 640  |  body: 640, 960, 1280  |  hero: 640, 960, 1280, 1600, 1920
+    // thumbnail: 320, 480, 640  |  body: 640, 750, 828, 960, 1280  |  hero: 640, 750, 828, 960, 1280, 1600, 1920
+    // 750 and 828 fit the phones that need about 720 to 830 pixels (many
+    // Android phones, iPhones at 2x), which otherwise took the 960 file
+    // (Batch C, C2: about a third fewer bytes, the same to the eye).
     formats: ["image/avif", "image/webp"],
-    deviceSizes: [640, 960, 1280, 1600, 1920],
+    deviceSizes: [640, 750, 828, 960, 1280, 1600, 1920],
     imageSizes: [320, 480],
   },
 };
