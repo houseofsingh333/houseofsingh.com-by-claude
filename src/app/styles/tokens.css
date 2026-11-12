@@ -42,7 +42,9 @@
   --rise-reveal: 12px;
   --dur-image: 1000ms; /* image fade ins and colour reveals */
   --dur-hover: 500ms; /* hover and focus changes */
-  --dur-page: 600ms; /* page fade in, content swapped by a click */
+  --dur-page: 600ms; /* content swapped by a click; a whole page change (out, then in) */
+  --dur-page-out: 200ms; /* a page change: the old page fading out to the canvas (approved 12 Nov) */
+  --dur-page-in: 400ms; /* then the new page fading in, on --editorial-ease (approved 12 Nov) */
   --dur-develop: 1400ms; /* a photograph developing to full tone */
   --dur-plate: 1400ms; /* one photograph crossfading to the next on a Projects plate */
   --dur-menu: 500ms; /* the newsletter note and the filter veil opening */
@@ -59,7 +61,8 @@
   --dur-record-turn: 3600ms; /* one steady turn of the home page record, half of 33 1/3 rpm (Chapter VI, approved 10 Nov) */
   --dur-text-link: 400ms; /* the text call to action: its hairline redrawing and its arrow moving (approved 10 Nov) */
 
-  /* Earlier fast curve, kept only for the menu and popup opening. */
+  /* Earlier fast curve, kept for the menu and popup opening and, since
+     12 Nov, a new page fading in (--dur-page-in). */
   --editorial-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --editorial-duration: 1200ms;
 

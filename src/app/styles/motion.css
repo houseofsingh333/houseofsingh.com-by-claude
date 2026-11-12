@@ -47,22 +47,58 @@
 }
 
 /* ——— Page transitions (PageTransition, browser View Transitions) ———
-   The old page fades out and the new one fades in, over --dur-page on
-   --ease-slow. The rest of the document (header, footer) crossfades on the
-   same timing, so it reads as one calm change. Clicks pass through the
-   overlay. Reduced motion: no animation, the page changes at once. */
-::view-transition-old(.page),
-::view-transition-new(.page),
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: var(--dur-page);
-  animation-timing-function: var(--ease-slow);
+   One page after the other, never both at once (approved 12 Nov): the old
+   page, header and all, fades out to the canvas over --dur-page-out; while
+   nothing is visible the new page is in place at its own scroll position
+   (the top, or where Back left it); then it fades in over --dur-page-in on
+   --editorial-ease. Together they take --dur-page. The canvas colour sits
+   beneath both, so the gap between them is the page's own colour, never
+   white. The Shop's phone bars leave at once (styles/editions.css). Clicks
+   pass through the overlay. Reduced motion: no animation, the page changes
+   at once.
+
+   The Projects page's own view switch (Monograph.tsx, desktop) marks the
+   document data-vt="mono" and keeps its crossfade over --dur-page. */
+::view-transition {
+  pointer-events: none;
+  background-color: var(--background);
 }
 ::view-transition-group(.page) {
   animation: none;
 }
-::view-transition {
-  pointer-events: none;
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(.page),
+  ::view-transition-old(root) {
+    animation: page-out var(--dur-page-out) var(--ease-slow) both;
+  }
+  ::view-transition-new(.page),
+  ::view-transition-new(root) {
+    animation: page-in var(--dur-page-in) var(--editorial-ease) var(--dur-page-out) both;
+  }
+  :root[data-vt="mono"]::view-transition-old(root),
+  :root[data-vt="mono"]::view-transition-new(root) {
+    animation-duration: var(--dur-page);
+    animation-timing-function: var(--ease-slow);
+    animation-delay: 0s;
+    /* As the browser's own crossfade: the two add up, so nothing dims midway. */
+    mix-blend-mode: plus-lighter;
+  }
+  :root[data-vt="mono"]::view-transition-image-pair(root) {
+    isolation: isolate;
+  }
+}
+:root[data-vt="mono"]::view-transition {
+  background-color: transparent;
 }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
+import { useInView } from "@/hooks/useInView";
 import { DEFAULT_ZONE, citiesSentence, momentIn, type CityTime } from "@/lib/editions/release";
 
 type Props = {
@@ -22,7 +23,9 @@ const ROLL_MS = 2500;
  * time" and the moment in the visitor's own time zone (Toronto until the
  * browser says), then "The same moment:" and the other cities rolling
  * through one at a time. Screen readers hear every city once, as one
- * sentence; with reduced motion the line stays on the first city.
+ * sentence; with reduced motion the line stays on the first city. The
+ * cities roll only while the line is on screen (phones), never on desktop
+ * where the box is not shown.
  */
 export default function ReleaseTimes({ opens, times }: Props) {
   // The visitor's own time zone; Toronto on the server and before hydration.
@@ -37,11 +40,14 @@ export default function ReleaseTimes({ opens, times }: Props) {
   // The other cities: all but the visitor's own (Toronto until the browser says).
   const others = times.filter((t) => t.timeZone !== zone);
 
+  const windowRef = useRef<HTMLSpanElement>(null);
+  const onScreen = useInView(windowRef, { once: false });
+
   useEffect(() => {
-    if (others.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (others.length < 2 || !onScreen || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => setRoll((r) => ({ at: r.at + 1, slide: true })), ROLL_MS);
     return () => window.clearInterval(timer);
-  }, [others.length]);
+  }, [others.length, onScreen]);
 
   const sentence = `Opens at ${citiesSentence(times)}.`;
   // One step past the last is the first again (repeated at the end), so the roll never runs backwards.
@@ -65,7 +71,7 @@ export default function ReleaseTimes({ opens, times }: Props) {
         {others.length > 0 && (
           <span className="ed-times-same">
             <span>The same moment:</span>
-            <span className="ed-times-window">
+            <span ref={windowRef} className="ed-times-window">
               <span
                 className="ed-times-reel"
                 data-snap={roll.slide ? undefined : ""}

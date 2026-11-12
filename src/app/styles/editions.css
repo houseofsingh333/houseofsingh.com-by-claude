@@ -2262,6 +2262,21 @@ a.ed-spine:focus-visible {
 .ed-shopbar[data-shown] {
   transform: none;
   opacity: 1;
+  /* On a page change the bar leaves at once instead of fading out with the
+     page (styles/motion.css, Page transitions). One bar per page at most. */
+  view-transition-name: ed-bar;
+}
+::view-transition-group(ed-bar) {
+  animation: none;
+}
+::view-transition-old(ed-bar) {
+  animation: none;
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-new(ed-bar) {
+    animation: page-in var(--dur-page-in) var(--editorial-ease) var(--dur-page-out) both;
+  }
 }
 /* Room for the bar beneath the whole Shop page, footer line included, so
    it never covers the last words. */
