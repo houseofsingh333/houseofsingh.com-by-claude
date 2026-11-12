@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
 import { TERMS_UPDATED } from "@/lib/legalDates";

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import SanityImage from "@/components/SanityImage";
 import { formatEntryDate } from "@/lib/dates";
 import { pad2 } from "@/lib/editions/format";

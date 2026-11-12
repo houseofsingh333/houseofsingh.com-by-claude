@@ -1,5 +1,5 @@
 import { ViewTransition } from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 import SanityImage from "@/components/SanityImage";
 import TextLink from "@/components/TextLink";
 import { hasImageAsset } from "@/lib/sanityImage";

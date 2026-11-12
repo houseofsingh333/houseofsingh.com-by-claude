@@ -39,6 +39,7 @@ Maninder is the founder and creative director. He is not a developer. This means
 - Keep components modular and separated by responsibility.
 - Minimize dependencies. Do not add a library when a small amount of native code will do. Justify any new dependency before adding it.
 - Avoid Vite specific logic and React Router. This is Next App Router.
+- Links inside the site use `@/components/Link`, never `next/link` directly: it is Next's Link, but holds back prefetching until the first page load has finished (so the pages a visitor might open next never compete with the page being opened).
 - For any task, first identify whether it affects UI, CMS schema, routing, data fetching, or deployment, and say so.
 - If a request would break this architecture, stop and say so rather than complying.
 

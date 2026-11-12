@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import type { Metadata, ResolvingMetadata } from "next";
 import { shareCard } from "@/lib/share-metadata";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { redirect } from "next/navigation";
 import CollectionCard from "@/components/editions/CollectionCard";
 import CollectionGrid from "@/components/editions/CollectionGrid";

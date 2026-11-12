@@ -2,7 +2,7 @@ import type { Metadata, ResolvingMetadata } from "next";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
 import { ARTISTS_DESCRIPTION } from "@/lib/pageDescriptions";
-import Link from "next/link";
+import Link from "@/components/Link";
 import ProposalForm from "@/components/editions/ProposalForm";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";

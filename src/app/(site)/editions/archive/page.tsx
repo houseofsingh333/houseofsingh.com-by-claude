@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/Link";
 import SanityImage from "@/components/SanityImage";
 import CollectionCard from "@/components/editions/CollectionCard";
 import { cardDate } from "@/lib/editions/release";

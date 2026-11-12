@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 import SanityImage from "@/components/SanityImage";
 import { categorySlug } from "@/lib/projectCategories";
 import type { MonographProject } from "@/lib/projectsData";
