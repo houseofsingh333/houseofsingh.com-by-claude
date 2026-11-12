@@ -56,6 +56,20 @@ export const test = base.extend<{ errors: Errors; quiet: void }>({
           sessionStorage.setItem("hos_intro_seen", "1");
           sessionStorage.setItem("hos_newsletter_dismissed", "1");
         } catch {}
+        // Page changes in progress, from the moment one begins (while the old
+        // page is captured, before any fade runs) until it has finished, so
+        // a check waits for the whole change (settled, below).
+        const w = window as unknown as { __vtOpen: number };
+        w.__vtOpen = 0;
+        const start = document.startViewTransition?.bind(document);
+        if (start) {
+          document.startViewTransition = ((arg?: Parameters<typeof start>[0]) => {
+            const t = start(arg);
+            w.__vtOpen++;
+            t.finished.finally(() => w.__vtOpen--);
+            return t;
+          }) as typeof document.startViewTransition;
+        }
       });
       // A protected preview: the bypass key is added to requests to the
       // preview itself only, never to Sanity, Spotify or any other host.
@@ -104,10 +118,16 @@ export const header = (page: Page) => page.locator("header[aria-hidden='false']"
 export const transitioning = (page: Page) =>
   page.evaluate(() => document.getAnimations().some((a) => (a.effect as KeyframeEffect | null)?.pseudoElement?.startsWith("::view-transition")));
 
-/** Waits for the page change to finish. */
+/** Waits for the page change to finish: none begun and unfinished, no fade running. */
 export async function settled(page: Page) {
   await page
-    .waitForFunction(() => !document.getAnimations().some((a) => (a.effect as KeyframeEffect | null)?.pseudoElement?.startsWith("::view-transition")), null, { timeout: 4000 })
+    .waitForFunction(
+      () =>
+        !(window as unknown as { __vtOpen?: number }).__vtOpen &&
+        !document.getAnimations().some((a) => (a.effect as KeyframeEffect | null)?.pseudoElement?.startsWith("::view-transition")),
+      null,
+      { timeout: 4000 },
+    )
     .catch(() => {});
 }
 
