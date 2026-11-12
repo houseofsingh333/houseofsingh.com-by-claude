@@ -9,6 +9,7 @@ import {
   STORAGE_KEY,
 } from "@/lib/contact-form-data";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
+import { EMAIL_HINT, looksLikeEmail } from "@/lib/emailCheck";
 
 type Phase = "form" | "review" | "done";
 
@@ -47,6 +48,8 @@ export function useContactForm(copy: ContactFormCopy) {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  /** The current step's own message: an email that is not one (the site's wording, lib/emailCheck). */
+  const [stepError, setStepError] = useState<string | null>(null);
   // Honeypot — kept out of formData so it is never persisted to localStorage.
   const [honeypot, setHoneypot] = useState("");
 
@@ -77,12 +80,19 @@ export function useContactForm(copy: ContactFormCopy) {
   const handleFieldChange = useCallback(
     (field: keyof ContactFormData, value: string) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
+      setStepError(null);
     },
     [],
   );
 
   const handleNext = useCallback(() => {
     if (!isValid() && !isSkippable) return;
+    // The same check as the server's, here, so the reader hears it at this step, not after the review.
+    if (currentStepDef?.type === "email" && !looksLikeEmail(String(currentValue ?? ""))) {
+      setStepError(EMAIL_HINT);
+      return;
+    }
+    setStepError(null);
     if (returnToReview) {
       setReturnToReview(false);
       setPhase("review");
@@ -93,9 +103,10 @@ export function useContactForm(copy: ContactFormCopy) {
     } else {
       setPhase("review");
     }
-  }, [isValid, isSkippable, currentStep, steps.length, returnToReview]);
+  }, [isValid, isSkippable, currentStep, steps.length, returnToReview, currentStepDef?.type, currentValue]);
 
   const handlePrev = useCallback(() => {
+    setStepError(null);
     if (currentStep > 0) setCurrentStep((s) => s - 1);
   }, [currentStep]);
 
@@ -176,6 +187,7 @@ export function useContactForm(copy: ContactFormCopy) {
     hasDraft,
     submitting,
     submitError,
+    stepError,
     steps,
     currentStepDef,
     currentValue,

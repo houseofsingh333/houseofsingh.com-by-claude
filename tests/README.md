@@ -107,4 +107,4 @@ The checks send the key only to the preview itself, never to Sanity, Spotify or 
 
 ## Known exceptions
 
-Two accessibility findings sit inside protected designs and wait for Maninder's approval. They are listed, with the proposed fix for each, at the top of `e2e/a11y.spec.ts` (`KNOWN`). Nothing else is excused. When one is fixed, its entry must be removed, otherwise the check fails.
+An accessibility finding inside a protected design that is waiting for Maninder's approval is listed, with its proposed fix, at the top of `e2e/a11y.spec.ts` (`KNOWN`). Nothing else is excused, and when one is fixed its entry must be removed, otherwise the check fails. Since 12 Nov 2026 the list is empty.

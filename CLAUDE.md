@@ -165,7 +165,7 @@ Before Maninder is asked to merge, every change passes all of this. CI runs it o
 2. **Journeys** pass on a phone (390) and a desktop (1440): every page type opens, the menu, every form state, the sealed Shop and Notify me, For artists, unsubscribe, the 404.
 3. **Page changes:** every new page opens at its top, Back and Forward return to where the reader was, and no frame shows two pages.
 4. **Screenshots** match the approved ones. An intended change is approved with the `approve-visuals` label, after looking at the differences, never by loosening the check.
-5. **Accessibility:** axe finds zero violations on every page type and state (the only exceptions are listed in `tests/e2e/a11y.spec.ts`, awaiting Maninder's approval).
+5. **Accessibility:** axe finds zero violations on every page type and state (an exception is allowed only inside a protected design awaiting Maninder's approval, listed in `tests/e2e/a11y.spec.ts`; none today).
 6. **No sideways scroll** at any width from 320 to 2560.
 7. **The crawl:** zero broken internal links, zero console errors.
 8. **Budgets:** each page within its JavaScript size and Lighthouse limits (`tests/budgets.json`). A limit is raised only deliberately, with the reason in the pull request.

@@ -13,27 +13,18 @@ test.use({ reducedMotion: "reduce" });
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"];
 
 /*
- * Known violations inside protected designs (CLAUDE.md, Protected), which
- * may not be changed without Maninder's approval. Each is listed with the
- * proposed fix; nothing else is excused. When one is fixed, remove it here:
- * an exception that no longer occurs fails the check, so this list cannot
- * quietly outlive its reason.
+ * Known violations that may not be fixed yet (inside a protected design,
+ * awaiting Maninder's approval), each with its page, its element and the
+ * proposed fix. Nothing else is excused. An exception that no longer occurs
+ * fails the check below, so this list cannot outlive its reason.
+ *
+ * Empty since 12 Nov 2026: the Journal's month link and the Shop's
+ * "House of Singh × you" line were the two, both fixed with his approval.
  */
-const KNOWN = [
-  {
-    rule: "label-content-name-mismatch",
-    target: ".jr-month-name",
-    why: "Journal (J4): the month link's visible words run together as 'July2026' (two spans in an inline flex row), so its name 'July 2026, show the whole year' does not contain them. Proposed fix, invisible: a space between the two spans in Calendar.tsx.",
-  },
-  {
-    rule: "label-content-name-mismatch",
-    target: ".ed-invite-line",
-    why: "The Shop: the line 'House of Singh × you' is named 'Propose a collaboration', so a voice control user saying the words they see does not reach it. Proposed fix: name it 'House of Singh × you, propose a collaboration' in ArtistsInvite.tsx.",
-  },
-];
+type Known = { rule: string; path: string; target: string; why: string };
+const KNOWN: Known[] = [];
 
 type Violation = { id: string; impact: string; help: string; nodes: { target: string[]; failureSummary?: string }[] };
-
 /**
  * axe, run inside the page on the site's own markup. A third party player
  * (Spotify on Home) is not checked inside, which is not ours to change;
@@ -140,6 +131,13 @@ test("state: every step of the contact form, its review, its error and its thank
       continue;
     }
     const field = page.locator("main input:visible:not([name=company]), main textarea:visible").first();
+    if ((await field.count()) && (await field.getAttribute("type")) === "email") {
+      // The email step's own message.
+      await field.fill("not-an-email");
+      await page.locator("main button:visible", { hasText: /^(next|review)/i }).first().click();
+      await expect(page.locator("main [role=alert]")).toBeVisible();
+      await axe(page, "contact, email not valid");
+    }
     if (await field.count()) await field.fill((await field.getAttribute("type")) === "email" ? "reader@example.com" : "A few words");
     else await page.locator("main [aria-pressed], main [role=radio], main button.contact-option, main .contact-chip").first().click();
     await page.locator("main button:visible", { hasText: /^(next|review)/i }).first().click();
@@ -205,18 +203,15 @@ test("state: Projects at a glance", async ({ page }) => {
   await axe(page, "projects, at a glance");
 });
 
-// Each known exception still occurs (on the page it was found on); once
-// fixed, it must be removed from KNOWN.
+// Each known exception still occurs; once fixed, it must leave KNOWN.
 test("the known exceptions are still real", async ({ page }, info) => {
-  test.skip(info.project.name !== "desktop", "measured on the desktop, where both show");
-  for (const [path, target] of [["/journal", ".jr-month-name"], ["/editions", ".ed-invite-line"]] as const) {
-    if (path === "/editions" && SHOP !== "anticipation") continue;
-    await open(page, path);
+  test.skip(!KNOWN.length, "no known exceptions");
+  test.skip(info.project.name !== "desktop", "measured on the desktop");
+  for (const k of KNOWN) {
+    await open(page, k.path);
     await atRest(page);
     const { violations } = await builder(page).analyze();
-    const still = violations.some((v) => v.nodes.some((n) => n.target.join(" ").includes(target)));
-    // On a phone the month link may not be on screen to be measured.
-    if (!still && (await page.locator(target).count()) === 0) continue;
-    expect(still, `${target} is fixed: remove it from KNOWN in a11y.spec.ts`).toBe(true);
+    const still = violations.some((v) => v.id === k.rule && v.nodes.some((n) => n.target.join(" ").includes(k.target)));
+    expect(still, `${k.target} on ${k.path} is fixed: remove it from KNOWN in a11y.spec.ts`).toBe(true);
   }
 });

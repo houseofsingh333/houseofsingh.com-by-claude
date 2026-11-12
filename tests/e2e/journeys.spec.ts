@@ -112,7 +112,19 @@ test.describe("contact form", () => {
       const field = page.locator("main input:visible:not([name=company]), main textarea:visible").first();
       if (await field.count()) {
         const type = await field.getAttribute("type");
+        if (type === "email") {
+          // Not an email: the site's own message, said at once, and the step waits.
+          const question = await page.locator("main h2").first().textContent();
+          await field.fill("not-an-email");
+          await next.click();
+          await expect(page.locator("main [role=alert]")).toHaveText(EMAIL_HINT);
+          await expect(field).toHaveAttribute("aria-invalid", "true");
+          await expect(field).toBeFocused();
+          await expect(page.locator("main h2").first()).toHaveText(question!);
+        }
         await field.fill(type === "email" ? "reader@example.com" : "A few words");
+        // Typing again clears the message.
+        if (type === "email") await expect(page.locator("main [role=alert]")).toHaveCount(0);
       } else {
         // A choice (the budget): the first one.
         await page.locator("main [aria-pressed], main [role=radio], main button.contact-option, main .contact-chip").first().click();

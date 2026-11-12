@@ -95,6 +95,7 @@ export default function Calendar({ year, month, zoomYear, byDay, months, years, 
             {/* The month's name and year crossfade as the month turns. */}
             <span className="jr-month-label">
               <Crossfade className="jr-month-word" value={MONTH_NAMES[month - 1]} />
+              {/* A space for the words as read ("July 2026"); the flex row draws none. */}{" "}
               {/* Fresh for each month: it moves with the name's width, so it arrives rather than slides. */}
               <span key={monthKey(year, month)} className="jr-month-year">
                 {year}

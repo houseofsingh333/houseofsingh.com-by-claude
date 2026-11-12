@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { CalendarIcon } from "lucide-react";
 import { formatDateOnly, toDateOnly } from "@/lib/dates";
 import type { StepDefinition, ContactFormData } from "@/lib/contact-form-data";
@@ -9,6 +9,8 @@ interface StepRendererProps {
   step: StepDefinition;
   value: string;
   onChange: (field: keyof ContactFormData, value: string) => void;
+  /** This step's message (an email that is not one), said at once beneath the field. */
+  error?: string | null;
 }
 
 
@@ -16,7 +18,13 @@ export default function StepRenderer({
   step,
   value,
   onChange,
+  error,
 }: StepRendererProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  // Back to the field with its message, so the reader can correct it at once.
+  useEffect(() => {
+    if (error) inputRef.current?.focus();
+  }, [error]);
   const handleChange = useCallback(
     (val: string) => onChange(step.field, val),
     [onChange, step.field],
@@ -127,10 +135,15 @@ export default function StepRenderer({
   }
 
   // Default: text / email / tel input
+  const errorId = `contact-${step.field}-error`;
   return (
+    <>
     <input
+      ref={inputRef}
       type={step.type}
       value={value}
+      aria-invalid={error ? true : undefined}
+      aria-describedby={error ? errorId : undefined}
       onChange={(e) => handleChange(e.target.value)}
       placeholder={
         step.type === "email"
@@ -142,5 +155,11 @@ export default function StepRenderer({
       className="contact-input w-full bg-transparent border-0 px-0 py-3 text-statement text-foreground"
       autoFocus
     />
+    {error && (
+      <p id={errorId} role="alert" className="mt-3 text-small text-error">
+        {error}
+      </p>
+    )}
+    </>
   );
 }
