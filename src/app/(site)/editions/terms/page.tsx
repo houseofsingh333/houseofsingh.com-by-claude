@@ -1,9 +1,19 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
+import { fullTitle } from "@/lib/page-title";
+import { shareCard } from "@/lib/share-metadata";
+import { EDITIONS_TERMS_DESCRIPTION } from "@/lib/pageDescriptions";
 import { loadSettings, withDefaults } from "@/lib/editions/load";
 import { DEFAULT_TERMS } from "@/lib/editions/defaults";
 import { requireEditions } from "@/lib/editions/enabled";
 
-export const metadata: Metadata = { title: "Terms of sale" };
+export async function generateMetadata(_props: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  return {
+    title: "Terms of sale",
+    description: EDITIONS_TERMS_DESCRIPTION,
+    alternates: { canonical: "/editions/terms" },
+    ...(await shareCard(parent, fullTitle("Terms of sale"), EDITIONS_TERMS_DESCRIPTION)),
+  };
+}
 // Rendered on each visit, so the Shop's mode (EDITIONS_MODE) always applies.
 export const dynamic = "force-dynamic";
 

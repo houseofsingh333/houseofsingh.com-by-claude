@@ -56,9 +56,13 @@ export default function Exhibition({ projects, copy }: { projects: HomepageProje
                 </div>
               )}
 
-              <a href="#journal-strip-title" className="exhibition-skip">
-                {copy.workSkipLink}
-              </a>
+              {/* One skip link, at the start of the exhibition: a keyboard
+                  user meets it once, not in every room (audit P3). */}
+              {i === 0 && (
+                <a href="#journal-strip-title" className="exhibition-skip">
+                  {copy.workSkipLink}
+                </a>
+              )}
 
               <div className="exhibition-print">
                 <div className="exhibition-photo">

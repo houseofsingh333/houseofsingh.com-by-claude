@@ -24,7 +24,7 @@ export type ShopTaxRate = { id: string; province: string; percentage: number };
 let cached: { at: number; rates: ShopTaxRate[] } | null = null;
 
 /** The Shop's active GST/HST rates in Stripe, by province (cached for ten minutes). */
-export async function shopTaxRates(): Promise<ShopTaxRate[]> {
+async function shopTaxRates(): Promise<ShopTaxRate[]> {
   if (cached && Date.now() - cached.at < 600_000) return cached.rates;
   const list = await stripeGet<{ data: TaxRate[] }>("/v1/tax_rates", { active: true, limit: 100 });
   const rates = list.data

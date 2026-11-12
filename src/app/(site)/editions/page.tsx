@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import type { Metadata, ResolvingMetadata } from "next";
 import { shareCard } from "@/lib/share-metadata";
 import Link from "next/link";
@@ -123,7 +124,18 @@ export default async function EditionsPage({ searchParams }: { searchParams: Pro
       <section className="ed-open2" data-state={state} aria-labelledby="ed-title">
         <CollectionCard number={current.number} colour={current.colour} date={cardDate(current.opens)} label={`${title}, released once, on ${dayIn(current.opens)}`} />
         <div className="ed-open2-text">
-          <span className="type-label text-muted-foreground ed-open2-eyebrow">{eyebrow}</span>
+          <span className="type-label text-muted-foreground ed-open2-eyebrow">
+            {/* Where the screen is too narrow, the label breaks at its "·",
+                each half whole; the space between them is the only break (audit M2). */}
+            {String(eyebrow)
+              .split(" · ")
+              .map((part, i, all) => (
+                <Fragment key={i}>
+                  <span className="ed-open2-eyebrow-part">{i < all.length - 1 ? `${part} ·` : part}</span>
+                  {i < all.length - 1 ? " " : null}
+                </Fragment>
+              ))}
+          </span>
           <h1 id="ed-title" className="font-editorial font-normal text-display-xl leading-none text-foreground">
             {title}
           </h1>

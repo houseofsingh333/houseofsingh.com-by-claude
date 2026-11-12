@@ -90,9 +90,6 @@ export function stateLine(c: EditionsCollection, state: CollectionState, now: Da
   return `Releasing for ${seasonWord(c.season)} · ${dayIn(c.opens)}`;
 }
 
-/** "Collection 01 · Vaisakhi 2027". */
-export const collectionLine = (c: Pick<EditionsCollection, "number" | "season">) => `${collectionTitle(c.number)} · ${c.season}`;
-
 /** "No. 01 · Vaisakhi 2027", on a spine. */
 export const spineLine = (c: Pick<EditionsCollection, "number" | "season">) => `No. ${pad2(c.number)} · ${c.season}`;
 
@@ -111,7 +108,7 @@ const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eig
 export const collectionsInWords = (n: number) => `${WORDS[n] ?? n} ${n === 1 ? "Collection" : "Collections"}`;
 
 /** Whether every piece of a Collection has been sold. */
-export const allSold = (pieces: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes">[]) => pieces.length > 0 && pieces.every((p) => available(p) === 0);
+const allSold = (pieces: Pick<EditionsPiece, "quantity" | "soldCount" | "sizes">[]) => pieces.length > 0 && pieces.every((p) => available(p) === 0);
 
 /**
  * The closed Collection's sentence, true to what happened: "every piece

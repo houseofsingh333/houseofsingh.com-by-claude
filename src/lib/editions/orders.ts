@@ -80,16 +80,16 @@ export interface OrderStore {
 
 /** Private IDs: Sanity never serves a document with a dot in its ID without a token. */
 export const orderId = (sessionId: string) => `private.editions-order-${sessionId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
-export const collectorId = (email: string) =>
+const collectorId = (email: string) =>
   `private.editions-collector-${createHash("sha256").update(email.trim().toLowerCase()).digest("hex").slice(0, 32)}`;
 
 /** A certificate code: ten letters and digits, easy to read (no 0, O, 1, I, L). */
-export function certificateCode(): string {
+function certificateCode(): string {
   const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
   return Array.from(randomBytes(10), (b) => alphabet[b % alphabet.length]).join("");
 }
 
-export function addressLines(a: StripeAddress | null | undefined, name?: string | null): string | undefined {
+function addressLines(a: StripeAddress | null | undefined, name?: string | null): string | undefined {
   if (!a) return undefined;
   const city = [a.city, a.state, a.postal_code].filter(Boolean).join(" ");
   return [name, a.line1, a.line2, city, a.country].filter(Boolean).join("\n") || undefined;

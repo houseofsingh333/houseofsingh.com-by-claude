@@ -1,7 +1,7 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import { permanentRedirect } from "next/navigation";
 import { fullTitle } from "@/lib/page-title";
-import { shareCard } from "@/lib/share-metadata";
+import { shareCard, withSharePhoto } from "@/lib/share-metadata";
 import JournalPage from "@/components/journal/room/JournalPage";
 import NotFoundResponse from "@/components/NotFoundResponse";
 import { journalMonthHref, loadJournalEntries, monthsWithEntries } from "@/lib/journalArchive";
@@ -10,6 +10,8 @@ import JsonLd from "@/components/JsonLd";
 import { loadJournalIndex } from "@/lib/journalData";
 import { monthKey, monthKeyOf } from "@/lib/journalRoom";
 import { buildBreadcrumbJsonLd, buildJournalMonthJsonLd } from "@/lib/structured-data";
+import { parseSanityDate } from "@/lib/dates";
+import type { JournalEntry } from "@/lib/types";
 
 /*
  * One month of the journal, at its own cached address with its own
@@ -35,6 +37,17 @@ export async function generateStaticParams(): Promise<Params[]> {
   return monthsWithEntries(entries).map(({ year, month }) => ({ year: String(year), month: String(month) }));
 }
 
+/** The month's share photograph: its latest entry's photograph (audit P1). */
+function monthPhoto(entries: JournalEntry[], year: number, month: number) {
+  const e = entries.find((x) => {
+    const d = parseSanityDate(x.date);
+    return d.getFullYear() === year && d.getMonth() + 1 === month && x.coverImage;
+  });
+  if (!e?.coverImage) return null;
+  const alt = typeof e.coverImage === "object" && "alt" in e.coverImage ? (e.coverImage as { alt?: string | null }).alt : null;
+  return { image: e.coverImage, alt: alt || e.title };
+}
+
 export async function generateMetadata(
   { params }: { params: Promise<Params> },
   parent: ResolvingMetadata,
@@ -50,7 +63,7 @@ export async function generateMetadata(
     description,
     alternates: { canonical: journalMonthHref(when.year, when.month) },
     ...(hasEntries ? {} : { robots: { index: false, follow: true } }),
-    ...(await shareCard(parent, fullTitle(title), description)),
+    ...withSharePhoto(await shareCard(parent, fullTitle(title), description), monthPhoto(entries, when.year, when.month), title),
   };
 }
 

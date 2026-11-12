@@ -137,3 +137,32 @@ export function pageShareImages({
   if (photo) return { openGraph: [photo], twitter: [photo] };
   return routeShareImages(path, cardAlt);
 }
+
+/**
+ * The share card with a photograph instead of the sitewide card: the given
+ * photo, cropped 1200 by 630 around its focal point. Unchanged when there is
+ * no photo on the Sanity CDN (audit P1).
+ */
+export function withSharePhoto<T extends Pick<Metadata, "openGraph" | "twitter">>(
+  card: T,
+  photo: { image: SanityImage; alt?: string | null } | null | undefined,
+  fallbackAlt: string,
+): T {
+  const shared = photo ? coverShareImage(photo.image, photo.alt?.trim() || fallbackAlt) : null;
+  if (!shared) return card;
+  return {
+    ...card,
+    openGraph: { ...(card.openGraph ?? {}), images: [shared] },
+    twitter: { ...(card.twitter ?? {}), images: [shared] },
+  } as T;
+}
+
+/** The parent's share card as it is, with a photograph (for a page with no title of its own: Home). */
+export async function sharePhotoOnly(
+  parent: ResolvingMetadata,
+  photo: { image: SanityImage; alt?: string | null } | null | undefined,
+  fallbackAlt: string,
+): Promise<Pick<Metadata, "openGraph" | "twitter">> {
+  const { openGraph, twitter } = await parent;
+  return withSharePhoto({ openGraph: openGraph as Metadata["openGraph"], twitter: twitter as Metadata["twitter"] }, photo, fallbackAlt);
+}

@@ -452,6 +452,13 @@ button.text-link {
   white-space: nowrap;
   transition: color var(--dur-hover) var(--ease-soft-out);
 }
+/* Below 360 wide a long label may take two lines instead of overflowing the
+   screen (audit M2). */
+@media (max-width: 359px) {
+  .outline-cta {
+    white-space: normal;
+  }
+}
 .outline-cta-fill {
   position: absolute;
   inset: 0;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { EMAIL_HINT, looksLikeEmail } from "@/lib/emailCheck";
 import HoneypotField from "@/components/HoneypotField";
 import type { SiteCopy } from "@/lib/siteCopy";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
@@ -86,7 +87,12 @@ export default function NewsletterNote({ isOpen, onClose, copy }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!looksLikeEmail(email)) {
+      setErrorMsg(EMAIL_HINT);
+      setStatus("error");
+      inputRef.current?.focus();
+      return;
+    }
     setStatus("loading");
     try {
       const res = await fetch("/api/newsletter", {
@@ -127,7 +133,7 @@ export default function NewsletterNote({ isOpen, onClose, copy }: Props) {
           </p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <h2 id="newsletter-title" className="font-editorial font-normal text-display-s leading-[1.2] text-foreground">
               {copy.newsletterHeading}
@@ -144,13 +150,18 @@ export default function NewsletterNote({ isOpen, onClose, copy }: Props) {
               type="email"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (status === "error") setStatus("idle");
+              }}
               placeholder={copy.newsletterPlaceholder}
+              aria-invalid={status === "error" ? true : undefined}
+              aria-describedby={status === "error" ? "newsletter-error" : undefined}
               className="note-input"
             />
           </label>
           {status === "error" && (
-            <p className="text-small text-error" role="alert">
+            <p id="newsletter-error" className="text-small text-error" role="alert">
               {errorMsg}
             </p>
           )}

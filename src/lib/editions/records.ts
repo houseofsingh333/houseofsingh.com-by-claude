@@ -10,7 +10,7 @@ import type { freeUnits } from "./holds";
  * dataset is public, these are not. Reading and writing needs
  * SANITY_API_TOKEN (server side only).
  */
-export const privateId = (kind: string) => `private.editions-${kind}-${randomUUID()}`;
+const privateId = (kind: string) => `private.editions-${kind}-${randomUUID()}`;
 
 export async function saveProposal(p: { name: string; email: string; practice: string; link: string; idea: string }): Promise<void> {
   if (!writeClient) throw new Error("SANITY_API_TOKEN is not set");

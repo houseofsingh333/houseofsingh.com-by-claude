@@ -5,7 +5,7 @@ import { certificateEmail, checkTaxEmail, madeEmail, orderEmail, shippedEmail } 
 import { addressOf, emailConfig } from "./config";
 
 /** A short reference for an order, from its Stripe session (the last eight characters). */
-export const orderRef = (order: Pick<OrderRecord, "sessionId">) => order.sessionId.slice(-8).toUpperCase();
+const orderRef = (order: Pick<OrderRecord, "sessionId">) => order.sessionId.slice(-8).toUpperCase();
 
 /** After a paid order is recorded: the confirmation, and the certificate for a numbered or one of one piece. */
 export async function sendOrderEmails(order: OrderRecord, editionOf: number | null): Promise<void> {

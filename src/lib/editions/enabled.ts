@@ -29,9 +29,6 @@ export function siteMode(): EditionsMode {
 /** Whether the footer links to the Shop. */
 export const editionsLinked = () => siteMode() !== "off";
 
-/** @deprecated The Shop is on at all (any mode but "off"). */
-export const editionsEnabled = editionsLinked;
-
 export const PREVIEW_COOKIE = "hos_editions_preview";
 
 /** The preview cookie's value: a fingerprint of the secret, never the secret. */

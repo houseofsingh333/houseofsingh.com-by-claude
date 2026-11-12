@@ -1,4 +1,5 @@
 import type { Metadata, ResolvingMetadata } from "next";
+import { pagePhoto } from "@/lib/pagePhotos";
 import { notFound } from "next/navigation";
 import AboutSection from "@/components/about/AboutSection";
 import { devPlaceholder } from "@/lib/placeholders";
@@ -10,7 +11,7 @@ import JsonLd from "@/components/JsonLd";
 import ReadingProgress from "@/components/ReadingProgress";
 import { buildAboutPageJsonLd, buildFaqJsonLd } from "@/lib/structured-data";
 import { fullTitle, pageTitle } from "@/lib/page-title";
-import { shareCard } from "@/lib/share-metadata";
+import { shareCard, withSharePhoto } from "@/lib/share-metadata";
 
 /** The page's search title and description (Sanity, else these defaults). */
 function aboutCopy(data: AboutPageData | null) {
@@ -41,7 +42,7 @@ export async function generateMetadata(
       canonical: data?.seo?.canonicalUrl || "/about",
     },
     ...(noIndex ? { robots: { index: false, follow: true } } : {}),
-    ...(await shareCard(parent, fullTitle(rawTitle), description)),
+    ...withSharePhoto(await shareCard(parent, fullTitle(rawTitle), description), await pagePhoto("about"), "Maninder Singh"),
   };
 }
 

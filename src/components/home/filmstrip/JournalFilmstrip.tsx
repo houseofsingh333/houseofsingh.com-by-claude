@@ -52,7 +52,7 @@ export default function JournalFilmstrip({
   return (
     <section ref={sectionRef} aria-labelledby="journal-strip-title" className="section-py">
       <div className="px-6 md:px-16">
-        <div className="flex items-end justify-between gap-6 border-b border-border pb-4 md:pb-6">
+        <div className="flex items-end justify-between gap-6 border-b border-border pb-4 md:pb-6 max-[359px]:flex-wrap">
           <div className="flex flex-col gap-4">
             <ChapterMark numeral="V" label={label} />
             <h2

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { EMAIL_HINT, looksLikeEmail } from "@/lib/emailCheck";
 import HoneypotField from "@/components/HoneypotField";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
 import { roman } from "@/lib/roman";
@@ -65,10 +66,16 @@ export default function FooterNewsletter({
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [stamp, setStamp] = useState<{ day: string; year: string } | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!looksLikeEmail(email)) {
+      setErrorMsg(EMAIL_HINT);
+      setStatus("error");
+      inputRef.current?.focus();
+      return;
+    }
     setStatus("loading");
     try {
       const res = await fetch(endpoint, {
@@ -99,13 +106,17 @@ export default function FooterNewsletter({
     <div className={`footer-newsletter${buttonText ? " footer-newsletter-worded" : ""}`}>
       {label && <span className="footer-label">{label}</span>}
       <div className="footer-nl-stage">
-        <form onSubmit={handleSubscribe} className="footer-nl-form" data-done={done ? "" : undefined} inert={done}>
+        <form onSubmit={handleSubscribe} noValidate className="footer-nl-form" data-done={done ? "" : undefined} inert={done}>
           <HoneypotField value={company} onChange={setCompany} idSuffix={idSuffix} />
           <input
+            ref={inputRef}
             type="email"
             required
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (status === "error") setStatus("idle");
+            }}
             placeholder={placeholder}
             autoComplete={autoComplete}
             aria-label={fieldLabel}

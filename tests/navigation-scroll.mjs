@@ -35,8 +35,16 @@ const check = (ok, label, detail) => {
   if (!ok) failures.push(label);
 };
 
-/** scrollY read now and then every 50ms for 600ms: proves it is not gliding. */
+/**
+ * scrollY read every 50ms for 600ms, once the page change has finished:
+ * proves it is not gliding. The page change fades the old page out and the
+ * new one in (styles/motion.css); the scroll moves to the top while only the
+ * canvas shows, so it is sampled when no view transition is running.
+ */
 async function settledAt(page) {
+  await page
+    .waitForFunction(() => !document.getAnimations().some((a) => a.effect?.pseudoElement?.startsWith("::view-transition")), null, { timeout: 3000 })
+    .catch(() => {});
   const samples = [];
   for (let i = 0; i < 12; i++) {
     samples.push(await page.evaluate(() => Math.round(window.scrollY)));

@@ -21,7 +21,7 @@
  */
 const notProduction = process.env.VERCEL_ENV !== "production";
 
-export const SITE_URL = "https://houseofsingh.com";
+const SITE_URL = "https://houseofsingh.com";
 
 function emailSiteUrl(): string {
   if (!notProduction) return SITE_URL;

@@ -34,7 +34,7 @@ export type StoryItem =
   | { type: "text"; blocks: PortableTextBlock[] };
 
 /** Wider than tall, by more than a hair. */
-export function isLandscape(p: StoryPhoto): boolean {
+function isLandscape(p: StoryPhoto): boolean {
   return !!p.width && !!p.height && p.width / p.height > 1.05;
 }
 

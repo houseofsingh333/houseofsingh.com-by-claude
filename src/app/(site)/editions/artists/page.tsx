@@ -1,4 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
+import { fullTitle } from "@/lib/page-title";
+import { shareCard } from "@/lib/share-metadata";
+import { ARTISTS_DESCRIPTION } from "@/lib/pageDescriptions";
 import Link from "next/link";
 import ProposalForm from "@/components/editions/ProposalForm";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
@@ -7,7 +10,14 @@ import { collectionTitle, dayIn, pad2 } from "@/lib/editions/format";
 import { requireEditions } from "@/lib/editions/enabled";
 import { keepLastWords } from "@/lib/keepLastWords";
 
-export const metadata: Metadata = { title: "For artists" };
+export async function generateMetadata(_props: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  return {
+    title: "For artists",
+    description: ARTISTS_DESCRIPTION,
+    alternates: { canonical: "/editions/artists" },
+    ...(await shareCard(parent, fullTitle("For artists"), ARTISTS_DESCRIPTION)),
+  };
+}
 
 /**
  * For artists (canvas FL6-Artists), always open: the invitation and the

@@ -85,12 +85,6 @@ export function monthBounds(year: number, month: number): { from: string; to: st
   return { from: `${year}-${pad(month)}-01`, to: `${next.y}-${pad(next.m)}-01` };
 }
 
-/** "5 July 2026" */
-export function longDate(date: string): string {
-  const { year, month, day } = dateParts(date);
-  return `${day} ${MONTH_NAMES[month - 1]} ${year}`;
-}
-
 /** "The saddle", "The saddle and Groundwork", "A, B and C". */
 export function joinTitles(titles: string[]): string {
   if (titles.length < 2) return titles[0] ?? "";

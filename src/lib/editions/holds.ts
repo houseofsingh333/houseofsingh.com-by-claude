@@ -15,16 +15,16 @@ import type { EditionsHold, EditionsSize } from "./types";
  * Written against a small store, so it is tested in memory.
  */
 
-export const HOLD_MINUTES = 32;
+const HOLD_MINUTES = 32;
 
 type Stock = { quantity: number; soldCount?: number | null; sizes?: Pick<EditionsSize, "_key" | "stock" | "sold">[] | null; holds?: EditionsHold[] | null };
 
 /** Holds still in force at a moment. */
-export const activeHolds = (holds: EditionsHold[] | null | undefined, now = Date.now()) =>
+const activeHolds = (holds: EditionsHold[] | null | undefined, now = Date.now()) =>
   (holds ?? []).filter((h) => Date.parse(h.until) > now);
 
 /** Units held now, for one size or (no size) for the piece. */
-export function heldCount(holds: EditionsHold[] | null | undefined, sizeKey: string | null, now = Date.now()): number {
+function heldCount(holds: EditionsHold[] | null | undefined, sizeKey: string | null, now = Date.now()): number {
   return activeHolds(holds, now).filter((h) => (sizeKey ? h.size === sizeKey : true)).length;
 }
 

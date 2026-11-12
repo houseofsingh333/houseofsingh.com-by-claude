@@ -1347,3 +1347,18 @@ p.pp-story {
     transform: none;
   }
 }
+
+/* A card's short description, shown only without JavaScript, where the
+   page falls back to this grid and One by one (which shows it) cannot run
+   (audit P5). With JavaScript the approved grid is unchanged. */
+.mono-card-excerpt {
+  display: none;
+}
+html:not(.js) .mono-card-excerpt {
+  display: block;
+  margin-top: 0.5rem;
+  max-width: 36rem;
+  font-size: var(--type-small);
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
