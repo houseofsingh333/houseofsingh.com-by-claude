@@ -1,18 +1,22 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
-import { INDEXNOW_HOST, KEY_PATH, indexNowKey } from "@/lib/indexnow";
-import { parseSanityDate } from "@/lib/dates";
-import { journalMonthHref } from "@/lib/journalLinks";
+import { KEY_PATH, ORIGIN, indexNowKey, submitToIndexNow, urlsForDocument } from "@/lib/indexnow";
+import { sitemapEntries } from "@/lib/sitemapEntries";
+import { siteMode } from "@/lib/editions/enabled";
 
 /*
- * Called by a Sanity webhook when a journal entry or a project is created
- * or edited (the settings are in docs/indexnow.md). Sends that page, and
- * the pages that list it, to IndexNow. Does nothing until INDEXNOW_KEY and
- * SANITY_WEBHOOK_SECRET are both set in Vercel.
+ * IndexNow (docs/indexnow.md).
+ *
+ * POST, from the Sanity webhook, when a document is published: sends the
+ * changed page, and the pages that show it, to IndexNow.
+ * POST {"all": true}, with the same secret header: sends every address in
+ * the sitemap (the first submission, or after a long gap).
+ * GET: whether IndexNow is set up here (no secrets in the answer), so the
+ * setup can be checked from a browser.
+ *
+ * Every answer says what IndexNow replied, and the result is logged in
+ * Vercel, so a submission can be followed end to end.
  */
-
-const ORIGIN = `https://${INDEXNOW_HOST}`;
-const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/i;
 
 /** The secret in the request header matches, compared in constant time. */
 function authorised(req: Request, secret: string): boolean {
@@ -21,44 +25,39 @@ function authorised(req: Request, secret: string): boolean {
   return given.length === wanted.length && timingSafeEqual(given, wanted);
 }
 
-/** The addresses to announce for a changed document. */
-function urlsFor(doc: { _type?: unknown; slug?: unknown; date?: unknown } | null): string[] | null {
-  const slug = typeof doc?.slug === "string" && SLUG.test(doc.slug) ? doc.slug : null;
-  if (!slug) return null;
-  if (doc?._type === "project") {
-    return [`${ORIGIN}/projects/${slug}`, `${ORIGIN}/projects`, `${ORIGIN}/`];
-  }
-  if (doc?._type === "journalEntry") {
-    const urls = [`${ORIGIN}/journal/${slug}`, `${ORIGIN}/journal`];
-    if (typeof doc.date === "string" && /^\d{4}-\d{2}-\d{2}/.test(doc.date)) {
-      const d = parseSanityDate(doc.date);
-      urls.push(`${ORIGIN}${journalMonthHref(d.getFullYear(), d.getMonth() + 1)}`);
-    }
-    return [...urls, `${ORIGIN}/`];
-  }
-  return null;
+export async function GET() {
+  const key = indexNowKey();
+  const secret = Boolean(process.env.SANITY_WEBHOOK_SECRET?.trim());
+  return NextResponse.json({
+    configured: Boolean(key && secret),
+    key: key ? "set" : "missing: add INDEXNOW_KEY in Vercel (Production) and redeploy",
+    keyFile: key ? `${ORIGIN}${KEY_PATH}` : null,
+    webhookSecret: secret ? "set" : "missing: add SANITY_WEBHOOK_SECRET in Vercel (Production) and redeploy",
+  });
 }
 
 export async function POST(req: Request) {
   const key = indexNowKey();
   const secret = process.env.SANITY_WEBHOOK_SECRET?.trim();
-  // Not set up yet: nothing is sent.
-  if (!key || !secret) return NextResponse.json({ ok: false, reason: "not configured" }, { status: 503 });
+  // Not set up yet: nothing is sent, and the answer says what is missing.
+  if (!key || !secret) {
+    console.warn("[indexnow] not configured: INDEXNOW_KEY or SANITY_WEBHOOK_SECRET is missing");
+    return NextResponse.json({ ok: false, reason: "not configured (see GET /api/indexnow)" }, { status: 503 });
+  }
   if (!authorised(req, secret)) return NextResponse.json({ ok: false }, { status: 401 });
 
-  const urlList = urlsFor(await req.json().catch(() => null));
-  if (!urlList) return NextResponse.json({ ok: false, reason: "not a journal entry or project" }, { status: 400 });
-
-  try {
-    const res = await fetch("https://api.indexnow.org/indexnow", {
-      method: "POST",
-      headers: { "Content-Type": "application/json; charset=utf-8" },
-      body: JSON.stringify({ host: INDEXNOW_HOST, key, keyLocation: `${ORIGIN}${KEY_PATH}`, urlList }),
-      signal: AbortSignal.timeout(8000),
-    });
-    // 200 and 202 both mean accepted.
-    return NextResponse.json({ ok: res.ok, status: res.status, urlList }, { status: res.ok ? 200 : 502 });
-  } catch {
-    return NextResponse.json({ ok: false, reason: "IndexNow did not answer" }, { status: 502 });
+  const body = (await req.json().catch(() => null)) as { all?: unknown; _type?: unknown; slug?: unknown; date?: unknown } | null;
+  let urlList: string[] | null;
+  if (body?.all === true) {
+    urlList = (await sitemapEntries()).map((e) => e.url);
+  } else {
+    urlList = urlsForDocument(body);
+    // With the Shop off, /editions is not a page (404): never announced.
+    if (urlList && siteMode() === "off") urlList = urlList.filter((u) => !u.endsWith("/editions"));
+    if (!urlList?.length) return NextResponse.json({ ok: false, reason: "no public page shows this document" }, { status: 400 });
   }
+
+  const result = await submitToIndexNow(urlList, key);
+  console.log(`[indexnow] ${urlList.length} addresses sent, ${result.count} accepted: IndexNow ${result.status} (${result.message})`);
+  return NextResponse.json({ ...result, urlList: body?.all === true ? undefined : urlList }, { status: result.ok ? 200 : 502 });
 }
