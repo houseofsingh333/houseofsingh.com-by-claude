@@ -94,9 +94,10 @@ export async function generateMetadata(): Promise<Metadata> {
       creator: "@houseofsingh",
       site: "@houseofsingh",
     },
-    // Favicon and Apple touch icon are auto-detected from app/favicon.ico and
-    // app/apple-icon.png (Next.js convention: the <link> tags are declared for
-    // us). A copy of the touch icon at public/apple-touch-icon.png answers
+    // The icons (the crest's lion, made by scripts/favicons.mjs) are
+    // auto-detected from app/favicon.ico (16, 32, 48), app/icon.png (32) and
+    // app/apple-icon.png (180) (Next.js convention: the <link> tags are
+    // declared for us). A copy of the touch icon at public/apple-touch-icon.png answers
     // devices that ask for that address without reading the page; the 192 and
     // 512 icons are listed in public/site.webmanifest.
     manifest: "/site.webmanifest",

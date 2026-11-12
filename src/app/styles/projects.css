@@ -1140,6 +1140,21 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
+/* On phones the line may break between categories, each kept whole (a
+   long list, such as Zamana's, is wider than the screen); from 768 it
+   stays on one line. */
+.pp-meta-list {
+  min-width: 0;
+  white-space: normal;
+}
+.pp-meta-item {
+  white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .pp-meta-list {
+    white-space: nowrap;
+  }
+}
 .pp-upcoming {
   display: inline-flex;
   align-items: center;

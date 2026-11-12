@@ -62,7 +62,9 @@ export default function JournalFilmstrip({
               Journal
             </h2>
           </div>
-          <div className="flex items-center gap-5 md:gap-6">
+          {/* On a narrow phone "Read the journal" drops beneath the pause button
+              instead of pushing past the screen's edge; it never breaks itself. */}
+          <div className="flex flex-wrap items-center justify-end gap-x-5 gap-y-3 md:flex-nowrap md:gap-6">
             {drift && (
               <button
                 type="button"
