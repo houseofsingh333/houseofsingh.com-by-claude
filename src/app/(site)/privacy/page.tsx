@@ -131,7 +131,8 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
           page: your card details go to Stripe and never reach this site.
           Stripe passes us your name, email address and shipping address,
           and what you bought (the piece, its size, where it ships, the
-          price, shipping and tax). We keep that order privately in Sanity,
+          price and shipping). Pieces are sold by Maninder Singh, operating
+          as House of Singh Editions. We keep that order privately in Sanity,
           with the collector number we give each buyer and, for numbered
           pieces, the certificate code. Emails about your order (the
           confirmation, the certificate, when it is being made and when it

@@ -161,3 +161,55 @@ export const emailDay = defineType({
   fields: [defineField({ name: "day", title: "Day (UTC)", type: "string" }), defineField({ name: "count", title: "Sent", type: "number" })],
   preview: { select: { title: "day", n: "count" }, prepare: ({ title, n }) => ({ title, subtitle: `${n ?? 0} sent` }) },
 });
+
+/**
+ * The small supplier tracker (lib/editions/smallSupplier.ts), one private
+ * document: "private.editions-small-supplier". Maninder adds here any other
+ * personal taxable revenue, by calendar quarter; the Shop's own orders are
+ * counted from the orders themselves. Unlike the records above, this one
+ * is edited by hand. The thresholds already emailed about are kept by the
+ * daily job, read only.
+ */
+export const editionsSmallSupplier = defineType({
+  name: "editionsSmallSupplier",
+  title: "Editions: Small supplier tracker",
+  type: "document",
+  // Saved as typed, with no draft: the daily job reads what is there.
+  liveEdit: true,
+  fields: [
+    defineField({
+      name: "otherRevenue",
+      title: "Other taxable revenue",
+      description:
+        "Any other personal taxable revenue, by calendar quarter (for example photography or design work invoiced in your own name), in Canadian dollars. The Shop's orders are counted automatically: do not add them here.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "quarterRevenue",
+          fields: [
+            defineField({
+              name: "quarter",
+              title: "Quarter",
+              type: "string",
+              description: "The calendar quarter, written as 2026-Q4 (Q1 January to March, Q2 April to June, Q3 July to September, Q4 October to December).",
+              validation: (r) => r.required().regex(/^\d{4}-Q[1-4]$/, { name: "quarter", invert: false }).error("Write the quarter as 2026-Q4."),
+            }),
+            defineField({ name: "amount", title: "Amount (CAD)", type: "number", validation: (r) => r.required().min(0) }),
+            defineField({ name: "note", title: "Note", type: "string", description: "What it was, for your records." }),
+          ],
+          preview: { select: { q: "quarter", a: "amount", n: "note" }, prepare: ({ q, a, n }) => ({ title: `${q ?? "Quarter?"}: CA$${(a ?? 0).toLocaleString("en-CA")}`, subtitle: n }) },
+        },
+      ],
+    }),
+    defineField({
+      name: "alertsActive",
+      title: "Thresholds already emailed",
+      description: "Kept by the daily job, so each threshold is emailed once.",
+      type: "array",
+      of: [{ type: "string" }],
+      readOnly: true,
+    }),
+  ],
+  preview: { prepare: () => ({ title: "Small supplier tracker" }) },
+});

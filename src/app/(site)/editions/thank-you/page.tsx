@@ -37,7 +37,8 @@ export default async function ThankYouPage({ searchParams }: { searchParams: Pro
     ...(zone ? [["Ships to", zone] as [string, string]] : []),
     ["Price", cad(Number(m.price ?? 0))],
     ["Shipping", cad(Number(m.shipping ?? 0))],
-    ["Tax", cad(fromCents(session.total_details?.amount_tax))],
+    // No tax is charged (TAX_MODE "none"): a Tax row only if some was.
+    ...(fromCents(session.total_details?.amount_tax) > 0 ? [["Tax", cad(fromCents(session.total_details?.amount_tax))] as [string, string]] : []),
     ["Total", cad(fromCents(session.amount_total))],
   ];
 

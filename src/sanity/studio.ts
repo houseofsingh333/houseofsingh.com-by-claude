@@ -7,9 +7,10 @@ import { structureTool, type StructureResolver } from "sanity/structure";
 import { schemaTypes } from "./schemas";
 import { projectId, dataset, apiVersion } from "./env";
 import { MarkMadeAction, MarkShippedAction } from "./actions/orderActions";
+import SmallSupplierView from "./components/SmallSupplierView";
 
 /** Single documents of the Shop: edited in place, never listed or duplicated. */
-const EDITIONS_SINGLETONS = new Set(["editionsShipping", "editionsSettings"]);
+const EDITIONS_SINGLETONS = new Set(["editionsShipping", "editionsSettings", "editionsSmallSupplier"]);
 
 /** Types the site writes as private records (never publicly readable). */
 const PRIVATE_TYPES = new Set(["contactSubmission", "newsletterSubscriber"]);
@@ -19,7 +20,7 @@ const PRIVATE_TYPES = new Set(["contactSubmission", "newsletterSubscriber"]);
  * Editions in its own section (Collections, pieces, categories,
  * collaborators, shipping rates and Shop settings, and the private
  * records the site writes: orders, collectors, notify requests and
- * proposals).
+ * proposals), and the private small supplier tracker.
  */
 const structure: StructureResolver = (S) =>
   S.list()
@@ -98,6 +99,18 @@ const structure: StructureResolver = (S) =>
                   .title(title)
                   .child(S.documentList().title(title).schemaType(type).apiVersion(apiVersion).filter("_type == $type").params({ type })),
               ),
+              S.divider(),
+              // Private (id "private."): the paid orders by calendar quarter,
+              // and the other revenue Maninder adds (lib/editions/smallSupplier.ts).
+              S.listItem()
+                .title("Small supplier tracker")
+                .child(
+                  S.document()
+                    .title("Small supplier tracker")
+                    .schemaType("editionsSmallSupplier")
+                    .documentId("private.editions-small-supplier")
+                    .views([S.view.component(SmallSupplierView).title("Quarters"), S.view.form().title("Other revenue")]),
+                ),
             ]),
         ),
     ]);

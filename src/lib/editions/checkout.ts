@@ -72,10 +72,10 @@ export function checkPurchase(
 const cents = (cad: number) => Math.round(cad * 100);
 
 /**
- * One piece, quantity 1, in CAD. Shipping is a second line, so GST/HST
- * applies to it too, as it must in Canada; both lines carry the Shop's
- * dynamic tax rates, which match Canadian shipping addresses only. The
- * address can only be in the chosen zone's countries.
+ * One piece, quantity 1, in CAD, and shipping as a second line. No tax by
+ * default (TAX_MODE "none"). With a future registration, GST/HST applies
+ * to both lines in Canada: fixed tax rates ("fixed") or Stripe Tax
+ * ("stripe"). The address can only be in the chosen zone's countries.
  */
 export function checkoutParams(input: {
   piece: EditionsPiece;
@@ -85,7 +85,7 @@ export function checkoutParams(input: {
   shipping: number;
   /** Canada, fixed mode: the province's Stripe tax rate (from the postal code), and the province. */
   taxRate?: { id: string; province: string } | null;
-  /** "stripe": Stripe Tax works the tax out from the shipping address; "fixed": taxRate. Default "fixed". */
+  /** "none": no tax; "stripe": Stripe Tax works it out from the shipping address; "fixed": taxRate. Unset: "fixed" with a taxRate, else "none". */
   taxMode?: TaxMode;
   siteUrl: string;
   imageUrl?: string | null;
@@ -96,10 +96,13 @@ export function checkoutParams(input: {
 }) {
   const { piece, size, zone, shipping, siteUrl } = input;
   const zoneLabel = ZONES.find((z) => z.value === zone)?.label ?? zone;
-  const stripeTax = input.taxMode === "stripe";
-  // Fixed: the province's GST/HST on the piece and on shipping. Stripe Tax:
-  // prices exclusive of tax, each line with its product tax code.
-  const taxes = !stripeTax && input.taxRate ? { tax_rates: [input.taxRate.id] } : {};
+  // Unset: fixed when a province's rate is given, otherwise none.
+  const mode: TaxMode = input.taxMode ?? (input.taxRate ? "fixed" : "none");
+  const stripeTax = mode === "stripe";
+  // None: no tax at all. Fixed: the province's GST/HST on the piece and on
+  // shipping. Stripe Tax: prices exclusive of tax, each with its tax code.
+  const rate = mode === "fixed" ? (input.taxRate ?? null) : null;
+  const taxes = rate ? { tax_rates: [rate.id] } : {};
   const metadata = {
     pieceId: piece._id,
     pieceSlug: piece.slug,
@@ -110,11 +113,13 @@ export function checkoutParams(input: {
     price: String(piece.price),
     shipping: String(shipping),
     holdKey: input.holdKey ?? "",
-    taxProvince: stripeTax ? "" : (input.taxRate?.province ?? ""),
-    taxMode: stripeTax ? "stripe" : "fixed",
+    taxProvince: rate?.province ?? "",
+    taxMode: mode,
     collection: String(input.collectionNumber),
   };
-  const seller = `Sold by ${EDITIONS_DEFAULTS.seller}${input.gstNumber ? `. GST/HST ${input.gstNumber}` : ""}.`;
+  // A GST/HST number shows only while tax is charged (a future registration).
+  const charged = stripeTax || Boolean(rate);
+  const seller = `Sold by ${EDITIONS_DEFAULTS.seller}${charged && input.gstNumber ? `. GST/HST ${input.gstNumber}` : ""}.`;
   const now = input.now ?? new Date();
   return {
     mode: "payment",

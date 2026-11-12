@@ -11,8 +11,8 @@ How to switch the Shop on, test it, take it live, and run it from one Collection
 | `STRIPE_SECRET_KEY` | Stripe's secret key. `sk_test_...` on Preview, `sk_live_...` on Production only at launch. | Stripe Dashboard, Developers, API keys |
 | `STRIPE_API_VERSION` | Optional: pins the Stripe API version to the account's, by its exact name in the Stripe Dashboard (Developers, API version). Unset, Stripe uses the account's default. | Stripe Dashboard |
 | `STRIPE_WEBHOOK_SECRET` | Proves an event really came from Stripe (`whsec_...`). One per endpoint and per mode. | Stripe Dashboard, Developers, Webhooks, the endpoint, Signing secret |
-| `TAX_MODE` | How tax is worked out at checkout: `stripe` (Stripe Tax: no postal code on the piece page; Stripe takes the shipping address at checkout and works out GST/HST itself) or `fixed` (the postal code and the fixed provincial rates). Unset: `fixed` on Production, `stripe` on previews. Set `stripe` on Production only once Stripe Tax is set up in live mode (section 11). | Set by hand |
-| `GST_NUMBER` | The GST/HST number of House of Singh Studios Inc. Shown on the Stripe checkout page, the receipt line and the terms of sale. | Your CRA business number with the RT account (for example `123456789 RT0001`) |
+| `TAX_MODE` | How tax is worked out at checkout. Unset, or `none` (the default, everywhere): no tax. The Shop is sold by Maninder Singh, a sole proprietor and small supplier, so no GST/HST is charged: no postal code, no tax at checkout, in emails or on receipts. Kept for a future registration: `stripe` (Stripe Tax) or `fixed` (the postal code and fixed provincial rates), section 11. | Set by hand |
+| `GST_NUMBER` | Not used while no tax is charged: leave it unset. Only after a GST/HST registration, with `TAX_MODE` `stripe` or `fixed`: the number, shown on the checkout page, the order email and the terms of sale. | Your CRA business number with the RT account (for example `123456789 RT0001`) |
 | `SANITY_API_TOKEN` | Already set for the contact form. The Shop uses it to save orders, collectors, notify requests and proposals. Needs write access. | Sanity, manage, API, Tokens (Editor) |
 | Email | `KIT_API_KEY`, `RESEND_API_KEY`, `EMAIL_FROM_LETTERS`, `EMAIL_FROM_EDITIONS`, `EMAIL_POSTAL_ADDRESS`, `CRON_SECRET` and the rest: see `docs/email.md`. | |
 | `EDITIONS_CLOCK` | Testing only. An ISO date (for example `2027-04-20T12:00:00Z`) that moves the Shop's clock, to see Open or Closed before the dates arrive. Ignored on the live site. | Set it on Preview only, then remove it |
@@ -23,7 +23,7 @@ Never put any of these in the code or in a message. After changing a variable (`
 
 1. In Stripe, stay in **Test mode** (the toggle at the top of the Dashboard).
 2. Copy the test secret key into `STRIPE_SECRET_KEY` for **Preview** only.
-3. Create the GST/HST rates in test mode, once:
+3. Skip while no tax is charged (`TAX_MODE` unset). Only for `fixed`, after a registration: create the GST/HST rates in test mode, once:
    `STRIPE_SECRET_KEY=sk_test_... npx tsx scripts/editions-tax-rates.ts`
    It creates one rate per province and territory (GST 5% in AB, BC, MB, NT, NU, QC, SK and YT; HST 13% in ON, 14% in NS, 15% in NB, NL and PE), exclusive of the price; checkout applies the buyer's province's rate as a fixed tax rate. Check these against the CRA before launch: a changed rate is fixed in `src/lib/editions/tax.ts` and the script run again (it switches the old rate off).
 4. Add the webhook: Stripe, Developers, Webhooks, Add endpoint.
@@ -46,10 +46,10 @@ Check both after any change in the Dashboard: a method switched on there appears
 
 Only when the test purchase has worked end to end.
 
-1. In Stripe, switch to **Live mode** and complete the account (business details as House of Singh Studios Inc., bank account, statement descriptor such as `HOS EDITIONS`).
-2. Run the tax rate script again with the live key: `STRIPE_SECRET_KEY=sk_live_... npx tsx scripts/editions-tax-rates.ts`.
+1. In Stripe, switch to **Live mode** and complete the account (business type **Individual / sole proprietor**, Maninder Singh, public business name House of Singh Editions, your bank account, statement descriptor such as `HOS EDITIONS`).
+2. No tax rates are needed while no tax is charged (`TAX_MODE` unset). Only after a registration, with `fixed`: run the tax rate script with the live key, `STRIPE_SECRET_KEY=sk_live_... npx tsx scripts/editions-tax-rates.ts`.
 3. Add the live webhook endpoint (`https://houseofsingh.com/api/editions/webhook`) with the same five events as in test mode (section 2, step 4) and copy its live signing secret.
-4. In Vercel, for **Production** only: `STRIPE_SECRET_KEY` = the live key, `STRIPE_WEBHOOK_SECRET` = the live signing secret, `GST_NUMBER`.
+4. In Vercel, for **Production** only: `STRIPE_SECRET_KEY` = the live key, `STRIPE_WEBHOOK_SECRET` = the live signing secret. No `TAX_MODE` and no `GST_NUMBER`.
 5. Delete the sample content (section 6), remove `EDITIONS_CLOCK` everywhere, and redeploy.
 6. Before launch, the live site can sit in anticipation: set `EDITIONS_MODE` to `anticipation` on Production and redeploy. /editions then shows the sealed Collection with Notify me, linked from the footer, and you can see the whole Shop yourself with `/editions?preview=EDITIONS_PREVIEW_SECRET`.
 7. Launch: set `EDITIONS_MODE` to `full` on Production and redeploy.
@@ -64,7 +64,7 @@ In the Studio: House of Singh Editions, Shipping rates. One route for each origi
 4. India is its own zone: Stripe accepts only an Indian address for it, and "Rest of the world" no longer includes India. Where an origin has no India route yet, an order to India is charged that origin's Rest of the world price.
 5. A piece heavier than every band of a route cannot be bought for that zone; the page shows "Not yet" for it, rather than guessing.
 
-Shipping is charged at cost as its own line on the checkout, so GST/HST applies to it for Canadian addresses, as Canadian rules require.
+Shipping is charged at cost as its own line on the checkout, so that after a GST/HST registration the tax would apply to it for Canadian addresses, as Canadian rules require. No tax is charged today.
 
 ## 5. A Collection, from sealed to closed
 
@@ -117,26 +117,28 @@ A refund in Stripe (in full) marks the order Refunded, puts the piece (and its s
 
 When someone goes to Stripe's checkout, the piece (and size) is held for them for about thirty minutes, shown read only on the piece in the Studio ("Held during checkout"). If they pay, the hold becomes the sale; if they leave, it is released when Stripe reports the checkout expired, and a hold past its time never counts anyway. If the last one is held, the next buyer is told it is in someone's checkout and may come back. Sold counts and holds are written to the published piece: if you are editing a piece while it sells, publish your edit promptly, or it can overwrite the newer counts.
 
-## 11. Tax: Stripe Tax or the fixed rates (`TAX_MODE`)
+## 11. Tax (`TAX_MODE`)
 
-Two ways to charge GST/HST, chosen by `TAX_MODE` (Shop design round 3):
+**Today: no tax (`none`, the default).** Decided with Maninder's CPA: House of Singh Editions is sold by Maninder Singh, a sole proprietor and small supplier, so no GST/HST is charged. The piece page asks for no postal code; the checkout, receipts and emails carry no tax line and no GST/HST number; the terms say "No GST or HST is charged." The small supplier tracker (section 13) watches the limit.
 
-- **`fixed`** (Production for now): the piece page asks for the postal code; its province's fixed rate (created by `scripts/editions-tax-rates.ts`) goes on the piece and on shipping; the webhook marks an order "Check tax" if the shipping address is in another province. No extra fee.
-- **`stripe`** (previews): no postal code on the piece page. The Checkout Session has automatic tax turned on, prices exclusive of tax, the piece with Stripe's physical goods tax code (`txcd_99999999`) and shipping with the shipping tax code (`txcd_92010001`). Stripe works the tax out from the shipping address the buyer types at checkout, so there is no province to compare afterwards and no "Check tax". Stripe Tax charges only where you have a registration: with Canada's GST/HST registered, a Canadian address pays GST or HST, an address abroad pays none.
+Kept in the code for a future registration, two ways to charge GST/HST (Shop design round 3); everything below applies only then:
+
+- **`fixed`**: the piece page asks for the postal code; its province's fixed rate (created by `scripts/editions-tax-rates.ts`) goes on the piece and on shipping; the webhook marks an order "Check tax" if the shipping address is in another province. No extra fee.
+- **`stripe`**: no postal code on the piece page. The Checkout Session has automatic tax turned on, prices exclusive of tax, the piece with Stripe's physical goods tax code (`txcd_99999999`) and shipping with the shipping tax code (`txcd_92010001`). Stripe works the tax out from the shipping address the buyer types at checkout, so there is no province to compare afterwards and no "Check tax". Stripe Tax charges only where you have a registration: with Canada's GST/HST registered, a Canadian address pays GST or HST, an address abroad pays none.
 
 **What to do in Stripe, test mode (sandbox) first.** Every step is per mode: the sandbox and live mode each have their own tax settings.
 
 1. **Turn Stripe Tax on.** Dashboard, Settings, Tax (or More, Tax), and follow "Get started" / activate.
-2. **Origin address.** In Tax settings, the head office address of House of Singh Studios Inc. in Toronto. Stripe uses it as where you sell from.
+2. **Origin address.** In Tax settings, the business address in Toronto. Stripe uses it as where you sell from.
 3. **Defaults.** In Tax settings: default tax behaviour **Exclusive** (prices before tax, as the site shows them), and default product tax code **General, Tangible goods** (`txcd_99999999`). The site sends its own codes on each line, so these are a safety net.
-4. **Registrations.** Tax, Registrations, Add registration, **Canada**, the federal **GST/HST** registration, with its start date. This collects GST in the GST provinces and HST in the HST provinces, as today. Do **not** add Quebec (QST) or the provincial PSTs (British Columbia, Saskatchewan, Manitoba) unless House of Singh Studios Inc. is registered there; without them Stripe charges what the fixed rates charge today, GST/HST only. Stripe's monitoring page will show if sales elsewhere approach a threshold where registering becomes due.
-5. **Preview.** In Vercel, Preview: `TAX_MODE` is `stripe` by default on previews (set it explicitly to be clear), with the test key. Redeploy.
+4. **Registrations.** Tax, Registrations, Add registration, **Canada**, the federal **GST/HST** registration, with its start date. This collects GST in the GST provinces and HST in the HST provinces, as today. Do **not** add Quebec (QST) or the provincial PSTs (British Columbia, Saskatchewan, Manitoba) unless the seller is registered there; without them Stripe charges what the fixed rates charge today, GST/HST only. Stripe's monitoring page will show if sales elsewhere approach a threshold where registering becomes due.
+5. **Preview.** In Vercel, Preview: set `TAX_MODE` to `stripe`, with the test key. Redeploy.
 6. **Test purchase.** Card `4242 4242 4242 4242`. An Ontario address should show HST 13% on the piece and on shipping; an Alberta address GST 5%; a United States address no tax. The order appears in the Studio as usual, without "Check tax".
-7. **Live.** Repeat steps 1 to 4 in live mode (origin, defaults, the same GST/HST registration). Then, and only then, set `TAX_MODE` to `stripe` on Production and redeploy. Until then Production keeps `fixed`.
+7. **Live.** Repeat steps 1 to 4 in live mode (origin, defaults, the same GST/HST registration). Then, and only then, set `TAX_MODE` to `stripe` on Production and redeploy.
 
 **The fee.** Stripe Tax is charged per transaction on which it calculates tax: for Checkout, on Stripe's pay as you go pricing, about 0.5% of the transaction. Check the current rate for Canada on Stripe's Tax pricing page before switching live; test mode is free. The fixed rates cost nothing beyond Stripe's card fees.
 
-To go back at any time: set `TAX_MODE` to `fixed` and redeploy; the postal code returns on the piece page and the fixed rates apply again.
+To change at any time: set `TAX_MODE` (`none`, `fixed` or `stripe`) and redeploy.
 
 ## 12. Launching the sealed Shop (anticipation) on the live site
 
@@ -152,3 +154,21 @@ No payments: Production keeps `TAX_MODE` and its Stripe keys as they are, and in
 In anticipation: the footer links the Shop (in its Pages list; never the site menu); /editions is indexed and in the sitemap; For artists, the terms of sale and Questions are reachable; pieces, prices, the archive, collaborators, checkout, the thank you page, certificates and early access answer 404 or stay closed; a question with no answer (returns) is left out of the live site.
 
 **The share image** is `public/images/og-editions-collection-01.png` (1200 by 630, the card on the canvas), made from the page itself; a later Collection needs its own image, added to `SHARE_IMAGES` in `src/app/(site)/editions/page.tsx` (without one, the site's own share image is used).
+
+## 13. The small supplier tracker (private)
+
+No GST/HST is charged while Maninder, as a sole proprietor, stays a small supplier: taxable revenue of CA$30,000 or less over four consecutive calendar quarters, and in any single quarter. The tracker watches that, with an early warning.
+
+**Where.** Studio, House of Singh Editions, Small supplier tracker (a private record, `private.editions-small-supplier`, saved as typed with no Publish step).
+
+- **Quarters** (the first tab): the last eight calendar quarters, newest first. For each: the Shop's orders (piece plus shipping, every country, by the day paid in Toronto; refunded orders and test orders left out), the other revenue you entered, the quarter's total, and the four quarters ending with it. Amber past 80 percent of a threshold, red past it.
+- **Other revenue** (the second tab): add any other personal taxable revenue by quarter (for example photography or design work invoiced in your own name), written as `2026-Q4`, in Canadian dollars, with a note. Do not add the Shop's orders: they are counted automatically.
+
+**The emails.** The daily job (`/api/email/daily`, just after midnight UTC) adds the same sums and emails the Shop's own address (the address in `EMAIL_FROM_EDITIONS`) when:
+
+- the four quarters ending with the current one pass CA$20,000, and again when they pass CA$25,000 (each once; if the total falls back under, it can email again later);
+- any single quarter of the last eight passes CA$20,000 (once per quarter).
+
+The thresholds already emailed are kept on the record ("Thresholds already emailed"). The sums are in `src/lib/editions/smallSupplier.ts`, checked by `scripts/editions-test.ts`. This is a tracker, not tax advice: the thresholds are early warnings set with Maninder's CPA, below the CA$30,000 limit, and the CPA decides when to register.
+
+**After a schema change:** run `npx sanity@latest schema deploy` so the Studio shows the tracker.

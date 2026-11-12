@@ -42,6 +42,10 @@ export const PAGES = [
 const NOISE = [
   // Vercel's own scripts (Speed Insights) exist only on Vercel.
   /\/_vercel\//,
+  // Vercel's toolbar, which Vercel adds to previews (not part of the site,
+  // and never on the live site): its frame is refused by the site's
+  // security policy, as it should be.
+  /Framing 'https:\/\/vercel\.live\/'/,
 ];
 
 type Errors = { console: string[]; page: string[] };

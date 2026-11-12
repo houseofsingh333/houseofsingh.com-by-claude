@@ -16,7 +16,7 @@ export const CONSENT = {
 /** Who sends each kind, in full, as recorded with the consent. */
 const SENDER = {
   letters: "Maninder Singh at House of Singh, Toronto",
-  shop: "House of Singh Editions (House of Singh Studios Inc.), Toronto",
+  shop: "Maninder Singh, House of Singh Editions, Toronto",
 } as const;
 
 /** What is kept in Kit: the words shown, who sends, where, and when. */

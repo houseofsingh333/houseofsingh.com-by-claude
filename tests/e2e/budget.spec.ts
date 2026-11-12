@@ -21,7 +21,9 @@ for (const p of PAGES) {
     const kb = await page.evaluate(() =>
       Math.round(
         (performance.getEntriesByType("resource") as PerformanceResourceTiming[])
-          .filter((r) => new URL(r.name).origin === location.origin && (r.initiatorType === "script" || /\.js(\?|$)/.test(new URL(r.name).pathname)))
+          // The site's own scripts: not Vercel's (/_vercel/, Speed Insights,
+          // present only on Vercel), so a preview measures what the CI build does.
+          .filter((r) => new URL(r.name).origin === location.origin && !new URL(r.name).pathname.startsWith("/_vercel/") && (r.initiatorType === "script" || /\.js(\?|$)/.test(new URL(r.name).pathname)))
           .reduce((sum, r) => sum + (r.encodedBodySize || r.transferSize), 0) / 1024,
       ),
     );

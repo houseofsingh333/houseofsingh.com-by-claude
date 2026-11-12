@@ -5,12 +5,15 @@ import { drain, sanityOutbox } from "@/lib/email/outbox";
 import { resendSend } from "@/lib/email/resend";
 import { emailConfig } from "@/lib/email/config";
 import { retryPending, sanityPending } from "@/lib/email/signups";
+import { checkSmallSupplier } from "@/lib/editions/smallSupplierCheck";
 
 /**
  * The daily job (Vercel Cron, vercel.json, just after midnight UTC when
  * Resend's daily allowance resets): sends the emails that waited, order
  * and shipping first, oldest first; and tries Kit again for any sign up
- * kept while Kit could not be reached. Only Vercel's cron may call it
+ * kept while Kit could not be reached; and checks the small supplier
+ * tracker, emailing the Shop's own address when a threshold is newly
+ * passed (lib/editions/smallSupplierCheck.ts). Only Vercel's cron may call it
  * (Authorization: Bearer CRON_SECRET).
  */
 /** Compared in constant time, so the answer's timing says nothing about the secret (audit P7). */
@@ -30,5 +33,10 @@ export async function GET(request: Request) {
   const pending = sanityPending()!;
   const signups = emailConfig().kitKey ? await retryPending(pending) : { moved: 0, left: -1 };
   const emails = emailConfig().resendKey ? await drain(sanityOutbox(), resendSend) : { sent: 0, left: -1 };
-  return NextResponse.json({ signups, emails });
+  // After the waiting emails, so a threshold email takes no place from an order's.
+  const smallSupplier = await checkSmallSupplier(writeClient).catch((e: unknown) => {
+    console.error("Small supplier check failed:", e instanceof Error ? e.message : e);
+    return { error: true };
+  });
+  return NextResponse.json({ signups, emails, smallSupplier: "error" in smallSupplier ? "failed" : { sent: smallSupplier.sent } });
 }

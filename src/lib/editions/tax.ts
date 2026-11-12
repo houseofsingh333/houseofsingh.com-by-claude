@@ -1,8 +1,9 @@
 import { stripeGet } from "./stripe";
 
 /**
- * GST/HST, charged by House of Singh Studios Inc. (registered for GST/HST)
- * on orders shipped to an address in Canada, at the rate of the province
+ * TAX_MODE "fixed" only, kept for a future registration: no tax is charged
+ * today (the Shop is sold by Maninder Singh, a small supplier). With it,
+ * GST/HST on orders shipped to an address in Canada, at the rate of the province
  * or territory, as fixed tax rates (Stripe retired dynamic tax rates). The
  * rates live in Stripe, created once by scripts/editions-tax-rates.ts
  * (metadata app = hos-editions, province = ON and so on). The buyer gives a
