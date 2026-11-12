@@ -54,6 +54,7 @@ export default function ContactForm({ portrait, caption, copy }: Props) {
     hasDraft,
     submitting,
     submitError,
+    stepError,
     steps,
     currentStepDef,
     currentValue,
@@ -132,6 +133,7 @@ export default function ContactForm({ portrait, caption, copy }: Props) {
                   step={currentStepDef}
                   value={currentValue}
                   onChange={handleFieldChange}
+                  error={stepError}
                 />
               )}
             </div>

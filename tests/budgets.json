@@ -1,0 +1,26 @@
+{
+  "_about": "The agreed limits (tests/README.md). javascriptKB: script each page type loads before its load event, compressed, measured 12 Nov 2026 at 154 to 164 KB and set about 7 percent above. lighthouse: medians of three runs on the CI build; measured 12 Nov 2026 at mobile 87 to 99 (LCP up to 3.9 s, blocking up to 163 ms) and desktop 99 to 100 (LCP up to 0.93 s), with margins so normal variation never fails the check. Raise a limit only deliberately, saying why in the pull request.",
+  "javascriptKB": {
+    "home": 175,
+    "about": 170,
+    "projects": 175,
+    "project": 170,
+    "journal": 175,
+    "entry": 175,
+    "month": 175,
+    "contact": 170,
+    "shop": 170,
+    "artists": 170,
+    "shop-terms": 165,
+    "privacy": 165,
+    "terms": 165,
+    "unsubscribe": 165,
+    "not-found": 165
+  },
+  "lighthouse": {
+    "runs": 3,
+    "pages": ["/", "/about", "/projects", "/projects/zamana", "/journal"],
+    "mobile": { "performance": 80, "lcpMs": 4500, "tbtMs": 350, "cls": 0.05 },
+    "desktop": { "performance": 90, "lcpMs": 1500, "tbtMs": 150, "cls": 0.05 }
+  }
+}

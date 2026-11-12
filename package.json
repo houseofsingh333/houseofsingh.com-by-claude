@@ -9,7 +9,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "playwright test",
+    "test:build": "EDITIONS_MODE=anticipation next build",
+    "test:lighthouse": "node tests/lighthouse.mjs",
+    "test:report": "playwright show-report"
   },
   "dependencies": {
     "@portabletext/react": "^8.0.1",
@@ -22,10 +26,12 @@
     "sanity": "^5.31.2"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-core": "4.14.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
     "heic-decode": "^2.1.0",

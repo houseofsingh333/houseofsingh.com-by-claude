@@ -77,6 +77,8 @@ export default function ArtistsInvite({ words, href }: { words: string[]; href: 
   const duration = !still && roll.slide ? (roll.at === last ? LAST_SLIDE_MS : SLIDE_MS) : 0;
   const reel = (
     <span className="ed-roll" aria-hidden="true">
+      {/* A space for the words as read ("House of Singh you"); first in this
+          inline block, so it is never drawn. */}{" "}
       <span className="ed-roll-reel" style={{ transform: `translateY(${-at * 1.5}em)`, transitionDuration: `${duration}ms` }}>
         {[...list, list[0]].map((w, i) => (
           <span key={`${w}-${i}`}>{w}</span>
@@ -87,7 +89,7 @@ export default function ArtistsInvite({ words, href }: { words: string[]; href: 
 
   return (
     <>
-      <Link ref={lineRef} href={href} className="ed-invite-line" aria-label="Propose a collaboration">
+      <Link ref={lineRef} href={href} className="ed-invite-line" aria-label={`House of Singh × ${list[last]}, propose a collaboration`}>
         <span aria-hidden="true" className="ed-invite-words">
           House of Singh
           <DrawnTimes className="ed-invite-x" />
