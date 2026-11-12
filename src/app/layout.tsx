@@ -136,7 +136,8 @@ export default function RootLayout({
             class (and only when the visitor allows motion), so without
             JavaScript every reveal is simply visible; see "Scroll reveal" in
             styles/motion.css. It also marks loaded blur up photos (BlurUp.tsx)
-            and photographs ready to develop.
+            and photographs ready to develop, and gives photographs further
+            down a page their address when they are near (SanityImage).
             Harmless on routes outside the site, such as the Studio. */}
         <script
           dangerouslySetInnerHTML={{
@@ -154,12 +155,31 @@ export default function RootLayout({
               'var v=new WeakSet(),d=function(i){if(v.has(i)&&i.complete&&i.naturalWidth)i.setAttribute("data-developed","")},' +
               'o="IntersectionObserver"in window?new IntersectionObserver(function(s){s.forEach(function(e){if(e.isIntersecting){v.add(e.target);o.unobserve(e.target);d(e.target)}})},{rootMargin:"0px 0px -10% 0px"}):null,' +
               'w=function(n){if(!o||n.nodeType!==1)return;if(n.tagName==="IMG"){if(n.hasAttribute("data-develop"))o.observe(n)}else n.querySelectorAll("img[data-develop]").forEach(function(i){o.observe(i)})};' +
-              'new MutationObserver(function(r){r.forEach(function(x){x.addedNodes.forEach(w)})}).observe(document.documentElement,{childList:true,subtree:true});' +
+              // 5. Photographs further down a page wait (img[data-src], from
+              //    SanityImage): while the page loads, only one on screen is
+              //    given its address; once it has loaded and settled (half a
+              //    second, then a quiet moment, so the opening photograph has
+              //    been painted), any within a screen and a half (and a screen
+              //    to either side, in a horizontal strip). Printing releases them all. Without
+              //    IntersectionObserver they are released at once.
+              'var R=function(i){if(i.hasAttribute("src"))return;var s=i.getAttribute("data-srcset");if(s)i.setAttribute("srcset",s);i.setAttribute("src",i.getAttribute("data-src"))},' +
+              // (The sideways margin is for strips only: a margin on a scroll
+              //    box is measured against that box, and the page's own body is
+              //    one, so a vertical one would reach the whole page.)
+              'q=function(g,h){if(!("IntersectionObserver"in window))return null;var f=function(s,ob){s.forEach(function(e){if(e.isIntersecting){ob.unobserve(e.target);R(e.target)}})};try{return new IntersectionObserver(f,{rootMargin:g,scrollMargin:h})}catch(x){return new IntersectionObserver(f,{rootMargin:g})}},' +
+              'a=q("0px","0px"),b=null,' +
+              'y=function(i){if(i.hasAttribute("src"))return;var z=b||a;if(z)z.observe(i);else R(i)},' +
+              'W=function(n){if(n.nodeType!==1)return;if(n.tagName==="IMG"){if(n.hasAttribute("data-src"))y(n)}else n.querySelectorAll("img[data-src]").forEach(y)};' +
+              'addEventListener("load",function(){setTimeout(function(){(window.requestIdleCallback||setTimeout)(function(){b=q("150% 100%","0px 100%");document.querySelectorAll("img[data-src]:not([src])").forEach(function(i){if(a)a.unobserve(i);y(i)})},{timeout:1500})},500)});' +
+              'addEventListener("beforeprint",function(){document.querySelectorAll("img[data-src]").forEach(R)});' +
+              'new MutationObserver(function(r){r.forEach(function(x){x.addedNodes.forEach(function(n){w(n);W(n)})})}).observe(document.documentElement,{childList:true,subtree:true});' +
               'var m=function(e){var t=e.target;if(!t||t.tagName!=="IMG")return;if(t.hasAttribute("data-blurup"))t.setAttribute("data-loaded","");if(t.hasAttribute("data-develop"))d(t)};' +
               'document.addEventListener("load",m,true);document.addEventListener("error",m,true);' +
               // 3. Safety net: once the page has loaded, any blur up photo
               //    already complete is marked too, so none can stay hidden.
-              'addEventListener("load",function(){document.querySelectorAll("img[data-blurup]").forEach(function(i){if(i.complete)i.setAttribute("data-loaded","")})});',
+              //    (A waiting photograph, with no address yet, counts as complete
+              //    to the browser: it is left for its own load event.)
+              'addEventListener("load",function(){document.querySelectorAll("img[data-blurup][src]").forEach(function(i){if(i.complete)i.setAttribute("data-loaded","")})});',
           }}
         />
       </head>

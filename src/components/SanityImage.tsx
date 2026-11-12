@@ -1,6 +1,7 @@
 "use client";
 
-import Image from "next/image";
+import Image, { getImageProps as nextImageProps } from "next/image";
+import { useLayoutEffect, useRef } from "react";
 import BlurUp, { blurUpImgProps, objectPositionOf } from "@/components/BlurUp";
 import {
   getImageProps,
@@ -76,6 +77,15 @@ export default function SanityImage({
       })
     : undefined;
 
+  // A photograph further down the page waits (audit C1): its address is
+  // written as data-src and data-srcset, and the pre paint script in
+  // app/layout.tsx gives it to the browser when the photograph is near (on
+  // screen while the page loads; within a screen and a half after). The
+  // phone's own lazy loading started such photographs up to two screens
+  // ahead, competing with the opening photograph. Priority photographs, and
+  // photographs with their own reveal (develop false: plates, portraits,
+  // the menu, the Shop), load as before.
+  const deferred = develop && !priority;
   // Blur up: the tiny lqip preview under the photo, which dissolves in over
   // it on load (BlurUp.tsx). Replaces next/image's own blur placeholder,
   // which swapped instantly instead of dissolving.
@@ -91,6 +101,35 @@ export default function SanityImage({
   const preview = (
     <BlurUp lqip={lqip} position={objectPosition ?? objectPositionOf(className)} />
   );
+
+  if (deferred) {
+    const { props: p } = nextImageProps({
+      src: props.src,
+      alt: props.alt,
+      ...(fill ? { fill: true } : { width: props.width, height: props.height }),
+      sizes: sizes ?? props.sizes,
+      className,
+      style: fill && objectPosition ? { objectPosition } : undefined,
+      loader,
+    });
+    const img = <DeferredImg {...p} marks={marks} />;
+    if (fill) {
+      return (
+        <>
+          {preview}
+          {img}
+        </>
+      );
+    }
+    return lqip ? (
+      <span className="blurup-wrap">
+        {preview}
+        {img}
+      </span>
+    ) : (
+      img
+    );
+  }
 
   if (fill) {
     return (
@@ -134,5 +173,34 @@ export default function SanityImage({
     </span>
   ) : (
     img
+  );
+}
+
+type ImgProps = ReturnType<typeof nextImageProps>["props"];
+
+/**
+ * The waiting photograph: the browser's own img, with its address held in
+ * data-src and data-srcset until the pre paint script releases it. Without
+ * JavaScript the copy in noscript shows instead. When the photograph
+ * changes in place after it has been released (a new src), the new one is
+ * given to the browser at once, as next/image would.
+ */
+function DeferredImg({ src, srcSet, marks, ...rest }: ImgProps & { marks: Record<string, unknown> }) {
+  const ref = useRef<HTMLImageElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || !el.hasAttribute("src")) return;
+    if (srcSet && el.getAttribute("srcset") !== srcSet) el.srcset = srcSet;
+    if (src && el.getAttribute("src") !== src) el.src = src;
+  }, [src, srcSet]);
+  return (
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+      <img ref={ref} {...rest} data-src={src} data-srcset={srcSet} {...marks} suppressHydrationWarning />
+      <noscript>
+        {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
+        <img {...rest} src={src} srcSet={srcSet} />
+      </noscript>
+    </>
   );
 }
