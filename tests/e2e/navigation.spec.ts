@@ -23,7 +23,8 @@ test("the menu opens a page at its top, Back returns to where it was left, Forwa
   await openMenuAndGo(page, "/about");
   await page.waitForURL("**/about");
   await expect(page.locator("h1").first()).toContainText(/About/);
-  expect(atTop(await scrollSamples(page)), "About opens at its top, and stays there").toBe(true);
+  const aboutAt = await scrollSamples(page);
+  expect(atTop(aboutAt), `About opens at its top, and stays there (${aboutAt.join(",")})`).toBe(true);
 
   await scrollTo(page, 1500);
   await page.waitForTimeout(300);

@@ -307,3 +307,35 @@ test.describe("unsubscribe", () => {
     await expect(page.locator("h1")).toHaveText("You are unsubscribed.");
   });
 });
+
+test.describe("photographs further down a page", () => {
+  test("wait until near, then all arrive as the reader goes down", async ({ page }) => {
+    let loaded = false;
+    page.on("load", () => (loaded = true));
+    const early: string[] = [];
+    page.on("request", (r) => {
+      if (!loaded && r.resourceType() === "image" && /cdn\.sanity\.io/.test(r.url()) && !/[?&]w=(16|32|48|64|96)\b/.test(r.url())) early.push(r.url());
+    });
+    await open(page, "/projects/zamana");
+    // Before the page had loaded: the photographs on screen only (the
+    // opening photograph and at most the next, not the gallery below).
+    expect(early.length, `photographs requested before the page loaded: ${early.length}`).toBeLessThanOrEqual(2);
+    // On a phone the gallery is further than a screen and a half: it waits.
+    // (On a desktop the whole page is near once it has loaded.)
+    if (test.info().project.name === "phone") {
+      expect(await page.locator("img[data-src]:not([src])").count(), "photographs further down are waiting").toBeGreaterThan(0);
+    }
+    // Every waiting photograph keeps its preview until its own photograph is in.
+    expect(await page.locator("img[data-src]:not([src])[data-loaded]").count()).toBe(0);
+    // Read down the page: each one arrives, and its preview dissolves.
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.documentElement.scrollHeight; y += 300) {
+        window.scrollTo({ top: y, behavior: "instant" });
+        await new Promise((r) => setTimeout(r, 120));
+      }
+    });
+    await expect
+      .poll(() => page.evaluate(() => [...document.querySelectorAll<HTMLImageElement>("img[data-src]")].filter((i) => i.offsetParent && i.getBoundingClientRect().left < innerWidth && !(i.complete && i.naturalWidth && i.hasAttribute("data-loaded"))).length), { timeout: 15_000 })
+      .toBe(0);
+  });
+});

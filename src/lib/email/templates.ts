@@ -52,7 +52,7 @@ function render(blocks: Block[], footer: string): string {
     .join("\n");
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"><title></title>
-<style>@font-face{font-family:'Instrument Sans';font-weight:400;src:url(${assetUrl}/fonts/instrument-sans-latin-400-normal.woff2) format('woff2')}@font-face{font-family:'Instrument Sans';font-weight:500;src:url(${assetUrl}/fonts/instrument-sans-latin-500-normal.woff2) format('woff2')}@font-face{font-family:'Playfair Display';font-weight:400;src:url(${assetUrl}/fonts/playfair-display-latin-wght-normal.woff2) format('woff2')}</style>
+<style>@font-face{font-family:'Instrument Sans';font-weight:400;src:url(${assetUrl}/fonts/instrument-sans-latin-400-normal.woff2) format('woff2')}@font-face{font-family:'Instrument Sans';font-weight:500;src:url(${assetUrl}/fonts/instrument-sans-latin-500-normal.woff2) format('woff2')}@font-face{font-family:'Playfair Display';font-weight:400;src:url(${assetUrl}/fonts/playfair-display-latin-400-normal.woff2) format('woff2')}</style>
 </head>
 <body style="margin:0;padding:0;background:${C.canvas}">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.canvas}"><tr><td align="center" style="padding:40px 20px">
