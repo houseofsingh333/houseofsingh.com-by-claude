@@ -59,7 +59,7 @@ export default function GlobalError({
           }
           @font-face {
             font-family: "Playfair Display";
-            src: url("/fonts/playfair-display-latin-wght-normal.woff2") format("woff2");
+            src: url("/fonts/playfair-display-latin-400-normal.woff2") format("woff2");
             font-weight: 400;
             font-display: swap;
           }

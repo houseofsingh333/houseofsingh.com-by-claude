@@ -23,14 +23,15 @@ const SEO_DEFAULTS = {
   sameAs: ["https://www.instagram.com/houseofsingh"],
 };
 
-/* Playfair regular only, at 400, the one display weight (the variable file
-   is declared at 400, so no lighter or heavier cut can appear). The italic
+/* Playfair regular only, at 400, the one display weight: a static cut at
+   400 made from the variable file (21 KB instead of 38 KB; the glyphs at
+   400 are the same), so no lighter or heavier weight can appear. The italic
    is used for one line on the whole site (the About quote), so it is
    declared in styles/about.css and loads on the About page alone. */
 const playfair = localFont({
   src: [
     {
-      path: "../../public/fonts/playfair-display-latin-wght-normal.woff2",
+      path: "../../public/fonts/playfair-display-latin-400-normal.woff2",
       weight: "400",
       style: "normal",
     },
