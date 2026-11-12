@@ -82,6 +82,7 @@ When a change is meant to alter a page's look, the screenshot check fails and sh
 1. On the pull request, open the failed **ci** run. Then open **Artifacts**, then **playwright-report**, and open `index.html`. Each changed page shows the approved screenshot, the new one and the difference between them.
 2. If the change is the one you wanted, add the label **approve-visuals** to the pull request (the gear beside Labels).
 3. A few minutes later, new approved screenshots are committed to the pull request, the label comes off, and the checks run again, this time green.
+4. The new screenshots were committed by GitHub's own bot, so the repository's merge rule asks for one person's approval of that commit. Open **Files changed**, then **Review changes**, choose **Approve** and submit. Then merge as usual.
 
 Screenshots are made and compared on Linux only, in CI, because a Mac draws type very slightly differently. That is why they are skipped when you run the checks on your Mac.
 
