@@ -149,10 +149,12 @@ for (const [label, from, to] of [
     const link = page.locator(`${to}:visible`).last();
     await link.evaluate((a) => a.scrollIntoView({ block: "center", behavior: "instant" }));
     await page.waitForTimeout(400);
-    const before = page.url();
+    // The destination's own address: the Journal's reading room updates the
+    // address by itself as entries pass, so "the address changed" is not enough.
+    const dest = new URL((await link.getAttribute("href"))!, page.url()).pathname;
     const change = await watchChange(page, async () => {
       await link.evaluate((a: HTMLElement) => a.click());
-      await page.waitForURL((u) => u.href !== before);
+      await page.waitForURL((u) => u.pathname === dest);
     });
     // The page did change, through the fade (not at once).
     expect(change.frames.length, "the page change was seen").toBeGreaterThan(0);
