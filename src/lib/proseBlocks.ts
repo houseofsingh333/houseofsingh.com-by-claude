@@ -59,7 +59,7 @@ function paragraphsOf(children: Child[]): Child[][] {
 }
 
 /** All capitals become sentence case: headings are never all caps. */
-export function headingCase(text: string): string {
+function headingCase(text: string): string {
   const t = text.trim();
   if (!/[A-Z]/.test(t) || t !== t.toUpperCase()) return t;
   return (t.charAt(0) + t.slice(1).toLowerCase()).replace(/\bi\b/g, "I");

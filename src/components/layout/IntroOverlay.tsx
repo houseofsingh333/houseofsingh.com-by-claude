@@ -109,7 +109,7 @@ export default function IntroOverlay({
 }) {
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-white"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-background"
       style={{
         opacity: fading ? 0 : 1,
         transition: "opacity 500ms ease-in-out",
@@ -129,17 +129,20 @@ export default function IntroOverlay({
           width={1280}
           height={720}
           className="w-full h-auto aspect-video object-cover"
+          // The animation is drawn on white: multiplied onto the canvas, its
+          // white becomes the canvas colour and the logo is unchanged (audit S5).
+          style={{ mixBlendMode: "multiply" }}
         >
           <source
             src="/images/HOS_Logo_Animation.mp4"
             type="video/mp4"
           />
         </video>
-        {/* Edge feather mask — blends video edges into white overlay */}
+        {/* Edge feather mask: blends the video's edges into the canvas */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            boxShadow: "inset 0 0 40px 20px white",
+            boxShadow: "inset 0 0 40px 20px var(--background)",
           }}
         />
       </div>

@@ -40,3 +40,10 @@ export function projectFallbackDescription(title: string): string {
   if (full.length <= 155) return full.length >= 120 ? full : `${full} Based in Toronto.`;
   return `${title}, a project from House of Singh by Maninder Singh in Toronto.`;
 }
+
+/** Pages kept out of search engines still say what they are, under their own address (audit S2). */
+export const ARTISTS_DESCRIPTION =
+  "For artists: propose a collaboration with House of Singh Editions. How it works, and a short form to send your work and an idea.";
+export const EDITIONS_TERMS_DESCRIPTION =
+  "The terms of sale for House of Singh Editions: who sells the pieces, prices and tax, shipping and duties, returns and how to reach us.";
+export const UNSUBSCRIBE_DESCRIPTION = "Stop receiving emails from House of Singh.";

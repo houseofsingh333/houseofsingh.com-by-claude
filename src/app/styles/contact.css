@@ -1,28 +1,5 @@
-/* Contact: the Instagram plate, form inputs, buttons and intent options.
+/* Contact: form inputs, buttons and intent options.
    Imported by globals.css, in the order listed there. */
-
-/* ——— Instagram photo plate crossfade ——— */
-
-/* One crossfade layer per photo (with its blur up preview inside). */
-.instagram-plate-layer {
-  position: absolute;
-  inset: 0;
-  transition: opacity var(--plate-fade-duration, 1.2s) var(--ease-slow);
-}
-
-.instagram-plate-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .instagram-plate-layer {
-    transition: none;
-  }
-}
 
 /* ——— Contact form — editorial input refinements ——— */
 
@@ -35,6 +12,8 @@
 
 .contact-input:focus {
   border-bottom-color: var(--foreground);
+  /* A second pixel beneath the hairline: a 2px line in focus, nothing moves (audit P10). */
+  box-shadow: 0 1px 0 0 var(--foreground);
   outline: none;
 }
 
@@ -78,7 +57,6 @@
 .contact-option {
   transition: background-color var(--dur-hover) var(--ease-soft-out), color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
 }
-
 
 /* ——— Intent options — editorial divider-line interaction ——— */
 
@@ -128,7 +106,6 @@
   color: var(--foreground);
 }
 
-
 /* Keyboard focus — calm underline, no harsh outline */
 .contact-intent-option:focus-visible {
   outline: none;
@@ -168,7 +145,6 @@
 @media (prefers-reduced-motion: reduce) {
   .contact-input,
   .contact-btn,
-  .contact-btn-arrow,
   .contact-option,
   .contact-intent-option,
   .contact-intent-option::after {

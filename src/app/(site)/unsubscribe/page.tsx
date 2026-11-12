@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { UNSUBSCRIBE_DESCRIPTION } from "@/lib/pageDescriptions";
 import Link from "next/link";
 import { OutlineButton } from "@/components/OutlineCta";
 import { readUnsubscribeToken } from "@/lib/email/unsubscribe";
 
 export const metadata: Metadata = {
   title: "Unsubscribe",
+  description: UNSUBSCRIBE_DESCRIPTION,
+  alternates: { canonical: "/unsubscribe" },
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
 };
 

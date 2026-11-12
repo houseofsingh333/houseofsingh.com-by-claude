@@ -128,6 +128,9 @@ export default function RootLayout({
     // header appeared over the old page while it was still fading.
     <html lang="en-CA" className={`${playfair.variable} ${instrument.variable}`} style={{ viewTransitionName: "root" }} suppressHydrationWarning>
       <head>
+        {/* The photographs come from Sanity's image CDN: connect to it at
+            once, so the opening photograph is not kept waiting (audit M1). */}
+        <link rel="preconnect" href="https://cdn.sanity.io" />
         {/* Pre paint script. Scroll reveals start hidden only under the "js"
             class (and only when the visitor allows motion), so without
             JavaScript every reveal is simply visible; see "Scroll reveal" in

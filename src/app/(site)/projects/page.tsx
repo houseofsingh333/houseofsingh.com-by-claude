@@ -1,6 +1,7 @@
 import type { Metadata, ResolvingMetadata } from "next";
+import { pagePhoto } from "@/lib/pagePhotos";
 import { fullTitle } from "@/lib/page-title";
-import { shareCard } from "@/lib/share-metadata";
+import { shareCard, withSharePhoto } from "@/lib/share-metadata";
 import ProjectsMonograph from "@/components/projects/monograph/ProjectsMonograph";
 import { PROJECTS_DESCRIPTION, PROJECTS_TITLE } from "@/lib/pageDescriptions";
 import JsonLd from "@/components/JsonLd";
@@ -20,7 +21,7 @@ export async function generateMetadata(
     alternates: {
       canonical: "/projects",
     },
-    ...(await shareCard(parent, fullTitle(TITLE), DESCRIPTION)),
+    ...withSharePhoto(await shareCard(parent, fullTitle(TITLE), DESCRIPTION), await pagePhoto("projects"), TITLE),
   };
 }
 

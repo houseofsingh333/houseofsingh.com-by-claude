@@ -234,6 +234,9 @@ export default function AtAGlance({ projects, filter, reduced, onOpen, arrival, 
               <span className="mono-card-caption">
                 <span className="mono-card-title">{p.title}</span>
                 {p.categories.length > 0 && <span className="mono-card-meta">{p.categories.join(", ")}</span>}
+                {/* Read only without JavaScript (crawlers, reading modes): the
+                    short description One by one shows (audit P5). */}
+                {p.excerpt && <span className="mono-card-excerpt">{p.excerpt}</span>}
               </span>
             </Link>
           </li>

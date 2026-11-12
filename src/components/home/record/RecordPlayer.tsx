@@ -15,7 +15,7 @@ const API_SRC = "https://open.spotify.com/embed/iframe-api/v1";
  */
 const API_TIMEOUT_MS = 12000;
 /** The compact Spotify player; the placeholder matches it, so nothing shifts. */
-export const PLAYER_HEIGHT = 152;
+const PLAYER_HEIGHT = 152;
 /** After a pause the record stops turning, then waits this long before sliding back to its peek. */
 const SETTLE_MS = 2000;
 /** The arrival (record to its peek) plays once a visit. */

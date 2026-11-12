@@ -424,7 +424,7 @@ function imageObject(image: SanityImageAsset): Json {
  * shows them: the hero (lib/projectHero.ts), the Photographs, then the
  * images in its content sections. Decorative images and repeats are left out.
  */
-export function projectImages(project: ProjectDetail, hero?: SanityImageAsset | null): SanityImageAsset[] {
+function projectImages(project: ProjectDetail, hero?: SanityImageAsset | null): SanityImageAsset[] {
   const out: SanityImageAsset[] = [];
   const seen = new Set<string>();
   const add = (image?: SanityImageAsset | null) => {

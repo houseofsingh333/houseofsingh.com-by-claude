@@ -54,13 +54,3 @@ export function objectPositionOf(className?: string): string | undefined {
   return named ? named[1] : undefined;
 }
 
-/**
- * Marks a content photograph to develop like a print when first in view
- * (see "Photographs that develop" in styles/motion.css). SanityImage sets it
- * itself; images rendered with next/image directly spread this.
- */
-export const developImgProps = {
-  "data-develop": "",
-  // The pre paint script adds data-developed before React may hydrate.
-  suppressHydrationWarning: true,
-} as const;

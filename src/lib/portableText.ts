@@ -30,7 +30,7 @@ export function splitFirstSentence(text: string): { first: string; rest: string 
 }
 
 /** A text split into sentences (each keeps its closing mark and quotes). */
-export function sentences(text: string): string[] {
+function sentences(text: string): string[] {
   return (text.match(/[^.!?]+(?:[.!?]+["”’)]*|$)/g) ?? [])
     .map((s) => s.trim())
     .filter(Boolean);

@@ -126,21 +126,6 @@ body:has(.ed) .footer-grid {
   justify-content: space-between;
   gap: 40px;
 }
-/* The way down to the Collection: its label over a brass hairline. */
-.ed-cue {
-  grid-column: 1 / -1;
-  justify-self: start;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  color: var(--muted-foreground);
-}
-.ed-cue-line {
-  width: 1px;
-  height: 40px;
-  background: var(--accent);
-}
 
 /* ——— Notify me: the footer's newsletter line, worded, on the canvas ——— */
 
@@ -591,57 +576,8 @@ body:has(.ed) .footer-grid {
   margin-top: 10px;
   border-top: 1px solid var(--border);
 }
-.ed-fold {
-  border-bottom: 1px solid var(--border);
-}
-.ed-fold summary {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 0;
-  font-size: var(--type-small);
-  line-height: 1.5;
-  color: var(--foreground);
-  cursor: pointer;
-  list-style: none;
-}
-.ed-fold summary::-webkit-details-marker {
-  display: none;
-}
-.ed-fold-mark {
-  position: relative;
-  flex: none;
-  width: 11px;
-  height: 11px;
-}
-.ed-fold-mark::before,
-.ed-fold-mark::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 5px;
-  width: 11px;
-  height: 1px;
-  background: var(--muted-foreground);
-  transition: transform var(--dur-hover) var(--ease-soft-out);
-}
-.ed-fold-mark::after {
-  transform: rotate(90deg);
-}
-.ed-fold[open] .ed-fold-mark::after {
-  transform: rotate(0deg);
-}
-.ed-fold-body {
-  padding: 0 0 18px;
-  font-size: var(--type-small);
-  line-height: 1.65;
-  color: var(--foreground);
-  white-space: pre-line;
-}
+
 @media (prefers-reduced-motion: reduce) {
-  .ed-fold-mark::before,
-  .ed-fold-mark::after,
   .ed-size,
   .ed-zone {
     transition: none;
@@ -867,6 +803,7 @@ a.ed-spine:focus-visible {
 .ed-field textarea:focus-visible {
   outline: none;
   border-bottom-color: var(--foreground);
+  box-shadow: 0 1px 0 0 var(--foreground); /* 2px in focus (audit P10) */
 }
 .ed-artists-list {
   display: flex;
@@ -1082,6 +1019,7 @@ a.ed-spine:focus-visible {
 .ed-postal input:focus-visible {
   outline: none;
   border-bottom-color: var(--foreground);
+  box-shadow: 0 1px 0 0 var(--foreground); /* 2px in focus (audit P10) */
 }
 @media (prefers-reduced-motion: reduce) {
   .ed-postal input {
@@ -1986,7 +1924,6 @@ a.ed-spine:focus-visible {
   color: var(--ed-seal-ink);
 }
 
-
 /* ═══ Shop design round 3 (approved on the canvas) ═══ */
 
 .ed {
@@ -2383,4 +2320,13 @@ a.ed-spine:focus-visible {
 /* A long "Notify me of …" beside a sold out piece may wrap on a phone. */
 .ed-buy-closed .text-link {
   white-space: normal;
+}
+
+/* The opening label breaks only at its "·", and only where it is wider
+   than the column (narrow phones); elsewhere it stays on one line (audit M2). */
+.ed-open2-eyebrow {
+  white-space: normal;
+}
+.ed-open2-eyebrow-part {
+  white-space: nowrap;
 }

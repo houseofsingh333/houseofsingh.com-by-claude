@@ -19,7 +19,7 @@ export type ConsentKind = "letters" | "shop";
 
 const FIELD_LABELS: Record<ConsentKind, string> = { letters: "Consent, letters", shop: "Consent, Shop" };
 
-export class KitError extends Error {
+class KitError extends Error {
   constructor(message: string, public status: number) {
     super(message);
   }
@@ -122,5 +122,3 @@ export async function kitUnsubscribe(email: string): Promise<void> {
   await kit("POST", `/subscribers/${person.id}/unsubscribe`, {});
 }
 
-/** Kit is set up (a key is present). */
-export const kitConfigured = () => Boolean(emailConfig().kitKey);

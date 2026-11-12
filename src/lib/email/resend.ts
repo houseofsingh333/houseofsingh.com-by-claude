@@ -18,7 +18,7 @@ export type Email = {
   headers?: Record<string, string>;
 };
 
-export class ResendError extends Error {
+class ResendError extends Error {
   constructor(message: string, public status: number) {
     super(message);
   }
@@ -51,4 +51,3 @@ export async function resendSend(email: Email): Promise<string> {
   return data.id;
 }
 
-export const resendConfigured = () => Boolean(emailConfig().resendKey);

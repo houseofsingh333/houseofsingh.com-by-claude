@@ -1,6 +1,7 @@
 import type { Metadata, ResolvingMetadata } from "next";
+import { pagePhoto } from "@/lib/pagePhotos";
 import { fullTitle } from "@/lib/page-title";
-import { shareCard } from "@/lib/share-metadata";
+import { shareCard, withSharePhoto } from "@/lib/share-metadata";
 import JournalPage from "@/components/journal/room/JournalPage";
 import { JOURNAL_DESCRIPTION, JOURNAL_TITLE } from "@/lib/pageDescriptions";
 import JsonLd from "@/components/JsonLd";
@@ -20,7 +21,7 @@ export async function generateMetadata(
     alternates: {
       canonical: "/journal",
     },
-    ...(await shareCard(parent, fullTitle(JOURNAL_TITLE), JOURNAL_DESCRIPTION)),
+    ...withSharePhoto(await shareCard(parent, fullTitle(JOURNAL_TITLE), JOURNAL_DESCRIPTION), await pagePhoto("journal"), JOURNAL_TITLE),
   };
 }
 

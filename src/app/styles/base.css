@@ -61,12 +61,6 @@ dd {
   padding-top: 300px;
 }
 
-/* Projects on phones: the crest ends near 110px, so 200px leaves calm air
-   without the long empty stretch above the title. */
-.page-top-offset-tight {
-  padding-top: 200px;
-}
-
 @media (min-width: 768px) {
   .page-top-offset {
     padding-top: 320px;
@@ -88,23 +82,10 @@ dd {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .editorial-slide-up,
-  /* Tailwind utilities built from the --animate-* tokens above: the About
-     quote (animate-editorial-fade-in), the journal grid and the journal
-     hover preview (animate-fade-in). Content simply appears. */
-  .animate-editorial-fade-in,
-  .animate-fade-in {
+  .editorial-slide-up {
     animation: none;
     opacity: 1;
     transform: none;
   }
 }
 
-/* Hide scrollbar for timeline scrubber */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}

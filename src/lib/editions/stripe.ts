@@ -45,7 +45,7 @@ export function formEncode(params: Params, prefix = ""): string[] {
   return out;
 }
 
-export class StripeError extends Error {
+class StripeError extends Error {
   constructor(
     message: string,
     public status: number,

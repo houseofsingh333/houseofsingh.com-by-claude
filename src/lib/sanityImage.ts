@@ -245,7 +245,7 @@ export function getImageProps(
   const baseUrl = image.url;
   const largest = profile.widths[profile.widths.length - 1];
 
-  // For Sanity CDN images the `sanityLoader` applies every transform (width,
+  // For Sanity CDN images the loader (makeSanityLoader) applies every transform (width,
   // quality, format, focal point). Passing an already-transformed URL here
   // made next/image request the bare asset as well as the loader's variants —
   // the same image downloaded twice, once unoptimised. Hand the loader the
@@ -306,20 +306,4 @@ export function makeSanityLoader(opts: {
   };
 }
 
-/**
- * Next.js Image loader for Sanity CDN images.
- * Use as `loader={sanityLoader}` on `<Image>` when src is a Sanity CDN URL.
- */
-export function sanityLoader({
-  src,
-  width,
-  quality,
-}: {
-  src: string;
-  width: number;
-  quality?: number;
-}): string {
-  if (!isSanityCdnUrl(src)) return src;
-  return buildUrl(src, width, quality || 75, "crop");
-}
 

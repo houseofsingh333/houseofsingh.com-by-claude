@@ -6,7 +6,7 @@
  *
  * Kept in a plain module (no imports) so the Sanity schema can share it.
  */
-export const SHOP_COLOURS = {
+const SHOP_COLOURS = {
   saffron: { name: "Saffron", square: "#E6CFA4", ink: "#3A2E1F", quiet: "#5E4C34" },
   indigo: { name: "Indigo", square: "#3E4A5C", ink: "#F3EFE9", quiet: "#C9CED6" },
   olive: { name: "Olive", square: "#8A8B6A", ink: "#141410", quiet: "#1F1E16" },

@@ -41,7 +41,7 @@ export default function PracticeReveal({
       {mark}
       <div {...revealProps({ revealed, rise: false })}>
         {/* eslint-disable-next-line @next/next/no-img-element -- a logo at a fixed size: an SVG, or a Sanity image asked for at that size. */}
-        <img {...logoSource(logo)} alt="House of Singh" width={260} height={260} className="w-[200px] md:w-[260px] h-auto" />
+        <img {...logoSource(logo)} alt="House of Singh" width={260} height={260} loading="lazy" decoding="async" className="w-[200px] md:w-[260px] h-auto" />
       </div>
       <div
         className="about-practice-text max-w-[640px] text-body-l leading-[1.7] text-foreground"

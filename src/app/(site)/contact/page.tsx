@@ -1,10 +1,11 @@
 import type { Metadata, ResolvingMetadata } from "next";
+import { pagePhoto } from "@/lib/pagePhotos";
 import ContactForm from "@/components/contact/ContactForm";
 import { sanityFetch } from "@/sanity/fetch";
 import { contactPageQuery } from "@/sanity/queries";
 import type { SanityImage, Seo } from "@/lib/types";
 import { fullTitle, pageTitle } from "@/lib/page-title";
-import { shareCard } from "@/lib/share-metadata";
+import { shareCard, withSharePhoto } from "@/lib/share-metadata";
 import { resolveContactFormCopy, type ContactFormCopyInput } from "@/lib/contact-form-data";
 
 type ContactPageData = {
@@ -41,7 +42,7 @@ export async function generateMetadata(
       canonical: data?.seo?.canonicalUrl || "/contact",
     },
     ...(noIndex ? { robots: { index: false, follow: true } } : {}),
-    ...(await shareCard(parent, fullTitle(rawTitle), description)),
+    ...withSharePhoto(await shareCard(parent, fullTitle(rawTitle), description), await pagePhoto("contact"), "Maninder Singh"),
   };
 }
 

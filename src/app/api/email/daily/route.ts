@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { writeClient } from "@/sanity/writeClient";
 import { drain, sanityOutbox } from "@/lib/email/outbox";
@@ -12,9 +13,16 @@ import { retryPending, sanityPending } from "@/lib/email/signups";
  * kept while Kit could not be reached. Only Vercel's cron may call it
  * (Authorization: Bearer CRON_SECRET).
  */
+/** Compared in constant time, so the answer's timing says nothing about the secret (audit P7). */
+function sameSecret(given: string, wanted: string): boolean {
+  const a = Buffer.from(given);
+  const b = Buffer.from(wanted);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;
-  if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
+  if (!secret || !sameSecret(request.headers.get("authorization") ?? "", `Bearer ${secret}`)) {
     return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   }
   if (!writeClient) return NextResponse.json({ error: "SANITY_API_TOKEN is not set" }, { status: 500 });

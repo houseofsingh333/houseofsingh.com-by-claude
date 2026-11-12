@@ -199,7 +199,7 @@ export type CopyKey = (typeof SITE_COPY_FIELDS)[number]["name"];
 export type SiteCopy = Record<CopyKey, string>;
 
 /** Today's text for every field. */
-export const DEFAULT_COPY = Object.fromEntries(
+const DEFAULT_COPY = Object.fromEntries(
   SITE_COPY_FIELDS.map((f) => [f.name, f.text]),
 ) as SiteCopy;
 

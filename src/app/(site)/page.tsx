@@ -35,6 +35,9 @@ import { devPlaceholder } from "@/lib/placeholders";
 import JsonLd from "@/components/JsonLd";
 import { buildProfilePageJsonLd } from "@/lib/structured-data";
 import { parseSanityDate } from "@/lib/dates";
+import type { Metadata, ResolvingMetadata } from "next";
+import { sharePhotoOnly } from "@/lib/share-metadata";
+import { pagePhoto } from "@/lib/pagePhotos";
 
 type SanityHomepageProject = {
   _id: string;
@@ -51,6 +54,11 @@ function latestJournal(entries: JournalEntry[]): JournalEntry[] {
   return [...entries]
     .sort((a, b) => parseSanityDate(b.date).getTime() - parseSanityDate(a.date).getTime())
     .slice(0, 6);
+}
+
+/** The home page keeps the site's title and description; its share image is the first hero slide (audit P1). */
+export async function generateMetadata(_props: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  return sharePhotoOnly(parent, await pagePhoto("home"), "House of Singh");
 }
 
 export default async function HomePage() {

@@ -95,11 +95,6 @@ export function formatEntryDate(value: string | null | undefined): string {
   return format(value, "en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
 
-/** "15/07/2025": the home page journal list on desktop. */
-export function formatNumericDate(value: string | null | undefined): string {
-  return format(value, "en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
-}
-
 /** "July 2025": Featured On rows. Null when there is no valid date. */
 export function formatMonthYear(value: string | null | undefined): string | null {
   return toValidDate(value)
@@ -107,22 +102,11 @@ export function formatMonthYear(value: string | null | undefined): string | null
     : null;
 }
 
-/** "Jul 2025": the home page journal cards on phone and tablet. */
-export function formatShortMonthYear(value: string | null | undefined): string {
-  return format(value, "en-US", { month: "short", year: "numeric" });
-}
-
 /** "15": the day of the month, for the home page journal cards. */
 export function formatDayOfMonth(value: string | null | undefined): string {
   const d = toValidDate(value);
   return d ? d.getDate().toString() : (value ?? "");
 }
-
-/** Short month names, January first, for the journal month filter. */
-export const MONTH_SHORT_LABELS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-] as const;
 
 /**
  * A Sanity date as an ISO 8601 timestamp for structured data, or undefined

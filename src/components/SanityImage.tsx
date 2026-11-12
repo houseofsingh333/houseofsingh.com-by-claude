@@ -102,6 +102,7 @@ export default function SanityImage({
           fill
           sizes={sizes ?? props.sizes}
           priority={priority}
+          fetchPriority={priority ? "high" : undefined}
           className={className}
           style={objectPosition ? { objectPosition } : undefined}
           loader={loader}
@@ -119,6 +120,7 @@ export default function SanityImage({
       height={props.height}
       sizes={sizes ?? props.sizes}
       priority={priority}
+      fetchPriority={priority ? "high" : undefined}
       className={className}
       loader={loader}
       {...marks}

@@ -108,6 +108,19 @@ export default function NavOverlay({
     };
   }, [isOpen]);
 
+  // Going to another page: the menu goes at once (no slide), so the page
+  // change shows only the page fading out (audit P9, approved 12 Nov). The
+  // mark lasts until the page change has started, then is removed.
+  const leaveFor = (e: React.MouseEvent<HTMLAnchorElement>, here: boolean) => {
+    const plain = e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+    if (plain && !here) {
+      const html = document.documentElement;
+      html.setAttribute("data-menu-leaving", "");
+      window.setTimeout(() => html.removeAttribute("data-menu-leaving"), 1500);
+    }
+    onClose();
+  };
+
   // The page pointed at or focused; the current page until then (and again
   // on every opening).
   const [hovered, setHovered] = useState<number | null>(null);
@@ -179,7 +192,7 @@ export default function NavOverlay({
                 <Link
                   ref={i === Math.max(0, current) ? firstLinkRef : undefined}
                   href={item.href}
-                  onClick={onClose}
+                  onClick={(e) => leaveFor(e, i === current)}
                   onMouseEnter={() => setHovered(i)}
                   onFocus={() => setHovered(i)}
                   aria-current={i === current ? "page" : undefined}
