@@ -203,6 +203,8 @@ Always leave generous clear space around the logo in any form. As a rule, keep c
 ### 3.6 The site icon
 The favicon and app icons (approved 12 Nov) are the crest's lion alone: the crest clipped to the lion's shield and cropped to the lion, its lines in charcoal `#221F1C` at their original weight on the canvas `#F9F7F5`. One source, `scripts/favicons.mjs`, makes every size (the browser icon at 16, 32 and 48, the 32 PNG, the 180 Apple touch icon, and 192 and 512 for the web app manifest). Change the icon there and run it again; never edit the PNGs by hand.
 
+The share image (approved 12 Nov), what a link to the site shows when it is shared, is the crest's emblem alone: the eagle, the lion's shield, the horse and the elephant, without the HOUSE OF SINGH wordmark and without "Estd." and "MMXIV", its lines in charcoal `#221F1C` on the canvas `#F9F7F5`, centred on 1200 by 630 at 480 wide, so it stays whole in the square centre crop WhatsApp shows (75px clear either side). It is Home's share image and every page's without one of its own; About, Projects, each project, Journal, each entry, a month, Contact and the Shop keep their photograph or card. One source, `scripts/share-image.mjs`, makes `src/app/opengraph-image.png` and `twitter-image.png` and checks the square crop; change it there and run it again.
+
 ---
 
 ## 4. UI and UX Guidelines

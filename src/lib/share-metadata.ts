@@ -156,13 +156,3 @@ export function withSharePhoto<T extends Pick<Metadata, "openGraph" | "twitter">
     twitter: { ...(card.twitter ?? {}), images: [shared] },
   } as T;
 }
-
-/** The parent's share card as it is, with a photograph (for a page with no title of its own: Home). */
-export async function sharePhotoOnly(
-  parent: ResolvingMetadata,
-  photo: { image: SanityImage; alt?: string | null } | null | undefined,
-  fallbackAlt: string,
-): Promise<Pick<Metadata, "openGraph" | "twitter">> {
-  const { openGraph, twitter } = await parent;
-  return withSharePhoto({ openGraph: openGraph as Metadata["openGraph"], twitter: twitter as Metadata["twitter"] }, photo, fallbackAlt);
-}

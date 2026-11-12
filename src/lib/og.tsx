@@ -4,8 +4,8 @@
  *
  * Journal entries and projects with a cover photo share that photo straight
  * from the Sanity CDN (see pageShareImages in share-metadata.ts), so this
- * card is only for pages without one: the home page, listings, utility pages
- * and entries without a cover. It is a 1200x630 branded, text only PNG on
+ * card is only for an entry or project without one (the rest of the site
+ * without a photograph of its own shares the crest, src/app/opengraph-image.png). It is a 1200x630 branded, text only PNG on
  * the warm canvas, with flat colour so the file stays small.
  */
 
