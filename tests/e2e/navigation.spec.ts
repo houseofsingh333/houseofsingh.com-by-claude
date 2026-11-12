@@ -10,6 +10,19 @@ import type { Page } from "@playwright/test";
 const half = (page: Page) => page.evaluate(() => Math.round((document.documentElement.scrollHeight - window.innerHeight) / 2));
 
 async function openMenuAndGo(page: Page, href: string) {
+  // After a scroll the header changes state (crest to wordmark bar, past
+  // 60px; Header.tsx). Wait until it has, so the button clicked is not the
+  // one about to be covered: a busy WebKit applies it a little late.
+  await page.waitForFunction(() => {
+    const active = document.querySelectorAll("header[aria-hidden='false']");
+    const bar = scrollY >= 60;
+    if (active.length !== 1 || active[0].classList.contains("h-[68px]") !== bar) return false;
+    const b = active[0].querySelector("button[aria-label='Open menu']");
+    if (!b) return false;
+    const r = b.getBoundingClientRect();
+    const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return !!hit && b.contains(hit);
+  });
   await header(page).locator("button[aria-label='Open menu']").click();
   await page.locator(`nav[aria-label='Site menu'] a[href='${href}']`).first().click();
 }

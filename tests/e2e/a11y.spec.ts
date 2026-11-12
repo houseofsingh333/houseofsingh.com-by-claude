@@ -70,13 +70,36 @@ async function answer(page: Page, path: string, status: number, body: object = {
   await page.route(`**${path}`, (r) => r.fulfill({ status, contentType: "application/json", body: JSON.stringify(body) }));
 }
 
+/**
+ * Every frame added at any time (the Spotify player is built after the
+ * page loads) must have its title by the next moment, not only when axe
+ * happens to look (found in Firefox, 12 Nov).
+ */
+const watchFrames = (page: Page) =>
+  page.addInitScript(() => {
+    const w = window as unknown as { __untitledFrames: string[] };
+    w.__untitledFrames = [];
+    const seen = new WeakSet<Element>();
+    new MutationObserver(() =>
+      document.querySelectorAll("iframe").forEach((f) => {
+        if (seen.has(f)) return;
+        seen.add(f);
+        setTimeout(() => {
+          if (!f.title) w.__untitledFrames.push(f.src || "(no address)");
+        }, 0);
+      }),
+    ).observe(document, { childList: true, subtree: true });
+  });
+
 for (const p of PAGES) {
   test(`page: ${p.name}`, async ({ page }) => {
+    await watchFrames(page);
     await open(page, p.path);
     await readThrough(page);
     await page.waitForTimeout(400);
     await axe(page, p.path);
     for (const frame of await page.locator("iframe").all()) expect(await frame.getAttribute("title"), "every frame has a title").toBeTruthy();
+    expect(await page.evaluate(() => (window as unknown as { __untitledFrames: string[] }).__untitledFrames), "no frame, even one added later, is ever without a title").toEqual([]);
   });
 }
 

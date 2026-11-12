@@ -23,7 +23,8 @@ type Options = {
 /**
  * Keyboard and screen reader behaviour for an overlay (menu or dialog):
  * while active, everything outside the container is inert, Tab and
- * Shift+Tab loop inside it, and Escape calls onEscape. Shared by the site
+ * Shift+Tab (with or without Safari's Option) go through every item inside
+ * it and loop, and Escape calls onEscape. Shared by the site
  * menu and the newsletter popup so the two cannot drift apart.
  */
 export function useFocusTrap({
@@ -79,23 +80,30 @@ export function useFocusTrap({
       const focusable = Array.from(
         container.querySelectorAll<HTMLElement>(FOCUSABLE),
       ).filter(
-        // Skip the hidden honeypot field and anything inert or aria-hidden.
+        // Skip the hidden honeypot field, anything inert or aria-hidden,
+        // and anything not shown (a closed panel, the other layout's copy).
         (el) =>
           el.tabIndex >= 0 &&
           !el.closest("[inert]") &&
-          !el.closest('[aria-hidden="true"]'),
+          !el.closest('[aria-hidden="true"]') &&
+          el.getClientRects().length > 0,
       );
       if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const current = document.activeElement;
-      if (e.shiftKey && (current === first || !container.contains(current))) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && (current === last || !container.contains(current))) {
-        e.preventDefault();
-        first.focus();
-      }
+      // Every Tab is moved here, not left to the browser: Safari's Tab skips
+      // links unless Option is held (or "Press Tab to highlight each item"
+      // is on), so its own next stop could be outside the overlay, or none.
+      // Tab and Option+Tab (Alt+Tab elsewhere) both go through every item,
+      // in order, and loop; Shift goes back.
+      e.preventDefault();
+      const at = focusable.indexOf(document.activeElement as HTMLElement);
+      const step = e.shiftKey ? -1 : 1;
+      const next =
+        at === -1
+          ? e.shiftKey
+            ? focusable[focusable.length - 1]
+            : focusable[0]
+          : focusable[(at + step + focusable.length) % focusable.length];
+      next.focus();
     };
     document.addEventListener("keydown", onKeyDown);
 
