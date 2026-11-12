@@ -52,21 +52,26 @@ export function taxOnLines(price: number, shipping: number, percentage: number):
 
 /**
  * How tax is worked out at checkout (Shop design round 3), from TAX_MODE:
+ * - "none" (the default): no tax at all. The Shop is sold by Maninder Singh,
+ *   a sole proprietor and small supplier, so no GST/HST is charged: no
+ *   postal code on the piece page, no tax on the checkout, the receipts or
+ *   the emails.
  * - "stripe": Stripe Tax. No postal code on the piece page; Stripe takes
  *   the shipping address at checkout and works out the tax itself
  *   (automatic tax, prices exclusive of tax, each line with its product tax
  *   code). It charges tax only where Stripe Tax has a registration (Canada,
  *   GST/HST), so orders abroad carry none.
  * - "fixed": the postal code before Buy and the fixed provincial rates
- *   (lib/editions/tax.ts), as before.
- * Unset: "fixed" on the live site, "stripe" on previews and locally.
+ *   (lib/editions/tax.ts).
+ * "stripe" and "fixed" are kept for a future GST/HST registration; set
+ * TAX_MODE to use one. Unset, or anything else: "none".
  */
-export type TaxMode = "stripe" | "fixed";
+export type TaxMode = "none" | "stripe" | "fixed";
 
 export function taxMode(env: Record<string, string | undefined> = process.env): TaxMode {
   const set = env.TAX_MODE?.trim().toLowerCase();
   if (set === "stripe" || set === "fixed") return set;
-  return env.VERCEL_ENV === "production" ? "fixed" : "stripe";
+  return "none";
 }
 
 /** Stripe's product tax codes: physical goods, and shipping. */

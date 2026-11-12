@@ -45,5 +45,5 @@ export function projectFallbackDescription(title: string): string {
 export const ARTISTS_DESCRIPTION =
   "For artists: propose a collaboration with House of Singh Editions. How it works, and a short form to send your work and an idea.";
 export const EDITIONS_TERMS_DESCRIPTION =
-  "The terms of sale for House of Singh Editions: who sells the pieces, prices and tax, shipping and duties, returns and how to reach us.";
+  "The terms of sale for House of Singh Editions: who sells the pieces, prices, shipping and duties, returns and how to reach us.";
 export const UNSUBSCRIBE_DESCRIPTION = "Stop receiving emails from House of Singh.";

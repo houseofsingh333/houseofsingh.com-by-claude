@@ -7,9 +7,9 @@
  */
 export const EDITIONS_DEFAULTS = {
   brand: "House of Singh Editions",
-  seller: "House of Singh Studios Inc., operating House of Singh Editions",
+  /** Who sells (with Maninder's CPA, 13 Nov): Maninder personally, as a sole proprietor and small supplier. */
+  seller: "Maninder Singh, operating as House of Singh Editions",
   honestLine: "Made slowly, shipped in weeks. Shipping at cost.",
-  taxLine: "Plus applicable tax for Canadian orders.",
   beforeYouBuyHeading: "What this is, and what it is not",
   /** Before you buy (Shop design round 2): five short titles, one line each. */
   beforeYouBuy: [
@@ -70,17 +70,18 @@ export const EDITIONS_DEFAULTS = {
 
 /**
  * The terms of sale when Shop settings has none: seller, prices and tax,
- * shipping and duties, returns, contact. {gst} is the GST/HST number
- * (GST_NUMBER) and {returns} the returns line.
+ * shipping and duties, returns, contact. {returns} is the returns line. (A
+ * {gst} placeholder is still filled from GST_NUMBER, for a future
+ * registration; the text has none while no GST/HST is charged.)
  */
 export const DEFAULT_TERMS = [
   {
     title: "The seller",
-    text: "Pieces are sold by House of Singh Studios Inc., operating House of Singh Editions, a company registered in Canada. GST/HST number: {gst}.",
+    text: "Pieces are sold by Maninder Singh, a sole proprietor in Ontario, Canada, operating as House of Singh Editions.",
   },
   {
     title: "Prices and tax",
-    text: "Prices are in Canadian dollars and shown before tax. For orders shipped to an address in Canada, GST or HST is added at checkout at the rate of the province or territory you ship to. Orders shipped outside Canada carry no Canadian tax.",
+    text: "Prices are in Canadian dollars. No GST or HST is charged.",
   },
   {
     title: "Shipping and duties",

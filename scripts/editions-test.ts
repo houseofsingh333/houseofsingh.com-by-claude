@@ -16,7 +16,10 @@ import { taxMode, TAX_CODES } from "../src/lib/editions/tax-rates";
 import { editionsCollectionsQuery } from "../src/lib/editions/queries";
 import { cardDate, cityTimes, daysUntil, momentIn, releaseIcs, sealedEyebrow } from "../src/lib/editions/release";
 import { withDefaults } from "../src/lib/editions/load";
+import { DEFAULT_TERMS } from "../src/lib/editions/defaults";
 import { CONSENT } from "../src/lib/email/consent";
+import { orderEmail, smallSupplierEmail } from "../src/lib/email/templates";
+import { alertsDue, quarterOf, shiftQuarter, summarise } from "../src/lib/editions/smallSupplier";
 import { checkPurchase, checkoutParams } from "../src/lib/editions/checkout";
 import { isZone, shippingPrice, ZONES } from "../src/lib/editions/shipping";
 import { taxForPostalCode, taxOnLines } from "../src/lib/editions/tax-rates";
@@ -159,7 +162,16 @@ check(releaseTimes("2027-04-14T13:00:00Z") === "9 am in Toronto, 6:30 pm in Indi
   check(gridFilters(own, held).map((f) => f.label).join() === "Prints", "filters: only categories with a piece in the Collection");
   check(gridFilters({} as EditionsCollection, [...held, { category: objects }] as unknown as EditionsPiece[]).length === 2, "filters: every held category, in order");
 }
-check(params.custom_text.submit.message.includes("House of Singh Studios Inc., operating House of Singh Editions") && params.custom_text.submit.message.includes("123456789RT0001"), "the seller and GST/HST number at checkout", params.custom_text.submit.message);
+check(params.custom_text.submit.message === "Sold by Maninder Singh, operating as House of Singh Editions. GST/HST 123456789RT0001.", "fixed tax (a future registration): the seller and the GST/HST number at checkout", params.custom_text.submit.message);
+{
+  // The seller change (with Maninder's CPA): sold by Maninder Singh, a small supplier; no GST/HST.
+  const none = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "canada", shipping: 22, taxRate: { id: "txr_on", province: "ON" }, taxMode: "none", siteUrl: "https://example.test", gstNumber: "123456789RT0001", now });
+  check(none.custom_text.submit.message === "Sold by Maninder Singh, operating as House of Singh Editions.", "no tax: the seller, and no GST/HST number", none.custom_text.submit.message);
+  check(none.line_items.every((l) => !("tax_rates" in l)) && !("automatic_tax" in none) && !JSON.stringify(none).includes("tax_code") && !JSON.stringify(none).includes("tax_behavior"), "no tax: no rate, no Stripe Tax, even if a rate were passed");
+  check(none.metadata.taxMode === "none" && none.metadata.taxProvince === "", "no tax: nothing to check afterwards");
+  check(!/Studios Inc|GST|HST/.test(JSON.stringify(withDefaults({}))), "the Shop's default words name no company and no GST/HST");
+  check(/Maninder Singh, a sole proprietor in Ontario, Canada, operating as House of Singh Editions/.test(JSON.stringify(DEFAULT_TERMS)) && /No GST or HST is charged/.test(JSON.stringify(DEFAULT_TERMS)), "the terms: the sole proprietor, and no GST or HST");
+}
 check(params.success_url.endsWith("/editions/thank-you?session_id={CHECKOUT_SESSION_ID}") && params.cancel_url.endsWith("/editions/test-print"), "success to the thank you page, cancel back to the piece");
 const encoded = formEncode(params).join("&");
 check(encoded.includes("line_items%5B0%5D%5Bprice_data%5D%5Bcurrency%5D=cad") && encoded.includes("line_items%5B1%5D%5Btax_rates%5D%5B0%5D=txr_on"), "form encoding for Stripe");
@@ -302,7 +314,7 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
   // Shop design round 3: Stripe Tax behind TAX_MODE, few left, Made by, availability.
   {
     check(taxMode({ TAX_MODE: "stripe" }) === "stripe" && taxMode({ TAX_MODE: "fixed", VERCEL_ENV: "preview" }) === "fixed", "TAX_MODE chooses the tax");
-    check(taxMode({ VERCEL_ENV: "production" }) === "fixed" && taxMode({ VERCEL_ENV: "preview" }) === "stripe" && taxMode({}) === "stripe", "unset: fixed on the live site, Stripe Tax on previews and locally");
+    check(taxMode({ VERCEL_ENV: "production" }) === "none" && taxMode({ VERCEL_ENV: "preview" }) === "none" && taxMode({}) === "none" && taxMode({ TAX_MODE: "None" }) === "none" && taxMode({ TAX_MODE: "other" }) === "none", "unset or unknown: no tax, everywhere");
     const st = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "canada", shipping: 22, taxRate: { id: "txr_on", province: "ON" }, taxMode: "stripe", siteUrl: "https://example.test", now });
     const [pieceLine, shipLine] = st.line_items as { price_data: { tax_behavior?: string; product_data: { tax_code?: string } } }[];
     check((st as { automatic_tax?: { enabled: boolean } }).automatic_tax?.enabled === true, "Stripe Tax: automatic tax on the session");
@@ -362,6 +374,7 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
       { _id: "private.signup-pending-1", _type: "signupPending", kind: "shop" },
       { _id: "private.signup-pending-2", _type: "signupPending", kind: "letters" },
       { _id: "private.email-day-2026-11-11", _type: "emailDay" },
+      { _id: "private.editions-small-supplier", _type: "editionsSmallSupplier" },
       { _id: "subscriber-1", _type: "newsletterSubscriber" },
     ];
     const hit = new Set<string>();
@@ -376,6 +389,54 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
     const keptWithReal = new Set<string>();
     for (const [, q] of SAMPLE_GROUPS as [string, string][]) for (const d of (await (await evaluate(parse(q), { dataset: real })).get()) as { _id: string }[]) keptWithReal.add(d._id);
     check(!keptWithReal.has("private.editions-collector-a") && !keptWithReal.has("private.editions-counter"), "a collector or the counter with a real order is kept");
+  }
+
+  // The order email with no tax charged: no Tax row, no GST/HST number.
+  {
+    process.env.GST_NUMBER = "123456789RT0001";
+    const e = orderEmail("buyer@example.test", { pieceName: "Window Seat", price: 180, shipping: 18, tax: 0, total: 198, collectorNumber: 4, orderRef: "TEST" });
+    check(!/\bTax\b|GST|HST|123456789/.test(e.html + e.text) && /198/.test(e.text), "order email, no tax: no Tax row and no GST/HST number", e.text);
+    check(/Maninder Singh, House of Singh Editions/.test(e.text) && /Studios Inc/.test(e.text) === false, "order email: sent by Maninder Singh, House of Singh Editions");
+    const taxed = orderEmail("buyer@example.test", { pieceName: "Window Seat", price: 180, shipping: 18, tax: 25.74, total: 223.74, collectorNumber: 4, orderRef: "TEST" });
+    check(/Tax/.test(taxed.text) && /123456789RT0001/.test(taxed.text), "order email, tax charged (a future registration): the Tax row and the number");
+    delete process.env.GST_NUMBER;
+  }
+
+  // The small supplier tracker: calendar quarters in Toronto, four quarters rolling, alerts once.
+  {
+    check(quarterOf("2026-12-31T23:30:00-05:00") === "2026-Q4" && quarterOf("2027-01-01T04:30:00Z") === "2026-Q4" && quarterOf("2027-01-01T05:30:00Z") === "2027-Q1", "a quarter is Toronto's: 11:30 pm on 31 December is still Q4");
+    check(shiftQuarter("2027-Q1", 1) === "2026-Q4" && shiftQuarter("2026-Q4", 3) === "2026-Q1" && shiftQuarter("2026-Q4", -1) === "2027-Q1", "quarters count back across a year");
+    const now = new Date("2027-05-10T12:00:00Z"); // 2027-Q2
+    const orders = [
+      { subtotal: 180, shipping: 20, paidAt: "2027-04-20T15:00:00Z" },
+      { subtotal: 300, shipping: 48, paidAt: "2027-04-21T15:00:00Z", refundedAt: "2027-04-25T15:00:00Z" },
+      { subtotal: 900, shipping: 0, paidAt: "2027-04-22T15:00:00Z", testMode: true },
+      { subtotal: 100, shipping: 50, paidAt: "2026-11-02T15:00:00Z" },
+      { subtotal: 100, shipping: 0, paidAt: null },
+      { subtotal: 1000, shipping: 0, paidAt: "2025-12-02T15:00:00Z" },
+    ];
+    const rows = summarise(orders, [{ quarter: "2027-Q1", amount: 5000 }, { quarter: "bad", amount: 9 }], now);
+    const at = (q: string) => rows.find((r) => r.quarter === q)!;
+    check(rows.length === 8 && rows[7].quarter === "2027-Q2" && rows[0].quarter === "2025-Q3", "eight quarters, oldest first, ending now", rows.map((r) => r.quarter));
+    check(at("2027-Q2").orders === 200 && at("2027-Q2").ordersCount === 1, "piece plus shipping; refunded, test and unpaid orders left out", at("2027-Q2"));
+    check(at("2027-Q2").rolling === 200 + 5000 + 150 && at("2026-Q3").rolling === 1000 && at("2026-Q4").rolling === 150, "four quarters rolling: this one and the three before (a year ago drops out)", [at("2027-Q2").rolling, at("2026-Q3").rolling, at("2026-Q4").rolling]);
+    check(at("2027-Q1").other === 5000 && rows.every((r) => !Number.isNaN(r.total)), "other revenue by quarter; a mistyped quarter is ignored");
+
+    const big = summarise([], [{ quarter: "2027-Q1", amount: 12000 }, { quarter: "2027-Q2", amount: 9000 }], now);
+    const a1 = alertsDue(big, []);
+    check(a1.due.map((a) => a.key).join() === "rolling-20000" && a1.active.join() === "rolling-20000", "past CA$20,000 rolling: one email", a1.due);
+    check(alertsDue(big, a1.active).due.length === 0, "the next day: no second email for the same threshold");
+    const bigger = summarise([], [{ quarter: "2027-Q1", amount: 12000 }, { quarter: "2027-Q2", amount: 14000 }], now);
+    const a2 = alertsDue(bigger, a1.active);
+    check(a2.due.map((a) => a.key).join() === "rolling-25000", "then past CA$25,000: its own email", a2.due);
+    const single = summarise([], [{ quarter: "2027-Q2", amount: 20500 }], now);
+    const a3 = alertsDue(single, []);
+    check(a3.due.map((a) => a.key).join() === "rolling-20000,quarter-20000:2027-Q2", "one quarter past CA$20,000: the quarter's own email too", a3.due);
+    check(alertsDue(single, a3.active).due.length === 0, "a quarter alerts once");
+    const fallen = alertsDue(summarise([], [], now), a2.active);
+    check(fallen.active.length === 0 && fallen.due.length === 0, "back under: the thresholds clear, ready to alert again");
+    const mail = smallSupplierEmail("editions@example.test", a3.due[1], single);
+    check(/2027-Q2/.test(mail.subject) && /CA\$20,500\.00/.test(mail.text) && mail.priority === "order", "the alert email: the quarter, the amount, sent ahead of sign ups", mail.subject);
   }
 
   console.log(failures ? `\n${failures} failed` : "\nall passed");

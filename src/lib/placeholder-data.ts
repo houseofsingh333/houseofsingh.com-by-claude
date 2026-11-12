@@ -198,7 +198,7 @@ export const fallbackJournalEntries: JournalEntry[] = [
 export const fallbackSiteSettings: SiteSettings = {
   siteTitle: "House of Singh",
   tagline: "Design. Build. Create.",
-  footerText: "\u00A9 2026 House of Singh Studios Inc.",
+  footerText: "\u00A9 2026 House of Singh",
   spotifyPlaylistUrl:
     "https://open.spotify.com/embed/playlist/5siljeAcGgaINDEqVRBsAg?utm_source=generator",
 };

@@ -5,6 +5,7 @@ import { EDITIONS_TERMS_DESCRIPTION } from "@/lib/pageDescriptions";
 import { loadSettings, withDefaults } from "@/lib/editions/load";
 import { DEFAULT_TERMS } from "@/lib/editions/defaults";
 import { requireEditions } from "@/lib/editions/enabled";
+import { taxMode } from "@/lib/editions/tax-rates";
 
 export async function generateMetadata(_props: unknown, parent: ResolvingMetadata): Promise<Metadata> {
   return {
@@ -33,7 +34,8 @@ function fill(text: string, gst: string | null, returns: string): string {
 export default async function TermsOfSalePage() {
   await requireEditions("any");
   const s = withDefaults(await loadSettings());
-  const gst = process.env.GST_NUMBER?.trim() || null;
+  // A GST/HST number only while tax is charged (TAX_MODE, a future registration).
+  const gst = taxMode() !== "none" ? process.env.GST_NUMBER?.trim() || null : null;
   const sections = (s.terms ?? DEFAULT_TERMS).map((t) => ({ title: t.title, text: fill(t.text, gst, s.returnsLine) }));
 
   return (

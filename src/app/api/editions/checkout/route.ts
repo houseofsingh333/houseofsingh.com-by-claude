@@ -55,8 +55,9 @@ export async function POST(request: Request) {
   const zone = String(form?.get("zone") ?? "");
   if (!slug) return NextResponse.redirect(new URL("/editions", origin), 303);
   if (!isZone(zone)) return back(slug, "no-zone");
-  // Fixed tax: for Canada the postal code sets the province, and so the
-  // GST/HST. Stripe Tax works it out from the address given at checkout.
+  // No tax by default (TAX_MODE "none"). Kept for a future registration:
+  // fixed tax, where for Canada the postal code sets the province, and so
+  // the GST/HST; Stripe Tax, which works it out from the address at checkout.
   const mode = taxMode();
   const tax = mode === "fixed" && zone === "canada" ? taxForPostalCode(String(form?.get("postal") ?? "").slice(0, 10)) : null;
   if (mode === "fixed" && zone === "canada" && !tax) return back(slug, "postal-needed");

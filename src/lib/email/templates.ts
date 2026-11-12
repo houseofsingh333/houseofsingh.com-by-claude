@@ -82,7 +82,8 @@ function plain(blocks: Block[], footer: string): string {
 /** Who sent it, where from, and why it arrived (CASL). */
 function footer(who: "letters" | "editions", why: string, unsubscribe?: string | null): string {
   const { postalAddress, siteUrl } = emailConfig();
-  const sender = who === "letters" ? "Maninder Singh, House of Singh" : EDITIONS_DEFAULTS.seller;
+  // Who sends (CASL): Maninder in both cases; the Shop's emails as House of Singh Editions.
+  const sender = who === "letters" ? "Maninder Singh, House of Singh" : "Maninder Singh, House of Singh Editions";
   const site = siteUrl.replace(/^https?:\/\//, "");
   const leave = unsubscribe ? `<a href="${esc(unsubscribe)}" style="color:${C.muted}">Unsubscribe</a>` : "";
   return [esc(sender), postalAddress ? esc(postalAddress) : "", `<a href="${siteUrl}" style="color:${C.muted}">${esc(site)}</a>`, esc(why), leave].filter(Boolean).join("<br>");
@@ -191,7 +192,8 @@ export type OrderEmailData = {
 const collector = (n: number) => `No. ${String(n).padStart(4, "0")}`;
 
 export function orderEmail(to: string, o: OrderEmailData): Email {
-  const gst = process.env.GST_NUMBER?.trim();
+  // No tax line, and no GST/HST number, unless tax was charged (a future registration).
+  const gst = o.tax > 0 ? process.env.GST_NUMBER?.trim() : undefined;
   return email(
     to,
     "order",
@@ -206,7 +208,7 @@ export function orderEmail(to: string, o: OrderEmailData): Email {
           ...(o.shipsTo ? ([["Ships to", o.shipsTo]] as [string, string][]) : []),
           ["Price", cad(o.price)],
           ["Shipping", cad(o.shipping)],
-          ["Tax", cad(o.tax)],
+          ...(o.tax > 0 ? ([["Tax", cad(o.tax)]] as [string, string][]) : []),
           ["Total", cad(o.total)],
           ["Collector", collector(o.collectorNumber)],
         ],
@@ -280,6 +282,24 @@ export function checkTaxEmail(to: string, o: { pieceName: string; orderRef: stri
       { big: "An order to check." },
       { rows: [["Order", o.orderRef], ["Piece", o.pieceName], ["Taxed for", o.taxProvince], ["Ships to", o.shipProvince || "Unknown"]] },
       { p: "The buyer's postal code before Buy was in one province and the shipping address at checkout is in another, so the GST or HST charged may be wrong. In the Studio: House of Singh Editions, Orders, Check tax." },
+    ],
+    footer("editions", "Sent to the Shop's own address by houseofsingh.com."),
+  );
+}
+
+/** The small supplier tracker passed a threshold (lib/editions/smallSupplier.ts): to the Shop's own address. */
+export function smallSupplierEmail(to: string, a: { key: string; subject: string; text: string }, rows: { quarter: string; total: number; rolling: number }[]): Email {
+  const cad = (n: number) => `CA$${n.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return email(
+    to,
+    `small-supplier-${a.key}`,
+    "order",
+    a.subject,
+    [
+      { big: "A small supplier threshold." },
+      { p: a.text },
+      { rows: rows.slice(-4).map((r) => [r.quarter, `${cad(r.total)} (four quarters: ${cad(r.rolling)})`]) },
+      { p: "The Shop's paid orders (piece plus shipping, every country, refunds left out) and the other revenue you entered. Worth a word with your CPA about registering for GST/HST. In the Studio: House of Singh Editions, Small supplier tracker." },
     ],
     footer("editions", "Sent to the Shop's own address by houseofsingh.com."),
   );
