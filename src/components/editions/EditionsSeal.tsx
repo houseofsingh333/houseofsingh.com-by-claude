@@ -54,7 +54,7 @@ const LETTERS = [...half(true), ...half(false)].filter((l) => l.ch !== " ");
 export default function EditionsSeal() {
   return (
     <span className="ed-seal2" aria-hidden="true">
-      <svg className="ed-seal2-ring" viewBox="0 0 128 128" focusable="false">
+      <svg className="ed-seal2-ring" viewBox="0 0 128 128" focusable="false" aria-hidden="true">
         <g className="ed-seal2-turn">
           {LETTERS.map((l, i) => (
             <text key={i} className="ed-seal2-text" fontSize={SIZE} x={l.x} y={l.y} transform={`rotate(${l.turn} ${l.x} ${l.y})`} textAnchor="middle" dominantBaseline="central">

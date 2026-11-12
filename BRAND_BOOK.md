@@ -200,6 +200,9 @@ Always leave generous clear space around the logo in any form. As a rule, keep c
 - Do not crowd it with other elements.
 - Do not reconstruct or rearrange the crest's elements.
 
+### 3.6 The site icon
+The favicon and app icons (approved 12 Nov) are the crest's lion alone: the crest clipped to the lion's shield and cropped to the lion, its lines in charcoal `#221F1C` at their original weight on the canvas `#F9F7F5`. One source, `scripts/favicons.mjs`, makes every size (the browser icon at 16, 32 and 48, the 32 PNG, the 180 Apple touch icon, and 192 and 512 for the web app manifest). Change the icon there and run it again; never edit the PNGs by hand.
+
 ---
 
 ## 4. UI and UX Guidelines
