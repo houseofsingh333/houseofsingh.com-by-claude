@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { useInView } from "@/hooks/useInView";
 import DrawnTimes from "./DrawnTimes";
 

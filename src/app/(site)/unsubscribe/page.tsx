@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { UNSUBSCRIBE_DESCRIPTION } from "@/lib/pageDescriptions";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { OutlineButton } from "@/components/OutlineCta";
 import { readUnsubscribeToken } from "@/lib/email/unsubscribe";
 

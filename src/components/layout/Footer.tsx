@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import OutlineCta from "@/components/OutlineCta";
 import TextLink from "@/components/TextLink";
 import TorontoTime from "@/components/TorontoTime";

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import { requireEditions } from "@/lib/editions/enabled";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type RefObject } from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { categoryHref } from "@/lib/projectCategories";
 import type { MonographCategory } from "@/lib/projectsData";

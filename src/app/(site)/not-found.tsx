@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import SanityImage from "@/components/SanityImage";
 import { hasImageAsset } from "@/lib/sanityImage";
 import { sanityFetch } from "@/sanity/fetch";

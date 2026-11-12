@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import Link from "@/components/Link";
 import NavOverlay, { SITE_MENU_ID, type MenuCopy } from "./NavOverlay";
 import type { NewsletterCopy } from "@/components/NewsletterNote";
 import IntroOverlay, { useIntroSequence } from "./IntroOverlay";

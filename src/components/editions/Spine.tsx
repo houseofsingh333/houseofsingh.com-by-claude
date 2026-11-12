@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import type { CSSProperties } from "react";
 import { shopColour } from "@/lib/editions/palette";
 import { gurmukhi } from "@/lib/editions/format";
