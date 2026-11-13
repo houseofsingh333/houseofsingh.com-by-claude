@@ -3,6 +3,7 @@ import type { Email } from "./resend";
 import { cad } from "@/lib/editions/format";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
 import { unsubscribeOneClickUrl, unsubscribePageUrl } from "./unsubscribe";
+import { KIND_LABEL, safeName, type MessageKind } from "@/lib/inbox/kinds";
 
 /**
  * The emails the website sends (through Resend), in the House of Singh
@@ -101,9 +102,11 @@ function withUnsubscribe(e: Email, to: string): Email {
   };
 }
 
+/** Emails that come from Maninder himself (his own address); every other one from the Shop. */
+const FROM_MANINDER = new Set(["welcome", "message", "message-thanks", "inbox-daily"]);
+
 function email(to: string, kind: string, priority: Email["priority"], subject: string, blocks: Block[], foot: string): Email {
-  // The newsletter welcome comes from Maninder; every other email from the Shop.
-  const sender = kind === "welcome" ? "letters" : "editions";
+  const sender = FROM_MANINDER.has(kind) ? "letters" : "editions";
   return { to, kind, priority, sender, subject, html: render(blocks, foot), text: plain(blocks, foot) };
 }
 
@@ -148,7 +151,8 @@ export function proposalReceivedEmail(to: string, name: string): Email {
     "signup",
     "Your proposal is in",
     [
-      { big: `Thank you, ${name}. Your proposal is in.` },
+      // The name only when it is safe to say back (no link): never a way to send someone a link.
+      { big: safeName(name) ? `Thank you, ${safeName(name)}. Your proposal is in.` : "Thank you. Your proposal is in." },
       { p: EDITIONS_DEFAULTS.proposalPromise },
       { sign: "Maninder" },
     ],
@@ -156,23 +160,80 @@ export function proposalReceivedEmail(to: string, name: string): Email {
   );
 }
 
-export function proposalCopyEmail(to: string, p: { name: string; email: string; practice: string; link: string; idea: string }): Email {
-  const copy = email(
+// ——— Messages through the forms (the Inbox) ———
+
+/** A message sent through a form, as Maninder reads it. */
+export type InboxMessage = {
+  kind: MessageKind;
+  /** What it was sent through: "Contact form", "Project interest: Zamana", "For artists". */
+  via: string;
+  name: string;
+  email: string;
+  /** Every answer, label and text, in the order asked. */
+  rows: [string, string][];
+  /** The longest answer (the message itself), shown in full below the rows. */
+  message?: string;
+  submittedAt: string;
+};
+
+const torontoTime = (iso: string) =>
+  new Intl.DateTimeFormat("en-CA", { timeZone: "America/Toronto", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(iso));
+
+/** To Maninder at once: the whole message; replying writes to the sender. */
+export function messageNoticeEmail(to: string, m: InboxMessage): Email {
+  const { siteUrl } = emailConfig();
+  const e = email(
     to,
-    "proposal-copy",
-    "signup",
-    `A collaboration proposal from ${p.name}`,
+    "message",
+    "notice",
+    `${KIND_LABEL[m.kind]}: ${m.name}`,
     [
-      { label: "From" },
-      { rows: [["Name", p.name], ["Email", p.email], ["Makes", p.practice], ["Work", p.link || "No link"]] },
-      { label: "The idea" },
-      { p: p.idea },
-      { p: "In the Studio: House of Singh Editions, Collaboration proposals.", muted: true },
+      { label: `${KIND_LABEL[m.kind]} · ${m.via}` },
+      { rows: [["Name", m.name], ["Email", m.email], ...m.rows, ["Sent", `${torontoTime(m.submittedAt)}, Toronto`]] },
+      ...(m.message ? [{ label: "The message" } as Block, { p: m.message } as Block] : []),
+      { p: "Reply to this email to answer them directly. In the Studio: Inbox, New.", muted: true },
+      { link: "Open the Inbox", href: `${siteUrl}/studio` },
     ],
-    footer("editions", "A copy of a proposal sent on houseofsingh.com."),
+    footer("letters", "A message sent through a form on houseofsingh.com. It is also kept in the Studio's Inbox."),
   );
-  // Replying to the copy writes to the artist.
-  return { ...copy, replyTo: p.email };
+  // One click to answer: replying writes to the person who sent it.
+  return { ...e, replyTo: m.email };
+}
+
+/**
+ * To the sender: that it arrived. Transactional only, and never their own
+ * words or any link they typed back to them, so the form cannot be used to
+ * send someone else a message.
+ */
+export function messageThanksEmail(to: string, name: string): Email {
+  const who = safeName(name);
+  return email(
+    to,
+    "message-thanks",
+    "signup",
+    "Your message is in",
+    [{ big: who ? `Thank you, ${who}. Your message is in.` : "Thank you. Your message is in." }, { p: "I will reply within two working days." }, { sign: "Maninder" }],
+    footer("letters", "You are receiving this because you sent a message through houseofsingh.com. Only this one email: nothing more follows unless I reply."),
+  );
+}
+
+/** To Maninder once a day: the messages of the last seven days not yet replied to (or reviewed). */
+export function inboxDigestEmail(to: string, open: { name: string; kind: MessageKind; submittedAt: string }[]): Email {
+  const { siteUrl } = emailConfig();
+  const n = open.length;
+  return email(
+    to,
+    "inbox-daily",
+    "notice",
+    `${n} message${n === 1 ? "" : "s"} waiting for a reply`,
+    [
+      { big: `${n} message${n === 1 ? " has" : "s have"} not been marked Replied yet.` },
+      { rows: open.map((m) => [m.name, `${KIND_LABEL[m.kind]} · ${torontoTime(m.submittedAt)}`] as [string, string]) },
+      { p: "From the last seven days. Mark each one Replied (or Reviewed, for a proposal) or Archive it in the Studio, and it leaves this list.", muted: true },
+      { link: "Open the Inbox", href: `${siteUrl}/studio` },
+    ],
+    footer("letters", "The daily list of messages sent through houseofsingh.com and not yet answered. It comes only on days when there is one."),
+  );
 }
 
 // ——— Orders ———

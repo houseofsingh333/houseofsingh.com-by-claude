@@ -4,18 +4,24 @@ import { writeClient } from "@/sanity/writeClient";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { isHoneypotFilled } from "@/lib/spam-protection";
 import { readJsonBody } from "@/lib/read-json-body";
+import { sendEmail } from "@/lib/email/outbox";
+import { emailConfig } from "@/lib/email/config";
+import { messageThanksEmail } from "@/lib/email/templates";
+import { contactKind } from "@/lib/inbox/kinds";
+import { receive } from "@/lib/inbox/receive";
 
 /**
  * Format the branching detail fields into a human-readable summary
  * so the Sanity document is easy to read at a glance.
  */
-function formatDetails(body: Record<string, unknown>): string {
-  const lines: string[] = [];
+/** Every detail answer, label and text, in the order asked. */
+function detailRows(body: Record<string, unknown>): [string, string][] {
+  const rows: [string, string][] = [];
 
   const add = (label: string, key: string) => {
     const val = body[key];
     if (typeof val === "string" && val.trim()) {
-      lines.push(`${label}: ${val.trim()}`);
+      rows.push([label, val.trim()]);
     }
   };
 
@@ -41,7 +47,7 @@ function formatDetails(body: Record<string, unknown>): string {
   // Something Else
   add("Message", "freeformMessage");
 
-  return lines.join("\n");
+  return rows;
 }
 
 export async function POST(request: Request) {
@@ -87,7 +93,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const details = formatDetails(body);
+    const rows = detailRows(body);
+    const details = rows.map(([k, v]) => `${k}: ${v}`).join("\n");
     const phone = typeof body.phone === "string" ? body.phone.trim() : "";
     const referralSource =
       typeof body.referralSource === "string"
@@ -108,26 +115,52 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!writeClient) {
-      console.error("SANITY_API_TOKEN is not configured. Contact submission was not saved.");
+    // Saved first (a private id: never readable from the public dataset),
+    // then emailed to Maninder, then confirmed to the sender (lib/inbox).
+    const kind = contactKind(body, intent);
+    const submittedAt = new Date().toISOString();
+    const client = writeClient;
+    const longest = rows.reduce<[string, string] | null>((m, r) => (!m || r[1].length > m[1].length ? r : m), null);
+    const result = await receive({
+      message: {
+        kind,
+        via: intent ? `Contact form: ${intent}` : "Contact form",
+        name,
+        email,
+        rows: [...(phone ? [["Phone", phone] as [string, string]] : []), ...rows.filter((r) => r !== longest), ...(referralSource ? [["Heard of us", referralSource] as [string, string]] : [])],
+        message: longest?.[1],
+        submittedAt,
+      },
+      save: async () => {
+        // Without the token the message is not saved, but the email below still carries it.
+        if (!client) throw new Error("SANITY_API_TOKEN is not set");
+        const doc = await client.create({
+          _id: `private.contact-${randomUUID()}`,
+          _type: "contactSubmission",
+          kind,
+          intent,
+          name,
+          email,
+          phone: phone || undefined,
+          details: details || undefined,
+          referralSource: referralSource || undefined,
+          submittedAt,
+        });
+        return doc._id;
+      },
+      markNotified: async (id, outcome) => {
+        await client!.patch(id).set({ notified: outcome, notifiedAt: new Date().toISOString() }).commit();
+      },
+      thanks: messageThanksEmail(email, name),
+      send: sendEmail,
+      notifyTo: emailConfig().notifyTo,
+    });
+    if (!result.ok) {
       return NextResponse.json(
-        { error: "Unable to process your request at this time. Please try again later." },
+        { error: "Unable to send that right now. Please try again in a few minutes." },
         { status: 500 },
       );
     }
-
-    // A private id (a dot in it): never readable from the public dataset.
-    await writeClient.create({
-      _id: `private.contact-${randomUUID()}`,
-      _type: "contactSubmission",
-      intent,
-      name,
-      email,
-      phone: phone || undefined,
-      details: details || undefined,
-      referralSource: referralSource || undefined,
-      submittedAt: new Date().toISOString(),
-    });
 
     return NextResponse.json({ success: true });
   } catch {

@@ -6,8 +6,11 @@ export type Email = {
   subject: string;
   html: string;
   text: string;
-  /** For the daily count and the queue: order and shipping before sign ups. */
-  priority: "order" | "signup";
+  /**
+   * For the daily count and the queue: a message to Maninder from a form
+   * (notice) first, then order and shipping, then sign ups.
+   */
+  priority: "notice" | "order" | "signup";
   /** What it is, for the logs and the queue (never the address). */
   kind: string;
   /** Who sends it: Maninder (the newsletter welcome) or the Shop (everything else). */

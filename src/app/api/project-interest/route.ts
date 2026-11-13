@@ -1,8 +1,13 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { writeClient } from "@/sanity/writeClient";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { isHoneypotFilled } from "@/lib/spam-protection";
 import { readJsonBody } from "@/lib/read-json-body";
+import { sendEmail } from "@/lib/email/outbox";
+import { emailConfig } from "@/lib/email/config";
+import { messageThanksEmail } from "@/lib/email/templates";
+import { receive } from "@/lib/inbox/receive";
 
 export async function POST(request: Request) {
   try {
@@ -63,24 +68,50 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!writeClient) {
-      console.error("SANITY_API_TOKEN is not configured. Project interest submission was not saved.");
+    // Saved first, privately (a private id: until 13 Nov these were written
+    // with a public id, readable by anyone; none existed), then emailed to
+    // Maninder, then confirmed to the sender (lib/inbox).
+    const client = writeClient;
+    const submittedAt = new Date().toISOString();
+    const result = await receive({
+      message: {
+        kind: "collaboration",
+        via: projectTitle ? `Project interest: ${projectTitle}` : "Project interest",
+        name,
+        email,
+        rows: [...(phone ? [["Phone", phone] as [string, string]] : []), ...(instagram ? [["Instagram", instagram] as [string, string]] : [])],
+        message: story,
+        submittedAt,
+      },
+      save: async () => {
+        if (!client) throw new Error("SANITY_API_TOKEN is not set");
+        const doc = await client.create({
+          _id: `private.project-interest-${randomUUID()}`,
+          _type: "projectInterest",
+          kind: "collaboration",
+          name,
+          email,
+          phone: phone || undefined,
+          instagram: instagram || undefined,
+          story,
+          projectTitle: projectTitle || undefined,
+          submittedAt,
+        });
+        return doc._id;
+      },
+      markNotified: async (id, outcome) => {
+        await client!.patch(id).set({ notified: outcome, notifiedAt: new Date().toISOString() }).commit();
+      },
+      thanks: messageThanksEmail(email, name),
+      send: sendEmail,
+      notifyTo: emailConfig().notifyTo,
+    });
+    if (!result.ok) {
       return NextResponse.json(
-        { error: "Unable to process your request at this time. Please try again later." },
+        { error: "Unable to send that right now. Please try again in a few minutes." },
         { status: 500 },
       );
     }
-
-    await writeClient.create({
-      _type: "projectInterest",
-      name,
-      email,
-      phone: phone || undefined,
-      instagram: instagram || undefined,
-      story,
-      projectTitle: projectTitle || undefined,
-      submittedAt: new Date().toISOString(),
-    });
 
     return NextResponse.json({ success: true });
   } catch {

@@ -46,14 +46,15 @@ jobs:
       - run: npx tsc --noEmit
       - run: npm run lint
       # The checks that need no browser: the Shop (prices, tax, holds, the
-      # small supplier tracker), the email queue, the import tool and the
-      # Studio guardrails. Each prints "all passed" or stops the run.
-      - name: Shop, email, import and Studio checks
+      # small supplier tracker), the email queue, the import tool, the
+      # Studio guardrails and the messages sent through the forms. Each prints "all passed" or stops the run.
+      - name: Shop, email, import, Studio and message checks
         run: |
           npx tsx scripts/editions-test.ts
           npx tsx scripts/email-test.ts
           node scripts/import-content-test.mjs
           npx tsx scripts/guardrails-test.ts
+          npx tsx scripts/inbox-test.ts
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - name: Browser checks

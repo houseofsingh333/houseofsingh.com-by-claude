@@ -35,6 +35,7 @@ function memoryOutbox() {
     async queue(item) { queue.push(item); },
     async waiting(limit) { return [...queue].sort((a, b) => a.priority - b.priority || a.createdAt.localeCompare(b.createdAt)).slice(0, limit); },
     async remove(id) { const i = queue.findIndex((q) => q._id === id); if (i > -1) queue.splice(i, 1); },
+    async bump(id) { const q = queue.find((x) => x._id === id); if (q) q.attempts = (q.attempts ?? 1) + 1; },
   };
   return { store, counts, queue };
 }

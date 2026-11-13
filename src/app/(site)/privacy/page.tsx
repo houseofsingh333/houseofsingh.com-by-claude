@@ -83,8 +83,10 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
           <li>Something else: your message.</li>
         </ul>
         <p>
-          When you submit, your answers are saved in Sanity together with
-          the time of submission.
+          When you submit, your answers are saved privately in Sanity
+          together with the time of submission, and emailed to Maninder
+          through Resend so he can reply. You receive one short email that
+          your message arrived; it does not repeat what you wrote.
         </p>
         <p>
           <strong className="text-foreground">Project interest form.</strong>{" "}
@@ -92,7 +94,8 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
           your name, your email address, a phone number and an Instagram
           handle (both optional), and your story or nomination. The title
           of the project page and the time of submission are saved with
-          it in Sanity.
+          it privately in Sanity, and it is emailed to Maninder through
+          Resend; you receive one short email that it arrived.
         </p>
         <p>
           <strong className="text-foreground">Newsletter.</strong>{" "}
@@ -142,8 +145,8 @@ const SECTIONS: (Omit<LegalSection, "short"> & { short: CopyKey })[] = [
           <strong className="text-foreground">The Shop: collaboration proposals.</strong>{" "}
           The proposal form for artists collects your name, email address,
           what you make, a link to your work if you give one, and your
-          idea. It is kept privately in Sanity; you receive an email that
-          it arrived, and a copy goes to Maninder, through Resend.
+          idea. It is kept privately in Sanity and emailed to Maninder;
+          you receive an email that it arrived, both through Resend.
         </p>
         <p>
           <strong className="text-foreground">Protection against abuse.</strong>{" "}

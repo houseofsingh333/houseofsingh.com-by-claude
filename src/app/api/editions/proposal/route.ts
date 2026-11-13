@@ -2,17 +2,20 @@ import { NextResponse } from "next/server";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { isHoneypotFilled } from "@/lib/spam-protection";
 import { readJsonBody } from "@/lib/read-json-body";
-import { saveProposal } from "@/lib/editions/records";
+import { markProposalNotified, saveProposal } from "@/lib/editions/records";
 import { sendEmail } from "@/lib/email/outbox";
-import { addressOf, emailConfig } from "@/lib/email/config";
-import { proposalCopyEmail, proposalReceivedEmail } from "@/lib/email/templates";
+import { emailConfig } from "@/lib/email/config";
+import { proposalReceivedEmail } from "@/lib/email/templates";
+import { receive } from "@/lib/inbox/receive";
 import { editionsAllowed, editionsOff } from "@/lib/editions/enabled";
 
 const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
 /**
- * A collaboration proposal (For artists): saved privately; the artist gets
- * an email that it arrived, and Maninder a copy (lib/email).
+ * A collaboration proposal (For artists): saved privately, emailed to
+ * Maninder, and the artist told it arrived, with no promise of a reply
+ * (only proposals that fit a coming Collection get one). Never lost:
+ * lib/inbox/receive.ts.
  */
 export async function POST(request: Request) {
   if (!(await editionsAllowed("any"))) return editionsOff();
@@ -43,14 +46,25 @@ export async function POST(request: Request) {
   }
   if (p.link && !/^https?:\/\//i.test(p.link)) p.link = `https://${p.link}`;
 
-  try {
-    await saveProposal(p);
-  } catch (error) {
-    console.error("Editions proposal was not saved:", error instanceof Error ? error.message : error);
+  const submittedAt = new Date().toISOString();
+  const result = await receive({
+    message: {
+      kind: "artists",
+      via: "For artists",
+      name: p.name,
+      email: p.email,
+      rows: [["Makes", p.practice], ["Work", p.link || "No link"]],
+      message: p.idea,
+      submittedAt,
+    },
+    save: () => saveProposal({ ...p, submittedAt }),
+    markNotified: markProposalNotified,
+    thanks: proposalReceivedEmail(p.email, p.name),
+    send: sendEmail,
+    notifyTo: emailConfig().notifyTo,
+  });
+  if (!result.ok) {
     return NextResponse.json({ error: "Unable to send that right now. Please try again later." }, { status: 500 });
   }
-  // The artist hears at once; a copy goes to the Shop's own address.
-  await sendEmail(proposalReceivedEmail(p.email, p.name));
-  await sendEmail(proposalCopyEmail(addressOf(emailConfig().fromEditions), p));
   return NextResponse.json({ success: true });
 }

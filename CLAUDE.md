@@ -34,6 +34,7 @@ Maninder is the founder and creative director. He is not a developer. This means
 - **Dependencies:** Use npm ci, never npm install.
 - **CI:** Every pull request must show the ci check green before merging. ci runs the type check, lint, build and every automated check in `tests/` (see the Definition of done in section 7, and `tests/README.md`).
 - **Language:** TypeScript throughout.
+- **Messages never missed:** every message sent through a form (contact, project interest, For artists) is saved privately, then emailed to Maninder at once (the email queue's highest priority, retried every fifteen minutes by the site watch, which opens an alert if one is stuck), confirmed to the sender without repeating their words, listed daily until marked Replied (or Reviewed) or Archived, and kept in the Studio's Inbox (`lib/inbox`, `docs/email.md`, Messages through the forms).
 - **Reliability:** a weekly, encrypted backup of the Sanity dataset (`docs/backup-and-restore.md`); uptime and error alerts by email through GitHub (`docs/monitoring.md`); one Studio registration, pinned in `sanity.cli.ts` (`docs/sanity-studio.md`); the Studio's guardrails, which warn before a heavy or mislabelled photograph or a weak search description is published (`docs/studio-guardrails.md`); every key, token and secret, with its permission and rotation date, in `docs/security/key-register.md` (never the values), and a Monday reminder issue when one is due.
 
 **Architecture rules:**
@@ -162,7 +163,7 @@ When fixes do not resolve on the first attempt, stop patching and diagnose the r
 
 Before Maninder is asked to merge, every change passes all of this. CI runs it on every pull request (`.github/workflows/ci.yml`); the required check, ci, is green only when all of it is. How to run it on a Mac: `tests/README.md`.
 
-1. **Type check, lint and build** are clean: `npx tsc --noEmit`, `npm run lint`, `npm run build`; and the checks that need no browser pass (the Shop, the email queue, the import tool and the Studio guardrails: `scripts/editions-test.ts`, `scripts/email-test.ts`, `scripts/import-content-test.mjs`, `scripts/guardrails-test.ts`).
+1. **Type check, lint and build** are clean: `npx tsc --noEmit`, `npm run lint`, `npm run build`; and the checks that need no browser pass (the Shop, the email queue, the import tool, the Studio guardrails and the messages sent through the forms: `scripts/editions-test.ts`, `scripts/email-test.ts`, `scripts/import-content-test.mjs`, `scripts/guardrails-test.ts`, `scripts/inbox-test.ts`).
 2. **Journeys** pass on a phone (390) and a desktop (1440): every page type opens, the menu, every form state, the sealed Shop and Notify me, For artists, unsubscribe, the 404.
 3. **Page changes:** every new page opens at its top, Back and Forward return to where the reader was, and no frame shows two pages.
 4. **Screenshots** match the approved ones. An intended change is approved with the `approve-visuals` label, after looking at the differences, never by loosening the check.
