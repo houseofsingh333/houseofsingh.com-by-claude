@@ -12,6 +12,10 @@
  *   the name in quotes because it holds a comma). Replies to each go
  *   back to its own sender's address; the copy of a collaboration
  *   proposal goes to the Shop's address.
+ * - EMAIL_NOTIFY_TO: where a message sent through a form reaches Maninder
+ *   (default maninder@houseofsingh.com): the contact form, project
+ *   interest and For artists proposals, and the daily list of those not
+ *   yet replied to.
  * - EMAIL_POSTAL_ADDRESS: the mailing address every email carries, as
  *   Canada's anti spam law asks.
  * - RESEND_DAILY_LIMIT (default 100, Resend's free plan) and
@@ -39,6 +43,7 @@ export const emailConfig = () => ({
   fromLetters: process.env.EMAIL_FROM_LETTERS?.trim() || "Maninder Singh <maninder@houseofsingh.com>",
   fromEditions: process.env.EMAIL_FROM_EDITIONS?.trim() || '"Maninder Singh, House of Singh Editions" <editions@houseofsingh.com>',
   postalAddress: process.env.EMAIL_POSTAL_ADDRESS?.trim() || "",
+  notifyTo: process.env.EMAIL_NOTIFY_TO?.trim() || "maninder@houseofsingh.com",
   dailyLimit: Math.max(1, Number(process.env.RESEND_DAILY_LIMIT) || 100),
   signupReserve: Math.max(0, Number(process.env.RESEND_SIGNUP_RESERVE ?? 10)),
   /**
