@@ -32,7 +32,7 @@ import { randomUUID, createHash } from "node:crypto";
 import { itemFolders, readItem } from "./import/read.mjs";
 import { markdownToBlocks } from "./import/markdown.mjs";
 import { SECTIONS, LATER } from "./import/sections.mjs";
-import { preparePhoto, loadSharp, kb } from "./photo-prep.mjs";
+import { preparePhoto, loadSharp, kb, COVER_MAX } from "./photo-prep.mjs";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "31g7gu7n";
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
@@ -140,10 +140,9 @@ export async function run(opts, client) {
   const root = resolve(opts.folder);
   const sharp = await loadSharp();
   const present = readdirSync(root).filter((n) => !n.startsWith("_") && !n.startsWith(".") && statSync(join(root, n)).isDirectory());
-  for (const n of present) {
-    if (LATER[n]) console.log(`\n${n}: ${LATER[n]}.`);
-    else if (!SECTIONS[n]) console.log(`\n${n}: not a section I know (${Object.keys(SECTIONS).join(", ")}); skipped.`);
-  }
+  // Known sections for later say so; any other folder ("Claude outputs",
+  // notes, exports) is passed over quietly.
+  for (const n of present) if (LATER[n]) console.log(`\n${n}: ${LATER[n]}.`);
 
   console.log(`\n${opts.apply ? "Publishing" : "Dry run (nothing is changed)"}: ${root}${opts.replace ? "  [--replace: removals are shown and, with --apply, made]" : ""}`);
   const plan = [];
@@ -168,7 +167,9 @@ export async function run(opts, client) {
       const prepared = [];
       for (const r of roles) {
         if (r.noDecorative && r.image.decorative) item.problems.push(`${r.image.file}: this photograph needs alt text (it cannot be decorative)`);
-        const p = await preparePhoto(sharp, r.image.path, { hero: !!r.hero, minWidth: r.logo ? false : undefined });
+        // A cover (a project's or an entry's) or a hero is stored at most COVER_MAX wide.
+        const cover = r.role === "coverImage" || !!r.hero;
+        const p = await preparePhoto(sharp, r.image.path, { hero: !!r.hero, minWidth: r.logo ? false : undefined, maxWidth: cover ? COVER_MAX : undefined });
         if (p.refused) item.problems.push(`${r.image.file} refused: ${p.refused}`);
         prepared.push({ ...r, p, sha1: createHash("sha1").update(p.buffer).digest("hex"), uploadName: `${item.slug}-${basename(r.image.file, extname(r.image.file))}.${p.format === "png" ? "png" : "jpg"}` });
         totalBefore += p.before;
@@ -202,7 +203,7 @@ export async function run(opts, client) {
       for (const x of prepared) {
         const saved = x.p.before ? Math.round((1 - x.p.after / x.p.before) * 100) : 0;
         const fresh = newImages.includes(x) ? "" : " (already there)";
-        console.log(`      ${x.image.file} -> ${x.role}${x.hero ? " (hero)" : ""}: ${x.p.width} x ${x.p.height}px, ${kb(x.p.before)} -> ${kb(x.p.after)} (${saved >= 0 ? `${saved}% smaller` : `${-saved}% larger`})${fresh}`);
+        console.log(`      ${x.image.file} -> ${x.role}${x.hero ? " (hero)" : ""}: ${x.p.width} x ${x.p.height}px${x.p.stored.width !== x.p.width ? ` -> ${x.p.stored.width} x ${x.p.stored.height}px` : ""}, ${kb(x.p.before)} -> ${kb(x.p.after)} (${saved >= 0 ? `${saved}% smaller` : `${-saved}% larger`})${fresh}`);
         for (const flag of x.p.flags) console.log(`        Check: ${flag}`);
       }
       for (const w of item.warnings) console.log(`      Note: ${w}`);

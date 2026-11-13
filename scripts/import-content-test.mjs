@@ -15,7 +15,7 @@
 import { mkdtempSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { preparePhoto, loadSharp, estimateJpegQuality, isHero, JPEG_QUALITY } from "./photo-prep.mjs";
+import { preparePhoto, loadSharp, estimateJpegQuality, isHero, JPEG_QUALITY, COVER_MAX } from "./photo-prep.mjs";
 import { parseImageLine, parseItemMd, slugOf, orderOf, readItem } from "./import/read.mjs";
 import { markdownToBlocks } from "./import/markdown.mjs";
 import { SECTIONS, PROJECT_CATEGORIES } from "./import/sections.mjs";
@@ -81,6 +81,19 @@ async function photo(name, width, height, { blur = 0, quality = 92, exif = true 
   check(isHero("hero.jpg") && isHero("00 Hero.png") && !isHero("heron.jpg"), "hero file names");
 }
 {
+  // Covers are stored at most COVER_MAX wide (the Sifti da Ghar cover went up at 6248px).
+  const big = await preparePhoto(sharp, await photo("cover.jpg", 6248, 4165), { maxWidth: COVER_MAX });
+  const m = await sharp(big.buffer).metadata();
+  check(m.width === COVER_MAX && Math.abs(m.height - 1867) <= 1 && big.stored.width === COVER_MAX, "a 6248px cover is stored 2800px wide", `${m.width} x ${m.height}`);
+  check(big.width === 6248 && big.flags.every((f) => !/under/.test(f)), "its checks still read the source's size");
+  const hero = await preparePhoto(sharp, await photo("hero.jpg", 3600, 2400));
+  check((await sharp(hero.buffer).metadata()).width === COVER_MAX, "a hero is also stored 2800px wide");
+  const body = await preparePhoto(sharp, await photo("05-wide.jpg", 4000, 2667));
+  check((await sharp(body.buffer).metadata()).width === 4000 && body.stored.width === 4000, "an ordinary photograph keeps its size");
+  const small = await preparePhoto(sharp, await photo("cover.jpg", 2000, 1333), { maxWidth: COVER_MAX });
+  check((await sharp(small.buffer).metadata()).width === 2000, "a cover under 2800px is never enlarged");
+}
+{
   const logoPath = join(dir, "logo.png");
   writeFileSync(logoPath, await sharp({ create: { width: 400, height: 200, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).png().toBuffer());
   const p = await preparePhoto(sharp, logoPath, { minWidth: false });
@@ -140,10 +153,15 @@ check(blocks[0].children.some((c) => c.marks.includes("strong")) && blocks[0].ma
     { _id: "about", _type: "aboutPage", milestones: [{ _key: "m2013", year: "2013", title: "House of Singh begins" }], featuredOn: [] },
     { _id: "project-old", _type: "project", title: "Old", slug: { current: "old" } },
   ]);
+  // A folder that is not a section ("Claude outputs", notes): passed over quietly.
+  mkdirSync(join(root, "Claude outputs"), { recursive: true });
+  writeFileSync(join(root, "Claude outputs", "notes.md"), "Draft notes.\n");
   const quiet = console.log;
-  console.log = () => {};
+  const said = [];
+  console.log = (...a) => said.push(a.join(" "));
   const problems = await run({ folder: root, apply: true, replace: false, only: null }, sanity);
   console.log = quiet;
+  check(!said.some((l) => /Claude outputs|not a section/.test(l)), "a folder that is not a section is passed over quietly");
   const docs = sanity.docs;
   check(problems === 1 && !docs.has("heroSlide-tiny"), "publish: the small hero is refused and not written, the rest go through");
   const slide = docs.get("heroSlide-port");

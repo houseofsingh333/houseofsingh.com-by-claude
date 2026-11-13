@@ -6,6 +6,7 @@
  * and other metadata is removed), saves it as a progressive JPEG at quality
  * 83, and checks it: width, shape, sharpness and how compressed the source
  * already was. The checks warn; only a hero under 1600px wide is refused.
+ * A cover or hero wider than COVER_MAX is resized to it.
  *
  * Image work uses sharp, which Next.js already installs for its image
  * optimisation. iPhone photographs (HEIC) are decoded by heic-decode (a
@@ -21,6 +22,13 @@ export const JPEG_QUALITY = 83;
 export const HERO_MIN = 2400;
 export const HERO_REFUSE = 1600;
 export const SECTION_MIN = 1600;
+/**
+ * A cover or hero is stored at most this wide (never enlarged): the site's
+ * largest photograph size is 1920, so 2800 keeps room for a sharp crop and
+ * a large screen without uploading a camera's full 6000px (the Sifti da
+ * Ghar cover went up at 6248px, 13 Nov). Other photographs keep their size.
+ */
+export const COVER_MAX = 2800;
 /**
  * Variance of the Laplacian (at 1024px) below which a photograph is likely
  * soft. Sharp photographs measure about 300 to 600; a 1.5px blur on a 2400px
@@ -173,10 +181,12 @@ export async function preparePhoto(sharp, path, options = {}) {
   // A logo with transparency stays a PNG (on the canvas a JPEG would show a
   // white box); every photograph becomes a JPEG.
   const png = logo && meta.hasAlpha;
+  // Covers and heroes: at most COVER_MAX wide (options.maxWidth overrides).
+  const maxWidth = logo ? null : (options.maxWidth ?? (hero ? COVER_MAX : null));
+  const resize = maxWidth && width > maxWidth ? { width: maxWidth, withoutEnlargement: true } : null;
   let buffer = png
     ? await sharp(source).rotate().keepIccProfile().png({ compressionLevel: 9, palette: false }).toBuffer()
-    : await sharp(source)
-        .rotate()
+    : await (resize ? sharp(source).rotate().resize(resize) : sharp(source).rotate())
         .flatten({ background: "#ffffff" })
         .keepIccProfile()
         // mozjpeg's smaller files, with the standard (Annex K) tables, so
@@ -187,7 +197,9 @@ export async function preparePhoto(sharp, path, options = {}) {
   // so the JPEG is labelled Display P3 (not converted, which would dull them).
   if (heic) buffer = attachIcc(buffer, await displayP3(sharp));
 
-  return { file, hero, width, height, before: statSync(path).size, after: buffer.length, buffer, format: png ? "png" : "jpeg", flags, refused, sharpness: sharpVar, quality };
+  // The size stored: the source's, or the cover's resized width.
+  const stored = resize ? { width: maxWidth, height: Math.round((height * maxWidth) / width) } : { width, height };
+  return { file, hero, width, height, stored, before: statSync(path).size, after: buffer.length, buffer, format: png ? "png" : "jpeg", flags, refused, sharpness: sharpVar, quality };
 }
 
 /** sharp, from Next.js's own install; a clear message if it is missing. */
