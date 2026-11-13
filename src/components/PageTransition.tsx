@@ -26,6 +26,13 @@ import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
  * makes the rule explicit (CLAUDE.md guardrail 12, tests/e2e/navigation).
  */
 
+/**
+ * Sent when a page change has opened the new page at its top, before the
+ * new page is captured: the header (Header.tsx) takes its top state at
+ * once, so it fades in with the page rather than crossfading on its own.
+ */
+export const PAGE_TOP_EVENT = "hos:page-top";
+
 /** The path a Back or Forward is returning to, until that page has shown. */
 let traversalTo: string | null = null;
 if (typeof window !== "undefined") {
@@ -55,6 +62,7 @@ export default function PageTransition({
     }
     if (window.location.hash) return;
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    window.dispatchEvent(new Event(PAGE_TOP_EVENT));
   }, [pathname]);
   return (
     <ViewTransition
