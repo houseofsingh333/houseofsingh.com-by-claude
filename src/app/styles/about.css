@@ -210,6 +210,9 @@ a.press-cutting:hover .press-mat {
 .jl-ledger {
   grid-area: ledger;
   position: relative;
+}
+/* The keyboard focus ring (motion.css) wins when the ledger is focused. */
+.jl-ledger:not(:focus-visible) {
   outline-offset: 4px;
 }
 .jl-side {

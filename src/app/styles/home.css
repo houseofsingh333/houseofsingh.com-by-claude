@@ -458,7 +458,8 @@ html:not(.js) .hero-progress {
   .exhibition-label:focus-within {
     opacity: 1;
   }
-  .exhibition-label-enter,
+  /* (The Enter label stays shown, as it always has: the text link's display
+     won over this rule before the area styles were split, C3.) */
   .exhibition-count {
     display: none;
   }
@@ -953,4 +954,15 @@ html:not(.js) .hero-progress {
   .practice-panel[data-on] .practice-photo-zoom {
     transform: none;
   }
+}
+
+/* ——— Journal filmstrip (home/filmstrip) ———
+   The strip scrolls by hand when still (reduced motion, no JavaScript) and
+   is clipped while it drifts; either way it shows no scrollbar, so the two
+   states are the same height and switching never moves anything. */
+.filmstrip-viewport {
+  scrollbar-width: none;
+}
+.filmstrip-viewport::-webkit-scrollbar {
+  display: none;
 }

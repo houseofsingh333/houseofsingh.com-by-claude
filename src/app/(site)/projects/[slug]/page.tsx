@@ -45,6 +45,8 @@ import {
   buildCreativeWorkJsonLd,
   buildBreadcrumbJsonLd,
 } from "@/lib/structured-data";
+// This area's own styles, loaded with its pages alone (globals.css).
+import "@/app/styles/projects.css";
 
 type Props = {
   params: Promise<{ slug: string }>;

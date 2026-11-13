@@ -10,6 +10,8 @@ import { sanityFetch } from "@/sanity/fetch";
 import { siteSettingsQuery } from "@/sanity/queries";
 import { buildJournalJsonLd } from "@/lib/structured-data";
 import type { SiteSettings } from "@/lib/types";
+// This area's own styles, loaded with its pages alone (globals.css).
+import "@/app/styles/journal.css";
 
 export async function generateMetadata(
   _props: unknown,

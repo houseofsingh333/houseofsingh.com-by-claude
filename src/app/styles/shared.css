@@ -1,0 +1,88 @@
+/* Shared: the few rules every page needs that belong to one area's design
+   (Batch C, C3). The area stylesheets (home, about, journal, projects,
+   editions) now load with their own pages only; these stay site wide:
+   a page change spans two pages, so its shared photograph and the Shop's
+   bar must be styled whichever page the reader is on; the brass upcoming
+   dot and the footer's note appear on more than one area's pages. Imported
+   by globals.css just before motion.css, as their old places were. */
+
+/* ——— Page changes: the Projects plate and the Shop's bar ——— */
+/* Switching views on desktop: the plate shrinks into its place in the grid,
+   or a grid photograph grows into the One by one plate (Monograph names the
+   two "mono-shared" for the transition); the rest of the page crossfades. */
+::view-transition-group(mono-shared) {
+  animation-duration: var(--dur-image);
+  animation-timing-function: var(--ease-slow);
+}
+::view-transition-old(mono-shared),
+::view-transition-new(mono-shared) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: var(--dur-image);
+  animation-timing-function: var(--ease-slow);
+}
+
+/* The plate growing into the project's hero (a shared view transition
+   between the two pages, named project-<slug>): it morphs over --dur-page
+   on --ease-slow, while the rest of the page crossfades as usual. */
+::view-transition-group(.project-plate) {
+  animation-duration: var(--dur-page);
+  animation-timing-function: var(--ease-slow);
+}
+::view-transition-old(.project-plate),
+::view-transition-new(.project-plate) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: var(--dur-page);
+  animation-timing-function: var(--ease-slow);
+}
+
+::view-transition-group(ed-bar) {
+  animation: none;
+}
+::view-transition-old(ed-bar) {
+  animation: none;
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-new(ed-bar) {
+    animation: page-in var(--dur-page-in) var(--editorial-ease) var(--dur-page-out) both;
+  }
+}
+
+/* ——— The footer's note under the newsletter line ——— */
+.footer-nl-note {
+  margin-top: -4px;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+/* ——— Upcoming project — pulsing accent dot ——— */
+
+.upcoming-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: upcomingPulse 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upcoming-dot {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+@keyframes upcomingPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}

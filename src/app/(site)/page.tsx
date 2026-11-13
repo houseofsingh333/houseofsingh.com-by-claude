@@ -35,6 +35,8 @@ import { devPlaceholder } from "@/lib/placeholders";
 import JsonLd from "@/components/JsonLd";
 import { buildProfilePageJsonLd } from "@/lib/structured-data";
 import { parseSanityDate } from "@/lib/dates";
+// This area's own styles, loaded with its pages alone (globals.css).
+import "@/app/styles/home.css";
 
 type SanityHomepageProject = {
   _id: string;

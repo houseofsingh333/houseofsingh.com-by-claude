@@ -4,6 +4,8 @@ import { shareCard } from "@/lib/share-metadata";
 import ProjectsMonograph from "@/components/projects/monograph/ProjectsMonograph";
 import { loadMonographProjects } from "@/lib/projectsData";
 import { PROJECTS_DESCRIPTION, PROJECTS_TITLE } from "@/lib/pageDescriptions";
+// This area's own styles, loaded with its pages alone (globals.css).
+import "@/app/styles/projects.css";
 
 /*
  * The Projects page opened on one project, One by one. Visitors reach it as

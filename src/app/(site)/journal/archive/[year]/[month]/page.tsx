@@ -12,6 +12,8 @@ import { monthKey, monthKeyOf } from "@/lib/journalRoom";
 import { buildBreadcrumbJsonLd, buildJournalMonthJsonLd } from "@/lib/structured-data";
 import { parseSanityDate } from "@/lib/dates";
 import type { JournalEntry } from "@/lib/types";
+// This area's own styles, loaded with its pages alone (globals.css).
+import "@/app/styles/journal.css";
 
 /*
  * One month of the journal, at its own cached address with its own

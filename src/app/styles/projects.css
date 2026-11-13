@@ -305,7 +305,6 @@ html:not(.js) .mono-icon {
 .mono-pause {
   min-height: 24px;
   color: var(--muted-foreground);
-  transition: color var(--dur-hover) var(--ease-soft-out);
 }
 
 
@@ -332,11 +331,10 @@ html:not(.js) .mono-icon {
   line-clamp: 2;
   overflow: hidden;
 }
+/* (C3: this rule now loads after motion.css, which it once preceded; declarations that the shared text link, hairline or focus styles always overrode are left out, so the page looks exactly as before.) */
 .mono-enter {
   position: relative;
   margin-top: 1.5rem;
-  padding-block: 0.875rem;
-  color: var(--foreground);
 }
 
 /* Previous and Next on a hairline; hovering or focusing Next shows the
@@ -430,11 +428,8 @@ html:not(.js) .mono-icon {
     min-height: 3.2em;
   }
   .mono-enter {
-    display: inline-flex;
-    align-items: center;
     min-height: 44px;
     margin-top: 0.5rem;
-    padding-block: 0;
   }
     .mono-phone-nav {
     margin-top: 0.5rem;
@@ -560,7 +555,6 @@ html:not(.js) .mono-icon {
   .mono-counter,
   .mono-pause,
   .mono-meta,
-  .mono-enter,
   .mono-nav button {
     font-size: var(--type-label-size);
     white-space: nowrap;
@@ -625,7 +619,7 @@ html:not(.js) .mono-icon {
   }
   .mono-enter {
     align-self: flex-start;
-    padding: calc(12 * var(--px)) 0 calc(4 * var(--px));
+    padding-inline: 0;
   }
     .mono-nav {
     align-items: center;
@@ -962,38 +956,9 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   }
 }
 
-/* Switching views on desktop: the plate shrinks into its place in the grid,
-   or a grid photograph grows into the One by one plate (Monograph names the
-   two "mono-shared" for the transition); the rest of the page crossfades. */
-::view-transition-group(mono-shared) {
-  animation-duration: var(--dur-image);
-  animation-timing-function: var(--ease-slow);
-}
-::view-transition-old(mono-shared),
-::view-transition-new(mono-shared) {
-  height: 100%;
-  object-fit: cover;
-  animation-duration: var(--dur-image);
-  animation-timing-function: var(--ease-slow);
-}
 .mono[data-vt] .mono-one,
 .mono[data-vt] .mono-glance {
   animation: none;
-}
-
-/* The plate growing into the project's hero (a shared view transition
-   between the two pages, named project-<slug>): it morphs over --dur-page
-   on --ease-slow, while the rest of the page crossfades as usual. */
-::view-transition-group(.project-plate) {
-  animation-duration: var(--dur-page);
-  animation-timing-function: var(--ease-slow);
-}
-::view-transition-old(.project-plate),
-::view-transition-new(.project-plate) {
-  height: 100%;
-  object-fit: cover;
-  animation-duration: var(--dur-page);
-  animation-timing-function: var(--ease-slow);
 }
 
 /* Reduced motion: nothing slides, grows or draws; views and projects
@@ -1034,34 +999,7 @@ html:not(.js) .mono-veil-list a[aria-current]::before {
   border-radius: 2px;
 }
 
-/* ——— Upcoming project — pulsing accent dot ——— */
 
-.upcoming-dot {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accent);
-  animation: upcomingPulse 2.8s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .upcoming-dot {
-    animation: none;
-    opacity: 1;
-  }
-}
-
-@keyframes upcomingPulse {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-}
 
 /* ═══ The project page (frames "Zamana, refined", "The journey",
    "Automatic layout") ═══
