@@ -3,11 +3,30 @@ import { defineField, defineType } from "sanity";
 import { httpsRule } from "./rules";
 import { imageAltFields } from "./imageFields";
 import { ABOUT_COPY_FIELDS } from "../../lib/siteCopy";
+import { inGroups } from "./groups";
+
+/** The About form's tabs, in the order of the page; Intro opens first. */
+const ABOUT_TABS = {
+  intro: ["introQuote", "founderName", "founderRoles", "founderBio", "bioPullQuote", "homeBio", "portrait", "homePortrait", "aboutPortraitLabel", "aboutStoryLabel"],
+  practice: ["monikerLogo", "monikerText", "aboutPracticeLabel"],
+  journey: ["milestones", "aboutJourneyHeading"],
+  featuredOn: ["featuredOn", "aboutPrintHeading"],
+  rapidFire: ["rapidFire", "aboutConversationLabel", "aboutConversationHeading", "aboutReplyName"],
+  search: ["seo", "seoTitle", "seoDescription"],
+} as const;
 
 export const aboutPage = defineType({
   name: "aboutPage",
-  title: "About Page",
+  title: "About",
   type: "document",
+  groups: [
+    { name: "intro", title: "Intro", default: true },
+    { name: "practice", title: "Practice" },
+    { name: "journey", title: "Journey" },
+    { name: "featuredOn", title: "Featured on" },
+    { name: "rapidFire", title: "Rapid fire" },
+    { name: "search", title: "Search" },
+  ],
   fieldsets: [
     {
       name: "chapterHeadings",
@@ -16,7 +35,7 @@ export const aboutPage = defineType({
       options: { collapsible: true, collapsed: true },
     },
   ],
-  fields: [
+  fields: inGroups([
     /* ——— 1 · Intro Quote ——— */
     defineField({
       name: "introQuote",
@@ -281,7 +300,7 @@ export const aboutPage = defineType({
         description: `Optional. When empty: ${f.text}`,
       }),
     ),
-  ],
+  ], ABOUT_TABS),
   preview: {
     select: { title: "founderName" },
   },

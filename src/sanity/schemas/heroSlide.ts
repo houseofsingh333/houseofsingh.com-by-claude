@@ -3,7 +3,7 @@ import { httpsRule } from "./rules";
 
 export const heroSlide = defineType({
   name: "heroSlide",
-  title: "Hero Slide",
+  title: "Home slide",
   type: "document",
   fields: [
     defineField({

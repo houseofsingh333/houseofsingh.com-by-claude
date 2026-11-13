@@ -60,7 +60,7 @@ function stepField(id: StepId) {
 
 export const contactPage = defineType({
   name: "contactPage",
-  title: "Contact Page",
+  title: "Contact page",
   type: "document",
   fields: [
     defineField({

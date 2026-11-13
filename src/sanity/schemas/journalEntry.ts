@@ -1,6 +1,14 @@
 import { defineField, defineType } from "sanity";
 import { imageAltFields, captionField } from "./imageFields";
 import { SLUG_NOTE } from "./rules";
+import { inGroups } from "./groups";
+
+/** The journal entry form's tabs; Writing opens first. */
+const JOURNAL_TABS = {
+  writing: ["title", "slug", "date", "excerpt", "body", "author"],
+  photographs: ["coverImage"],
+  search: ["seo", "seoTitle", "seoDescription"],
+} as const;
 
 const bodyMembers = [
   { type: "block" },
@@ -13,9 +21,14 @@ const bodyMembers = [
 
 export const journalEntry = defineType({
   name: "journalEntry",
-  title: "Journal Entry",
+  title: "Journal entry",
   type: "document",
-  fields: [
+  groups: [
+    { name: "writing", title: "Writing", default: true },
+    { name: "photographs", title: "Photographs" },
+    { name: "search", title: "Search" },
+  ],
+  fields: inGroups([
     defineField({
       name: "title",
       title: "Title",
@@ -89,7 +102,7 @@ export const journalEntry = defineType({
       readOnly: true,
       hidden: ({ value }) => !value,
     }),
-  ],
+  ], JOURNAL_TABS),
   orderings: [
     {
       title: "Date (Newest)",
