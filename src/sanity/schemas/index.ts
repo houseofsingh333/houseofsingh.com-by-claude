@@ -41,8 +41,10 @@ import {
 } from "./editions";
 import { siteSettings } from "./siteSettings";
 import { spotlight } from "./spotlight";
+import { withGuardrails } from "../guardrails";
 
-export const schemaTypes = [
+/** Every type, with the Studio guardrails attached (sanity/guardrails.ts). */
+export const schemaTypes = withGuardrails([
   // Document types
   aboutPage,
   contactPage,
@@ -88,4 +90,4 @@ export const schemaTypes = [
   stickyChapter,
   // Shared object types
   seo,
-];
+]);

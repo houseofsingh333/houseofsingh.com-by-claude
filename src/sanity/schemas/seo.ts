@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { descriptionCheck, titleCheck } from "../guardrails";
 
 /**
  * Reusable SEO object — attach to any indexable document type.
@@ -17,13 +18,8 @@ export const seo = defineType({
       title: "Meta Title",
       type: "string",
       description:
-        "Title for search engines, browser tabs, and social/AI previews. Aim for ~60 characters. Leave blank to use the page's default title.",
-      validation: (rule) =>
-        rule
-          .max(70)
-          .warning(
-            "Titles longer than ~60 characters are often truncated in search results.",
-          ),
+        "Title for search engines, browser tabs, and social/AI previews. At most 60 characters (a warning shows past that). Leave blank to use the page's default title.",
+      validation: (rule) => rule.custom((value) => titleCheck(value as string) ?? true).warning(),
     }),
     defineField({
       name: "metaDescription",
@@ -31,13 +27,8 @@ export const seo = defineType({
       type: "text",
       rows: 3,
       description:
-        "Summary shown in search results and social/AI previews. Aim for 120 to 155 characters.",
-      validation: (rule) =>
-        rule
-          .max(155)
-          .warning(
-            "Descriptions longer than 155 characters are often cut off in search results.",
-          ),
+        "Summary shown in search results and social/AI previews: 70 to 160 characters (a warning shows outside that).",
+      validation: (rule) => rule.custom((value) => descriptionCheck(value as string) ?? true).warning(),
     }),
     defineField({
       name: "noIndex",
