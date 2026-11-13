@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { inboxFields, inboxPreview } from "../inboxFields";
 
 /*
  * Private records of House of Singh Editions. The site writes them with IDs
@@ -26,18 +27,20 @@ export const editionsNotify = defineType({
 
 export const editionsProposal = defineType({
   name: "editionsProposal",
-  title: "Editions: Collaboration proposal",
+  title: "For artists proposal",
   type: "document",
-  ...readOnly,
+  // In the Inbox: what they sent stays read only; the ticks and notes save as they are clicked.
+  liveEdit: true,
   fields: [
-    defineField({ name: "name", title: "Name", type: "string" }),
-    defineField({ name: "email", title: "Email", type: "string" }),
-    defineField({ name: "practice", title: "What they make", type: "string" }),
-    defineField({ name: "link", title: "Link to their work", type: "string" }),
-    defineField({ name: "idea", title: "Their idea", type: "text" }),
-    defineField({ name: "submittedAt", title: "Date", type: "datetime" }),
+    ...inboxFields("Reviewed"),
+    defineField({ name: "name", title: "Name", type: "string", ...readOnly }),
+    defineField({ name: "email", title: "Email", type: "string", ...readOnly }),
+    defineField({ name: "practice", title: "What they make", type: "string", ...readOnly }),
+    defineField({ name: "link", title: "Link to their work", type: "string", ...readOnly }),
+    defineField({ name: "idea", title: "Their idea", type: "text", ...readOnly }),
+    defineField({ name: "submittedAt", title: "Date", type: "datetime", ...readOnly }),
   ],
-  preview: { select: { title: "name", subtitle: "practice" } },
+  preview: inboxPreview("artists"),
 });
 
 export const editionsOrder = defineType({
