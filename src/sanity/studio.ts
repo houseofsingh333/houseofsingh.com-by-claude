@@ -8,6 +8,7 @@ import { schemaTypes } from "./schemas";
 import { projectId, dataset, apiVersion } from "./env";
 import { MarkMadeAction, MarkShippedAction } from "./actions/orderActions";
 import SmallSupplierView from "./components/SmallSupplierView";
+import ContentRules from "./components/ContentRules";
 
 /** Single documents of the Shop: edited in place, never listed or duplicated. */
 const EDITIONS_SINGLETONS = new Set(["editionsShipping", "editionsSettings", "editionsSmallSupplier"]);
@@ -26,6 +27,9 @@ const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
+      // What the Studio checks before publishing, in plain English (sanity/guardrails.ts).
+      S.listItem().id("content-rules").title("Content rules").child(S.component(ContentRules).id("content-rules-page").title("Content rules")),
+      S.divider(),
       ...S.documentTypeListItems()
         .filter((item) => !String(item.getId() ?? "").startsWith("editions") && !["signupPending", "emailQueued", "emailDay"].includes(String(item.getId())))
         // Contact submissions and newsletter subscribers are private
