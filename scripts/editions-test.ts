@@ -17,6 +17,7 @@ import { editionsCollectionsQuery } from "../src/lib/editions/queries";
 import { cardDate, cityTimes, daysUntil, momentIn, releaseIcs, sealedEyebrow } from "../src/lib/editions/release";
 import { withDefaults } from "../src/lib/editions/load";
 import { DEFAULT_TERMS } from "../src/lib/editions/defaults";
+import { previewAllowed } from "../src/lib/editions/enabled";
 import { CONSENT } from "../src/lib/email/consent";
 import { orderEmail, smallSupplierEmail } from "../src/lib/email/templates";
 import { alertsDue, quarterOf, shiftQuarter, summarise } from "../src/lib/editions/smallSupplier";
@@ -170,6 +171,19 @@ check(params.custom_text.submit.message === "Sold by Maninder Singh, operating a
   check(none.line_items.every((l) => !("tax_rates" in l)) && !("automatic_tax" in none) && !JSON.stringify(none).includes("tax_code") && !JSON.stringify(none).includes("tax_behavior"), "no tax: no rate, no Stripe Tax, even if a rate were passed");
   check(none.metadata.taxMode === "none" && none.metadata.taxProvince === "", "no tax: nothing to check afterwards");
   check(!/Studios Inc|GST|HST/.test(JSON.stringify(withDefaults({}))), "the Shop's default words name no company and no GST/HST");
+  {
+    // The preview cookie (approved 13 Nov): on previews and locally, never on Production.
+    const was = process.env.VERCEL_ENV;
+    process.env.VERCEL_ENV = "production";
+    const onProduction = previewAllowed();
+    process.env.VERCEL_ENV = "preview";
+    const onPreview = previewAllowed();
+    delete process.env.VERCEL_ENV;
+    const locally = previewAllowed();
+    if (was === undefined) delete process.env.VERCEL_ENV;
+    else process.env.VERCEL_ENV = was;
+    check(!onProduction && onPreview && locally, "the preview cookie counts on previews and locally, never on Production");
+  }
   check(/Maninder Singh, a sole proprietor in Ontario, Canada, operating as House of Singh Editions/.test(JSON.stringify(DEFAULT_TERMS)) && /No GST or HST is charged/.test(JSON.stringify(DEFAULT_TERMS)), "the terms: the sole proprietor, and no GST or HST");
 }
 check(params.success_url.endsWith("/editions/thank-you?session_id={CHECKOUT_SESSION_ID}") && params.cancel_url.endsWith("/editions/test-print"), "success to the thank you page, cancel back to the piece");
