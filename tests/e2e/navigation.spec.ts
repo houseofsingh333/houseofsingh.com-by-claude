@@ -111,7 +111,7 @@ test("an in page link glides to its anchor", async ({ page }) => {
  * the new page's snapshots are read on every frame: the new one may only
  * start to show once the old one has gone.
  */
-type Change = { started: number; frames: { old: number; new: number }[]; timing: { part: string; start: number; end: number }[] };
+type Change = { started: number; frames: { old: number; new: number; header: string }[]; timing: { part: string; start: number; end: number }[] };
 
 async function watchChange(page: Page, go: () => Promise<unknown>): Promise<Change> {
   await page.evaluate(() => {
@@ -140,7 +140,9 @@ async function watchChange(page: Page, go: () => Promise<unknown>): Promise<Chan
     const read = (part: string) => Number(getComputedStyle(document.documentElement, `::view-transition-${part}(root)`).opacity);
     const tick = () => {
       if (!w.__vtRun) return;
-      if (fades().length) w.__vt.frames.push({ old: read("old"), new: read("new") });
+      // The header's two states (crest, wordmark bar), as the new page shows them.
+      const header = [...document.querySelectorAll("header.site-header")].map((h) => Number(getComputedStyle(h).opacity).toFixed(2)).join("/");
+      if (fades().length) w.__vt.frames.push({ old: read("old"), new: read("new"), header });
       requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
@@ -161,6 +163,8 @@ for (const [label, from, to] of [
   ["About, far down, to Journal by the footer", "/about", "footer a[href='/journal']"],
   ["an entry, far down, to Projects by the footer", "/journal/the-saddle", "footer a[href='/projects']"],
   ["a project, far down, to Contact by the footer", "/projects/zamana", "footer a[href='/contact']"],
+  // The stutter of 13 Nov: from far down the Shop, For artists.
+  ["the Shop, far down, to For artists", "/editions", "a[href='/editions/artists']"],
 ] as const) {
   test(`page change, ${label}: never two pages at once`, async ({ page }) => {
     await open(page, from);
@@ -189,6 +193,10 @@ for (const [label, from, to] of [
     const both = change.frames.filter((f) => f.old > 0.01 && f.new > 0.01);
     expect(both, `frames showing both pages: ${JSON.stringify(both.slice(0, 3))}`).toHaveLength(0);
     expect(atTop(await scrollSamples(page)), "the new page opens at its top").toBe(true);
+    // The header arrives with the page, already in its top state (the
+    // crest), never crossfading on its own beside the page's fade.
+    const header = [...new Set(change.frames.map((f) => f.header))];
+    expect(header, `the header during the change: ${header.join(", ")}`).toEqual(["1.00/0.00"]);
   });
 }
 

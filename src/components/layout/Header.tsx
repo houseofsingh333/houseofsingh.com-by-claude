@@ -6,6 +6,7 @@ import Link from "@/components/Link";
 import NavOverlay, { SITE_MENU_ID, type MenuCopy } from "./NavOverlay";
 import type { NewsletterCopy } from "@/components/NewsletterNote";
 import IntroOverlay, { useIntroSequence } from "./IntroOverlay";
+import { PAGE_TOP_EVENT } from "@/components/PageTransition";
 
 const NewsletterNote = dynamic(
   () => import("@/components/NewsletterNote"),
@@ -34,6 +35,32 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
   const menuButton1Ref = useRef<HTMLButtonElement>(null);
   const menuButton2Ref = useRef<HTMLButtonElement>(null);
   const menuWasOpenRef = useRef(false);
+
+  /*
+   * A page change that opens the new page at its top (PageTransition): the
+   * header is set to State 1 at once, before the new page is captured, with
+   * no crossfade of its own, so header and page fade in together as one
+   * page. Without it the header noticed the scroll a frame later and ran
+   * its own 250ms crossfade beside the page's fade (the stutter seen going
+   * from far down the Shop to For artists, 13 Nov). Scrolling is unchanged.
+   */
+  const [instant, setInstant] = useState(false);
+  useEffect(() => {
+    let frame = 0;
+    const onTop = () => {
+      setInstant(true);
+      setScrolled(false);
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        frame = requestAnimationFrame(() => setInstant(false));
+      });
+    };
+    window.addEventListener(PAGE_TOP_EVENT, onTop);
+    return () => {
+      window.removeEventListener(PAGE_TOP_EVENT, onTop);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
 
   /* ── Scroll listener with hysteresis (State 1 ↔ State 2) ── */
   useEffect(() => {
@@ -90,7 +117,7 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
 
       {/* ═══ STATE 1 : Crest + controls — top-edges at 32px rail ═══ */}
       <header
-        className={`site-header fixed inset-x-0 top-0 z-50 transition-opacity duration-[250ms] ease-in-out ${
+        className={`site-header fixed inset-x-0 top-0 z-50 ${instant ? "" : "transition-opacity duration-[250ms] ease-in-out"} ${
           showState1 ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         aria-hidden={!showState1}
@@ -143,7 +170,7 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
 
       {/* ═══ STATE 2 : Scrolled white bar header ═══ */}
       <header
-        className={`site-header fixed top-0 left-0 right-0 z-50 h-[68px] flex items-center justify-between px-5 md:px-8 bg-background border-b border-border/40 transition-opacity duration-[250ms] ease-in-out ${
+        className={`site-header fixed top-0 left-0 right-0 z-50 h-[68px] flex items-center justify-between px-5 md:px-8 bg-background border-b border-border/40 ${instant ? "" : "transition-opacity duration-[250ms] ease-in-out"} ${
           showState2 ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         aria-hidden={!showState2}
