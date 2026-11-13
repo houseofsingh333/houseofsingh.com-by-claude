@@ -5,6 +5,8 @@ import { requireEditions } from "@/lib/editions/enabled";
 import { loadCollections, loadSettings, withDefaults } from "@/lib/editions/load";
 import { shopSections, showPlaceholders, visibleQuestions } from "@/lib/editions/view";
 import { gurmukhiFont } from "@/lib/editions/fonts";
+// This area's own styles, loaded with its pages alone (globals.css).
+import "@/app/styles/editions.css";
 
 /**
  * House of Singh Editions: reachable only from the footer's "Shop" link,

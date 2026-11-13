@@ -1,16 +1,6 @@
-/* Journal: the homepage journal filmstrip.
-   Imported by globals.css, in the order listed there. */
-
-/* ——— Journal filmstrip (home/filmstrip) ———
-   The strip scrolls by hand when still (reduced motion, no JavaScript) and
-   is clipped while it drifts; either way it shows no scrollbar, so the two
-   states are the same height and switching never moves anything. */
-.filmstrip-viewport {
-  scrollbar-width: none;
-}
-.filmstrip-viewport::-webkit-scrollbar {
-  display: none;
-}
+/* Journal: the Journal pages (the calendar and the reading room). Imported
+   by those pages alone (Batch C, C3); see globals.css for the site wide
+   stylesheets. */
 
 /* ═══ The Journal page: the calendar and the reading room ═══
    Frames "J4 desktop" and "Phone B" (components/journal/room). Desktop: the
@@ -192,9 +182,12 @@
   border-radius: 50%;
   overflow: hidden;
   background: var(--secondary);
+  transition: outline-color var(--dur-hover) var(--ease-soft-out);
+}
+/* The keyboard focus ring (motion.css) wins when the circle is focused. */
+.jr-circle:not(:focus-visible) {
   outline: 1px solid transparent;
   outline-offset: 2px;
-  transition: outline-color var(--dur-hover) var(--ease-soft-out);
 }
 .jr-day[aria-current] .jr-circle {
   outline-color: var(--accent);
@@ -267,7 +260,6 @@
   line-height: var(--type-label-leading);
   letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
-  transition: color var(--dur-hover) var(--ease-soft-out);
 }
 .jr-mini.is-empty .jr-mini-name {
   color: var(--muted-foreground);
@@ -396,7 +388,6 @@
   letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--muted-foreground);
-  transition: color var(--dur-hover) var(--ease-soft-out);
 }
 /* With JavaScript the months load by themselves: the link to the next older
    month shows only to a keyboard user on it, and room is kept below for that

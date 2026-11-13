@@ -7,6 +7,8 @@ import NotFoundResponse from "@/components/NotFoundResponse";
 import { categoriesOf, loadMonographProjects } from "@/lib/projectsData";
 import { categorySlug, legacyCategorySlug } from "@/lib/projectCategories";
 import { PROJECTS_DESCRIPTION, PROJECTS_TITLE } from "@/lib/pageDescriptions";
+// This area's own styles, loaded with its pages alone (globals.css).
+import "@/app/styles/projects.css";
 
 /*
  * One category of projects at its own cached address: the Projects page At

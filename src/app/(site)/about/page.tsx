@@ -12,6 +12,8 @@ import ReadingProgress from "@/components/ReadingProgress";
 import { buildAboutPageJsonLd, buildFaqJsonLd } from "@/lib/structured-data";
 import { fullTitle, pageTitle } from "@/lib/page-title";
 import { shareCard, withSharePhoto } from "@/lib/share-metadata";
+// This area's own styles, loaded with its pages alone (globals.css).
+import "@/app/styles/about.css";
 
 /** The page's search title and description (Sanity, else these defaults). */
 function aboutCopy(data: AboutPageData | null) {

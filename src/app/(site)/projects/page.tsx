@@ -7,6 +7,8 @@ import { PROJECTS_DESCRIPTION, PROJECTS_TITLE } from "@/lib/pageDescriptions";
 import JsonLd from "@/components/JsonLd";
 import { loadMonographProjects } from "@/lib/projectsData";
 import { buildProjectsJsonLd } from "@/lib/structured-data";
+// This area's own styles, loaded with its pages alone (globals.css).
+import "@/app/styles/projects.css";
 
 const TITLE = PROJECTS_TITLE;
 const DESCRIPTION = PROJECTS_DESCRIPTION;
