@@ -35,9 +35,6 @@ import { devPlaceholder } from "@/lib/placeholders";
 import JsonLd from "@/components/JsonLd";
 import { buildProfilePageJsonLd } from "@/lib/structured-data";
 import { parseSanityDate } from "@/lib/dates";
-import type { Metadata, ResolvingMetadata } from "next";
-import { sharePhotoOnly } from "@/lib/share-metadata";
-import { pagePhoto } from "@/lib/pagePhotos";
 
 type SanityHomepageProject = {
   _id: string;
@@ -56,10 +53,9 @@ function latestJournal(entries: JournalEntry[]): JournalEntry[] {
     .slice(0, 6);
 }
 
-/** The home page keeps the site's title and description; its share image is the first hero slide (audit P1). */
-export async function generateMetadata(_props: unknown, parent: ResolvingMetadata): Promise<Metadata> {
-  return sharePhotoOnly(parent, await pagePhoto("home"), "House of Singh");
-}
+// The home page keeps the site's title, description and share image: the
+// crest (src/app/opengraph-image.png, made by scripts/share-image.mjs;
+// approved 12 Nov, in place of the first hero slide).
 
 export default async function HomePage() {
   const [slides, intro, settings, featured, latest, journal, spotlight] =

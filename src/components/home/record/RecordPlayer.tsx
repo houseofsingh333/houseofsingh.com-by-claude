@@ -190,6 +190,12 @@ export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
     // renders into the mount, so the swap cannot upset it.
     const target = document.createElement("div");
     mount.appendChild(target);
+    // Every frame the API puts here is titled the moment it appears, not
+    // only once the player reports ready: until then a screen reader (and
+    // axe, found in Firefox) would meet a frame with no name.
+    const name = () => mount.querySelectorAll("iframe:not([title])").forEach((f) => f.setAttribute("title", title));
+    const watch = new MutationObserver(name);
+    watch.observe(mount, { childList: true, subtree: true });
     loadApi()
       .then((api) => {
         if (stopped) return;
@@ -203,7 +209,7 @@ export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
             if (stopped) return;
             handed = true;
             window.clearTimeout(deadline);
-            mount.querySelector("iframe")?.setAttribute("title", title);
+            mount.querySelectorAll("iframe").forEach((f) => f.setAttribute("title", title));
             setHandedOver(true);
           });
           c.addListener("playback_update", (e) => {
@@ -215,6 +221,7 @@ export default function RecordPlayer({ embedSrc, recordId, title }: Props) {
 
     return () => {
       stopped = true;
+      watch.disconnect();
       window.clearTimeout(deadline);
       controller?.destroy();
       mount.replaceChildren();

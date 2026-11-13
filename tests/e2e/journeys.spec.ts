@@ -75,11 +75,23 @@ test.describe("menu", () => {
     const nav = page.locator("nav[aria-label='Site menu']");
     await expect(nav).toBeVisible();
     for (const href of ["/", "/about", "/projects", "/journal", "/contact"]) await expect(nav.locator(`a[href='${href}']`).first()).toBeVisible();
-    // Keyboard focus stays inside the open menu.
-    for (let i = 0; i < 12; i++) {
-      await page.keyboard.press("Tab");
-      const inside = await page.evaluate(() => !!document.activeElement?.closest("nav[aria-label='Site menu'], [role=dialog], [aria-modal=true]"));
-      expect(inside, `Tab ${i + 1} stays in the menu`).toBe(true);
+    // Keyboard focus stays inside the open menu and reaches every page
+    // link, with Tab, Safari's Option+Tab (Alt+Tab) and Shift+Tab alike:
+    // Safari's own Tab skips links, so the menu moves focus itself.
+    const where = () =>
+      page.evaluate(() => {
+        const el = document.activeElement;
+        return { inside: !!el?.closest("nav[aria-label='Site menu'], [role=dialog], [aria-modal=true]"), href: el?.getAttribute("href") ?? null };
+      });
+    for (const key of ["Tab", "Alt+Tab", "Shift+Tab"]) {
+      const reached = new Set<string>();
+      for (let i = 0; i < 14; i++) {
+        await page.keyboard.press(key);
+        const at = await where();
+        expect(at.inside, `${key} ${i + 1} stays in the menu`).toBe(true);
+        if (at.href) reached.add(at.href);
+      }
+      for (const href of ["/", "/about", "/projects", "/journal", "/contact"]) expect(reached.has(href), `${key} reaches ${href}`).toBe(true);
     }
     await page.keyboard.press("Escape");
     await expect(nav).toBeHidden();
@@ -302,9 +314,18 @@ test.describe("unsubscribe", () => {
     await open(page, `/unsubscribe?t=${Buffer.from(email).toString("base64url")}.${mac}`);
     await expect(page.locator("main")).toContainText("r•••@example.com");
     // The button posts to the server, which would reach Kit: answered here instead.
-    await page.route("**/api/email/unsubscribe", (route) => route.fulfill({ status: 303, headers: { location: "/unsubscribe?done=1" } }));
+    // (The real answer is a 303 to /unsubscribe?done=1; WebKit cannot be
+    // handed a redirect here, so the stand in moves on itself, as a 303
+    // would. That the button posts the signed link is checked too.)
+    let posted = "";
+    await page.route("**/api/email/unsubscribe", (route) => {
+      posted = route.request().postData() ?? "";
+      return route.fulfill({ status: 200, contentType: "text/html", body: '<!doctype html><meta http-equiv="refresh" content="0;url=/unsubscribe?done=1">' });
+    });
     await page.getByRole("button", { name: "Unsubscribe" }).click();
+    await page.waitForURL("**/unsubscribe?done=1");
     await expect(page.locator("h1")).toHaveText("You are unsubscribed.");
+    expect(posted, "the button posts the signed link").toContain(mac);
   });
 });
 

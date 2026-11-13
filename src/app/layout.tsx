@@ -81,8 +81,9 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical: "/",
     },
-    // OG/Twitter images come from the sitewide opengraph-image.tsx /
-    // twitter-image.tsx generators (Next.js convention).
+    // The share image is the crest (src/app/opengraph-image.png and
+    // twitter-image.png, made by scripts/share-image.mjs; Next.js links them
+    // sitewide). Pages with their own photograph or card replace it.
     openGraph: {
       type: "website",
       locale: "en_CA",
