@@ -7,6 +7,12 @@
  * is measured several times and the median is compared; the limits sit a
  * margin below the measured values. Fails only when a median crosses one.
  *
+ * Each page and form is first loaded once, unmeasured ("warmup"): a fresh
+ * server resizes every photograph on its first request and prepares the
+ * page, and that work shared the machine with the first measured runs.
+ * Home, measured first and the richest in photographs, swung from 69 to
+ * 100 because of it (13 Nov); warmed, it measures like the other pages.
+ *
  *   node tests/lighthouse.mjs [url]       (default http://localhost:3100)
  *
  * Lighthouse is fetched at a fixed version on first use (npx), not added to
@@ -26,6 +32,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const BASE = (process.argv[2] || process.env.BASE_URL || "http://localhost:3100").replace(/\/$/, "");
 const { lighthouse: limits } = JSON.parse(readFileSync(join(here, "budgets.json"), "utf8"));
 const RUNS = Number(process.env.LIGHTHOUSE_RUNS || limits.runs || 3);
+const WARMUP = Number(process.env.LIGHTHOUSE_WARMUP ?? limits.warmup ?? 1);
 const LIGHTHOUSE_VERSION = "13.6.0";
 const [cmd, ...pre] = process.env.LIGHTHOUSE ? [process.env.LIGHTHOUSE] : ["npx", "--yes", `lighthouse@${LIGHTHOUSE_VERSION}`];
 const out = mkdtempSync(join(tmpdir(), "lh-"));
@@ -63,6 +70,7 @@ const failures = [];
 for (const form of ["mobile", "desktop"]) {
   const limit = limits[form];
   for (const path of limits.pages) {
+    for (let i = 0; i < WARMUP; i++) await measure(path, form, `warmup-${i}`);
     const runs = [];
     for (let i = 0; i < RUNS; i++) runs.push(await measure(path, form, i));
     const m = {
@@ -88,7 +96,7 @@ rmSync(out, { recursive: true, force: true });
 if (process.env.GITHUB_STEP_SUMMARY) {
   const lim = (f) => limits[f];
   const table = [
-    `### Lighthouse (median of ${RUNS} runs)`,
+    `### Lighthouse (median of ${RUNS} runs, after ${WARMUP} unmeasured warm up)`,
     "",
     "| | Page | Performance | LCP | Blocking time | Layout shift | |",
     "|---|---|---|---|---|---|---|",
