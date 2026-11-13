@@ -44,15 +44,17 @@ const WEBSITE_ID = `${SITE_URL}/#website`;
 const BLOG_ID = `${SITE_URL}/journal#blog`;
 
 /**
- * Canonical portrait, served from the STUDIO's Sanity CDN (project 00iree4d)
- * on purpose, so both sites publish a byte-identical image URL for the Person.
- *
- * This is deliberately not this repo's Sanity project (31g7gu7n) and is not
- * CMS-managed. If the asset is removed from the studio project this URL breaks,
- * so it must be changed on both sites together.
+ * The Person's portrait: the About portrait, in this site's own Sanity
+ * project (31g7gu7n), pinned here so the Person node never changes by
+ * accident. Approved 13 Nov: until then it pointed at an image in the
+ * studio site's project (00iree4d); that project stays (it is the live
+ * studio site's) and the studio site keeps its own Person image, so the two
+ * sites now publish different portrait addresses for the same Person.
+ * If the About portrait is replaced in the Studio, update this address
+ * (the old image stays in Sanity until it is deleted, so nothing breaks).
  */
 const PERSON_IMAGE =
-  "https://cdn.sanity.io/images/00iree4d/production/99da20aab16b0adf357312fc3440c03ebd3dc6bf-1868x2336.jpg";
+  "https://cdn.sanity.io/images/31g7gu7n/production/8e7fb67313ccf4dd67303e8e782a7d0f23f23cec-1121x1403.jpg";
 
 /**
  * Person sameAs is pinned here rather than read from Sanity: these profiles

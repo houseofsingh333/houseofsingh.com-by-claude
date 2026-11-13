@@ -198,8 +198,8 @@ Three entities are shared across this site and the studio site. Their `@id` valu
 | House of Singh Studios (Organization) | `https://studios.houseofsingh.com/#organization` | studios.houseofsingh.com |
 
 - **This site owns the Person and the parent brand.** It is the only place they are fully defined. The studio Organization is referenced by `@id` only and is never redefined here.
-- **Person facts must stay identical to the studio site:** `jobTitle`, `description`, `image`, `memberOf`, `knowsAbout`, and `sameAs`, including the order of the `sameAs` profiles. Change them on both sites together, never on one alone.
-- The Person `image` deliberately points at the studio's Sanity CDN (project `00iree4d`) so both sites publish the same portrait URL. This is not this repo's Sanity project and must not change this repo's Sanity config.
+- **Person facts must stay identical to the studio site:** `jobTitle`, `description`, `memberOf`, `knowsAbout`, and `sameAs`, including the order of the `sameAs` profiles. Change them on both sites together, never on one alone.
+- **The Person `image` is the one exception** (approved 13 Nov): this site's Person image is the About portrait in this site's own Sanity project (`31g7gu7n`), pinned as `PERSON_IMAGE` in `src/lib/structured-data.ts`; the studio site keeps its own. The studio's Sanity project (`00iree4d`) is the live studio site's: never delete it, and never point this site at it again.
 - **Naming rule:** House of Singh Studios is a **venture** of House of Singh. Never call it a division or a subsidiary.
 - **Dates:** House of Singh has been active since 2014. House of Singh Studios was founded in Canada in 2023.
 - **Never published on this site:** the trademark registration number and the studio's exact founding day and month. Write "registered Canadian trademark" and "founded in 2023", nothing more specific. This repo is public, so that includes code, docs and commit messages.
