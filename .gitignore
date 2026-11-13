@@ -45,3 +45,19 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /blob-report/
+
+# Backups and exports of the Sanity dataset, and anything encrypted
+# (docs/backup-and-restore.md, docs/security/key-register.md). The
+# repository is public: these hold private records and must never be in it.
+*.tar.gz
+*.tar.gz.enc
+*.enc
+*.ndjson
+/backups/
+/house-of-singh-backups/
+*-export/
+*-export.json
+*-backup*.json
+
+# Personal Claude Code settings (may hold local permissions or paths)
+.claude/settings.local.json
