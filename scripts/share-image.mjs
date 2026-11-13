@@ -29,10 +29,10 @@ const { chromium } = require("playwright");
 const INK = "#221F1C";
 const CANVAS = "#F9F7F5";
 const SIZE = { width: 1200, height: 630 };
-/** The crest's width on the image: 480 of 1200, so the centre square keeps 75px either side. */
-const CREST_WIDTH = 480;
+/** The crest's width on the image: 540 of 1200 (approved 13 Nov, from 480, so it reads at thumbnail size); the centre square keeps 45px either side. */
+const CREST_WIDTH = 540;
 /** The least margin, in pixels, the crest keeps inside the centre square. */
-const SQUARE_MARGIN = 60;
+const SQUARE_MARGIN = 40;
 
 const crest = readFileSync("public/images/hos-logo.svg", "utf8");
 const inner = crest
