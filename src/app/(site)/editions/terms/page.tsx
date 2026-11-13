@@ -15,8 +15,9 @@ export async function generateMetadata(_props: unknown, parent: ResolvingMetadat
     ...(await shareCard(parent, fullTitle("Terms of sale"), EDITIONS_TERMS_DESCRIPTION)),
   };
 }
-// Rendered on each visit, so the Shop's mode (EDITIONS_MODE) always applies.
-export const dynamic = "force-dynamic";
+// Prepared ahead and refreshed every minute, like the other pages (a change
+// of EDITIONS_MODE takes a redeploy, which rebuilds it).
+export const revalidate = 60;
 
 /** Fills {gst} and {returns}; without a GST_NUMBER the sentence naming it is left out. */
 function fill(text: string, gst: string | null, returns: string): string {

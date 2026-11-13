@@ -10,6 +10,10 @@ import { collectionTitle, dayIn, pad2 } from "@/lib/editions/format";
 import { requireEditions } from "@/lib/editions/enabled";
 import { keepLastWords } from "@/lib/keepLastWords";
 
+// Prepared ahead and refreshed every minute, like the other pages (on
+// Production; a preview reads the preview cookie, so it renders on each visit).
+export const revalidate = 60;
+
 export async function generateMetadata(_props: unknown, parent: ResolvingMetadata): Promise<Metadata> {
   return {
     title: "For artists",

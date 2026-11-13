@@ -14,9 +14,12 @@ import { sameHash, sha256Hex } from "./access";
  * - "full": the whole Shop (Vercel Preview today; Production at launch).
  *
  * EDITIONS_MODE unset: "full" where the older EDITIONS_ENABLED is "true",
- * else "off". A browser holding the secret preview cookie
- * (/editions?preview=EDITIONS_PREVIEW_SECRET) sees "full" while the site
- * is in "anticipation" (docs/editions-setup.md).
+ * else "off". On a Vercel preview (and locally) a browser holding the
+ * secret preview cookie (/editions?preview=EDITIONS_PREVIEW_SECRET) sees
+ * "full" while the site is in "anticipation" (docs/editions-setup.md).
+ * On Production the cookie is never read (approved 13 Nov): every visitor
+ * sees the site's mode, so the Shop's pages are prepared ahead and cached
+ * like the others, and open without waiting for the server.
  */
 export type EditionsMode = "off" | "anticipation" | "full";
 
@@ -31,6 +34,9 @@ export const editionsLinked = () => siteMode() !== "off";
 
 export const PREVIEW_COOKIE = "hos_editions_preview";
 
+/** Whether the preview cookie counts here: on previews and locally, never on Production. */
+export const previewAllowed = () => process.env.VERCEL_ENV !== "production";
+
 /** The preview cookie's value: a fingerprint of the secret, never the secret. */
 export function previewFingerprint(): string | null {
   const secret = process.env.EDITIONS_PREVIEW_SECRET?.trim();
@@ -40,7 +46,7 @@ export function previewFingerprint(): string | null {
 /** The mode this visitor sees: the site's, or "full" with the preview cookie. */
 export async function viewerMode(): Promise<EditionsMode> {
   const mode = siteMode();
-  if (mode !== "anticipation") return mode;
+  if (mode !== "anticipation" || !previewAllowed()) return mode;
   const expected = previewFingerprint();
   if (!expected) return mode;
   const held = (await cookies()).get(PREVIEW_COOKIE)?.value;

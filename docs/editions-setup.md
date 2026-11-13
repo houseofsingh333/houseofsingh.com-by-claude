@@ -7,7 +7,7 @@ How to switch the Shop on, test it, take it live, and run it from one Collection
 | Name | What it is | Where it comes from |
 |---|---|---|
 | `EDITIONS_MODE` | How much of the Shop a site shows: `off` (nothing: no footer link, every Shop page and API route is a 404), `anticipation` (the live site before launch: /editions shows only the sealed Collection with Notify me, linked from the footer and indexable; pieces, prices, the archive, collaborators, checkout and certificates are 404), `full` (everything). Preview: `full`. Production: `off`, then `anticipation`, then `full` at launch. Unset, the older `EDITIONS_ENABLED=true` still means `full`. | Set by hand |
-| `EDITIONS_PREVIEW_SECRET` | A long random string (at least 12 characters). Opening `/editions?preview=THE_SECRET` on the live site shows that browser the full Shop while the site is in anticipation (a cookie, for 30 days); `/editions?preview=off` removes it. Keep it to yourself. | Set by hand, Production |
+| `EDITIONS_PREVIEW_SECRET` | A long random string (at least 12 characters). On a Vercel preview whose `EDITIONS_MODE` is `anticipation`, opening `/editions?preview=THE_SECRET` shows that browser the full Shop (a cookie, for 30 days); `/editions?preview=off` removes it. **Never on Production** (approved 13 Nov): there the cookie is not read, so the Shop's pages are prepared ahead and open at once; to see the full Shop before launch, use a Vercel preview (its `EDITIONS_MODE` is `full`). Keep it to yourself. | Set by hand, Preview (not needed on Production) |
 | `STRIPE_SECRET_KEY` | Stripe's secret key. `sk_test_...` on Preview, `sk_live_...` on Production only at launch. | Stripe Dashboard, Developers, API keys |
 | `STRIPE_API_VERSION` | Optional: pins the Stripe API version to the account's, by its exact name in the Stripe Dashboard (Developers, API version). Unset, Stripe uses the account's default. | Stripe Dashboard |
 | `STRIPE_WEBHOOK_SECRET` | Proves an event really came from Stripe (`whsec_...`). One per endpoint and per mode. | Stripe Dashboard, Developers, Webhooks, the endpoint, Signing secret |
@@ -51,7 +51,7 @@ Only when the test purchase has worked end to end.
 3. Add the live webhook endpoint (`https://houseofsingh.com/api/editions/webhook`) with the same five events as in test mode (section 2, step 4) and copy its live signing secret.
 4. In Vercel, for **Production** only: `STRIPE_SECRET_KEY` = the live key, `STRIPE_WEBHOOK_SECRET` = the live signing secret. No `TAX_MODE` and no `GST_NUMBER`.
 5. Delete the sample content (section 6), remove `EDITIONS_CLOCK` everywhere, and redeploy.
-6. Before launch, the live site can sit in anticipation: set `EDITIONS_MODE` to `anticipation` on Production and redeploy. /editions then shows the sealed Collection with Notify me, linked from the footer, and you can see the whole Shop yourself with `/editions?preview=EDITIONS_PREVIEW_SECRET`.
+6. Before launch, the live site can sit in anticipation: set `EDITIONS_MODE` to `anticipation` on Production and redeploy. /editions then shows the sealed Collection with Notify me, linked from the footer. The Shop's pages there are prepared ahead and refreshed every minute, like the rest of the site; to see the whole Shop yourself, open the latest Vercel preview (the preview link does nothing on Production).
 7. Launch: set `EDITIONS_MODE` to `full` on Production and redeploy.
 
 ## 4. The shipping table (Canada Post)

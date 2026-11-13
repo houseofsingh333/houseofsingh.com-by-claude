@@ -18,7 +18,11 @@ import { makingEntries, shopSections, showPlaceholders, stillAvailable, visibleQ
 import { cardDate, cityTimes, daysUntilShort, earlyEyebrow, sealedEyebrow } from "@/lib/editions/release";
 import { keepLastWords } from "@/lib/keepLastWords";
 import { EDITIONS_DEFAULTS } from "@/lib/editions/defaults";
-import { requireEditions, siteMode } from "@/lib/editions/enabled";
+import { previewAllowed, requireEditions, siteMode } from "@/lib/editions/enabled";
+
+// Prepared ahead and refreshed every minute, like the other pages (on
+// Production; a preview reads the preview cookie, so it renders on each visit).
+export const revalidate = 60;
 
 /** The share image for Collection 01 (public/images): its card on the canvas, 1200 by 630. */
 const SHARE_IMAGES: Record<number, string> = { 1: "/images/og-editions-collection-01.png" };
@@ -59,8 +63,11 @@ export async function generateMetadata(_props: unknown, parent: ResolvingMetadat
  */
 export default async function EditionsPage({ searchParams }: { searchParams: Promise<{ access?: string; preview?: string; code?: string }> }) {
   const mode = await requireEditions("any");
-  const { access, preview, code } = await searchParams;
-  if (preview) redirect(`/api/editions/preview?secret=${encodeURIComponent(preview.slice(0, 128))}`);
+  // The address's query (the preview link, early access) matters only on a
+  // preview or in the full Shop. On Production in anticipation it is never
+  // read, so this page is prepared ahead and cached like the others.
+  const { access, preview, code } = previewAllowed() || mode === "full" ? await searchParams : {};
+  if (preview && previewAllowed()) redirect(`/api/editions/preview?secret=${encodeURIComponent(preview.slice(0, 128))}`);
   if (access && mode === "full") redirect(`/api/editions/access?code=${encodeURIComponent(access.slice(0, 64))}`);
   const anticipation = mode === "anticipation";
 

@@ -4,6 +4,7 @@ import { ACCESS_COOKIE, hasAccess } from "./access";
 import { editionsCollectionsQuery, editionsSettingsQuery, editionsShippingQuery } from "./queries";
 import { collectionState, shopNow } from "./state";
 import { EDITIONS_DEFAULTS } from "./defaults";
+import { previewAllowed, siteMode } from "./enabled";
 import type { CollectionState, EditionsCollection, EditionsPiece, EditionsSettings, ShippingRoute } from "./types";
 
 export type CollectionWithPieces = EditionsCollection & { pieces: EditionsPiece[] };
@@ -19,9 +20,13 @@ export async function accessCookie(): Promise<string | undefined> {
  * is cached for a minute; the state is computed now, per request.
  */
 export async function loadCollections(): Promise<CollectionView[]> {
+  // On Production in anticipation early access is closed to everyone (no
+  // preview cookie there either), so the cookie cannot change anything and
+  // is not read: the Shop's pages stay prepared ahead (approved 13 Nov).
+  const sealedForAll = siteMode() === "anticipation" && !previewAllowed();
   const [collections, cookie] = await Promise.all([
     sanityFetch<CollectionWithPieces[] | null>({ query: editionsCollectionsQuery, revalidate: 60 }),
-    accessCookie(),
+    sealedForAll ? undefined : accessCookie(),
   ]);
   const now = shopNow();
   return (collections ?? []).map((c) => {
