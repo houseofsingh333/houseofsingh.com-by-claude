@@ -867,11 +867,11 @@ html:not(.js) .hero-progress {
      action at the bottom left, level with the photographs; the panels on
      the right with their captions beneath. */
   .practice {
-    /* The canvas composition (PS-CTA1, approved at 1280: 96 / 380 / 88 /
-       620 / 96) kept at every width: one block, 1088px at most, centred,
-       so a wider screen adds equal room on both sides, never wider strips.
-       Below 1216 the strips narrow inside the usual 64px sides. */
-    --practice-block: 1088px;
+    /* The canvas composition (PS-CTA1), with the wider gap approved on
+       13 Nov: 380 / 144 / 620, one block, 1144px at most, centred, so a
+       wider screen adds equal room on both sides, never wider strips. The
+       sides never go under 64px; below 1272 wide the strips narrow. */
+    --practice-block: 1144px;
     padding-inline: max(4rem, calc((100% - var(--practice-block)) / 2));
     display: grid;
     grid-template-columns: 380px minmax(0, 620px);
@@ -881,7 +881,7 @@ html:not(.js) .hero-progress {
       ". work"
       "sign work"
       "action work";
-    column-gap: 88px;
+    column-gap: 144px;
   }
   .practice[data-panels="0"] {
     grid-template-columns: minmax(0, 560px);
