@@ -867,8 +867,14 @@ html:not(.js) .hero-progress {
      action at the bottom left, level with the photographs; the panels on
      the right with their captions beneath. */
   .practice {
+    /* The canvas composition (PS-CTA1, approved at 1280: 96 / 380 / 88 /
+       620 / 96) kept at every width: one block, 1088px at most, centred,
+       so a wider screen adds equal room on both sides, never wider strips.
+       Below 1216 the strips narrow inside the usual 64px sides. */
+    --practice-block: 1088px;
+    padding-inline: max(4rem, calc((100% - var(--practice-block)) / 2));
     display: grid;
-    grid-template-columns: 380px minmax(0, 1fr);
+    grid-template-columns: 380px minmax(0, 620px);
     grid-template-rows: auto 1fr auto auto;
     grid-template-areas:
       "label work"
@@ -910,7 +916,8 @@ html:not(.js) .hero-progress {
   }
   .practice-panels {
     gap: 12px;
-    height: clamp(440px, 41.875vw, 600px);
+    /* 536 tall at 1280 and wider, as on the canvas. */
+    height: clamp(440px, 41.875vw, 536px);
   }
   .practice-cap {
     margin-top: var(--practice-cap-gap);
