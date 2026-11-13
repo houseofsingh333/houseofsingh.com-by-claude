@@ -90,6 +90,31 @@ jobs:
           elif [ "$DOWN" = "no" ] && [ -n "$open" ]; then
             gh issue close "$open" --comment "Back up: every page answers again ($now)."
           fi
+      # A message sent through a form must never be missed (lib/inbox): the
+      # emails to Maninder still waiting are tried again here, and an alert
+      # opens if one is stuck. The answer is counts only, never who or what.
+      - name: Messages to Maninder still waiting are tried again
+        id: inbox
+        run: |
+          out=$(curl -sS -X POST --max-time 90 -A "houseofsingh-site-watch" "$SITE/api/email/retry" 2>/dev/null || true)
+          echo "$out"
+          stuck=$(echo "$out" | jq -r '.stuck // empty' 2>/dev/null || true)
+          echo "stuck=${stuck:-unknown}" >> "$GITHUB_OUTPUT"
+          echo "Messages waiting: $(echo "$out" | jq -r '.waiting // "unknown"' 2>/dev/null), stuck: ${stuck:-unknown}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Open, or close, the message alert
+        env:
+          STUCK: ${{ steps.inbox.outputs.stuck }}
+        run: |
+          [ "$STUCK" = "unknown" ] && exit 0
+          gh label create message-waiting --color 9B4B3B --description "A message sent through houseofsingh.com has not reached Maninder's inbox (site-watch.yml)" 2>/dev/null || true
+          open=$(gh issue list --label message-waiting --state open --json number --jq '.[0].number')
+          now="$(TZ=America/Toronto date '+%-d %b %Y, %H:%M') Toronto time"
+          if [ "$STUCK" -gt 0 ] && [ -z "$open" ]; then
+            gh issue create --title "A message from the website has not reached your inbox" --label message-waiting --assignee "$ALERT_TO" \
+              --body "$(printf 'Noticed %s: %s message(s) sent through a form on houseofsingh.com could not be emailed to you after repeated tries.\n\nThe message is safe: read it in the Studio, Inbox, New (it shows Emailed to you: queued). The site keeps trying every fifteen minutes; this closes by itself once it is sent. What to look at: docs/monitoring.md (Resend, its key and the daily limit).\n\n[The run](%s/%s/actions/runs/%s)' "$now" "$STUCK" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")"
+          elif [ "$STUCK" = "0" ] && [ -n "$open" ]; then
+            gh issue close "$open" --comment "Sent: nothing is waiting any more ($now)."
+          fi
 
   crawl:
     if: github.event.schedule == '41 11 * * *' || inputs.check == 'crawl'

@@ -9,6 +9,7 @@ The site is watched by GitHub itself (`.github/workflows/site-watch.yml`). There
 - An error page has a different title, so a page that loads but breaks is caught too.
 - If any of them fails twice, a minute apart, an issue **"houseofsingh.com is down"** opens and is assigned to you. It lists which pages failed and how.
 - When every page answers again, the issue closes itself with the time.
+- Any message from the website's forms that has not yet reached your inbox is tried again. If one has failed four times, or waited two hours, an issue **"A message from the website has not reached your inbox"** opens and is assigned to you. It names nobody (this repository is public); the message is in the Studio's Inbox. It closes itself once the email goes.
 
 **Every morning (about 7:40, Toronto time):**
 - The crawl from the automated checks runs on the live site: every page, every link, the browser's console.
@@ -34,6 +35,10 @@ GitHub emails you about issues assigned to you. To check:
 2. Open Vercel, then the project, then **Deployments**. A failed latest deployment can be undone: the previous production deployment, the three dots, **Promote to Production** (or **Instant Rollback**).
 3. Check vercel-status.com and sanity-status.com. An outage at either shows here as the site being down.
 4. Send me the issue. I can read the runtime logs.
+
+**"A message from the website has not reached your inbox":**
+1. Open the Studio, **Inbox**, **New**, and read the message there; reply from your own mail.
+2. In Resend, **Emails** and **Domains**, see why it is refused (a domain no longer verified, the key revoked, or the daily limit reached). Send me the issue if it is not plain.
 
 **"Errors on houseofsingh.com":** the issue lists each page and its problem. A broken link usually means a link in Sanity points at a page that was renamed or unpublished. Send me the issue to fix the rest.
 

@@ -37,7 +37,10 @@ In `src/lib/email/templates.ts`, where every word is kept:
 |---|---|---|---|
 | Welcome ("Welcome. The next letter will find you.") | Maninder | Footer sign up | Sign up |
 | Notify me ("You are on the list for Collection 01.") | Editions | Shop Notify me | Sign up |
-| Proposal received, and a copy to editions@ | Editions | For artists proposal | Sign up |
+| A message for Maninder (the whole message; replying writes to the sender) | Maninder | Contact form, project interest, For artists proposal | Message, the highest |
+| Message received ("Thank you, [name]. Your message is in. I will reply within two working days.") | Maninder | Contact form, project interest | Sign up |
+| Proposal received ("Thank you, [name]. Your proposal is in.") | Editions | For artists proposal | Sign up |
+| Messages waiting for a reply (the daily list) | Maninder | Every morning, when any message of the last 7 days is not yet Replied (or Reviewed) or Archived | Message |
 | Order confirmation | Editions | Payment confirmed (Stripe webhook) | Order |
 | Certificate link | Editions | Same, only for a piece set to "Issue a certificate" | Order |
 | Being made | Editions | Studio: order, Made | Order |
@@ -45,9 +48,25 @@ In `src/lib/email/templates.ts`, where every word is kept:
 
 Only fitting proposals receive a reply. The For artists page, the thank you after sending and the proposal email say so in the same sentence, kept once (`proposalPromise` in `src/lib/editions/defaults.ts`): "Every proposal is read. If your idea fits a coming Collection, I will be in touch to talk it through."
 
-**The daily limit.** Resend's free plan sends 100 emails a day (`RESEND_DAILY_LIMIT`). The website counts each day's emails (UTC, when Resend's allowance resets) privately in Sanity. Over the limit, an email waits privately (Studio: "Emails waiting to send") and goes out the next day, just after midnight UTC, order and shipping emails first, then oldest first; none is dropped. Sign up confirmations stop 10 short of the limit (`RESEND_SIGNUP_RESERVE`), so a busy day of sign ups never holds back an order email. An email that fails to send waits the same way.
+**The daily limit.** Resend's free plan sends 100 emails a day (`RESEND_DAILY_LIMIT`). The website counts each day's emails (UTC, when Resend's allowance resets) privately in Sanity. Over the limit, an email waits privately (Studio: "Emails waiting to send") and goes out the next day, just after midnight UTC, messages for Maninder first, then order and shipping emails, then oldest first; none is dropped. Sign up confirmations stop 10 short of the limit (`RESEND_SIGNUP_RESERVE`), so a busy day of sign ups never holds back an order email. An email that fails to send waits the same way.
 
-**The daily job.** Vercel Cron calls `/api/email/daily` at 00:05 UTC (`vercel.json`): it sends what waited and retries sign ups kept for Kit. Vercel sends `CRON_SECRET` with the call; set it (any long random string) in Vercel, Production. Vercel's free plan runs cron jobs once a day, which is what this needs.
+**The daily job.** Vercel Cron calls `/api/email/daily` at 00:05 UTC (`vercel.json`): it sends what waited, retries sign ups kept for Kit, and sends the daily list of messages waiting for a reply. Vercel sends `CRON_SECRET` with the call; set it (any long random string) in Vercel, Production. Vercel's free plan runs cron jobs once a day, which is what this needs.
+
+## Messages through the forms (never missed)
+
+Every message sent through the contact form, a project's "Interested in this project" form or the For artists form (approved 13 Nov; `src/lib/inbox`):
+
+1. **Saved first,** privately in Sanity (ids under `private.`, never readable from the public dataset). It appears at once in the Studio's **Inbox**, at the top.
+2. **Then emailed to Maninder** (`EMAIL_NOTIFY_TO`, by default maninder@houseofsingh.com): the type, name, email, every answer and the message itself, with Reply To set to the sender, so replying in your mail writes straight to them. The subject names the type and the person, for example "Commercial project: Jane Doe".
+3. **Then a short confirmation to the sender.** It uses their first name only when it is a plain name, and never repeats their message or any link they typed, so the form cannot be used to send someone else spam. Proposals keep "Thank you, [name]. Your proposal is in." and promise no reply.
+
+**If an email to Maninder fails,** it is tried three times on the spot (at once, then after a pause). If Resend is still refusing, it waits in the queue (Studio: "Emails waiting to send") at the highest priority, above the daily limit's reserve, and the site watch tries it again every fifteen minutes (`/api/email/retry`, at most once every ten minutes, whoever calls it). After four failed tries, or two hours waiting, the site watch opens an issue, **"A message from the website has not reached your inbox"**, assigned to you (`docs/monitoring.md`). It names no one; the message itself is in the Studio's Inbox. The issue closes itself once the email goes.
+
+**If Sanity is down,** the email still carries the whole message, and the sender is told it arrived. Only when both Sanity and Resend fail does the sender see "Unable to send that right now", so they can send it again; they never see a success that was not kept. The existing rate limits (5 sends in 10 minutes from one address) and the hidden spam field are unchanged.
+
+**The daily list.** Every morning (with the daily job, 00:05 UTC, which is the evening before in Toronto) you receive one email listing every message from the last 7 days not yet ticked Replied (Reviewed, for proposals) or Archived: name, type and date. No list is sent when nothing is waiting.
+
+**The Studio Inbox.** At the top of the Studio: New, Replied and reviewed, Archived, then each type (Commercial project, Collaboration, Press, Shop artists, Something else), newest first. Each row shows the name, type, date and state. On a message, **Mark replied** (Mark reviewed on a proposal) and **Archive** save at once, with no Publish; a second click undoes either. **Notes** is yours alone. "Emailed to you" shows whether the notice was sent, queued or failed. The type is set from the form's answers and can be corrected by hand.
 
 ## Setting up
 
@@ -84,11 +103,12 @@ Only fitting proposals receive a reply. The For artists page, the thank you afte
 | `EMAIL_FROM_EDITIONS` | `"Maninder Singh, House of Singh Editions" <editions@houseofsingh.com>` (the default; keep the quotes if you set it) | Optional |
 | `EMAIL_POSTAL_ADDRESS` | The mailing address for the anti spam law, one line | Production, Preview |
 | `CRON_SECRET` | A long random string | Production |
+| `EMAIL_NOTIFY_TO` | Where messages through the forms and the daily list go; `maninder@houseofsingh.com` is the default | Optional |
 | `EMAIL_LINK_SECRET` | A long random string that signs the unsubscribe links; without it the Resend key signs them. Changing it makes older links invalid (the page then points to the contact page) | Optional, Production and Preview |
 | `RESEND_DAILY_LIMIT` | `100` (the default); raise it on a paid plan | Optional |
 | `RESEND_SIGNUP_RESERVE` | `10` (the default) | Optional |
 
-`EDITIONS_NOTIFY_TO`, `EDITIONS_NOTIFY_FROM`, `EMAIL_FROM` and `EMAIL_REPLY_TO` are no longer read: replies go back to each email's sender, and the copy of a proposal goes to the Shop's address.
+`EDITIONS_NOTIFY_TO`, `EDITIONS_NOTIFY_FROM`, `EMAIL_FROM` and `EMAIL_REPLY_TO` are no longer read: replies go back to each email's sender, and every message through the forms, proposals included, goes to `EMAIL_NOTIFY_TO`.
 
 ## Moving to Kit (once)
 
