@@ -1,0 +1,46 @@
+name: key rotation reminders
+
+# Every Monday: reads the rotation schedule in docs/security/key-register.md
+# and opens one issue, assigned to Maninder, for each key whose "Rotate by"
+# date has come. A key with an issue still open is not reported again.
+# After rotating, change the key's date in the register and close the issue.
+on:
+  schedule:
+    - cron: "23 13 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  ASSIGN_TO: houseofsingh333
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Keys due
+        id: due
+        run: |
+          node .github/scripts/keys-due.mjs > due.txt
+          echo "Keys due:"; cat due.txt
+      - name: An issue for each key due
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create key-rotation --repo "$REPO" --color A8895C --description "A key is due to be changed (docs/security/key-register.md)" --force >/dev/null
+          while IFS=$'\t' read -r key date; do
+            [ -z "$key" ] && continue
+            title="Rotate $key (due $date)"
+            open=$(gh issue list --repo "$REPO" --label key-rotation --state open --search "\"Rotate $key \" in:title" --json number --jq 'length')
+            if [ "$open" != "0" ]; then echo "$key: an issue is already open"; continue; fi
+            body="The key \`$key\` was due to be changed on $date.
+
+          How: docs/security/key-register.md, the row for \`$key\` (where it lives and how to rotate it).
+          Then set its next date in the Rotation schedule of that file, in a small pull request, and close this issue."
+            gh issue create --repo "$REPO" --title "$title" --label key-rotation --assignee "$ASSIGN_TO" --body "$body"
+          done < due.txt
