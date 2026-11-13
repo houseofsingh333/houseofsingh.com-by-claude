@@ -7,6 +7,7 @@
  */
 import { schemaTypes } from "../src/sanity/schemas";
 import { altChecks, descriptionCheck, photoChecks, titleCheck, type AssetInfo } from "../src/sanity/guardrails";
+import { PLACED_TYPES, SINGLETON_TYPES } from "../src/sanity/structureMap";
 
 let failures = 0;
 function check(ok: boolean, what: string, detail?: unknown) {
@@ -123,6 +124,27 @@ async function run(f: any, value: unknown, asset: AssetInfo | null, parent?: unk
   check((await run(metaDesc, "Too short.", null)).some((r) => r.level === "warning" && /70 to 160/.test(r.message)), "Studio, a 10 character search description: warns");
   const metaTitle = field("seo", ["metaTitle"]);
   check((await run(metaTitle, "x".repeat(70), null)).some((r) => r.level === "warning" && /60/.test(r.message)), "Studio, a 70 character search title: warns");
+
+  // ——— The Studio's layout (approved 13 Nov): every type placed once, every field in a tab ———
+  const docTypes = (schemaTypes as { name: string; type: string }[]).filter((t) => t.type === "document").map((t) => t.name);
+  const placed = Object.values(PLACED_TYPES).flat() as string[];
+  check(docTypes.every((t) => placed.includes(t)), "Studio, every document type has a place in the sidebar", docTypes.filter((t) => !placed.includes(t)));
+  check(placed.length === new Set(placed).size && placed.every((t) => docTypes.includes(t)), "Studio, each type placed once, and only real types", placed);
+  check([...SINGLETON_TYPES].every((t) => docTypes.includes(t)), "Studio, the single pages are real types");
+  const TABS: Record<string, string[]> = {
+    aboutPage: ["Intro", "Practice", "Journey", "Featured on", "Rapid fire", "Search"],
+    project: ["Story", "Photographs", "Homepage", "Search"],
+    journalEntry: ["Writing", "Photographs", "Search"],
+    siteSettings: ["Homepage chapters", "Menu", "Projects page", "Journal page", "Newsletter card", "404 page", "Privacy and Terms", "General", "Search"],
+  };
+  for (const [name, titles] of Object.entries(TABS)) {
+    const t = (schemaTypes as { name: string; groups?: { name: string; title: string; default?: boolean }[]; fields: { name: string; group?: string }[] }[]).find((x) => x.name === name)!;
+    const groups = t.groups ?? [];
+    check(JSON.stringify(groups.map((g) => g.title)) === JSON.stringify(titles), `Studio, ${name}: tabs ${titles.join(", ")}`, groups.map((g) => g.title));
+    check(groups[0]?.default === true && groups.filter((g) => g.default).length === 1, `Studio, ${name}: the first tab opens first`);
+    const loose = t.fields.filter((f) => !f.group || !groups.some((g) => g.name === f.group));
+    check(loose.length === 0, `Studio, ${name}: every field (${t.fields.length}) sits in a tab`, loose.map((f) => f.name));
+  }
 
   console.log(failures ? `\n${failures} failed` : "\nall passed");
   process.exit(failures ? 1 : 0);

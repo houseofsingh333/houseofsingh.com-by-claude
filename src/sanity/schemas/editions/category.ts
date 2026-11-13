@@ -4,7 +4,7 @@ import { isTestData } from "./fields";
 /** A kind of piece (prints, clothing, objects). A free list, in its own order. */
 export const editionsCategory = defineType({
   name: "editionsCategory",
-  title: "Editions: Category",
+  title: "Category",
   type: "document",
   fields: [
     defineField({ name: "singular", title: "Singular name", type: "string", description: "For example: Print.", validation: (r) => r.required().max(30) }),

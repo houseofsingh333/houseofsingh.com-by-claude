@@ -9,7 +9,7 @@ import { EDITIONS_DEFAULTS } from "../../../lib/editions/defaults";
  */
 export const editionsSettings = defineType({
   name: "editionsSettings",
-  title: "Editions: Shop settings",
+  title: "Shop settings",
   type: "document",
   groups: [
     { name: "shop", title: "The Shop", default: true },

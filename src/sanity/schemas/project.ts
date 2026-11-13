@@ -1,12 +1,27 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { captionField, imageAltFields } from "./imageFields";
 import { PROJECT_CATEGORIES, SLUG_NOTE } from "./rules";
+import { inGroups } from "./groups";
+
+/** The project form's tabs; Story opens first. */
+const PROJECT_TABS = {
+  story: ["title", "slug", "category", "year", "role", "shortIntro", "excerpt", "story", "isUpcoming", "showInterestForm", "author", "publishedAt", "updatedAt"],
+  photographs: ["coverImage", "thumbnail", "photographs", "plates", "contentSections"],
+  homepage: ["featuredOnHomepage", "homepageOrder"],
+  search: ["seo"],
+} as const;
 
 export const project = defineType({
   name: "project",
   title: "Project",
   type: "document",
-  fields: [
+  groups: [
+    { name: "story", title: "Story", default: true },
+    { name: "photographs", title: "Photographs" },
+    { name: "homepage", title: "Homepage" },
+    { name: "search", title: "Search" },
+  ],
+  fields: inGroups([
     defineField({
       name: "title",
       title: "Title",
@@ -241,7 +256,7 @@ export const project = defineType({
       title: "SEO",
       type: "seo",
     }),
-  ],
+  ], PROJECT_TABS),
   preview: {
     select: { title: "title", subtitle: "category", media: "thumbnail" },
   },

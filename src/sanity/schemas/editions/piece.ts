@@ -15,7 +15,7 @@ export const EDITION_TYPES = [
  */
 export const editionsPiece = defineType({
   name: "editionsPiece",
-  title: "Editions: Piece",
+  title: "Piece",
   type: "document",
   groups: [
     { name: "main", title: "Piece", default: true },

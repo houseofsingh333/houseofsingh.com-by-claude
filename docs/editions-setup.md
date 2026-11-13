@@ -31,7 +31,7 @@ Never put any of these in the code or in a message. After changing a variable (`
    - Events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.expired`, `checkout.session.async_payment_failed` and `charge.refunded`. The first two record the order; the next two let go of the stock held for an unpaid checkout; the last restocks a piece refunded in full.
    - Copy its signing secret into `STRIPE_WEBHOOK_SECRET` (Preview).
    - Vercel's preview protection blocks Stripe: in Vercel, Deployment Protection, add a bypass for automation, or test the webhook on a preview without protection.
-5. Buy something on the preview with the test card `4242 4242 4242 4242`, any future date, any CVC, a Canadian address. You should land on the thank you page; within a few seconds the collector number appears, the piece's sold count goes up in the Studio (per size for clothing), and an order appears under House of Singh Editions, Orders.
+5. Buy something on the preview with the test card `4242 4242 4242 4242`, any future date, any CVC, a Canadian address. You should land on the thank you page; within a few seconds the collector number appears, the piece's sold count goes up in the Studio (per size for clothing), and an order appears under Shop, Orders.
 
 ### Payment methods (Stripe Dashboard)
 
@@ -56,7 +56,7 @@ Only when the test purchase has worked end to end.
 
 ## 4. The shipping table (Canada Post)
 
-In the Studio: House of Singh Editions, Shipping rates. One route for each origin (Canada, India) and zone (Canada, United States, India, Rest of the world); each route has weight bands, "up to" a weight in kilograms, with a price in CAD.
+In the Studio: Shop, Shop settings, Shipping rates. One route for each origin (Canada, India) and zone (Canada, United States, India, Rest of the world); each route has weight bands, "up to" a weight in kilograms, with a price in CAD.
 
 1. Weigh each piece packed, as it will ship, and enter it on the piece (Packed weight).
 2. For Canada: use Canada Post's price finder (canadapost-postescanada.ca, Find a rate) from your postal code. For each zone, enter a typical far destination (for example Vancouver, Los Angeles, London) and each band's weight, with the service you will use (Expedited or Tracked Packet for the United States and abroad). Enter the price as the band's price, rounded up to the dollar.
@@ -104,7 +104,7 @@ Orders, collectors, notify requests and proposals are saved with ids beginning `
 
 ## 9. Orders, from paid to shipped
 
-In the Studio: House of Singh Editions, Orders (To make, Being made, Shipped, Refunded, All orders). Open an order:
+In the Studio: Shop, Orders (Check tax, To make, Being made, Shipped, Refunded, All orders). Open an order:
 
 - **Made**, at the foot of the order, marks it as being made and emails the buyer.
 - **Shipped** asks for the tracking number (and, for a carrier other than Canada Post, the tracking address), marks it shipped and emails the buyer with the tracking.
@@ -159,7 +159,7 @@ In anticipation: the footer links the Shop (in its Pages list; never the site me
 
 No GST/HST is charged while Maninder, as a sole proprietor, stays a small supplier: taxable revenue of CA$30,000 or less over four consecutive calendar quarters, and in any single quarter. The tracker watches that, with an early warning.
 
-**Where.** Studio, House of Singh Editions, Small supplier tracker (a private record, `private.editions-small-supplier`, saved as typed with no Publish step).
+**Where.** Studio, Shop, Small supplier tracker (a private record, `private.editions-small-supplier`, saved as typed with no Publish step).
 
 - **Quarters** (the first tab): the last eight calendar quarters, newest first. For each: the Shop's orders (piece plus shipping, every country, by the day paid in Toronto; refunded orders and test orders left out), the other revenue you entered, the quarter's total, and the four quarters ending with it. Amber past 80 percent of a threshold, red past it.
 - **Other revenue** (the second tab): add any other personal taxable revenue by quarter (for example photography or design work invoiced in your own name), written as `2026-Q4`, in Canadian dollars, with a note. Do not add the Shop's orders: they are counted automatically.

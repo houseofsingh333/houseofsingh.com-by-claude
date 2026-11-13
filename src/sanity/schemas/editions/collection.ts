@@ -11,7 +11,7 @@ import { isTestData } from "./fields";
  */
 export const editionsCollection = defineType({
   name: "editionsCollection",
-  title: "Editions: Collection",
+  title: "Collection",
   type: "document",
   groups: [
     { name: "main", title: "Collection", default: true },

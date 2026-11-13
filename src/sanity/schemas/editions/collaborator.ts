@@ -4,7 +4,7 @@ import { isTestData, shopImage } from "./fields";
 /** An artist or maker a piece was made with. Their page: /editions/collaborators/[address]. */
 export const editionsCollaborator = defineType({
   name: "editionsCollaborator",
-  title: "Editions: Collaborator",
+  title: "Collaborator",
   type: "document",
   fields: [
     defineField({ name: "name", title: "Name", type: "string", validation: (r) => r.required().max(60) }),

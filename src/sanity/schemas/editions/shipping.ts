@@ -10,7 +10,7 @@ import { ORIGINS, ZONES } from "./fields";
  */
 export const editionsShipping = defineType({
   name: "editionsShipping",
-  title: "Editions: Shipping rates",
+  title: "Shipping rates",
   type: "document",
   fields: [
     defineField({

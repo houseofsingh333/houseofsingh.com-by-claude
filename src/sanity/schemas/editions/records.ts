@@ -13,7 +13,7 @@ const readOnly = { readOnly: true } as const;
 
 export const editionsNotify = defineType({
   name: "editionsNotify",
-  title: "Editions: Notify request",
+  title: "Notify request",
   type: "document",
   ...readOnly,
   fields: [
@@ -45,7 +45,7 @@ export const editionsProposal = defineType({
 
 export const editionsOrder = defineType({
   name: "editionsOrder",
-  title: "Editions: Order",
+  title: "Order",
   type: "document",
   ...readOnly,
   fields: [
@@ -96,7 +96,7 @@ export const editionsOrder = defineType({
 
 export const editionsCollector = defineType({
   name: "editionsCollector",
-  title: "Editions: Collector",
+  title: "Collector",
   type: "document",
   ...readOnly,
   fields: [
@@ -111,7 +111,7 @@ export const editionsCollector = defineType({
 /** A sign up kept while Kit could not be reached; deleted once Kit has it (lib/email/signups.ts). */
 export const signupPending = defineType({
   name: "signupPending",
-  title: "Email: Sign up waiting for Kit",
+  title: "Sign up waiting for Kit",
   type: "document",
   ...readOnly,
   fields: [
@@ -130,7 +130,7 @@ export const signupPending = defineType({
 /** An email waiting for the next day's allowance (lib/email/outbox.ts). */
 export const emailQueued = defineType({
   name: "emailQueued",
-  title: "Email: Waiting to send",
+  title: "Email waiting to send",
   type: "document",
   ...readOnly,
   fields: [
@@ -158,7 +158,7 @@ export const emailQueued = defineType({
 /** The day's count of emails sent (lib/email/outbox.ts). */
 export const emailDay = defineType({
   name: "emailDay",
-  title: "Email: Sent that day",
+  title: "Emails sent that day",
   type: "document",
   ...readOnly,
   fields: [defineField({ name: "day", title: "Day (UTC)", type: "string" }), defineField({ name: "count", title: "Sent", type: "number" })],
@@ -175,7 +175,7 @@ export const emailDay = defineType({
  */
 export const editionsSmallSupplier = defineType({
   name: "editionsSmallSupplier",
-  title: "Editions: Small supplier tracker",
+  title: "Small supplier tracker",
   type: "document",
   // Saved as typed, with no draft: the daily job reads what is there.
   liveEdit: true,

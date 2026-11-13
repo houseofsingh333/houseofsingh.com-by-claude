@@ -5,9 +5,10 @@ import { httpsRule } from "./rules";
 import { BOOKING_URL } from "../../lib/booking";
 
 /*
- * Site Settings, in tabs: General (title, SEO, social), Homepage chapters
- * (one section per chapter, I to VII, and the Coda), Menu, 404 page,
- * Newsletter card, Privacy and Terms, Projects page and Journal page. Every
+ * Site Settings, in tabs by area: Homepage chapters (one section per
+ * chapter, I to VII, and the Coda; opens first), Menu, Projects page,
+ * Journal page, Newsletter card, 404 page, Privacy and Terms, General
+ * (title, tagline, footer) and Search (descriptions, names, profiles). Every
  * text field on the chapter tabs is optional: when empty, the text shown in
  * its description is used (lib/siteCopy.ts holds that text, and these fields
  * are made from it). The Journal page's line is the exception: empty hides it.
@@ -36,17 +37,19 @@ const MENU_PHOTOS: [string, string, string][] = [
 
 export const siteSettings = defineType({
   name: "siteSettings",
-  title: "Site Settings",
+  title: "Site settings",
   type: "document",
+  // By area of the site (approved 13 Nov): the homepage, edited most, opens first.
   groups: [
-    { name: "general", title: "General", default: true },
-    { name: "homepage", title: "Homepage chapters" },
+    { name: "homepage", title: "Homepage chapters", default: true },
     { name: "menu", title: "Menu" },
-    { name: "notFound", title: "404 page" },
-    { name: "newsletter", title: "Newsletter card" },
-    { name: "legal", title: "Privacy and Terms" },
     { name: "projects", title: "Projects page" },
     { name: "journal", title: "Journal page" },
+    { name: "newsletter", title: "Newsletter card" },
+    { name: "notFound", title: "404 page" },
+    { name: "legal", title: "Privacy and Terms" },
+    { name: "general", title: "General" },
+    { name: "search", title: "Search" },
   ],
   fieldsets: [
     { name: "chapter1", title: "Chapter I, the hero", options: { collapsible: true, collapsed: true } },
@@ -222,7 +225,7 @@ export const siteSettings = defineType({
       title: "Default Meta Description",
       type: "text",
       rows: 3,
-      group: "general",
+      group: "search",
       description:
         "Site-wide fallback description for pages that don't set their own. Aim for 120 to 155 characters.",
       validation: (rule) =>
@@ -234,21 +237,21 @@ export const siteSettings = defineType({
       name: "organizationName",
       title: "Organization / Brand Name",
       type: "string",
-      group: "general",
+      group: "search",
       description: "Used in structured data and Open Graph (e.g. House of Singh).",
     }),
     defineField({
       name: "founderName",
       title: "Founder Name",
       type: "string",
-      group: "general",
+      group: "search",
       description: "Used in Person/Organization structured data (e.g. Maninder Singh).",
     }),
     defineField({
       name: "sameAs",
       title: "Social Profiles",
       type: "array",
-      group: "general",
+      group: "search",
       of: [{ type: "url", validation: (rule) => httpsRule(rule) }],
       description:
         "Full URLs to official social profiles (Instagram, etc.). Output as sameAs links in structured data.",
@@ -257,7 +260,7 @@ export const siteSettings = defineType({
       name: "googleVerification",
       title: "Google Site Verification Code",
       type: "string",
-      group: "general",
+      group: "search",
       description:
         "The content value from Google Search Console's HTML-tag verification method.",
     }),
