@@ -5,6 +5,7 @@ import { parseSanityDate } from "@/lib/dates";
 import { journalMonthHref } from "@/lib/journalLinks";
 import { PRIVACY_UPDATED, TERMS_UPDATED } from "@/lib/legalDates";
 import { siteMode } from "@/lib/editions/enabled";
+import { selectedProjectQuery } from "@/sanity/queries";
 
 const BASE_URL = "https://houseofsingh.com";
 
@@ -25,14 +26,19 @@ const IMG = `{ "url": asset->url, isDecorative }`;
 
 /**
  * The photographs each fixed page shows, for the image sitemap: Home (the
- * hero and the portrait), About (the portrait and the milestones) and the
- * Projects page (each project's cover, else its thumbnail).
+ * crest, added below, the Introduction's portrait and Selected work's
+ * photograph), About (the portrait and the milestones) and the Projects
+ * page (each project's cover, else its thumbnail).
  */
 const PAGE_IMAGES_QUERY = `{
-  "home": [...*[_type == "heroSlide"].image, *[_type == "aboutPage"][0].homePortrait, *[_type == "aboutPage"][0].portrait]${IMG},
+  "home": [coalesce(*[_type == "aboutPage"][0].homePortrait, *[_type == "aboutPage"][0].portrait)]${IMG},
+  "selected": ${selectedProjectQuery},
   "about": [*[_type == "aboutPage"][0].portrait, ...*[_type == "aboutPage"][0].milestones[].image]${IMG},
   "projects": *[_type == "project"]{ "image": select(defined(coverImage.asset) => coverImage, thumbnail)${IMG} }.image
 }`;
+
+/** Home's opening: the crest, a file of the site rather than a photograph in Sanity. */
+const HOME_CREST: Img = { url: `${BASE_URL}/images/hos-crest-charcoal.svg` };
 
 /** Meaningful image addresses, each once, in order. */
 function imageUrls(images: Img[] | null | undefined): string[] {
@@ -69,7 +75,7 @@ export async function sitemapEntries(): Promise<MetadataRoute.Sitemap> {
   }
 
   let dates: Dates = {};
-  let pageImages: Partial<Record<"home" | "about" | "projects", Img[]>> = {};
+  let pageImages: Partial<Record<"home" | "about" | "projects", Img[]> & { selected: { image?: Img } | null }> = {};
   let projectRoutes: MetadataRoute.Sitemap = [];
   let journalRoutes: MetadataRoute.Sitemap = [];
   let monthRoutes: MetadataRoute.Sitemap = [];
@@ -142,7 +148,7 @@ export async function sitemapEntries(): Promise<MetadataRoute.Sitemap> {
 
   const at = (date: string | null | undefined) => (date ? { lastModified: date } : {});
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: BASE_URL, ...at(dates.home), changeFrequency: "weekly", priority: 1, ...withImages(pageImages.home) },
+    { url: BASE_URL, ...at(dates.home), changeFrequency: "weekly", priority: 1, ...withImages([HOME_CREST, ...(pageImages.home ?? []), pageImages.selected?.image ?? null]) },
     { url: `${BASE_URL}/journal`, ...at(dates.journal), changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/projects`, ...at(dates.projects), changeFrequency: "monthly", priority: 0.7, ...withImages(pageImages.projects) },
     { url: `${BASE_URL}/about`, ...at(dates.about), changeFrequency: "monthly", priority: 0.5, ...withImages(pageImages.about) },
