@@ -5,7 +5,8 @@
    Canvas "Home hero, proposal", artboard "In continuation". The first
    screen: the crest, centred, about 760px wide on desktop and 300px on a
    phone. On a first visit the logo animation plays and its last frame stays;
-   otherwise the still crest (data-opening, set before the first paint). The
+   otherwise the still crest (<html data-opening>, set by the root layout's
+   script before the first paint). The
    animation is drawn on white and multiplied onto the canvas, so its frame
    carries the canvas colour and isolation, or a white patch shows. On the
    first scroll the crest fades and settles to 0.65 (--settle, 0 to 1 over
@@ -62,8 +63,7 @@
   object-fit: cover;
   mix-blend-mode: multiply;
 }
-.opening[data-opening="play"] :is(.opening-cover, .opening-video),
-.opening[data-opening="ended"] :is(.opening-cover, .opening-video) {
+html:is([data-opening="play"], [data-opening="ended"]) .opening :is(.opening-cover, .opening-video) {
   visibility: visible;
 }
 /* The frame's edge, feathered into the canvas. */
@@ -89,8 +89,8 @@
   pointer-events: none;
   transition: opacity var(--dur-hover) var(--ease-soft-out);
 }
-.opening:is([data-opening="still"], [data-opening="ended"])[data-top] .opening-cue,
-.opening:not([data-opening])[data-top] .opening-cue {
+html:is([data-opening="still"], [data-opening="ended"]) .opening[data-top] .opening-cue,
+html:not([data-opening]) .opening[data-top] .opening-cue {
   opacity: 1;
 }
 .opening-cue-word {

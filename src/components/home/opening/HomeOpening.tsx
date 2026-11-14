@@ -9,12 +9,8 @@ const MAX_MS = 6500;
 /** The first scroll over which the crest fades and settles (canvas: 260px). */
 const SETTLE_PX = 260;
 
-/*
- * Decided before the first paint, right after the markup (so no frame shows
- * the wrong one): "play" on a first visit with motion allowed, else "still".
- * Without JavaScript the section has no mark and shows the still crest.
- */
-const DECIDE = `(function(){try{var s=document.currentScript.previousElementSibling,v=s.querySelector("video"),m=matchMedia("(prefers-reduced-motion: reduce)").matches,seen=sessionStorage.getItem("${SEEN}");if(seen||m||!v){s.setAttribute("data-opening","still");try{sessionStorage.setItem("${SEEN}","1")}catch(e){}}else{s.setAttribute("data-opening","play");v.preload="auto";var p=v.play();if(p&&p.catch)p.catch(function(){s.setAttribute("data-opening","still")})}}catch(e){}})();`;
+/** The opening plays at most once per page load: only the page loaded first. */
+let landed = false;
 
 /**
  * The opening of Home (approved 14 Nov; canvas "Home hero, proposal",
@@ -38,37 +34,42 @@ export default function HomeOpening({ scrollWord }: { scrollWord: string }) {
   useEffect(() => {
     const section = ref.current;
     if (!section) return;
+    const html = document.documentElement;
     const video = section.querySelector("video");
-    const still = () => {
+    const seen = () => {
       try {
         sessionStorage.setItem(SEEN, "1");
       } catch {}
     };
+    // "play" or "still" was decided in the root layout's script, before the
+    // first paint (it marks <html data-opening>). Arriving from another page
+    // shows the still crest, never an animation starting late.
+    const first = !landed;
+    landed = true;
+    if (!first || html.dataset.opening !== "play" || !video) {
+      if (html.dataset.opening !== "ended") html.dataset.opening = "still";
+    }
     // The animation's end: its last frame stays; the cue may show.
     const ended = () => {
-      if (section.dataset.opening === "play") section.dataset.opening = "ended";
-      still();
+      if (html.dataset.opening === "play") html.dataset.opening = "ended";
+      seen();
     };
     // It failed or stalled: the still crest instead, at once.
     const failed = () => {
-      if (section.dataset.opening === "play") section.dataset.opening = "still";
-      still();
+      if (html.dataset.opening === "play") html.dataset.opening = "still";
+      seen();
     };
-    // Arriving from another page (the script above runs only when the page
-    // is loaded): the still crest, never an animation starting late.
-    if (!section.dataset.opening) {
-      section.dataset.opening = "still";
-      still();
-    }
     let timer: number | undefined;
-    if (section.dataset.opening === "play" && video) {
-      if (video.ended) ended();
+    if (html.dataset.opening === "play" && video) {
+      video.preload = "auto";
       video.addEventListener("ended", ended);
       video.addEventListener("error", failed);
+      video.play().catch(failed);
       timer = window.setTimeout(() => {
-        if (section.dataset.opening === "play") (video.currentTime > 0 ? ended : failed)();
+        if (html.dataset.opening === "play") (video.currentTime > 0 ? ended : failed)();
       }, MAX_MS);
     }
+    if (!first && html.dataset.opening === "ended") html.dataset.opening = "still";
 
     // The crest settles over the first scroll; the cue only at the very top.
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -93,8 +94,7 @@ export default function HomeOpening({ scrollWord }: { scrollWord: string }) {
   }, []);
 
   return (
-    <>
-      <section ref={ref} className="opening" data-top="" suppressHydrationWarning>
+    <section ref={ref} className="opening" data-top="">
         <div className="opening-crest">
           <div className="opening-frame">
             {/* The still crest, painted with the very first frame of the page
@@ -132,8 +132,6 @@ export default function HomeOpening({ scrollWord }: { scrollWord: string }) {
           <span className="opening-cue-word">{scrollWord}</span>
           <span className="opening-cue-line" />
         </div>
-      </section>
-      <script dangerouslySetInnerHTML={{ __html: DECIDE }} />
-    </>
+    </section>
   );
 }
