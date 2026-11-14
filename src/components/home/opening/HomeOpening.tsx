@@ -97,6 +97,22 @@ export default function HomeOpening({ scrollWord }: { scrollWord: string }) {
       <section ref={ref} className="opening" data-top="" suppressHydrationWarning>
         <div className="opening-crest">
           <div className="opening-frame">
+            {/* The still crest, painted with the very first frame of the page
+                (an image, so it is the page's first and largest content). On
+                a first visit the canvas covers it while the animation draws
+                above, so the look is unchanged (14 Nov). */}
+            {/* eslint-disable-next-line @next/next/no-img-element -- a small, fixed SVG, painted at once, needs no optimizer */}
+            <img
+              src="/images/hos-crest-charcoal.svg"
+              alt=""
+              aria-hidden="true"
+              width={900}
+              height={900}
+              fetchPriority="high"
+              decoding="sync"
+              className="opening-still"
+            />
+            <span aria-hidden="true" className="opening-cover" />
             <video
               className="opening-video"
               muted
@@ -109,7 +125,6 @@ export default function HomeOpening({ scrollWord }: { scrollWord: string }) {
             >
               <source src="/images/HOS_Logo_Animation.mp4" type="video/mp4" />
             </video>
-            <span aria-hidden="true" className="opening-still record-crest" />
             <span aria-hidden="true" className="opening-feather" />
           </div>
         </div>

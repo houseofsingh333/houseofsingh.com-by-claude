@@ -32,32 +32,39 @@
   background: var(--background);
   isolation: isolate;
 }
+/* Three layers in the frame: the still crest (an image, painted with the
+   first frame, so the page's largest content appears at once); over it, on a
+   first visit, the canvas and the animation multiplied onto it, which draws
+   the crest from nothing and ends on it. Returning visitors, reduced motion
+   and no JavaScript: the still crest alone. The look is the same either way. */
+.opening-still {
+  position: absolute;
+  left: 50.16%;
+  top: 41.18%;
+  width: 65.7%;
+  height: auto;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+}
+.opening-cover,
+.opening-video {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+.opening-cover {
+  background: var(--background);
+}
 .opening-video {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   mix-blend-mode: multiply;
-  visibility: hidden;
 }
-.opening[data-opening="play"] .opening-video,
-.opening[data-opening="ended"] .opening-video {
+.opening[data-opening="play"] :is(.opening-cover, .opening-video),
+.opening[data-opening="ended"] :is(.opening-cover, .opening-video) {
   visibility: visible;
-}
-/* The still crest, where the animation's crest ends: its drawing 58.5% of
-   the frame wide, centred 50.2% across and 41.2% down. */
-.opening-still {
-  position: absolute;
-  left: 50.16%;
-  top: 41.18%;
-  width: 65.7%;
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  color: var(--foreground);
-}
-.opening[data-opening="play"] .opening-still,
-.opening[data-opening="ended"] .opening-still {
-  visibility: hidden;
 }
 /* The frame's edge, feathered into the canvas. */
 .opening-feather {
