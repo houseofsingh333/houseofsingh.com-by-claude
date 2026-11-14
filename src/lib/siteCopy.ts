@@ -7,7 +7,7 @@
  * so the description and the default can never drift apart.
  */
 
-export type CopyGroup = "homepage" | "menu" | "notFound" | "newsletter" | "legal" | "projects";
+export type CopyGroup = "homepage" | "menu" | "notFound" | "legal" | "projects";
 
 type CopyField = {
   name: string;
@@ -174,27 +174,6 @@ export const SITE_COPY_FIELDS = [
   { name: "notFoundWork", title: "Work link", group: "notFound", text: "The work" },
   { name: "notFoundHome", title: "Home link", group: "notFound", text: "Home" },
   { name: "notFoundHomeNote", title: "Home link note", group: "notFound", text: "Start again" },
-
-  // ——— Newsletter card ———
-  { name: "newsletterHeading", title: "Heading", group: "newsletter", text: "Stay in touch" },
-  {
-    name: "newsletterText",
-    title: "Text",
-    group: "newsletter",
-    text: "Subscribe for updates on new work, journal entries, and studio news.",
-    multiline: true,
-  },
-  { name: "newsletterPlaceholder", title: "Email field placeholder", group: "newsletter", text: "your@email.com" },
-  { name: "newsletterSubscribe", title: "Subscribe button", group: "newsletter", text: "Subscribe" },
-  { name: "newsletterNotNow", title: "Not now button", group: "newsletter", text: "Not now" },
-  { name: "newsletterThanksHeading", title: "Thank you heading", group: "newsletter", text: "Thank you" },
-  {
-    name: "newsletterThanksText",
-    title: "Thank you text",
-    group: "newsletter",
-    text: "You've been added to our mailing list. We'll be in touch.",
-    multiline: true,
-  },
 
   // ——— Privacy and Terms ———
   { name: "legalContentsLabel", title: "Contents label", group: "legal", text: "Contents" },
