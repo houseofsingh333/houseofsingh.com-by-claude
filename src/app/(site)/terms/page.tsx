@@ -10,7 +10,8 @@ import { sanityFetch } from "@/sanity/fetch";
 import { siteSettingsQuery } from "@/sanity/queries";
 import type { SiteSettings } from "@/lib/types";
 
-const TITLE = "Terms of Use";
+/** The title in search results and share cards (approved 14 Nov); the page itself still says "Terms of Use". */
+const SEARCH_TITLE = "Terms of Use for houseofsingh.com";
 const DESCRIPTION = TERMS_DESCRIPTION;
 
 export async function generateMetadata(
@@ -18,12 +19,12 @@ export async function generateMetadata(
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   return {
-    title: TITLE,
+    title: SEARCH_TITLE,
     description: DESCRIPTION,
     alternates: {
       canonical: "/terms",
     },
-    ...(await shareCard(parent, fullTitle(TITLE), DESCRIPTION)),
+    ...(await shareCard(parent, fullTitle(SEARCH_TITLE), DESCRIPTION, "/terms")),
   };
 }
 

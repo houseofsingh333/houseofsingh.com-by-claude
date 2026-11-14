@@ -80,9 +80,15 @@ export default function Entry({ entry, isPageHeading, current, priority }: Props
               alt={altOf(cover, entry.title)}
               fill
               priority={priority}
-              sizes="(min-width: 1024px) 340px, calc(100vw - 48px)"
+              sizes="(min-width: 1024px) 340px, (min-width: 768px) calc(100vw - 128px), calc(100vw - 48px)"
               className="object-cover"
               objectPosition={cover.hotspot ? `${Math.round(cover.hotspot.x * 1000) / 10}% ${Math.round(cover.hotspot.y * 1000) / 10}%` : undefined}
+              // The frame is 4:5 at every width (styles/journal.css): only the
+              // part it shows is downloaded, placed as objectPosition places it.
+              frame={{
+                aspect: 4 / 5,
+                ...(cover.hotspot ? { x: Math.round(cover.hotspot.x * 1000) / 1000, y: Math.round(cover.hotspot.y * 1000) / 1000 } : {}),
+              }}
             />
           </figure>
         )}

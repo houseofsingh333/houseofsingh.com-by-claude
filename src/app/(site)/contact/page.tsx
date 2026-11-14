@@ -42,7 +42,7 @@ export async function generateMetadata(
       canonical: data?.seo?.canonicalUrl || "/contact",
     },
     ...(noIndex ? { robots: { index: false, follow: true } } : {}),
-    ...withSharePhoto(await shareCard(parent, fullTitle(rawTitle), description), await pagePhoto("contact"), "Maninder Singh"),
+    ...withSharePhoto(await shareCard(parent, fullTitle(rawTitle), description, "/contact"), await pagePhoto("contact"), "Maninder Singh"),
   };
 }
 

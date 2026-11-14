@@ -25,7 +25,7 @@ export async function generateMetadata(
     alternates: {
       canonical: "/privacy",
     },
-    ...(await shareCard(parent, fullTitle(TITLE), DESCRIPTION)),
+    ...(await shareCard(parent, fullTitle(TITLE), DESCRIPTION, "/privacy")),
   };
 }
 

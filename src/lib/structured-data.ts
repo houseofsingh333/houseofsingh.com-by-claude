@@ -67,6 +67,9 @@ const PERSON_SAME_AS = [
   "https://www.instagram.com/houseofsingh/",
   "https://x.com/houseofsingh",
   "https://ca.pinterest.com/houseofsingh",
+  // Added 14 Nov. The studio site's Person must add it too, in this same
+  // last place, so the two stay identical.
+  "https://www.behance.net/manindersingh",
 ];
 
 const DEFAULTS = {
@@ -211,6 +214,17 @@ export function buildSiteJsonLd(settings?: SiteSettings | null): Json {
       addressLocality: "Toronto",
       addressRegion: "Ontario",
       addressCountry: "CA",
+    },
+    // Where he lives (approved 14 Nov); the work stays Toronto, above, and
+    // no visible wording changes.
+    homeLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Mississauga",
+        addressRegion: "Ontario",
+        addressCountry: "CA",
+      },
     },
     memberOf: {
       "@type": "Organization",

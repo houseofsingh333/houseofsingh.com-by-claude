@@ -19,8 +19,9 @@ import "@/app/styles/journal.css";
  * One month of the journal, at its own cached address with its own
  * canonical: the Journal page opened at that month. Months with entries are
  * built ahead; any other valid month is built on first visit and cached,
- * opens at the nearest older month with entries, and is kept out of search
- * results.
+ * and opens at the nearest older month with entries. Every month page is
+ * kept out of search results (noindex, follow) and out of the sitemap: the
+ * entries are indexed on their own pages (14 Nov).
  */
 
 type Params = { year: string; month: string };
@@ -57,15 +58,17 @@ export async function generateMetadata(
   const when = parse(await params);
   if (!when) return {};
   const entries = await loadJournalEntries();
-  const hasEntries = monthsWithEntries(entries).some((m) => m.year === when.year && m.month === when.month);
   const title = `Journal, ${monthName(when.year, when.month)}`;
   const description = journalMonthDescription(when.year, when.month);
   return {
     title,
     description,
     alternates: { canonical: journalMonthHref(when.year, when.month) },
-    ...(hasEntries ? {} : { robots: { index: false, follow: true } }),
-    ...withSharePhoto(await shareCard(parent, fullTitle(title), description), monthPhoto(entries, when.year, when.month), title),
+    // Every month page stays out of search, its links followed (approved
+    // 14 Nov): each entry is indexed on its own page, and the months only
+    // gather them. They are not in the sitemap either.
+    robots: { index: false, follow: true },
+    ...withSharePhoto(await shareCard(parent, fullTitle(title), description, journalMonthHref(when.year, when.month)), monthPhoto(entries, when.year, when.month), title),
   };
 }
 

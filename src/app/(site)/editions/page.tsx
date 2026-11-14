@@ -36,7 +36,7 @@ export async function generateMetadata(_props: unknown, parent: ResolvingMetadat
   const indexable = siteMode() === "anticipation";
   const current = (await loadCollections().catch(() => []))[0];
   const share = current
-    ? await shareCard(parent, `${collectionTitle(current.number)} · ${EDITIONS_DEFAULTS.brand}`, `${current.intro.trim()} Opens ${dayIn(current.opens)}.`)
+    ? await shareCard(parent, `${collectionTitle(current.number)} · ${EDITIONS_DEFAULTS.brand}`, `${current.intro.trim()} Opens ${dayIn(current.opens)}.`, "/editions")
     : {};
   const image = current && SHARE_IMAGES[current.number];
   const images = image ? [{ url: image, width: 1200, height: 630, alt: `${collectionTitle(current!.number)}, ${EDITIONS_DEFAULTS.brand}: the Collection's card` }] : undefined;

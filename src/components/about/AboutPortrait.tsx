@@ -27,7 +27,7 @@ export default function AboutPortrait({
         alt={alt}
         fill
         priority
-        sizes="(min-width: 1024px) 540px, 100vw"
+        sizes="(min-width: 1024px) 540px, (min-width: 768px) calc(100vw - 128px), calc(100vw - 48px)"
         // Has its own grey to colour reveal: no develop on top.
         develop={false}
         className={`object-cover object-top ${saturated ? "grayscale-0" : "grayscale"} ${

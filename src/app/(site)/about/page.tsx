@@ -44,7 +44,7 @@ export async function generateMetadata(
       canonical: data?.seo?.canonicalUrl || "/about",
     },
     ...(noIndex ? { robots: { index: false, follow: true } } : {}),
-    ...withSharePhoto(await shareCard(parent, fullTitle(rawTitle), description), await pagePhoto("about"), "Maninder Singh"),
+    ...withSharePhoto(await shareCard(parent, fullTitle(rawTitle), description, "/about"), await pagePhoto("about"), "Maninder Singh"),
   };
 }
 

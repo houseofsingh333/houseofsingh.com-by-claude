@@ -6,6 +6,7 @@ import BlurUp, { blurUpImgProps, objectPositionOf } from "@/components/BlurUp";
 import {
   getImageProps,
   makeSanityLoader,
+  frameRect,
   type SanityImageAsset,
   type ImageContext,
 } from "@/lib/sanityImage";
@@ -41,6 +42,13 @@ type Props = {
    * held back. Set false for images with their own reveal.
    */
   develop?: boolean;
+  /**
+   * The frame's shape (width / height) and the photograph's place in it
+   * (0 to 1, the same values as objectPosition), for a photograph that fills
+   * a frame of another shape: only the part the frame shows is downloaded
+   * (see frameRect in lib/sanityImage.ts). It looks the same.
+   */
+  frame?: { aspect: number; x?: number; y?: number };
 };
 
 /**
@@ -60,6 +68,7 @@ export default function SanityImage({
   sizes,
   objectPosition,
   develop = true,
+  frame,
 }: Props) {
   const props = getImageProps(image, context, altOverride);
   // No image (and no local placeholder): render nothing. The parent frame
@@ -74,6 +83,9 @@ export default function SanityImage({
         fit: props.fit,
         hotspot: props.hotspot,
         maxWidth: props.intrinsicWidth,
+        rect: frame
+          ? (frameRect(props.intrinsicWidth, props.intrinsicHeight, frame.aspect, { x: frame.x ?? 0.5, y: frame.y ?? 0.5 }) ?? undefined)
+          : undefined,
       })
     : undefined;
 

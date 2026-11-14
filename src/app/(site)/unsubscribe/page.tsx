@@ -1,15 +1,21 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import { UNSUBSCRIBE_DESCRIPTION } from "@/lib/pageDescriptions";
+import { fullTitle } from "@/lib/page-title";
+import { shareCard } from "@/lib/share-metadata";
 import Link from "@/components/Link";
 import { OutlineButton } from "@/components/OutlineCta";
 import { readUnsubscribeToken } from "@/lib/email/unsubscribe";
 
-export const metadata: Metadata = {
-  title: "Unsubscribe",
-  description: UNSUBSCRIBE_DESCRIPTION,
-  alternates: { canonical: "/unsubscribe" },
-  robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
-};
+export async function generateMetadata(_props: unknown, parent: ResolvingMetadata): Promise<Metadata> {
+  return {
+    title: "Unsubscribe",
+    description: UNSUBSCRIBE_DESCRIPTION,
+    alternates: { canonical: "/unsubscribe" },
+    robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
+    // Its own address on the share card, not the layout's (Home's).
+    ...(await shareCard(parent, fullTitle("Unsubscribe"), UNSUBSCRIBE_DESCRIPTION, "/unsubscribe")),
+  };
+}
 
 /** "maninder@example.com" → "m•••@example.com": enough to recognise, nothing more. */
 const masked = (email: string) => email.replace(/^(.)[^@]*(@.*)$/, "$1•••$2");

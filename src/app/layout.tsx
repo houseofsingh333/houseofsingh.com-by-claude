@@ -88,6 +88,9 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       locale: "en_CA",
       siteName,
+      // Home's own address (og:url). Every other page gives its own through
+      // shareCard (lib/share-metadata.ts) or its own share card.
+      url: "/",
       title: SEO_DEFAULTS.title,
       description,
     },

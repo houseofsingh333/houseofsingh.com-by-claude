@@ -12,7 +12,10 @@ export async function generateMetadata(_props: unknown, parent: ResolvingMetadat
     title: "Terms of sale",
     description: EDITIONS_TERMS_DESCRIPTION,
     alternates: { canonical: "/editions/terms" },
-    ...(await shareCard(parent, fullTitle("Terms of sale"), EDITIONS_TERMS_DESCRIPTION)),
+    // Out of search like every Shop page, but its links are followed
+    // (approved 14 Nov): the layout's nofollow is lifted here only.
+    robots: { index: false, follow: true, nocache: true, googleBot: { index: false, follow: true } },
+    ...(await shareCard(parent, fullTitle("Terms of sale"), EDITIONS_TERMS_DESCRIPTION, "/editions/terms")),
   };
 }
 // Prepared ahead and refreshed every minute, like the other pages (a change
