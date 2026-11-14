@@ -309,6 +309,16 @@ html:not([data-opening]) .opening[data-top] .opening-cue {
   }
 }
 
+/* The aperture's progress, registered as a number so a scroll timeline can
+   move it smoothly. The aperture needs this: without it Chrome and Edge
+   treat --p as text and its shutters jump open instead of sliding (lost
+   with the exhibition's styles in #101, restored 14 Nov). */
+@property --p {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 /* ——— Aperture (SpotlightBillboard), Chapter IV ———
    A dark room. Default (phones, reduced motion, no JavaScript): the open
    layout, text then image. Desktop with motion allowed and JavaScript
@@ -615,13 +625,10 @@ html:not([data-opening]) .opening[data-top] .opening-cue {
   .turntable-text {
     max-width: none;
   }
-  /* The player is as wide as the record above it (approved 13 Nov): from
-     the sleeve's left edge to the vinyl's right edge as it peeks out
-     (the sleeve, plus the quarter of the vinyl outside it: 465px), so
-     sleeve, vinyl and player read as one object. Never wider than the
-     room it has. */
+  /* The player on desktop (14 Nov): 640px wide, from the sleeve's left
+     edge (the column's start); never wider than its column, 1024 to 1279. */
   .record-player {
-    width: min(100%, calc(var(--sleeve) + var(--disc) * 0.25));
+    width: min(100%, 640px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
