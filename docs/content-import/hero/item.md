@@ -1,6 +1,7 @@
 ---
-# A homepage hero slide. Folder name: its number, then a name, for example
-# hero/01-port-credit/. The number sets the order of the slides.
+# A Home slide (the first, in order, is the menu's photograph for Home).
+# Folder name: its number, then a name, for example hero/01-port-credit/.
+# The number sets the order of the slides.
 # Put one photograph in the folder: landscape, at least 2400px wide
 # (under 1600px it is refused).
 

@@ -1,8 +1,8 @@
 /**
  * The small supplier tracker (private; with Maninder's CPA, 12 Nov 2026).
  *
- * House of Singh Editions is sold by Maninder Singh, a sole proprietor and
- * small supplier, so no GST/HST is charged. A small supplier's taxable
+ * House of Singh Editions is sold by Maninder Singh, operating as House of
+ * Singh, a small supplier, so no GST/HST is charged. A small supplier's taxable
  * revenue must stay within the limit over any four consecutive calendar
  * quarters, and within any single quarter. This adds up, by calendar
  * quarter (Toronto time):

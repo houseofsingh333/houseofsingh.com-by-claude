@@ -3,7 +3,7 @@
 One tool, `scripts/import-content.mjs`, adds and updates the website's content from a folder on your computer.
 
 **What it fills:**
-- the homepage hero slides;
+- the Home slides (the first is the menu's photograph for Home);
 - projects;
 - Journal entries;
 - the Journey and "Featured on" on the About page;
@@ -129,7 +129,9 @@ A photograph already there (the same prepared file) is not uploaded again.
 
 Limits are the same as in the Studio.
 
-### hero: homepage hero slides
+### hero: the Home slides
+
+Since the new opening (14 Nov) Home itself shows no slide: the first one, in order, is the menu's photograph for Home when Site settings sets none.
 
 | Field | | Notes |
 |---|---|---|
