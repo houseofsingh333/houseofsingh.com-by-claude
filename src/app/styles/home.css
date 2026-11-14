@@ -697,6 +697,14 @@ html:not(.js) .hero-progress {
   .turntable-text {
     max-width: none;
   }
+  /* The player is as wide as the record above it (approved 13 Nov): from
+     the sleeve's left edge to the vinyl's right edge as it peeks out
+     (the sleeve, plus the quarter of the vinyl outside it: 465px), so
+     sleeve, vinyl and player read as one object. Never wider than the
+     room it has. */
+  .record-player {
+    width: min(100%, calc(var(--sleeve) + var(--disc) * 0.25));
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .record-disc {
