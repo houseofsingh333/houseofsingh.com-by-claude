@@ -1,17 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import dynamic from "next/dynamic";
 import Link from "@/components/Link";
 import NavOverlay, { SITE_MENU_ID, type MenuCopy } from "./NavOverlay";
-import type { NewsletterCopy } from "@/components/NewsletterNote";
-import IntroOverlay, { useIntroSequence } from "./IntroOverlay";
 import { PAGE_TOP_EVENT } from "@/components/PageTransition";
 
-const NewsletterNote = dynamic(
-  () => import("@/components/NewsletterNote"),
-  { ssr: false },
-);
 import type { MenuPhoto, NavItem } from "@/lib/types";
 
 const SCROLL_SHOW = 60;
@@ -21,17 +14,13 @@ type Props = {
   items: NavItem[];
   /** Menu photographs by page link (see buildMenuPhotos in the layout). */
   menuPhotos: Record<string, MenuPhoto>;
-  /** The menu's and the newsletter card's texts (Site Settings). */
+  /** The menu's texts, its newsletter's included (Site Settings). */
   menuCopy: MenuCopy;
-  newsletterCopy: NewsletterCopy;
 };
 
-export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: Props) {
+export default function Header({ items, menuPhotos, menuCopy }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [newsletterOpen, setNewsletterOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { introVisible, introFading, introDone, dismissIntro } =
-    useIntroSequence();
   const menuButton1Ref = useRef<HTMLButtonElement>(null);
   const menuButton2Ref = useRef<HTMLButtonElement>(null);
   const menuWasOpenRef = useRef(false);
@@ -99,21 +88,13 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
     button?.focus({ preventScroll: true });
   }, [menuOpen, scrolled]);
 
-  const handleNewsletterOpen = useCallback(() => {
-    setMenuOpen(false);
-    setTimeout(() => setNewsletterOpen(true), 200);
-  }, []);
 
   /* ── Derived state ── */
-  const showState1 = introDone && !scrolled;
-  const showState2 = introDone && scrolled;
+  const showState1 = !scrolled;
+  const showState2 = scrolled;
 
   return (
     <>
-      {/* ═══ STATE 0 : Video intro overlay ═══ */}
-      {introVisible && (
-        <IntroOverlay fading={introFading} onDismiss={dismissIntro} />
-      )}
 
       {/* ═══ STATE 1 : Crest + controls — top-edges at 32px rail ═══ */}
       <header
@@ -122,12 +103,15 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
         }`}
         aria-hidden={!showState1}
       >
-        {/* Crest — center, links home. CSS mask so it renders in currentColor. */}
+        {/* Crest — center, links home. CSS mask so it renders in currentColor.
+            Hidden on Home, where the opening's crest stands in its place
+            ("header-crest" in styles/layout.css): the same markup on every
+            page, so the server's and the browser's always agree. */}
         <Link
           href="/"
           tabIndex={showState1 ? 0 : -1}
           aria-label="House of Singh, home"
-          className="absolute top-[32px] left-1/2 -translate-x-1/2"
+          className="header-crest absolute top-[32px] left-1/2 -translate-x-1/2"
           style={{ pointerEvents: showState1 ? "auto" : "none" }}
         >
           <div
@@ -208,17 +192,11 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
       <NavOverlay
         isOpen={menuOpen}
         onClose={closeMenu}
-        onNewsletterOpen={handleNewsletterOpen}
         items={items}
         photos={menuPhotos}
         copy={menuCopy}
       />
 
-      <NewsletterNote
-        isOpen={newsletterOpen}
-        onClose={() => setNewsletterOpen(false)}
-        copy={newsletterCopy}
-      />
     </>
   );
 }

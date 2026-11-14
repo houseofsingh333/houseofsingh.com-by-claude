@@ -1,118 +1,311 @@
-/* Home: hero slideshow, aperture (Chapter IV), exhibition (Chapter III), record (Chapter VI).
+/* Home: the opening (the crest), Introduction, Selected work, the aperture, the record, the practice and the notebook.
    Imported by globals.css, in the order listed there. */
 
-/* ——— Hero vignette — cinematic film still feel ——— */
-
-.hero-vignette {
-  background:
-    radial-gradient(ellipse at center, transparent 50%, color-mix(in srgb, var(--foreground) 30%, transparent) 100%),
-    linear-gradient(to top, color-mix(in srgb, var(--foreground) 35%, transparent) 0%, transparent 40%);
+/* ——— The opening (home/opening), approved 14 Nov ———
+   Canvas "Home hero, proposal", artboard "In continuation". The first
+   screen: the crest, centred, about 760px wide on desktop and 300px on a
+   phone. On a first visit the logo animation plays and its last frame stays;
+   otherwise the still crest (<html data-opening>, set by the root layout's
+   script before the first paint). The
+   animation is drawn on white and multiplied onto the canvas, so its frame
+   carries the canvas colour and isolation, or a white patch shows. On the
+   first scroll the crest fades and settles to 0.65 (--settle, 0 to 1 over
+   260px). Reduced motion: still and complete. */
+.opening {
+  --settle: 0;
+  position: relative;
+  height: 100svh;
+  min-height: 520px;
 }
-
-/* ——— Hero slideshow (CinematicHero), in CSS ———
-   Each slide is stacked. The active slide fades in over --hero-fade on
-   --ease-slow, on top of the slide it replaces, which stays fully visible
-   underneath (its zoom still running) until it is covered. The first slide
-   is shown at once. The Ken Burns zoom is a slow, linear drift between two
-   transforms the component sets per slide (--kb-from, --kb-to); it starts
-   when data-run is set and keeps its end position. */
-:root {
-  --hero-fade: 2000ms;
-  --hero-kb-duration: 12000ms;
-}
-.hero-slide {
+.opening-crest {
   position: absolute;
-  inset: 0;
-  opacity: 0;
+  left: 50%;
+  top: 50%;
+  width: clamp(300px, calc(129.2px + 43.81vw), 760px);
+  transform: translate(-50%, -54%) scale(calc(1 - 0.35 * var(--settle)));
+  opacity: calc(1 - var(--settle));
+  will-change: transform, opacity;
 }
-.hero-slide[data-state="active"] {
-  opacity: 1;
-  z-index: 2;
-  transition: opacity var(--hero-fade) var(--ease-slow);
-}
-.hero-slide[data-state="leaving"] {
-  opacity: 1;
-  z-index: 1;
-}
-.hero-slide[data-first] {
-  transition: none;
-}
-.hero-kb {
-  position: absolute;
-  inset: 0;
-  transform: var(--kb-from);
-}
-.hero-kb[data-run] {
-  animation: heroKenBurns var(--hero-kb-duration) linear forwards;
-}
-@keyframes heroKenBurns {
-  from {
-    transform: var(--kb-from);
-  }
-  to {
-    transform: var(--kb-to);
-  }
-}
-/* Caption: fades out (0.6s), then the next one fades and rises 12px in. */
-.hero-caption {
-  opacity: 0;
-  transform: translateY(12px);
-  transition:
-    opacity 600ms var(--ease-slow),
-    transform 0s linear 600ms;
-}
-.hero-caption[data-visible] {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 1200ms var(--ease-slow),
-    transform 1200ms var(--ease-slow);
-}
-.hero-caption[data-first] {
-  transition: none;
-}
-/* The hairline under the place name fills while the slide plays: a scale
-   from the left over the slide's time (set inline), restarted per slide.
-   Without JavaScript nothing plays, so it takes no space. */
-.hero-progress {
-  display: block;
-  width: 56px;
-  height: 1px;
+.opening-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: color-mix(in srgb, #ffffff 35%, transparent);
+  background: var(--background);
+  isolation: isolate;
 }
-.hero-progress-fill {
+/* Three layers in the frame: the still crest (an image, painted with the
+   first frame, so the page's largest content appears at once); over it, on a
+   first visit, the canvas and the animation multiplied onto it, which draws
+   the crest from nothing and ends on it. Returning visitors, reduced motion
+   and no JavaScript: the still crest alone. The look is the same either way. */
+.opening-still {
+  position: absolute;
+  left: 50.16%;
+  top: 41.18%;
+  width: 65.7%;
+  height: auto;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+}
+.opening-cover,
+.opening-video {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+.opening-cover {
+  background: var(--background);
+}
+.opening-video {
   display: block;
+  width: 100%;
   height: 100%;
-  background: #ffffff;
-  transform: scaleX(0);
-  transform-origin: left center;
+  object-fit: cover;
+  mix-blend-mode: multiply;
 }
-.hero-progress-fill[data-run] {
-  animation: hero-progress linear forwards;
+html:is([data-opening="play"], [data-opening="ended"]) .opening :is(.opening-cover, .opening-video) {
+  visibility: visible;
 }
-@keyframes hero-progress {
-  to {
-    transform: scaleX(1);
+/* The frame's edge, feathered into the canvas. */
+.opening-feather {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 40px 22px var(--background);
+}
+/* The scroll cue: "Scroll" over a 48px hairline whose inner line draws
+   downward and releases. Shown once the crest is still, and only at the very
+   top; it fades out as soon as the page moves. */
+.opening-cue {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-hover) var(--ease-soft-out);
+}
+html:is([data-opening="still"], [data-opening="ended"]) .opening[data-top] .opening-cue,
+html:not([data-opening]) .opening[data-top] .opening-cue {
+  opacity: 1;
+}
+.opening-cue-word {
+  font-size: var(--type-legal);
+  line-height: 1;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.opening-cue-line {
+  position: relative;
+  width: 1px;
+  height: 48px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+.opening-cue-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--muted-foreground);
+  transform-origin: top;
+  animation: opening-cue var(--dur-cue) var(--editorial-ease) infinite;
+}
+@keyframes opening-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
   }
-}
-html:not(.js) .hero-progress {
-  display: none;
+  45% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  55% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-slide,
-  .hero-slide[data-state],
-  .hero-caption,
-  .hero-caption[data-visible] {
+  .opening-crest {
+    transform: translate(-50%, -54%);
+    opacity: 1;
+  }
+  .opening-cue {
     transition: none;
   }
-  .hero-kb,
-  .hero-kb[data-run] {
+  .opening-cue-line::after {
     animation: none;
     transform: none;
   }
-  .hero-progress-fill[data-run] {
-    animation: none;
+}
+
+/* ——— Chapter I, Introduction (home/introduction), approved 14 Nov ———
+   Canvas "Introduction, calm options", artboard 1. Desktop: the words on the
+   left, the portrait on the right at 520 by 650, 120px apart, aligned at the
+   bottom; a phone: the portrait first, then the words. The reveal, once, the
+   first time it is in view, on the editorial easing: the portrait fades in
+   drifting up 18px over 1300ms; then the label, name, line and link each
+   fade in with a 12px lift over 1000ms, at 520, 660, 800 and 940ms. Without
+   JavaScript or with reduced motion it is simply there. */
+.introduction {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "photo" "words";
+  row-gap: 40px;
+}
+.introduction-words {
+  grid-area: words;
+  display: flex;
+  flex-direction: column;
+}
+.introduction-name {
+  margin-top: 30px;
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-name);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+.introduction-line {
+  margin-top: 24px;
+  max-width: 520px;
+  font-size: var(--type-body-l);
+  line-height: 1.5;
+  color: var(--foreground);
+  text-wrap: pretty;
+}
+.introduction-link {
+  margin-top: 40px;
+}
+.introduction-photo {
+  grid-area: photo;
+  position: relative;
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  overflow: hidden;
+  background: var(--secondary);
+}
+@media (min-width: 1024px) {
+  .introduction {
+    grid-template-columns: minmax(0, 1fr) 520px;
+    grid-template-areas: "words photo";
+    column-gap: 120px;
+    align-items: end;
+  }
+  .introduction-words {
+    padding-bottom: 24px;
+  }
+  .introduction-photo {
+    width: 520px;
+    height: 650px;
+    aspect-ratio: auto;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .introduction [data-step] {
+    transition:
+      opacity var(--dur-intro-words) var(--editorial-ease) var(--step-delay, 0ms),
+      transform var(--dur-intro-words) var(--editorial-ease) var(--step-delay, 0ms);
+  }
+  html.js .introduction [data-step="0"] {
+    transition-duration: var(--dur-intro-photo);
+  }
+  html.js .introduction [data-step="1"] {
+    --step-delay: 520ms;
+  }
+  html.js .introduction [data-step="2"] {
+    --step-delay: 660ms;
+  }
+  html.js .introduction [data-step="3"] {
+    --step-delay: 800ms;
+  }
+  html.js .introduction [data-step="4"] {
+    --step-delay: 940ms;
+  }
+  html.js .introduction:not([data-revealed]) [data-step] {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  html.js .introduction:not([data-revealed]) [data-step="0"] {
+    transform: translateY(18px);
+  }
+}
+
+/* ——— Chapter II, Selected work (home/selected), approved 14 Nov ———
+   One project at full width but calm: the label with "All projects" on its
+   line, right aligned; the photograph (about 1200 by 680 at 1440, 4:5 on a
+   phone); then its title and category on the left and its line and "View
+   the project" on the right, in a 480px column. */
+.selected-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+.selected-photo {
+  position: relative;
+  margin-top: 40px;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--secondary);
+}
+.selected-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 24px;
+  margin-top: 32px;
+}
+.selected-title {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-l);
+  line-height: 1.05;
+  color: var(--foreground);
+}
+.selected-category {
+  margin-top: 14px;
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-leading);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+.selected-about {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 26px;
+}
+.selected-line {
+  font-size: var(--type-body-l);
+  line-height: 1.65;
+  color: var(--foreground);
+  text-wrap: pretty;
+}
+@media (min-width: 768px) {
+  .selected-photo {
+    aspect-ratio: 3 / 2;
+  }
+}
+@media (min-width: 1024px) {
+  .selected-photo {
+    aspect-ratio: 1200 / 680;
+  }
+  .selected-meta {
+    grid-template-columns: minmax(0, 1fr) 480px;
+    column-gap: 80px;
+    align-items: start;
   }
 }
 
@@ -232,281 +425,6 @@ html:not(.js) .hero-progress {
   }
   html.js .aperture-stage {
     position: sticky;
-  }
-}
-
-/* ——— Exhibition (home/exhibition), Chapter III ———
-   Each project is a room. Default (phones, tablets, reduced motion, and
-   before any script): the framed print centred with its wall label beneath,
-   rooms in sequence. Desktop with motion allowed: each room is a track
-   about two screens tall whose stage pins for one screen of scrolling.
-   One progress value, --p (0 to 1), drives everything by transform and
-   opacity: the photo grows from print to full screen (--g, the first 60%),
-   the four canvas wall panels slide outward to open the 4:5 print into the
-   whole screen, the label and frame shadow fade, and the plate with
-   "Enter the project" fades in. CSS scroll driven animation sets --p where
-   supported; ScrollProgress sets it elsewhere. */
-@property --p {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-.exhibition {
-  padding-block: var(--section-space-md);
-}
-.exhibition-room + .exhibition-room {
-  margin-top: var(--section-space-md);
-}
-.exhibition-stage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-}
-.exhibition-head {
-  align-self: stretch;
-  margin-bottom: 24px;
-}
-/* "Skip to journal" exists only where the exhibition is pinned (desktop,
-   motion allowed), where scrolling past it takes a while; where the rooms
-   simply scroll by (phones, tablets, reduced motion) it is not needed. */
-.exhibition-skip {
-  display: none;
-  align-self: flex-end;
-  margin-right: 24px;
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  line-height: var(--type-label-leading);
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 4px;
-}
-.exhibition-print {
-  position: relative;
-  width: min(360px, 72vw);
-  aspect-ratio: 4 / 5;
-  box-shadow:
-    0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent),
-    0 12px 32px color-mix(in srgb, var(--foreground) 10%, transparent);
-  background: var(--secondary);
-}
-.exhibition-photo {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-.exhibition-wall,
-.exhibition-frame,
-.exhibition-plate,
-.exhibition-bar {
-  display: none;
-}
-.exhibition-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  max-width: 320px;
-  padding-inline: 24px;
-  text-align: center;
-}
-
-@media (min-width: 768px) {
-  .exhibition-skip {
-    margin-right: 64px;
-  }
-}
-
-@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-  .exhibition {
-    padding-block: var(--section-space-md) 0;
-  }
-  .exhibition-room {
-    position: relative;
-    height: 200svh;
-    --g: min(1, calc(var(--p) / 0.6));
-  }
-  @supports (animation-timeline: view()) {
-    .exhibition-room {
-      animation: exhibition-room linear both;
-      animation-timeline: view();
-      animation-range: contain 0% contain 100%;
-    }
-  }
-  .exhibition-room + .exhibition-room {
-    margin-top: 0;
-  }
-  .exhibition-stage {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    overflow: hidden;
-    display: block;
-    background: var(--background);
-  }
-  .exhibition-head {
-    position: absolute;
-    top: 96px;
-    left: 0;
-    right: 0;
-    z-index: 4;
-    margin: 0;
-    opacity: calc(1 - var(--g) * 2);
-  }
-  /* A skip link: visually hidden until it has keyboard focus, then shown
-     in the label style at the top right of the room; hidden again on blur. */
-  .exhibition-skip {
-    display: block;
-    position: absolute;
-    top: 104px;
-    right: 0;
-    z-index: 6;
-    margin-right: 64px;
-    background: var(--background);
-    padding: 6px 10px 4px;
-    color: var(--foreground);
-  }
-  .exhibition-skip:not(:focus-visible) {
-    width: 1px;
-    height: 1px;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    border: 0;
-  }
-  .exhibition-print {
-    position: absolute;
-    inset: 0;
-    width: auto;
-    aspect-ratio: auto;
-    box-shadow: none;
-    background: transparent;
-  }
-  .exhibition-photo {
-    transform: scale(calc(0.5 + 0.5 * var(--g)));
-    transform-origin: 50% 50%;
-  }
-  .exhibition-wall {
-    display: block;
-    position: absolute;
-    z-index: 1;
-    background: var(--background);
-  }
-  .exhibition-wall-l,
-  .exhibition-wall-r {
-    top: 0;
-    bottom: 0;
-    width: calc(50% - 20svh);
-  }
-  .exhibition-wall-l {
-    left: 0;
-    transform: translateX(calc(var(--g) * -100%));
-  }
-  .exhibition-wall-r {
-    right: 0;
-    transform: translateX(calc(var(--g) * 100%));
-  }
-  .exhibition-wall-t,
-  .exhibition-wall-b {
-    left: 0;
-    right: 0;
-    height: 25svh;
-  }
-  .exhibition-wall-t {
-    top: 0;
-    transform: translateY(calc(var(--g) * -100%));
-  }
-  .exhibition-wall-b {
-    bottom: 0;
-    transform: translateY(calc(var(--g) * 100%));
-  }
-  .exhibition-frame {
-    display: block;
-    position: absolute;
-    z-index: 2;
-    left: calc(50% - 20svh);
-    top: 25svh;
-    width: 40svh;
-    height: 50svh;
-    box-shadow:
-      0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent),
-      0 12px 32px color-mix(in srgb, var(--foreground) 10%, transparent);
-    opacity: calc(1 - var(--g) * 4);
-    pointer-events: none;
-  }
-  .exhibition-label {
-    position: absolute;
-    z-index: 5;
-    bottom: 25svh;
-    align-items: flex-start;
-    text-align: left;
-    max-width: 240px;
-    padding: 0;
-    opacity: calc(1 - var(--g) * 2.5);
-  }
-  .exhibition-room[data-side="right"] .exhibition-label {
-    left: calc(50% + 20svh + 48px);
-  }
-  .exhibition-room[data-side="left"] .exhibition-label {
-    right: calc(50% + 20svh + 48px);
-    align-items: flex-end;
-    text-align: right;
-  }
-  .exhibition-label:focus-within {
-    opacity: 1;
-  }
-  /* (The Enter label stays shown, as it always has: the text link's display
-     won over this rule before the area styles were split, C3.) */
-  .exhibition-count {
-    display: none;
-  }
-  .exhibition-plate {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: absolute;
-    z-index: 4;
-    left: 64px;
-    bottom: 56px;
-    width: 380px;
-    padding: 28px 32px;
-    background: var(--background);
-    opacity: calc((var(--p) - 0.6) * 5);
-  }
-  .exhibition-bar {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    position: absolute;
-    z-index: 3;
-    left: 0;
-    right: 0;
-    bottom: 56px;
-    opacity: calc(1 - var(--g) * 3);
-  }
-  .exhibition-line {
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    overflow: hidden;
-  }
-  .exhibition-line-fill {
-    display: block;
-    height: 100%;
-    background: var(--foreground);
-    transform-origin: left center;
-    transform: scaleX(calc((var(--i) + var(--p)) / var(--n)));
-  }
-}
-@keyframes exhibition-room {
-  from {
-    --p: 0;
-  }
-  to {
-    --p: 1;
   }
 }
 
@@ -797,6 +715,14 @@ html:not(.js) .hero-progress {
 .practice-action {
   margin-top: 30px;
 }
+/* What the Studio is, beneath its button: small and muted (14 Nov). */
+.practice-note {
+  margin-top: 14px;
+  max-width: 380px;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
 
 /* The panels. */
 .practice-panels {
@@ -923,7 +849,16 @@ html:not(.js) .hero-progress {
   }
   .practice:not([data-panels="0"]) .practice-action {
     /* Level with the bottom of the photographs, above the captions. */
+    position: relative;
     padding-bottom: calc(var(--practice-cap-gap) + var(--practice-cap-line));
+  }
+  /* The line hangs beneath the button, from the captions' line down, so
+     the button stays level with the photographs however it wraps. */
+  .practice:not([data-panels="0"]) .practice-note {
+    position: absolute;
+    left: 0;
+    top: calc(100% - var(--practice-cap-line));
+    margin: 0;
   }
   .practice-work {
     grid-area: work;

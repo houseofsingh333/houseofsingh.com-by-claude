@@ -148,30 +148,29 @@ export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
 
 // --------------- Homepage Featured Projects ---------------
 
-const _homepageProject = `{
-  _id, title, "slug": slug.current, category,
-  "thumbnail": thumbnail ${_imageAsset},
-  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt, year,
-  "coverImage": coverImage ${_imageAsset}
-}`;
-
 /**
- * Chapter III's three projects: Site Settings "Homepage projects" in its
- * order when it has any, else the first three projects shown on the
- * homepage, in homepage order.
+ * Chapter II, Selected work (approved 14 Nov): one project, chosen in Site
+ * Settings ("The selected project"), else the first in Homepage Order (then
+ * the newest). Its photograph is its cover, else its first plate, its first
+ * photograph or its content sections' first photograph, and only then its
+ * thumbnail (a card image); its line is its excerpt, else its short intro.
  */
-export const homepageFeaturedProjectsQuery = `select(
-  count(*[_type == "siteSettings"][0].homepageProjects[defined(@->_id)]) > 0 =>
-    *[_type == "siteSettings"][0].homepageProjects[]->${_homepageProject}[defined(_id)][0...3],
-  *[_type == "project" && featuredOnHomepage == true] | order(homepageOrder asc, title asc)[0...3]${_homepageProject}
-)`;
-
-export const latestProjectsQuery = `*[_type == "project"] | order(_createdAt desc)[0...6]{
+const _selectedProject = `{
   _id, title, "slug": slug.current, category,
-  "thumbnail": thumbnail ${_imageAsset},
-  "thumbnailAlt": coalesce(thumbnail.alt, title), excerpt, year,
-  "coverImage": coverImage ${_imageAsset}
+  "image": select(
+    defined(coverImage.asset) => coverImage,
+    count(plates[defined(asset)]) > 0 => plates[defined(asset)][0],
+    count(photographs[defined(asset)]) > 0 => photographs[defined(asset)][0],
+    count(contentSections[defined(image.asset)]) > 0 => contentSections[defined(image.asset)][0].image,
+    count(contentSections[defined(images)]) > 0 => contentSections[defined(images)][0].images[defined(asset)][0],
+    thumbnail
+  ) ${_imageAsset},
+  "line": coalesce(excerpt, shortIntro)
 }`;
+export const selectedProjectQuery = `coalesce(
+  *[_type == "siteSettings"][0].featuredProject->${_selectedProject},
+  *[_type == "project" && defined(slug.current)] | order(defined(homepageOrder) desc, homepageOrder asc, coalesce(publishedAt, _createdAt) desc)[0]${_selectedProject}
+)`;
 
 // --------------- Projects ---------------
 

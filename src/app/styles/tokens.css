@@ -47,6 +47,9 @@
   --dur-page-in: 400ms; /* then the new page fading in, on --editorial-ease (approved 12 Nov) */
   --dur-develop: 1400ms; /* a photograph developing to full tone */
   --dur-plate: 1400ms; /* one photograph crossfading to the next on a Projects plate */
+  --dur-intro-photo: 1300ms; /* Home, Introduction: the portrait fading in, drifting up 18px (approved 14 Nov) */
+  --dur-intro-words: 1000ms; /* Home, Introduction: the label, name, line and link each lifting 12px (approved 14 Nov) */
+  --dur-cue: 2.8s; /* Home, the scroll cue's line drawing down and releasing; the brass dot's breath (approved 14 Nov) */
   --dur-menu: 500ms; /* the newsletter note and the filter veil opening */
   /* The menu (approved 10 Nov): the panel slides in, the photograph fades
      in after a short delay and settles from 1.04 over --dur-reveal; on
@@ -81,6 +84,7 @@
      phone value at 390 and the desktop value at 1280 and scale between.
      Serif (Playfair 400) for names and numbers, sans (Instrument Sans 400,
      500 for emphasis) for sentences. */
+  --type-display-name: clamp(48px, calc(30.472px + 4.4944vw), 88px); /* 88/48 Home, Introduction: "Maninder Singh" alone (approved 14 Nov) */
   --type-display-xl: clamp(40px, calc(25.978px + 3.5955vw), 72px); /* 72/40 page and project titles */
   --type-display-l: clamp(34px, calc(26.112px + 2.0225vw), 52px); /* 52/34 chapter titles */
   --type-display-m: clamp(26px, calc(22.494px + 0.8989vw), 34px); /* 34/26 Toronto time, large single values */
@@ -146,6 +150,7 @@
   --font-editorial: var(--font-playfair), Georgia, serif;
   --font-sans: var(--font-instrument), Arial, sans-serif;
   /* The type scale as Tailwind sizes: text-display-xl, text-body and so on. */
+  --text-display-name: var(--type-display-name);
   --text-display-xl: var(--type-display-xl);
   --text-display-l: var(--type-display-l);
   --text-display-m: var(--type-display-m);

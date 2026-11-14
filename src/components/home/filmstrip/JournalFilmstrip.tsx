@@ -24,10 +24,13 @@ import { useFilmstripDrift } from "./useFilmstripDrift";
 export default function JournalFilmstrip({
   entries,
   label,
+  numeral = "IV",
 }: {
   entries: JournalEntry[];
-  /** The small label above the heading (Site Settings, Chapter V). */
+  /** The small label above the heading (Site Settings, the notebook). */
   label: string;
+  /** Its Roman numeral, in the order Home shows its chapters. */
+  numeral?: string;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -52,9 +55,9 @@ export default function JournalFilmstrip({
   return (
     <section ref={sectionRef} aria-labelledby="journal-strip-title" className="section-py">
       <div className="px-6 md:px-16">
-        <div className="flex items-end justify-between gap-6 border-b border-border pb-4 md:pb-6 max-[359px]:flex-wrap">
+        <div className="flex items-end justify-between gap-4 md:gap-6 border-b border-border pb-4 md:pb-6 max-[359px]:flex-wrap">
           <div className="flex flex-col gap-4">
-            <ChapterMark numeral="V" label={label} />
+            <ChapterMark numeral={numeral} label={label} />
             <h2
               id="journal-strip-title"
               className="font-editorial font-normal text-display-l leading-[1.1] text-foreground"

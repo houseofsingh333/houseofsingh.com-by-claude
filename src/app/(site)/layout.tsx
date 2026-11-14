@@ -56,7 +56,6 @@ function buildMenuPhotos(items: NavItem[], d: MenuPhotoSources | null): Record<s
 }
 import JsonLd from "@/components/JsonLd";
 import { buildSiteJsonLd } from "@/lib/structured-data";
-import { IntroProvider } from "@/components/IntroContext";
 
 /**
  * Layout for the public website: every page a visitor sees. The (site) route
@@ -105,7 +104,6 @@ export default async function SiteLayout({
       >
         Skip to content
       </a>
-      <IntroProvider>
         <Header
           items={navItems}
           menuPhotos={menuPhotos}
@@ -113,16 +111,12 @@ export default async function SiteLayout({
             menuClose: copy.menuClose,
             menuInstagram: copy.menuInstagram,
             menuNewsletter: copy.menuNewsletter,
+            menuNewsletterLine: copy.menuNewsletterLine,
+            menuStudio: copy.menuStudio,
+            menuStudioNote: copy.menuStudioNote,
             menuTimeLabel: copy.menuTimeLabel,
-          }}
-          newsletterCopy={{
-            newsletterHeading: copy.newsletterHeading,
-            newsletterText: copy.newsletterText,
-            newsletterPlaceholder: copy.newsletterPlaceholder,
-            newsletterSubscribe: copy.newsletterSubscribe,
-            newsletterNotNow: copy.newsletterNotNow,
-            newsletterThanksHeading: copy.newsletterThanksHeading,
-            newsletterThanksText: copy.newsletterThanksText,
+            codaNewsletterPlaceholder: copy.codaNewsletterPlaceholder,
+            codaNewsletterThanks: copy.codaNewsletterThanks,
           }}
         />
         <GlideScroll />
@@ -145,7 +139,6 @@ export default async function SiteLayout({
           }}
           bookUrl={bookingUrl(settings?.codaBookUrl)}
         />
-      </IntroProvider>
       <SpeedInsights />
     </>
   );

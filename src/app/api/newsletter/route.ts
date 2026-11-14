@@ -52,7 +52,16 @@ export async function POST(request: Request) {
     // lost); once Kit has it, the website keeps no copy of the email.
     try {
       await signUp(
-        { email, tag: "Letters", kind: "letters", consent: consentRecord("letters", "the newsletter form, houseofsingh.com") },
+        {
+          email,
+          tag: "Letters",
+          kind: "letters",
+          // The words that were shown: the footer's line, or the menu's.
+          consent:
+            body.form === "menu"
+              ? consentRecord("lettersMenu", "the menu's newsletter, houseofsingh.com")
+              : consentRecord("letters", "the newsletter form, houseofsingh.com"),
+        },
         sanityPending(),
       );
     } catch (error) {

@@ -29,9 +29,12 @@ const STUDIO_URL = "https://studios.houseofsingh.com";
 export default function PracticeChapter({
   copy,
   cards,
+  numeral = "VI",
 }: {
   copy: SiteCopy;
   cards?: StudioWorkCard[] | null;
+  /** Its Roman numeral, in the order Home shows its chapters. */
+  numeral?: string;
 }) {
   const panels: PracticePanel[] = (cards ?? [])
     .filter((c) => hasImageAsset(c.image) && c.clientName?.trim() && c.link?.trim())
@@ -54,7 +57,7 @@ export default function PracticeChapter({
       className="practice px-6 md:px-16 section-py"
       data-panels={panels.length}
     >
-      <ChapterMark numeral="VII" label={copy.practiceLabel} headingId="chapter-practice" className="practice-label" />
+      <ChapterMark numeral={numeral} label={copy.practiceLabel} headingId="chapter-practice" className="practice-label" />
 
       <div className="practice-sign">
         {/* eslint-disable-next-line @next/next/no-img-element -- an SVG logo: next/image adds nothing for vector files. */}
@@ -75,6 +78,7 @@ export default function PracticeChapter({
 
       <div className="practice-action">
         <OutlineCta href={STUDIO_URL} label={copy.practiceLinkText} />
+        <p className="practice-note">{copy.practiceStudioNote}</p>
       </div>
     </section>
   );

@@ -28,10 +28,14 @@
   align-items: end;
 }
 
+/* The closing line: Playfair 400 at display-m on every page it closes
+   (approved exception, 14 Nov; BRAND_BOOK.md 2.2). */
 .footer-invite {
   max-width: 640px;
-  font-size: var(--type-statement);
-  line-height: 1.35;
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-m);
+  line-height: 1.25;
   text-wrap: balance;
   color: var(--foreground);
 }
@@ -355,7 +359,8 @@ html:not(.js) .footer-time {
     align-items: flex-start;
   }
   .footer-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+    /* 420: the newsletter's consent line on one row (approved 14 Nov). */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
     justify-content: space-between;
     gap: 40px;
     padding-top: 36px;
@@ -555,6 +560,73 @@ button.menu-small:focus-visible {
   color: var(--foreground);
 }
 
+/* House of Singh Studios, the last name (approved 14 Nov): an arrow that
+   nudges up and right, and a quiet line beneath, on pointing and focus;
+   always shown on touch screens. Reduced motion: both at once. */
+.menu-out-arrow {
+  display: inline-block;
+  margin-left: -6px;
+  font-size: var(--type-small);
+  letter-spacing: 0;
+  color: var(--muted-foreground);
+  transition:
+    transform var(--dur-hover) var(--ease-soft-out),
+    color var(--dur-hover) var(--ease-soft-out);
+}
+.menu-link-out:hover .menu-out-arrow,
+.menu-link-out:focus-visible .menu-out-arrow {
+  transform: translate(2px, -2px);
+  color: var(--foreground);
+}
+.menu-out-note {
+  margin: -2px 0 0 40px; /* under the name, past the numerals' column */
+  font-size: var(--type-legal);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+  opacity: 0;
+  transition: opacity var(--dur-hover) var(--ease-soft-out);
+}
+.menu-link-out:hover + .menu-out-note,
+.menu-link-out:focus-visible + .menu-out-note {
+  opacity: 1;
+}
+@media (hover: none) {
+  .menu-out-note {
+    opacity: 1;
+  }
+}
+
+/* The newsletter inside the menu (approved 14 Nov): a line, then the email
+   field with its confirmation in place, beneath the foot. */
+.menu-letters {
+  flex-basis: 100%;
+  max-width: 420px;
+  padding-top: 8px;
+}
+.menu-letters:not([hidden]) {
+  animation: menu-letters-in var(--dur-hover) var(--ease-soft-out);
+}
+@keyframes menu-letters-in {
+  from {
+    opacity: 0;
+  }
+}
+.menu-letters-line {
+  margin-bottom: 14px;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu-out-arrow,
+  .menu-out-note {
+    transition: none;
+  }
+  .menu-letters:not([hidden]) {
+    animation: none;
+  }
+}
+
 /* Below 1024: the veil over the strip of page; no photograph. */
 .menu-veil {
   position: absolute;
@@ -667,112 +739,6 @@ button.menu-small:focus-visible {
   }
 }
 
-/* ——— Newsletter note (NewsletterNote) ———
-   A small paper card in the bottom right, not modal, no overlay. It rises
-   12px and fades in over --dur-menu; reduced motion: it appears at once. */
-
-.note-card {
-  position: fixed;
-  z-index: 60;
-  right: 16px;
-  bottom: 16px;
-  width: min(360px, calc(100vw - 32px));
-  padding: 28px;
-  background: var(--paper);
-  box-shadow:
-    0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent),
-    0 12px 32px color-mix(in srgb, var(--foreground) 12%, transparent);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(var(--rise-reveal));
-  transition:
-    opacity var(--dur-menu) var(--editorial-ease),
-    transform var(--dur-menu) var(--editorial-ease),
-    visibility 0s linear var(--dur-menu);
-}
-
-.note-card[data-open] {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  transition:
-    opacity var(--dur-menu) var(--editorial-ease),
-    transform var(--dur-menu) var(--editorial-ease);
-}
-
-.note-input {
-  width: 100%;
-  padding: 8px 0;
-  font-size: var(--type-body);
-  color: var(--foreground);
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--border);
-  outline: none;
-}
-
-.note-input::placeholder {
-  color: var(--muted-foreground);
-}
-
-.note-input:focus-visible {
-  border-bottom-color: var(--foreground);
-  box-shadow: 0 1px 0 0 var(--foreground); /* 2px in focus (audit P10) */
-}
-
-.note-subscribe,
-.note-later {
-  min-height: 44px;
-  font-size: var(--type-label-size);
-  white-space: nowrap;
-  line-height: var(--type-label-leading);
-  letter-spacing: var(--type-label-tracking);
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color var(--dur-hover) var(--ease-soft-out), border-color var(--dur-hover) var(--ease-soft-out);
-}
-
-.note-subscribe,
-.note-later {
-  display: inline-flex;
-  align-items: flex-end;
-  padding-bottom: 4px;
-  border-bottom: 1px solid transparent;
-}
-
-.note-subscribe {
-  color: var(--foreground);
-  border-bottom-color: var(--foreground);
-}
-
-.note-subscribe:disabled {
-  color: var(--muted-foreground);
-  border-color: var(--border);
-  cursor: wait;
-}
-
-.note-later {
-  color: var(--muted-foreground);
-}
-
-
-@media (min-width: 768px) {
-  .note-card {
-    right: 32px;
-    bottom: 32px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .note-card,
-  .note-card[data-open] {
-    transition: none;
-  }
-  .note-card {
-    transform: none;
-  }
-}
-
 /* ——— Page not found (404) ———
    Text first in the markup (and on phones); on desktop the photograph
    takes the left column. */
@@ -860,4 +826,10 @@ html[data-menu-leaving] .menu-shell *,
 html[data-menu-leaving] .site-header {
   transition: none !important;
   animation: none !important;
+}
+
+/* On Home the opening's crest is the header's State 1 crest (approved
+   14 Nov): the header shows only its dot there until the wordmark bar. */
+body:has(.opening) .header-crest {
+  display: none;
 }

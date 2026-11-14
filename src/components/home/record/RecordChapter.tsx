@@ -40,18 +40,20 @@ function Crest({ className }: { className: string }) {
 
 type Props = {
   playlistUrl?: string;
-  /** Site Settings, Chapter VI (today's text when empty). */
+  /** Site Settings, the record (today's text when empty). */
   copy: SiteCopy;
+  /** Its Roman numeral, in the order Home shows its chapters. */
+  numeral?: string;
 };
 
-export default function RecordChapter({ playlistUrl, copy }: Props) {
+export default function RecordChapter({ playlistUrl, copy, numeral = "V" }: Props) {
   if (!playlistUrl) return null;
   const embedSrc = toEmbedUrl(playlistUrl);
 
   return (
     <section aria-labelledby="chapter-listening" className="turntable px-6 md:px-16 section-py">
       <div className="turntable-text">
-        <ChapterMark numeral="VI" label={copy.listeningLabel} />
+        <ChapterMark numeral={numeral} label={copy.listeningLabel} />
         <h2 id="chapter-listening" className="turntable-heading font-editorial font-normal text-foreground">
           {copy.listeningHeading}
         </h2>

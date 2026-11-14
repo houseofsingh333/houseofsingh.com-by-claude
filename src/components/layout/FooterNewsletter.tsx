@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EMAIL_HINT, looksLikeEmail } from "@/lib/emailCheck";
 import HoneypotField from "@/components/HoneypotField";
 import { HONEYPOT_FIELD } from "@/lib/spam-protection";
@@ -29,6 +29,8 @@ type Props = {
   idSuffix?: string;
   /** The browser's autofill hint (the Shop's Notify me: "email"). */
   autoComplete?: string;
+  /** Takes the focus when it appears (the menu's newsletter, opened by a tap). */
+  focusOnOpen?: boolean;
 };
 
 /** Today in Toronto, as the postmark reads it: "8 NOV" and "MMXXVI". */
@@ -60,6 +62,7 @@ export default function FooterNewsletter({
   note,
   idSuffix = "footer",
   autoComplete,
+  focusOnOpen,
 }: Props) {
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState(""); // honeypot
@@ -67,6 +70,9 @@ export default function FooterNewsletter({
   const [errorMsg, setErrorMsg] = useState("");
   const [stamp, setStamp] = useState<{ day: string; year: string } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (focusOnOpen) inputRef.current?.focus();
+  }, [focusOnOpen]);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();

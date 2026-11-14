@@ -111,18 +111,18 @@ test("state: the menu open", async ({ page }) => {
   await axe(page, "menu open");
 });
 
-test("state: the newsletter note, open and with its error", async ({ page }) => {
+test("state: the newsletter inside the menu, open and with its error", async ({ page }) => {
   await open(page, "/about");
   await header(page).locator("button[aria-label='Open menu']").click();
   await page.locator("button.menu-small:visible").filter({ hasText: /newsletter/i }).click();
-  const field = page.locator("input[type=email]:focus");
-  await expect(field).toBeVisible();
+  const field = page.locator("#menu-letters input[type=email]");
+  await expect(field).toBeFocused();
   await page.waitForTimeout(600);
-  await axe(page, "newsletter note");
+  await axe(page, "menu newsletter");
   await field.fill("not-an-email");
   await field.press("Enter");
-  await expect(page.locator("#newsletter-error")).toBeVisible();
-  await axe(page, "newsletter note, error");
+  await expect(page.locator("#menu-nl-error")).toBeVisible();
+  await axe(page, "menu newsletter, error");
 });
 
 test("state: the footer newsletter, error and thank you", async ({ page }) => {

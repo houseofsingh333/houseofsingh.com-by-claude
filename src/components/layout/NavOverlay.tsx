@@ -7,6 +7,8 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import SanityImage from "@/components/SanityImage";
 import TorontoTime from "@/components/TorontoTime";
+import FooterNewsletter from "@/components/layout/FooterNewsletter";
+import { CONSENT } from "@/lib/email/consent";
 import { roman } from "@/lib/roman";
 import { hotspotPosition } from "@/lib/projectHero";
 import type { MenuPhoto, NavItem } from "@/lib/types";
@@ -21,7 +23,6 @@ const WIDE = "(min-width: 1024px)";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onNewsletterOpen: () => void;
   items: NavItem[];
   /** Menu photographs by page link (Site Settings, Menu; else a default). */
   photos: Record<string, MenuPhoto>;
@@ -29,7 +30,21 @@ type Props = {
   copy: MenuCopy;
 };
 
-export type MenuCopy = Pick<SiteCopy, "menuClose" | "menuInstagram" | "menuNewsletter" | "menuTimeLabel">;
+export type MenuCopy = Pick<
+  SiteCopy,
+  | "menuClose"
+  | "menuInstagram"
+  | "menuNewsletter"
+  | "menuNewsletterLine"
+  | "menuStudio"
+  | "menuStudioNote"
+  | "menuTimeLabel"
+  | "codaNewsletterPlaceholder"
+  | "codaNewsletterThanks"
+>;
+
+/** House of Singh Studios: the last name in the menu, opening in a new tab. */
+const isStudio = (href: string) => href.includes("studios.houseofsingh.com");
 
 /**
  * The menu (approved 10 Nov, after slowness.com; canvas page "Menu").
@@ -61,7 +76,6 @@ export type MenuCopy = Pick<SiteCopy, "menuClose" | "menuInstagram" | "menuNewsl
 export default function NavOverlay({
   isOpen,
   onClose,
-  onNewsletterOpen,
   items,
   photos,
   copy,
@@ -130,6 +144,12 @@ export default function NavOverlay({
     if (isOpen) setHovered(null);
   }
   const active = hovered ?? Math.max(0, current);
+
+  // The newsletter opens inside the menu, beneath its foot (approved
+  // 14 Nov): the email field and its confirmation in place, the menu open.
+  // Closed again whenever the menu closes.
+  const [letters, setLetters] = useState(false);
+  if (!isOpen && letters) setLetters(false);
 
   // Photographs load only from 1024 wide, and only once the menu has been
   // opened, never with the page.
@@ -205,24 +225,37 @@ export default function NavOverlay({
                 </Link>
               </li>
             ))}
+            {/* Outside the site, last (approved 14 Nov): House of Singh Studios,
+                with an arrow that nudges up and right and a quiet line
+                beneath on pointing and focus (always shown on touch). */}
+            {outside.map((item, j) => (
+              <li key={item.href} className="menu-item menu-item-out" style={{ ["--i" as string]: pages.length + j }}>
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={onClose}
+                  className="menu-link menu-link-out hairline-host"
+                >
+                  <span aria-hidden="true" className="menu-num" />
+                  <span className="menu-label hairline">{isStudio(item.href) ? copy.menuStudio : item.label}</span>
+                  <span aria-hidden="true" className="menu-out-arrow">
+                    {"\u2197"}
+                  </span>
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+                {isStudio(item.href) && (
+                  <p aria-hidden="true" className="menu-out-note">
+                    {copy.menuStudioNote}
+                  </p>
+                )}
+              </li>
+            ))}
           </ul>
         </nav>
 
         <div className="menu-foot">
           <div className="menu-foot-links">
-            {outside.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={onClose}
-                className="menu-small hairline"
-              >
-                {item.label}
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            ))}
             <a
               href="https://www.instagram.com/houseofsingh"
               target="_blank"
@@ -232,13 +265,35 @@ export default function NavOverlay({
               {copy.menuInstagram}
               <span className="sr-only"> (opens in a new tab)</span>
             </a>
-            <button type="button" onClick={onNewsletterOpen} className="menu-small hairline">
+            <button
+              type="button"
+              onClick={() => setLetters((v) => !v)}
+              aria-expanded={letters}
+              aria-controls="menu-letters"
+              className="menu-small hairline"
+            >
               {copy.menuNewsletter}
             </button>
           </div>
           <p className="menu-small menu-time">
             <TorontoTime /> {copy.menuTimeLabel}
           </p>
+          <div id="menu-letters" className="menu-letters" hidden={!letters}>
+            {letters && (
+              <>
+                <p className="menu-letters-line">{copy.menuNewsletterLine}</p>
+                <FooterNewsletter
+                  placeholder={copy.codaNewsletterPlaceholder}
+                  thanks={copy.codaNewsletterThanks}
+                  note={CONSENT.lettersMenu}
+                  extra={{ form: "menu" }}
+                  idSuffix="menu"
+                  autoComplete="email"
+                  focusOnOpen
+                />
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

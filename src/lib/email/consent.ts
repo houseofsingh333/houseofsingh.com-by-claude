@@ -10,15 +10,26 @@
  */
 export const CONSENT = {
   letters: "Occasional letters from House of Singh. Unsubscribe anytime.",
+  /** In the menu, beneath the line that already says what the letters are
+   * ("Occasional letters about new work and invitations to collaborate."),
+   * so it reads as one row (approved 14 Nov). */
+  lettersMenu: "From House of Singh. Unsubscribe anytime.",
   shop: "Release news and early access only, from House of Singh Editions. Unsubscribe anytime.",
 } as const;
+
+/** The words recorded, where they differ from the note alone: the menu's
+ * line above the field and its note, as a visitor reads them together. */
+const RECORDED: Partial<Record<keyof typeof CONSENT, string>> = {
+  lettersMenu: `Occasional letters about new work and invitations to collaborate. ${"From House of Singh. Unsubscribe anytime."}`,
+};
 
 /** Who sends each kind, in full, as recorded with the consent. */
 const SENDER = {
   letters: "Maninder Singh at House of Singh, Toronto",
-  shop: "Maninder Singh, House of Singh Editions, Toronto",
+  lettersMenu: "Maninder Singh at House of Singh, Toronto",
+  shop: "Maninder Singh, House of Singh, Toronto",
 } as const;
 
 /** What is kept in Kit: the words shown, who sends, where, and when. */
 export const consentRecord = (kind: keyof typeof CONSENT, where: string, at = new Date()) =>
-  `${CONSENT[kind]} (Sender: ${SENDER[kind]}. Agreed on ${where}, ${at.toISOString()})`;
+  `${RECORDED[kind] ?? CONSENT[kind]} (Sender: ${SENDER[kind]}. Agreed on ${where}, ${at.toISOString()})`;

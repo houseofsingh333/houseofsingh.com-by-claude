@@ -149,6 +149,11 @@ export default function RootLayout({
             //    React has started. Capture phase, as load does not bubble.
             __html:
               'document.documentElement.classList.add("js");' +
+              // 3. Home's opening (14 Nov): "play" the logo animation on a
+              //    first visit that lands on Home with motion allowed, else
+              //    "still". Decided here, before anything paints, so the
+              //    page's own markup never changes before React takes over.
+              'try{var _o=location.pathname==="/"&&!sessionStorage.getItem("hos_intro_seen")&&!matchMedia("(prefers-reduced-motion: reduce)").matches;document.documentElement.setAttribute("data-opening",_o?"play":"still");if(!_o)sessionStorage.setItem("hos_intro_seen","1")}catch(e){document.documentElement.setAttribute("data-opening","still")}' +
               // 4. Photographs that develop: an img[data-develop] is marked
               //    data-developed once it has loaded and entered view. New
               //    images (including after client navigation) are found by a

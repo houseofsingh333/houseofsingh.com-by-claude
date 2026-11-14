@@ -60,7 +60,7 @@ export default function Footer({ copy, bookUrl }: { copy: FooterCopy; bookUrl: s
             </p>
             <div className="footer-actions">
               <OutlineCta href={bookUrl} label={copy.codaBookLabel} className="footer-book" />
-              <TextLink href="/contact" className="footer-write">
+              <TextLink href="/contact" noArrow className="footer-write">
                 {copy.codaWriteLabel}
               </TextLink>
             </div>

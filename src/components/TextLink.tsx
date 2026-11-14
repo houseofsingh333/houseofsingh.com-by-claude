@@ -10,6 +10,8 @@ type Props = {
   inverse?: boolean;
   /** The back version: the arrow on the left, moving left (approved 10 Nov). */
   back?: boolean;
+  /** Words and hairline only, no arrow ("or write to me instead", approved 14 Nov). */
+  noArrow?: boolean;
   className?: string;
   tabIndex?: number;
   onClick?: () => void;
@@ -21,7 +23,8 @@ function textLinkClass({ inverse, back, className = "" }: { inverse?: boolean; b
 }
 
 /** The words with their hairline, and the arrow after them (or before them, going back). */
-function LinkContent({ back, arrow, children }: { back?: boolean; arrow?: string; children: ReactNode }) {
+function LinkContent({ back, arrow, noArrow, children }: { back?: boolean; arrow?: string; noArrow?: boolean; children: ReactNode }) {
+  if (noArrow) return <span className="text-link-text">{children}</span>;
   const mark = (
     <span aria-hidden="true" className="text-link-arrow">
       {back ? "\u2190" : (arrow ?? "\u2192")}
@@ -43,11 +46,11 @@ function LinkContent({ back, arrow, children }: { back?: boolean; arrow?: string
  * left on hover and focus while the arrow moves 4px to the right (see
  * ".text-link" in styles/motion.css). Primary actions use OutlineCta.
  */
-export default function TextLink({ href, children, external, inverse, back, className = "", tabIndex, onClick, style }: Props) {
+export default function TextLink({ href, children, external, inverse, back, noArrow, className = "", tabIndex, onClick, style }: Props) {
   const cls = textLinkClass({ inverse, back, className });
   const inner = (
     <>
-      <LinkContent back={back} arrow={external ? "\u2197" : undefined}>
+      <LinkContent back={back} noArrow={noArrow} arrow={external ? "\u2197" : undefined}>
         {children}
       </LinkContent>
       {external && <span className="sr-only"> (opens in a new tab)</span>}
