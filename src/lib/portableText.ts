@@ -19,16 +19,6 @@ export function plainParagraphs(blocks: PortableTextBlock[] | null | undefined):
     .filter(Boolean);
 }
 
-/**
- * The first sentence of a text and what follows it. A sentence ends at ".",
- * "!" or "?" followed by a space or the end. With no sentence end, the
- * whole text is the first sentence.
- */
-export function splitFirstSentence(text: string): { first: string; rest: string } {
-  const m = text.match(/^(.+?[.!?])(?:\s+|$)([\s\S]*)$/);
-  return m ? { first: m[1].trim(), rest: m[2].trim() } : { first: text.trim(), rest: "" };
-}
-
 /** A text split into sentences (each keeps its closing mark and quotes). */
 function sentences(text: string): string[] {
   return (text.match(/[^.!?]+(?:[.!?]+["”’)]*|$)/g) ?? [])

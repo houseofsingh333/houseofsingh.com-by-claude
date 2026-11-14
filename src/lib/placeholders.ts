@@ -2,8 +2,8 @@
  * Placeholder content switch.
  *
  * The demo content in placeholder-data.ts (fake projects, journal entries,
- * hero slides, intro and About text, Instagram placeholder images) may only
- * ever appear when a developer opts in locally:
+ * intro and About text) may only ever appear when a developer opts in
+ * locally:
  *
  *   NEXT_PUBLIC_USE_PLACEHOLDERS=1 npm run dev
  *

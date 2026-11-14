@@ -17,7 +17,6 @@ for (const width of WIDTHS) {
     await context.addInitScript(() => {
       try {
         sessionStorage.setItem("hos_intro_seen", "1");
-        sessionStorage.setItem("hos_newsletter_dismissed", "1");
       } catch {}
     });
     const page = await context.newPage();

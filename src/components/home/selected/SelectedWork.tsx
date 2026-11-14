@@ -25,8 +25,7 @@ type Props = {
  * artboard "In continuation"): one project, chosen in Site Settings ("The
  * selected project"), at full width but calm: its photograph, then its
  * title and category on the left, its line and "View the project" on the
- * right. "All projects" sits on the label's line, right aligned. Replaces
- * the three project exhibition.
+ * right. "All projects" sits on the label's line, right aligned.
  */
 export default function SelectedWork({ project, copy, numeral }: Props) {
   const href = `/projects/${project.slug}`;

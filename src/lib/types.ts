@@ -32,17 +32,6 @@ export type MenuPhoto = {
   alt?: string | null;
 };
 
-export type HeroSlide = {
-  _id: string;
-  heading?: string;
-  subheading?: string;
-  image: SanityImage;
-  imageAlt?: string;
-  caption?: string;
-  internalLink?: string;
-  externalLink?: string;
-};
-
 export type ProjectSummary = {
   _id: string;
   title: string;
@@ -54,18 +43,6 @@ export type ProjectSummary = {
   thumbnailLqip?: string | null;
   excerpt: string;
   isUpcoming?: boolean;
-};
-
-export type HomepageProject = {
-  _id: string;
-  title: string;
-  slug: string;
-  category: string;
-  thumbnail: SanityImage;
-  thumbnailAlt: string;
-  excerpt: string;
-  year?: number | null;
-  coverImage?: SanityImageAsset | null;
 };
 
 // --------------- Content Section Types ---------------
@@ -304,13 +281,10 @@ export type AboutPageData = {
   seoDescription: string | null;
 };
 
+/** Home's Introduction: the name and the portrait (homeIntroQuery). */
 export type HomeIntroData = {
   founderName: string;
-  founderRoles: string[] | null;
-  /** Resolved by homeIntroQuery as coalesce(homeBio, founderBio). */
-  founderBio: PortableTextBlock[] | null;
   portrait: SanityImage | null;
-  introQuote: string | null;
 };
 
 /** A project as linked from another project page ("Next project"). */
