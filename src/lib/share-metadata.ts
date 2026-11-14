@@ -9,12 +9,14 @@ import type { SanityImage } from "@/lib/types";
  * object entirely, which would drop the sitewide share image, site name,
  * locale and Twitter handles. So this reads the already resolved parent
  * metadata and keeps everything from it, changing only the title and
- * description to the page's own.
+ * description to the page's own, and giving the card the page's own address
+ * (og:url, its canonical path; metadataBase makes it absolute).
  */
 export async function shareCard(
   parent: ResolvingMetadata,
   title: string,
   description: string,
+  url: string,
 ): Promise<Pick<Metadata, "openGraph" | "twitter">> {
   const { openGraph, twitter } = await parent;
   // `type` exists only on some members of Next's resolved Open Graph union.
@@ -29,6 +31,7 @@ export async function shareCard(
       ...(openGraph?.images ? { images: openGraph.images } : {}),
       title,
       description,
+      url,
     } as Metadata["openGraph"],
     twitter: {
       ...(twitter?.card ? { card: twitter.card } : {}),

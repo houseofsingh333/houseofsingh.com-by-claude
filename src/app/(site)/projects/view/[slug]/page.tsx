@@ -3,7 +3,7 @@ import { fullTitle } from "@/lib/page-title";
 import { shareCard } from "@/lib/share-metadata";
 import ProjectsMonograph from "@/components/projects/monograph/ProjectsMonograph";
 import { loadMonographProjects } from "@/lib/projectsData";
-import { PROJECTS_DESCRIPTION, PROJECTS_TITLE } from "@/lib/pageDescriptions";
+import { PROJECTS_DESCRIPTION, PROJECTS_SEARCH_TITLE } from "@/lib/pageDescriptions";
 // This area's own styles, loaded with its pages alone (globals.css).
 import "@/app/styles/projects.css";
 
@@ -25,10 +25,10 @@ export async function generateMetadata(
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   return {
-    title: PROJECTS_TITLE,
+    title: PROJECTS_SEARCH_TITLE,
     description: PROJECTS_DESCRIPTION,
     alternates: { canonical: "/projects" },
-    ...(await shareCard(parent, fullTitle(PROJECTS_TITLE), PROJECTS_DESCRIPTION)),
+    ...(await shareCard(parent, fullTitle(PROJECTS_SEARCH_TITLE), PROJECTS_DESCRIPTION, "/projects")),
   };
 }
 

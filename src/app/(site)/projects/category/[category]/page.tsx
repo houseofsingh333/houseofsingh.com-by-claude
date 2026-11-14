@@ -6,7 +6,7 @@ import ProjectsMonograph from "@/components/projects/monograph/ProjectsMonograph
 import NotFoundResponse from "@/components/NotFoundResponse";
 import { categoriesOf, loadMonographProjects } from "@/lib/projectsData";
 import { categorySlug, legacyCategorySlug } from "@/lib/projectCategories";
-import { PROJECTS_DESCRIPTION, PROJECTS_TITLE } from "@/lib/pageDescriptions";
+import { PROJECTS_DESCRIPTION, PROJECTS_SEARCH_TITLE } from "@/lib/pageDescriptions";
 // This area's own styles, loaded with its pages alone (globals.css).
 import "@/app/styles/projects.css";
 
@@ -28,10 +28,10 @@ export async function generateMetadata(
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   return {
-    title: PROJECTS_TITLE,
+    title: PROJECTS_SEARCH_TITLE,
     description: PROJECTS_DESCRIPTION,
     alternates: { canonical: "/projects" },
-    ...(await shareCard(parent, fullTitle(PROJECTS_TITLE), PROJECTS_DESCRIPTION)),
+    ...(await shareCard(parent, fullTitle(PROJECTS_SEARCH_TITLE), PROJECTS_DESCRIPTION, "/projects")),
   };
 }
 

@@ -3,7 +3,7 @@ import { pagePhoto } from "@/lib/pagePhotos";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard, withSharePhoto } from "@/lib/share-metadata";
 import ProjectsMonograph from "@/components/projects/monograph/ProjectsMonograph";
-import { PROJECTS_DESCRIPTION, PROJECTS_TITLE } from "@/lib/pageDescriptions";
+import { PROJECTS_DESCRIPTION, PROJECTS_SEARCH_TITLE, PROJECTS_TITLE } from "@/lib/pageDescriptions";
 import JsonLd from "@/components/JsonLd";
 import { loadMonographProjects } from "@/lib/projectsData";
 import { buildProjectsJsonLd } from "@/lib/structured-data";
@@ -18,12 +18,12 @@ export async function generateMetadata(
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   return {
-    title: TITLE,
+    title: PROJECTS_SEARCH_TITLE,
     description: DESCRIPTION,
     alternates: {
       canonical: "/projects",
     },
-    ...withSharePhoto(await shareCard(parent, fullTitle(TITLE), DESCRIPTION), await pagePhoto("projects"), TITLE),
+    ...withSharePhoto(await shareCard(parent, fullTitle(PROJECTS_SEARCH_TITLE), DESCRIPTION, "/projects"), await pagePhoto("projects"), TITLE),
   };
 }
 

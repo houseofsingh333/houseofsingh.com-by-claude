@@ -86,8 +86,11 @@ function buildUrl(
   quality: number,
   fit: "crop" | "max",
   hotspot?: { x: number; y: number },
+  rect?: FrameRect,
 ): string {
   const url = new URL(baseUrl);
+  // A framed photograph: only the part its frame shows (see frameRect).
+  if (rect) url.searchParams.set("rect", `${rect.x},${rect.y},${rect.w},${rect.h}`);
   url.searchParams.set("w", String(width));
   url.searchParams.set("q", String(quality));
   url.searchParams.set("auto", "format");
@@ -147,6 +150,8 @@ type ImageProps = {
   quality?: number;
   /** True source width, so the loader never requests an upscaled variant. */
   intrinsicWidth?: number;
+  /** True source height (with the width, the part a frame shows: frameRect). */
+  intrinsicHeight?: number;
   fit?: "crop" | "max";
   hotspot?: { x: number; y: number };
 };
@@ -276,6 +281,7 @@ export function getImageProps(
     fit: profile.fit,
     hotspot: image.hotspot,
     intrinsicWidth: image.width,
+    intrinsicHeight: image.height,
   };
 }
 
@@ -289,21 +295,58 @@ export function makeSanityLoader(opts: {
   hotspot?: { x: number; y: number };
   /** Intrinsic width of the source asset, used to avoid upscaling. */
   maxWidth?: number;
+  /** Only this part of the photograph (a framed photograph, see frameRect). */
+  rect?: FrameRect;
 }) {
   return ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
     if (!isSanityCdnUrl(src)) return src;
     // next/image builds its srcSet from next.config deviceSizes (up to 3840),
     // which for a 1080px-wide source meant requesting large upscaled variants
-    // — wasted bytes for no visual gain. Never ask for more than the asset has.
-    const capped = opts.maxWidth ? Math.min(width, opts.maxWidth) : width;
+    // — wasted bytes for no visual gain. Never ask for more than the asset has
+    // (for a framed photograph, more than the part its frame shows).
+    const max = opts.rect?.w ?? opts.maxWidth;
+    const capped = max ? Math.min(width, max) : width;
     return buildUrl(
       src,
       capped,
       quality ?? opts.quality ?? 75,
-      opts.fit ?? "crop",
-      opts.hotspot,
+      opts.rect ? "max" : (opts.fit ?? "crop"),
+      opts.rect ? undefined : opts.hotspot,
+      opts.rect,
     );
   };
+}
+
+/** A rectangle of the source photograph, in its own pixels. */
+export type FrameRect = { x: number; y: number; w: number; h: number };
+
+/**
+ * The part of a photograph its frame shows, so only that is downloaded
+ * (14 Nov). A photograph filling a frame of another shape (object-fit:
+ * cover) shows only a band of itself, placed by object-position; this is
+ * that band, worked out the way the browser does: scaled to cover the frame,
+ * then offset by the position (0 to 1, the same rounded values the page
+ * gives object-position). The photograph in the frame looks the same; the
+ * part the frame hides is no longer sent. Null when the photograph's size
+ * is not known, or it already has the frame's shape.
+ */
+export function frameRect(
+  width: number | undefined,
+  height: number | undefined,
+  aspect: number,
+  position: { x: number; y: number } = { x: 0.5, y: 0.5 },
+): FrameRect | null {
+  if (!width || !height || !aspect) return null;
+  const own = width / height;
+  if (Math.abs(own - aspect) < 0.005) return null;
+  if (own < aspect) {
+    // Taller than the frame: the full width, a band of the height.
+    const h = Math.round(width / aspect);
+    return { x: 0, y: Math.round((height - h) * position.y), w: width, h };
+  }
+  // Wider than the frame: the full height, a band of the width.
+  const w = Math.round(height * aspect);
+  return { x: Math.round((width - w) * position.x), y: 0, w, h: height };
 }
 
 

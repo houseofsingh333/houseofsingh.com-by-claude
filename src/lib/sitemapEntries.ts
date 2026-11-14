@@ -1,8 +1,6 @@
 import type { MetadataRoute } from "next";
 import { client } from "@/sanity/client";
 import { placeholdersEnabled } from "@/lib/placeholders";
-import { parseSanityDate } from "@/lib/dates";
-import { journalMonthHref } from "@/lib/journalLinks";
 import { PRIVACY_UPDATED, TERMS_UPDATED } from "@/lib/legalDates";
 import { siteMode } from "@/lib/editions/enabled";
 import { selectedProjectQuery } from "@/sanity/queries";
@@ -57,11 +55,11 @@ const withImages = (images: Img[] | null | undefined) => {
 };
 
 /**
- * Every page, each with the date its content last changed: fixed pages from
- * the newest edit of what they show (the legal pages from their stated
- * "Last updated" date), projects and entries from their own edits, and each
- * month of the journal archive from its newest entry. A date that cannot be
- * known is left out rather than guessed.
+ * Every indexed page, each with the date its content last changed: fixed
+ * pages from the newest edit of what they show (the legal pages from their
+ * stated "Last updated" date), projects and entries from their own edits. The
+ * journal's month pages are not listed: they are noindex (14 Nov). A date
+ * that cannot be known is left out rather than guessed.
  */
 export async function sitemapEntries(): Promise<MetadataRoute.Sitemap> {
   // No silent fallback: if Sanity fails, throw so the build fails (or the
@@ -78,7 +76,6 @@ export async function sitemapEntries(): Promise<MetadataRoute.Sitemap> {
   let pageImages: Partial<Record<"home" | "about" | "projects", Img[]> & { selected: { image?: Img } | null }> = {};
   let projectRoutes: MetadataRoute.Sitemap = [];
   let journalRoutes: MetadataRoute.Sitemap = [];
-  let monthRoutes: MetadataRoute.Sitemap = [];
 
   if (client) {
     try {
@@ -117,26 +114,6 @@ export async function sitemapEntries(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
         ...withImages(entry.images),
       }));
-
-      // Each month of the archive, dated by its most recently edited entry.
-      // Each month shows its entries in full, so it lists their images too.
-      const months = new Map<string, { lastmod: string | null; images: Img[] }>();
-      for (const entry of journalEntries ?? []) {
-        if (!entry.date) continue;
-        const d = parseSanityDate(entry.date);
-        const href = journalMonthHref(d.getFullYear(), d.getMonth() + 1);
-        const month = months.get(href) ?? { lastmod: null, images: [] };
-        if (!month.lastmod || (entry.lastmod && entry.lastmod > month.lastmod)) month.lastmod = entry.lastmod;
-        month.images.push(...(entry.images ?? []));
-        months.set(href, month);
-      }
-      monthRoutes = [...months].map(([href, { lastmod, images }]) => ({
-        url: `${BASE_URL}${href}`,
-        ...(lastmod ? { lastModified: lastmod } : {}),
-        changeFrequency: "monthly" as const,
-        priority: 0.4,
-        ...withImages(images),
-      }));
     } catch (error) {
       if (!placeholdersEnabled) {
         console.error("[sanity] Sitemap request failed.", error);
@@ -160,5 +137,7 @@ export async function sitemapEntries(): Promise<MetadataRoute.Sitemap> {
     ...(siteMode() === "anticipation" ? [{ url: `${BASE_URL}/editions`, changeFrequency: "weekly" as const, priority: 0.6 }] : []),
   ];
 
-  return [...staticRoutes, ...projectRoutes, ...journalRoutes, ...monthRoutes];
+  // The journal's month pages are left out: they are noindex, and each
+  // entry is listed here at its own address (14 Nov).
+  return [...staticRoutes, ...projectRoutes, ...journalRoutes];
 }
