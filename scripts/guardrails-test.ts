@@ -135,7 +135,7 @@ async function run(f: any, value: unknown, asset: AssetInfo | null, parent?: unk
     aboutPage: ["Intro", "Practice", "Journey", "Featured on", "Rapid fire", "Search"],
     project: ["Story", "Photographs", "Homepage", "Search"],
     journalEntry: ["Writing", "Photographs", "Search"],
-    siteSettings: ["Homepage chapters", "Menu", "Projects page", "Journal page", "Newsletter card", "404 page", "Privacy and Terms", "General", "Search"],
+    siteSettings: ["Homepage chapters", "Menu", "Projects page", "Journal page", "404 page", "Privacy and Terms", "General", "Search"],
   };
   for (const [name, titles] of Object.entries(TABS)) {
     const t = (schemaTypes as { name: string; groups?: { name: string; title: string; default?: boolean }[]; fields: { name: string; group?: string }[] }[]).find((x) => x.name === name)!;
