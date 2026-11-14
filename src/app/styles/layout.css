@@ -827,3 +827,9 @@ html[data-menu-leaving] .site-header {
   transition: none !important;
   animation: none !important;
 }
+
+/* On Home the opening's crest is the header's State 1 crest (approved
+   14 Nov): the header shows only its dot there until the wordmark bar. */
+body:has(.opening) .header-crest {
+  display: none;
+}
