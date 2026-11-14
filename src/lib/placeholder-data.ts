@@ -7,9 +7,7 @@
 
 import type {
   NavItem,
-  HeroSlide,
   ProjectSummary,
-  HomepageProject,
   JournalEntry,
   SiteSettings,
   AboutPageData,
@@ -31,29 +29,6 @@ export const fallbackNavItems: NavItem[] = [
     order: 5,
   },
   { label: "Contact", href: "/contact", order: 6 },
-];
-
-// --------------- Fallback Hero Slides ---------------
-
-export const fallbackHeroSlides: HeroSlide[] = [
-  {
-    _id: "hero-1",
-    image: "/images/hero-placeholder-1.svg",
-    caption: "House of Singh — Design Studio",
-    internalLink: "/about",
-  },
-  {
-    _id: "hero-2",
-    image: "/images/hero-placeholder-2.svg",
-    caption: "Crafted Spaces — Where vision meets execution",
-    internalLink: "/projects",
-  },
-  {
-    _id: "hero-3",
-    image: "/images/hero-placeholder-3.svg",
-    caption: "Timeless Interiors — Built to inspire and endure",
-    internalLink: "/journal",
-  },
 ];
 
 // --------------- Fallback Projects ---------------
@@ -86,69 +61,6 @@ export const fallbackProjects: ProjectSummary[] = [
     thumbnailAlt: "Loft on Fifth living area",
     excerpt:
       "Industrial loft converted into a bright, open-plan living space.",
-  },
-];
-
-// --------------- Fallback Homepage Projects ---------------
-
-export const fallbackHomepageProjects: HomepageProject[] = [
-  {
-    _id: "proj-1",
-    title: "The Parkview Residence",
-    slug: "parkview-residence",
-    category: "Residential",
-    thumbnail: "/images/project-placeholder-1.svg",
-    thumbnailAlt: "Parkview Residence exterior",
-    excerpt: "A contemporary family home blending indoor and outdoor living.",
-  },
-  {
-    _id: "proj-2",
-    title: "Ember Restaurant",
-    slug: "ember-restaurant",
-    category: "Commercial",
-    thumbnail: "/images/project-placeholder-2.svg",
-    thumbnailAlt: "Ember Restaurant interior",
-    excerpt: "An intimate dining experience rooted in natural materials.",
-  },
-  {
-    _id: "proj-3",
-    title: "Loft on Fifth",
-    slug: "loft-on-fifth",
-    category: "Residential",
-    thumbnail: "/images/project-placeholder-3.svg",
-    thumbnailAlt: "Loft on Fifth living area",
-    excerpt:
-      "Industrial loft converted into a bright, open-plan living space.",
-  },
-  {
-    _id: "proj-4",
-    title: "Solace — A Visual Study",
-    slug: "solace-visual-study",
-    category: "Photography",
-    thumbnail: "/images/hero-placeholder-1.svg",
-    thumbnailAlt: "Solace visual study composition",
-    excerpt:
-      "A photographic exploration of stillness and light in everyday spaces.",
-  },
-  {
-    _id: "proj-5",
-    title: "Grain & Thread Identity",
-    slug: "grain-and-thread-identity",
-    category: "Design",
-    thumbnail: "/images/hero-placeholder-2.svg",
-    thumbnailAlt: "Grain & Thread brand identity",
-    excerpt:
-      "Complete visual identity for an artisan textile studio rooted in craft.",
-  },
-  {
-    _id: "proj-6",
-    title: "Folio 2024 — Singh x Atelier",
-    slug: "folio-2024-singh-atelier",
-    category: "Collaborations",
-    thumbnail: "/images/hero-placeholder-3.svg",
-    thumbnailAlt: "Folio 2024 collaboration spread",
-    excerpt:
-      "A limited-edition print collaboration merging photography and type.",
   },
 ];
 
@@ -229,13 +141,5 @@ export const fallbackAboutPage: AboutPageData = {
 
 export const fallbackHomeIntro: HomeIntroData = {
   founderName: "Maninder Singh",
-  founderRoles: [
-    "Creative Director",
-    "Multidisciplinary Designer",
-    "Photographer",
-  ],
-  founderBio: null,
   portrait: "/images/hero-placeholder-1.svg",
-  introQuote:
-    "Guided by a deep curiosity for life\u2019s quiet wonders, creating work that reflects the rhythm of nature and human connection.",
 };

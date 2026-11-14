@@ -29,8 +29,8 @@
  * it twice changes nothing twice.
  *
  * Usage
- *   node scripts/content-fixes.mjs            (dry run, needs no token)
- *   SANITY_WRITE_TOKEN=... node scripts/content-fixes.mjs --apply
+ *   node scripts/archive/content-fixes.mjs            (dry run, needs no token)
+ *   SANITY_WRITE_TOKEN=... node scripts/archive/content-fixes.mjs --apply
  */
 
 import { createClient } from "@sanity/client";
@@ -308,7 +308,7 @@ if (problems.length) {
 console.log(`${changes.length} changes in total.`);
 
 if (!apply) {
-  console.log("Dry run: nothing was written. To apply, after approval:\n  SANITY_WRITE_TOKEN=... node scripts/content-fixes.mjs --apply\n");
+  console.log("Dry run: nothing was written. To apply, after approval:\n  SANITY_WRITE_TOKEN=... node scripts/archive/content-fixes.mjs --apply\n");
   process.exit(0);
 }
 

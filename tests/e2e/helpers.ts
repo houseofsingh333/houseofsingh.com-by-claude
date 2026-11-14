@@ -58,7 +58,6 @@ export const test = base.extend<{ errors: Errors; quiet: void }>({
       await context.addInitScript(() => {
         try {
           sessionStorage.setItem("hos_intro_seen", "1");
-          sessionStorage.setItem("hos_newsletter_dismissed", "1");
         } catch {}
         // Page changes in progress, from the moment one begins (while the old
         // page is captured, before any fade runs) until it has finished, so

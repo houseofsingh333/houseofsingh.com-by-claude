@@ -122,28 +122,11 @@ export const aboutPageQuery = `*[_type == "aboutPage"][0]{
   seoDescription
 }`;
 
-// --------------- Homepage Intro (About preview) ---------------
+// --------------- Home, Introduction (the name and the portrait) ---------------
 
 export const homeIntroQuery = `*[_type == "aboutPage"][0]{
   founderName,
-  founderRoles,
-  // Short homepage bio, falling back to the full About-page bio when unset.
-  "founderBio": coalesce(homeBio, founderBio),
-  "portrait": coalesce(homePortrait, portrait) ${_imageAsset},
-  introQuote
-}`;
-
-// --------------- Hero Slides ---------------
-
-export const heroSlidesQuery = `*[_type == "heroSlide"] | order(order asc){
-  _id,
-  heading,
-  subheading,
-  "image": image ${_imageAsset},
-  "imageAlt": coalesce(image.alt, imageAlt),
-  caption,
-  internalLink,
-  externalLink
+  "portrait": coalesce(homePortrait, portrait) ${_imageAsset}
 }`;
 
 // --------------- Homepage Featured Projects ---------------

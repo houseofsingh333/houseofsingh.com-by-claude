@@ -162,8 +162,6 @@
   --text-body: var(--type-body);
   --text-small: var(--type-small);
   --text-legal: var(--type-legal);
-  --animate-fade-in: fadeIn 0.3s ease-out;
-  --animate-editorial-fade-in: editorialFadeIn var(--dur-reveal) var(--ease-slow) both;
 }
 
 /* The small label as a class for components (className="type-label"). */

@@ -7,8 +7,8 @@ import { BOOKING_URL } from "../../lib/booking";
 /*
  * Site Settings, in tabs by area: Homepage chapters (one section per
  * chapter, I to VII, and the Coda; opens first), Menu, Projects page,
- * Journal page, Newsletter card, 404 page, Privacy and Terms, General
- * (title, tagline, footer) and Search (descriptions, names, profiles). Every
+ * Journal page, 404 page, Privacy and Terms, General (title, tagline,
+ * footer) and Search (descriptions, names, profiles). Every
  * text field on the chapter tabs is optional: when empty, the text shown in
  * its description is used (lib/siteCopy.ts holds that text, and these fields
  * are made from it). The Journal page's line is the exception: empty hides it.
@@ -28,7 +28,7 @@ const textFields = SITE_COPY_FIELDS.map((f) =>
 
 /** The menu photographs: field, title, and the default used when empty. */
 const MENU_PHOTOS: [string, string, string][] = [
-  ["menuPhotoHome", "Menu photograph: Home", "the first homepage hero photograph"],
+  ["menuPhotoHome", "Menu photograph: Home", "the first Home slide's photograph"],
   ["menuPhotoAbout", "Menu photograph: About", "the About portrait"],
   ["menuPhotoProjects", "Menu photograph: Projects", "the first project in homepage order"],
   ["menuPhotoJournal", "Menu photograph: Journal", "the latest journal entry's photograph, automatically"],
@@ -45,7 +45,6 @@ export const siteSettings = defineType({
     { name: "menu", title: "Menu" },
     { name: "projects", title: "Projects page" },
     { name: "journal", title: "Journal page" },
-    { name: "newsletter", title: "Newsletter card" },
     { name: "notFound", title: "404 page" },
     { name: "legal", title: "Privacy and Terms" },
     { name: "general", title: "General" },

@@ -11,7 +11,7 @@ How to switch the Shop on, test it, take it live, and run it from one Collection
 | `STRIPE_SECRET_KEY` | Stripe's secret key. `sk_test_...` on Preview, `sk_live_...` on Production only at launch. | Stripe Dashboard, Developers, API keys |
 | `STRIPE_API_VERSION` | Optional: pins the Stripe API version to the account's, by its exact name in the Stripe Dashboard (Developers, API version). Unset, Stripe uses the account's default. | Stripe Dashboard |
 | `STRIPE_WEBHOOK_SECRET` | Proves an event really came from Stripe (`whsec_...`). One per endpoint and per mode. | Stripe Dashboard, Developers, Webhooks, the endpoint, Signing secret |
-| `TAX_MODE` | How tax is worked out at checkout. Unset, or `none` (the default, everywhere): no tax. The Shop is sold by Maninder Singh, a sole proprietor and small supplier, so no GST/HST is charged: no postal code, no tax at checkout, in emails or on receipts. Kept for a future registration: `stripe` (Stripe Tax) or `fixed` (the postal code and fixed provincial rates), section 11. | Set by hand |
+| `TAX_MODE` | How tax is worked out at checkout. Unset, or `none` (the default, everywhere): no tax. The Shop is sold by Maninder Singh, operating as House of Singh, a small supplier, so no GST/HST is charged: no postal code, no tax at checkout, in emails or on receipts. Kept for a future registration: `stripe` (Stripe Tax) or `fixed` (the postal code and fixed provincial rates), section 11. | Set by hand |
 | `GST_NUMBER` | Not used while no tax is charged: leave it unset. Only after a GST/HST registration, with `TAX_MODE` `stripe` or `fixed`: the number, shown on the checkout page, the order email and the terms of sale. | Your CRA business number with the RT account (for example `123456789 RT0001`) |
 | `SANITY_API_TOKEN` | Already set for the contact form. The Shop uses it to save orders, collectors, notify requests and proposals. Needs write access. | Sanity, manage, API, Tokens (Editor) |
 | Email | `KIT_API_KEY`, `RESEND_API_KEY`, `EMAIL_FROM_LETTERS`, `EMAIL_FROM_EDITIONS`, `EMAIL_POSTAL_ADDRESS`, `CRON_SECRET` and the rest: see `docs/email.md`. | |
@@ -46,7 +46,7 @@ Check both after any change in the Dashboard: a method switched on there appears
 
 Only when the test purchase has worked end to end.
 
-1. In Stripe, switch to **Live mode** and complete the account (business type **Individual / sole proprietor**, Maninder Singh, public business name House of Singh Editions, your bank account, statement descriptor such as `HOS EDITIONS`).
+1. In Stripe, switch to **Live mode** and complete the account (business type **Individual / sole proprietor**, Maninder Singh, public business name **House of Singh** (Maninder sets this himself in the Stripe dashboard when live mode is activated), your bank account, statement descriptor such as `HOS EDITIONS`).
 2. No tax rates are needed while no tax is charged (`TAX_MODE` unset). Only after a registration, with `fixed`: run the tax rate script with the live key, `STRIPE_SECRET_KEY=sk_live_... npx tsx scripts/editions-tax-rates.ts`.
 3. Add the live webhook endpoint (`https://houseofsingh.com/api/editions/webhook`) with the same five events as in test mode (section 2, step 4) and copy its live signing secret.
 4. In Vercel, for **Production** only: `STRIPE_SECRET_KEY` = the live key, `STRIPE_WEBHOOK_SECRET` = the live signing secret. No `TAX_MODE` and no `GST_NUMBER`.
@@ -119,7 +119,7 @@ When someone goes to Stripe's checkout, the piece (and size) is held for them fo
 
 ## 11. Tax (`TAX_MODE`)
 
-**Today: no tax (`none`, the default).** Decided with Maninder's CPA: House of Singh Editions is sold by Maninder Singh, a sole proprietor and small supplier, so no GST/HST is charged. The piece page asks for no postal code; the checkout, receipts and emails carry no tax line and no GST/HST number; the terms say "No GST or HST is charged." The small supplier tracker (section 13) watches the limit.
+**Today: no tax (`none`, the default).** Decided with Maninder's CPA: House of Singh Editions is sold by Maninder Singh, operating as House of Singh, a small supplier, so no GST/HST is charged. The piece page asks for no postal code; the checkout, receipts and emails carry no tax line and no GST/HST number; the terms say, under Prices and tax, "Prices are in Canadian dollars. Import duties and taxes in your country, where they apply, are paid on arrival." The small supplier tracker (section 13) watches the limit.
 
 Kept in the code for a future registration, two ways to charge GST/HST (Shop design round 3); everything below applies only then:
 
@@ -157,7 +157,7 @@ In anticipation: the footer links the Shop (in its Pages list; never the site me
 
 ## 13. The small supplier tracker (private)
 
-No GST/HST is charged while Maninder, as a sole proprietor, stays a small supplier: taxable revenue of CA$30,000 or less over four consecutive calendar quarters, and in any single quarter. The tracker watches that, with an early warning.
+No GST/HST is charged while Maninder Singh, operating as House of Singh, stays a small supplier: taxable revenue of CA$30,000 or less over four consecutive calendar quarters, and in any single quarter. The tracker watches that, with an early warning.
 
 **Where.** Studio, Shop, Small supplier tracker (a private record, `private.editions-small-supplier`, saved as typed with no Publish step).
 

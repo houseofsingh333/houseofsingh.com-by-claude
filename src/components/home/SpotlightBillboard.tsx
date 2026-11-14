@@ -14,8 +14,8 @@ const TITLE_ID = "spotlight-billboard-title";
  * image is first seen through a narrow vertical slit, two charcoal panels
  * slide apart to show the whole image, then the title, description, the
  * brass "Upcoming" dot with the label and the link appear. Transforms and
- * opacity only, driven by the same scroll progress as the exhibition (see
- * "Aperture" in styles/home.css). Phones, reduced motion and no JavaScript:
+ * opacity only, driven by its scroll progress, --p (see "Aperture" in
+ * styles/home.css). Phones, reduced motion and no JavaScript:
  * the open layout. All text comes from the spotlight's Sanity fields.
  */
 export default function SpotlightBillboard({ spotlight, copy, numeral = "III" }: { spotlight: SpotlightData; copy: SiteCopy; numeral?: string }) {

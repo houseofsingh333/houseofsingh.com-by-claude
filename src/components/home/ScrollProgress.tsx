@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 
 /**
- * Fallback driver for the pinned, scroll driven homepage chapters (the
- * exhibition rooms, the aperture): where the browser has no CSS scroll
+ * Fallback driver for Home's pinned, scroll driven chapter (the aperture):
+ * where the browser has no CSS scroll
  * driven animations, set each matching element's progress (--p, 0 to 1:
  * from its top reaching the top of the screen to its bottom reaching the
  * bottom) from the scroll position, only while `media` matches. Renders

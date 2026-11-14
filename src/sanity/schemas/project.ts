@@ -206,7 +206,7 @@ export const project = defineType({
       title: "Show on Homepage",
       type: "boolean",
       description:
-        "If enabled, this project appears in the homepage Projects section.",
+        "If enabled, this project can give the menu its Projects photograph (the first shown, in homepage order) when Site settings has none.",
       initialValue: false,
     }),
     defineField({

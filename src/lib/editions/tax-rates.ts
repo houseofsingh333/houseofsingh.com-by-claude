@@ -53,7 +53,7 @@ export function taxOnLines(price: number, shipping: number, percentage: number):
 /**
  * How tax is worked out at checkout (Shop design round 3), from TAX_MODE:
  * - "none" (the default): no tax at all. The Shop is sold by Maninder Singh,
- *   a sole proprietor and small supplier, so no GST/HST is charged: no
+ *   operating as House of Singh, a small supplier, so no GST/HST is charged: no
  *   postal code on the piece page, no tax on the checkout, the receipts or
  *   the emails.
  * - "stripe": Stripe Tax. No postal code on the piece page; Stripe takes

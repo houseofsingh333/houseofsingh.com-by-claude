@@ -379,9 +379,7 @@ body:has(.ed) .footer-grid {
   overflow: hidden;
   background: var(--border);
 }
-.ed-piece-panel,
-.ed-piece-main,
-.ed-piece-more {
+.ed-piece-panel {
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -414,15 +412,6 @@ body:has(.ed) .footer-grid {
   line-height: 1.7;
   color: var(--foreground);
   text-wrap: pretty;
-}
-.ed-piece-maker,
-.ed-piece-foot {
-  font-size: var(--type-small);
-  line-height: 1.6;
-  color: var(--muted-foreground);
-}
-.ed-piece-foot {
-  margin-top: 4px;
 }
 
 /* Buy: the sizes and where it ships as quiet outlined boxes, then the
