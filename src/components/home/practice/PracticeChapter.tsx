@@ -75,6 +75,7 @@ export default function PracticeChapter({
 
       <div className="practice-action">
         <OutlineCta href={STUDIO_URL} label={copy.practiceLinkText} />
+        <p className="practice-note">{copy.practiceStudioNote}</p>
       </div>
     </section>
   );

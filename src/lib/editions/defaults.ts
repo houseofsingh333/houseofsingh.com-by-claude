@@ -7,8 +7,8 @@
  */
 export const EDITIONS_DEFAULTS = {
   brand: "House of Singh Editions",
-  /** Who sells (with Maninder's CPA, 13 Nov): Maninder personally, as a sole proprietor and small supplier. */
-  seller: "Maninder Singh, operating as House of Singh Editions",
+  /** Who sells (with Maninder's CPA, 13 Nov; the wording approved 14 Nov): Maninder personally, a small supplier. */
+  seller: "Maninder Singh, operating as House of Singh",
   honestLine: "Made slowly, shipped in weeks. Shipping at cost.",
   beforeYouBuyHeading: "What this is, and what it is not",
   /** Before you buy (Shop design round 2): five short titles, one line each. */
@@ -77,15 +77,15 @@ export const EDITIONS_DEFAULTS = {
 export const DEFAULT_TERMS = [
   {
     title: "The seller",
-    text: "Pieces are sold by Maninder Singh, a sole proprietor in Ontario, Canada, operating as House of Singh Editions.",
+    text: "Sold by Maninder Singh, operating as House of Singh.",
   },
   {
     title: "Prices and tax",
-    text: "Prices are in Canadian dollars. No GST or HST is charged.",
+    text: "Prices are in Canadian dollars. Import duties and taxes in your country, where they apply, are paid on arrival.",
   },
   {
     title: "Shipping and duties",
-    text: "Pieces ship from Canada or India, made and packed with care, in 2 to 4 weeks, with tracking by email. Shipping is charged at what it costs and shown before you pay. Import duties and taxes in your country, where they apply, are paid on arrival.",
+    text: "Pieces ship from Canada or India, made and packed with care, in 2 to 4 weeks, with tracking by email. Shipping is charged at what it costs and shown before you pay.",
   },
   {
     title: "Returns",

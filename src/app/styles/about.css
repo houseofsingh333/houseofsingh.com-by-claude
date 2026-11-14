@@ -69,11 +69,16 @@
   font-family: "Playfair Display Italic", var(--font-editorial);
   font-style: italic;
 }
+/* "What drives him...": Playfair 400 at display-m, a step below the
+   chapter headings (approved exception, 14 Nov; BRAND_BOOK.md 2.2). */
 .about-pull {
   max-width: 760px;
   margin-block: 16px;
-  font-size: var(--type-statement);
-  line-height: 1.45;
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: var(--type-display-m);
+  line-height: 1.3;
+  text-wrap: balance;
   color: var(--foreground);
 }
 @media (min-width: 768px) {
@@ -81,7 +86,7 @@
     font-size: var(--type-body-l);
   }
   .about-pull {
-    line-height: 1.45;
+    line-height: 1.3;
   }
 }
 @media (min-width: 1024px) {

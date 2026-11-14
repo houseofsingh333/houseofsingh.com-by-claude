@@ -8,7 +8,7 @@ House of Singh Editions is a small shop inside the portfolio, not a store beside
 
 The tone is the site's: calm, honest, unhurried. The Shop says plainly what it is and is not before anyone buys ("This is not fast. This is not cheap. This will not return."), shows prices before tax, charges shipping at cost, and names the seller.
 
-The seller is **Maninder Singh, a sole proprietor in Ontario, operating as House of Singh Editions** (decided with his CPA, 12 Nov 2026): a small supplier, so no GST/HST is charged. Every page, email and checkout says "Sold by Maninder Singh, operating as House of Singh Editions." The brand shown is House of Singh Editions. House of Singh Studios Inc. is not the seller.
+The seller is **Maninder Singh, operating as House of Singh** (decided with his CPA, 12 Nov 2026; the wording approved 14 Nov): a small supplier, so no GST/HST is charged, and the terms no longer say so. The Shop's foot line, the terms of sale, checkout, the thank you page and Privacy say "Sold by Maninder Singh, operating as House of Singh." The brand shown is House of Singh Editions. House of Singh Studios Inc. is not the seller.
 
 ## Visibility: three modes
 

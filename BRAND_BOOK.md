@@ -83,9 +83,15 @@ Two typefaces, both from Google Fonts. One elegant serif for names and numbers, 
 
 **Serif for names and numbers, sans for sentences.** This is the rule that decides which face a piece of text takes (approved 10 Nov 2026).
 - **Playfair Display** is used only for names and numbers: page titles, chapter titles, project titles and journal titles (including in lists and cards and the studio panels), the Roman chapter numerals, the Journey years and the journal's day and month, the time in Toronto, and Maninder's quote beside his portrait (the one italic).
-- **Instrument Sans** is used for every sentence: chapter statements and introductions, the closing invitation, the practice line, the turntable note, About's story, practice text, answers and pull quote, the Privacy and Terms summaries, captions, body copy, labels, navigation, buttons and form fields. A prominent single line or short statement takes the statement size (26/20); longer introductions take body-l.
+- **Instrument Sans** is used for every sentence: chapter statements and introductions, the practice line, the turntable note, About's story, practice text and answers, the Privacy and Terms summaries, captions, body copy, labels, navigation, buttons and form fields. A prominent single line or short statement takes the statement size (26/20); longer introductions take body-l.
 
-**The one exception: the site's opening statement** (approved 10 Nov 2026). The first sentence of the homepage introduction, Chapter II ("Maninder Singh is a creative director, photographer, and multidisciplinary designer working out of Toronto."), is set in Playfair 400 at display-m (34/26), with balanced line breaks. No other sentence on the site is set in Playfair.
+**The one exception: the site's opening statement** (approved 10 Nov 2026). The first sentence of the homepage introduction, Chapter II ("Maninder Singh is a creative director, photographer, and multidisciplinary designer working out of Toronto."), is set in Playfair 400 at display-m (34/26), with balanced line breaks.
+
+**Two more sentences in Playfair** (approved 14 Nov 2026), both at display-m (34/26), a step below the chapter headings, with balanced line breaks:
+- **The closing line above the footer** ("Let's talk about a project, a collaboration, or an idea you may have.", Site Settings, Coda), the same size on every page it closes.
+- **About's pull quote** ("What drives him is not one thing...", the About Page's Bio pull quote, or the story's longest sentence when that is empty), set upright, not italic.
+
+No other sentence on the site is set in Playfair.
 
 **The Shop's headings** (Shop design round 2, approved 11 Nov 2026). On House of Singh Editions four section headings are set in Playfair 400 at display-l though they are short sentences: "In the making", "What this is, and what it is not", "Good to know" and "Make something with House of Singh" (on the Shop page and on For artists), with the line "House of Singh × you" leading to the proposal form. Every other sentence in the Shop stays in Instrument Sans.
 
@@ -107,7 +113,7 @@ Two typefaces, both from Google Fonts. One elegant serif for names and numbers, 
 |------|------|------|------|------|
 | `display-xl` | 72px | 40px | Playfair 400 | Page and project titles (Contact, Privacy and Terms, a project, the next project, the home spotlight, error pages) |
 | `display-l` | 52px | 34px | Playfair 400 | Chapter titles (Journal, On my turntable, In conversation, a contact step), the About quote, One by one's title, the Projects and Journal page headings |
-| `display-m` | 34px | 26px | Playfair 400 | The site's opening statement (the one sentence in Playfair), the time in Toronto and large single values; legal section titles, story headings, the filter's choices |
+| `display-m` | 34px | 26px | Playfair 400 | The site's opening statement, the closing line above the footer and About's pull quote (the sentences in Playfair), the time in Toronto and large single values; legal section titles, story headings, the filter's choices |
 | `display-s` | 24px | 20px | Playfair 400 | Titles in lists and cards: At a glance, journal entries, the filmstrip, the studio panels, press cuttings, the newsletter note |
 | `numeral` | 30px | 30px | Playfair 400, brass | Roman chapter numerals (brass text is never under 28px) |
 | `date` | 44px | 40px | Playfair 400 | Journey years, the journal's day and month |

@@ -204,22 +204,40 @@ test.describe("newsletter", () => {
     await emailLine(page, page.locator("footer form.footer-nl-form").first(), "/api/newsletter");
   });
 
-  test("the note from the menu: opens on the email field, signs up, closes itself", async ({ page }) => {
+  test("inside the menu: opens on the email field, signs up in place, the menu stays open", async ({ page }) => {
     await answer(page, "/api/newsletter", 200);
     await open(page, "/about");
     await header(page).locator("button[aria-label='Open menu']").click();
-    // In the menu's foot, beside Instagram.
-    await page.locator("button.menu-small:visible").filter({ hasText: /newsletter/i }).click();
-    const field = page.locator("input[type=email]:focus");
-    await expect(field).toBeVisible();
+    // In the menu's foot, beside Instagram: the line and the field open beneath, inside the menu.
+    const toggle = page.locator("button.menu-small:visible").filter({ hasText: /newsletter/i });
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    const letters = page.locator("#menu-letters");
+    await expect(letters.locator(".menu-letters-line")).toHaveText(/Occasional letters/);
+    const field = letters.locator("input[type=email]");
+    await expect(field).toBeFocused();
     await field.fill("not-an-email");
     await field.press("Enter");
-    await expect(page.locator("#newsletter-error")).toHaveText(EMAIL_HINT);
+    await expect(page.locator("#menu-nl-error")).toHaveText(EMAIL_HINT);
     await field.fill("reader@example.com");
     await field.press("Enter");
-    // The thank you holds, then the note closes itself.
-    await expect(page.locator("#newsletter-error")).toHaveCount(0);
-    await expect(field).toBeHidden({ timeout: 6000 });
+    // Its confirmation in place, and no dialog in the corner: the menu is still open.
+    await expect(letters.locator(".footer-postmark")).toBeVisible();
+    await expect(page.locator("#site-menu")).toBeVisible();
+    await expect(page.locator(".note-card")).toHaveCount(0);
+  });
+
+  test("the menu's last name: House of Singh Studios, in a new tab, with its line", async ({ page }) => {
+    await open(page, "/about");
+    await header(page).locator("button[aria-label='Open menu']").click();
+    const studio = page.locator(".menu-link-out");
+    await expect(studio).toHaveAttribute("href", "https://studios.houseofsingh.com");
+    await expect(studio).toHaveAttribute("target", "_blank");
+    await expect(page.locator(".menu-list > li").last()).toContainText("Studio");
+    const note = page.locator(".menu-out-note");
+    await expect(note).toHaveText("Opens House of Singh Studios");
+    await studio.hover();
+    await expect(note).toHaveCSS("opacity", "1");
   });
 });
 

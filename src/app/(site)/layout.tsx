@@ -113,16 +113,12 @@ export default async function SiteLayout({
             menuClose: copy.menuClose,
             menuInstagram: copy.menuInstagram,
             menuNewsletter: copy.menuNewsletter,
+            menuNewsletterLine: copy.menuNewsletterLine,
+            menuStudio: copy.menuStudio,
+            menuStudioNote: copy.menuStudioNote,
             menuTimeLabel: copy.menuTimeLabel,
-          }}
-          newsletterCopy={{
-            newsletterHeading: copy.newsletterHeading,
-            newsletterText: copy.newsletterText,
-            newsletterPlaceholder: copy.newsletterPlaceholder,
-            newsletterSubscribe: copy.newsletterSubscribe,
-            newsletterNotNow: copy.newsletterNotNow,
-            newsletterThanksHeading: copy.newsletterThanksHeading,
-            newsletterThanksText: copy.newsletterThanksText,
+            codaNewsletterPlaceholder: copy.codaNewsletterPlaceholder,
+            codaNewsletterThanks: copy.codaNewsletterThanks,
           }}
         />
         <GlideScroll />

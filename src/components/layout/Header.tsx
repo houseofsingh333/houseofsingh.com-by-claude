@@ -1,17 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import dynamic from "next/dynamic";
 import Link from "@/components/Link";
 import NavOverlay, { SITE_MENU_ID, type MenuCopy } from "./NavOverlay";
-import type { NewsletterCopy } from "@/components/NewsletterNote";
 import IntroOverlay, { useIntroSequence } from "./IntroOverlay";
 import { PAGE_TOP_EVENT } from "@/components/PageTransition";
 
-const NewsletterNote = dynamic(
-  () => import("@/components/NewsletterNote"),
-  { ssr: false },
-);
 import type { MenuPhoto, NavItem } from "@/lib/types";
 
 const SCROLL_SHOW = 60;
@@ -21,14 +15,12 @@ type Props = {
   items: NavItem[];
   /** Menu photographs by page link (see buildMenuPhotos in the layout). */
   menuPhotos: Record<string, MenuPhoto>;
-  /** The menu's and the newsletter card's texts (Site Settings). */
+  /** The menu's texts, its newsletter's included (Site Settings). */
   menuCopy: MenuCopy;
-  newsletterCopy: NewsletterCopy;
 };
 
-export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: Props) {
+export default function Header({ items, menuPhotos, menuCopy }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [newsletterOpen, setNewsletterOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { introVisible, introFading, introDone, dismissIntro } =
     useIntroSequence();
@@ -99,10 +91,6 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
     button?.focus({ preventScroll: true });
   }, [menuOpen, scrolled]);
 
-  const handleNewsletterOpen = useCallback(() => {
-    setMenuOpen(false);
-    setTimeout(() => setNewsletterOpen(true), 200);
-  }, []);
 
   /* ── Derived state ── */
   const showState1 = introDone && !scrolled;
@@ -208,17 +196,11 @@ export default function Header({ items, menuPhotos, menuCopy, newsletterCopy }: 
       <NavOverlay
         isOpen={menuOpen}
         onClose={closeMenu}
-        onNewsletterOpen={handleNewsletterOpen}
         items={items}
         photos={menuPhotos}
         copy={menuCopy}
       />
 
-      <NewsletterNote
-        isOpen={newsletterOpen}
-        onClose={() => setNewsletterOpen(false)}
-        copy={newsletterCopy}
-      />
     </>
   );
 }

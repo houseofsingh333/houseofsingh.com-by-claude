@@ -93,6 +93,11 @@ const order = (n: number): Email => orderEmail(`buyer${n}@example.com`, { pieceN
   const s2 = await signUp({ email: "a@example.com", tag: "Collection 01", kind: "shop", consent: consentRecord("shop", "Notify me") }, pending, subscribe);
   check(s1 === "kept" && s2 === "kept" && kept.length === 2 && kit.length === 0, "Kit unreachable: both sign ups kept privately", kept.length);
   check(kept[0].consent.startsWith(CONSENT.letters) && /Agreed on the newsletter form, \d{4}-/.test(kept[0].consent), "the consent kept is the words shown, where and when", kept[0].consent.slice(-50));
+  {
+    // The menu shows its own line above the field and a shorter note beneath it (14 Nov): both are recorded.
+    const m = consentRecord("lettersMenu", "the menu's newsletter");
+    check(m.startsWith("Occasional letters about new work and invitations to collaborate. From House of Singh. Unsubscribe anytime.") && m.includes(CONSENT.lettersMenu) && /Agreed on the menu's newsletter, \d{4}-/.test(m), "the menu's consent: its line and note, as shown together", m.slice(0, 120));
+  }
   const retry1 = await retryPending(pending, subscribe);
   check(retry1.moved === 0 && kept[0].attempts === 2, "still down: kept, tries counted", retry1);
   kitUp = true;

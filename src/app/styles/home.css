@@ -797,6 +797,14 @@ html:not(.js) .hero-progress {
 .practice-action {
   margin-top: 30px;
 }
+/* What the Studio is, beneath its button: small and muted (14 Nov). */
+.practice-note {
+  margin-top: 14px;
+  max-width: 380px;
+  font-size: var(--type-small);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
 
 /* The panels. */
 .practice-panels {
@@ -923,7 +931,16 @@ html:not(.js) .hero-progress {
   }
   .practice:not([data-panels="0"]) .practice-action {
     /* Level with the bottom of the photographs, above the captions. */
+    position: relative;
     padding-bottom: calc(var(--practice-cap-gap) + var(--practice-cap-line));
+  }
+  /* The line hangs beneath the button, from the captions' line down, so
+     the button stays level with the photographs however it wraps. */
+  .practice:not([data-panels="0"]) .practice-note {
+    position: absolute;
+    left: 0;
+    top: calc(100% - var(--practice-cap-line));
+    margin: 0;
   }
   .practice-work {
     grid-area: work;

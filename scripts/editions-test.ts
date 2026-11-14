@@ -163,11 +163,11 @@ check(releaseTimes("2027-04-14T13:00:00Z") === "9 am in Toronto, 6:30 pm in Indi
   check(gridFilters(own, held).map((f) => f.label).join() === "Prints", "filters: only categories with a piece in the Collection");
   check(gridFilters({} as EditionsCollection, [...held, { category: objects }] as unknown as EditionsPiece[]).length === 2, "filters: every held category, in order");
 }
-check(params.custom_text.submit.message === "Sold by Maninder Singh, operating as House of Singh Editions. GST/HST 123456789RT0001.", "fixed tax (a future registration): the seller and the GST/HST number at checkout", params.custom_text.submit.message);
+check(params.custom_text.submit.message === "Sold by Maninder Singh, operating as House of Singh. GST/HST 123456789RT0001.", "fixed tax (a future registration): the seller and the GST/HST number at checkout", params.custom_text.submit.message);
 {
   // The seller change (with Maninder's CPA): sold by Maninder Singh, a small supplier; no GST/HST.
   const none = checkoutParams({ piece: print, collectionNumber: 1, size: null, zone: "canada", shipping: 22, taxRate: { id: "txr_on", province: "ON" }, taxMode: "none", siteUrl: "https://example.test", gstNumber: "123456789RT0001", now });
-  check(none.custom_text.submit.message === "Sold by Maninder Singh, operating as House of Singh Editions.", "no tax: the seller, and no GST/HST number", none.custom_text.submit.message);
+  check(none.custom_text.submit.message === "Sold by Maninder Singh, operating as House of Singh.", "no tax: the seller, and no GST/HST number", none.custom_text.submit.message);
   check(none.line_items.every((l) => !("tax_rates" in l)) && !("automatic_tax" in none) && !JSON.stringify(none).includes("tax_code") && !JSON.stringify(none).includes("tax_behavior"), "no tax: no rate, no Stripe Tax, even if a rate were passed");
   check(none.metadata.taxMode === "none" && none.metadata.taxProvince === "", "no tax: nothing to check afterwards");
   check(!/Studios Inc|GST|HST/.test(JSON.stringify(withDefaults({}))), "the Shop's default words name no company and no GST/HST");
@@ -184,7 +184,10 @@ check(params.custom_text.submit.message === "Sold by Maninder Singh, operating a
     else process.env.VERCEL_ENV = was;
     check(!onProduction && onPreview && locally, "the preview cookie counts on previews and locally, never on Production");
   }
-  check(/Maninder Singh, a sole proprietor in Ontario, Canada, operating as House of Singh Editions/.test(JSON.stringify(DEFAULT_TERMS)) && /No GST or HST is charged/.test(JSON.stringify(DEFAULT_TERMS)), "the terms: the sole proprietor, and no GST or HST");
+  {
+    const t = JSON.stringify(DEFAULT_TERMS);
+    check(/Sold by Maninder Singh, operating as House of Singh\./.test(t) && !/sole proprietor|GST|HST/.test(t) && /"Prices are in Canadian dollars\. Import duties and taxes in your country, where they apply, are paid on arrival\."/.test(t), "the terms (14 Nov): the seller line, no sole proprietor, no GST or HST sentence, duties beside the prices", t);
+  }
 }
 check(params.success_url.endsWith("/editions/thank-you?session_id={CHECKOUT_SESSION_ID}") && params.cancel_url.endsWith("/editions/test-print"), "success to the thank you page, cancel back to the piece");
 const encoded = formEncode(params).join("&");

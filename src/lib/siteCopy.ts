@@ -92,6 +92,13 @@ export const SITE_COPY_FIELDS = [
     multiline: true,
   },
   { name: "practiceLinkText", title: "Call to action", group: "homepage", fieldset: "chapter7", text: "Visit House of Singh Studios" },
+  {
+    name: "practiceStudioNote",
+    title: "Line under the call to action",
+    group: "homepage",
+    fieldset: "chapter7",
+    text: "The design studio of House of Singh, for brands and businesses.",
+  },
 
   {
     name: "codaInvite",
@@ -138,6 +145,14 @@ export const SITE_COPY_FIELDS = [
   { name: "menuClose", title: "Close button", group: "menu", text: "Close" },
   { name: "menuInstagram", title: "Instagram link", group: "menu", text: "Instagram" },
   { name: "menuNewsletter", title: "Newsletter link", group: "menu", text: "Newsletter" },
+  {
+    name: "menuNewsletterLine",
+    title: "Line above the menu's email field",
+    group: "menu",
+    text: "Occasional letters about new work and invitations to collaborate.",
+  },
+  { name: "menuStudio", title: "Studio link (the last page name)", group: "menu", text: "Studio" },
+  { name: "menuStudioNote", title: "Line beneath the Studio link", group: "menu", text: "Opens House of Singh Studios" },
   { name: "menuTimeLabel", title: "Words after the time (10:42 pm in Toronto)", group: "menu", text: "in Toronto" },
 
   // ——— 404 page ———
