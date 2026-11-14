@@ -13,7 +13,7 @@ Every pull request into `main` runs these checks automatically. The check called
 | Sideways scroll | No page scrolls sideways, at 12 widths from 320 to 2560. | `e2e/overflow.spec.ts` |
 | Crawl | Every page of the site: no broken links, no console errors. | `e2e/crawl.spec.ts` |
 | Script budget | Each page type stays within its JavaScript size. | `e2e/budget.spec.ts`, `budgets.json` |
-| Lighthouse | The main pages, mobile and desktop: the median of three runs stays within the agreed limits. | `lighthouse.mjs`, `budgets.json` |
+| Lighthouse | The main pages, mobile and desktop: after one unmeasured warm up, the median of five runs stays within the agreed limits. | `lighthouse.mjs`, `budgets.json` |
 
 The forms are tested without sending anything. Each request a form makes is answered inside the test browser, as a success or a failure, so nothing reaches Kit, Resend or your inbox.
 
@@ -94,7 +94,7 @@ Photographs, video and the Spotify player are covered by a plain block in the sc
 - **Lighthouse, mobile:** performance at least 80, largest paint at most 4.5 s, blocking time at most 350 ms, layout shift at most 0.05. Measured at 87 to 99, up to 3.9 s, up to 163 ms and 0.
 - **Lighthouse, desktop:** performance at least 90, largest paint at most 1.5 s, blocking time at most 150 ms, layout shift at most 0.05. Measured at 99 to 100, up to 0.93 s, up to 3 ms and up to 0.01.
 
-Lighthouse varies from run to run, so each page is measured three times and the median is compared. The margins mean ordinary noise never fails a pull request. Raise a limit only on purpose, and say why in the pull request.
+Lighthouse varies from run to run, so each page is first loaded once without measuring (a fresh server resizes every photograph and prepares each page on its first request, which once made Home swing from 69 to 100), then measured five times, and the median is compared. The margins mean ordinary noise never fails a pull request. Raise a limit only on purpose, and say why in the pull request.
 
 ## Previews
 
