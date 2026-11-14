@@ -616,8 +616,15 @@ html:not([data-opening]) .opening[data-top] .opening-cue {
 }
 @media (min-width: 1024px) {
   .turntable {
-    --sleeve: 380px;
-    --disc: 340px;
+    /* The whole record stays inside the window at every width (approved
+       13 Nov), even playing, when the vinyl is furthest out: from the
+       sleeve's left edge that is the sleeve plus 0.56 of the vinyl, about
+       1.5 sleeves. The sleeve starts 560px in (64 + 400 + 96), and 24px
+       is kept for a scrollbar and a little air. So the record scales down
+       below about 1155 wide (to about 293px at 1024) and is unchanged
+       (380 and 340) above. The vinyl keeps its 340 : 380 proportion. */
+    --sleeve: min(380px, calc((100vw - 584px) / 1.5));
+    --disc: calc(var(--sleeve) * 340 / 380);
     grid-template-columns: 400px minmax(0, 1fr);
     column-gap: 96px;
     align-items: center;
