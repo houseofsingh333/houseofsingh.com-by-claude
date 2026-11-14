@@ -8,7 +8,7 @@
  * - EMAIL_FROM_LETTERS: the sender of the newsletter welcome, Maninder
  *   himself (default "Maninder Singh <maninder@houseofsingh.com>").
  * - EMAIL_FROM_EDITIONS: the sender of every Shop email (default
- *   '"Maninder Singh, House of Singh Editions" <editions@houseofsingh.com>',
+ *   '"Maninder Singh, House of Singh" <editions@houseofsingh.com>',
  *   the name in quotes because it holds a comma). Replies to each go
  *   back to its own sender's address; the copy of a collaboration
  *   proposal goes to the Shop's address.
@@ -41,7 +41,7 @@ export const emailConfig = () => ({
   resendKey: process.env.RESEND_API_KEY?.trim() || "",
   resendBase: (notProduction && process.env.RESEND_API_BASE) || "https://api.resend.com",
   fromLetters: process.env.EMAIL_FROM_LETTERS?.trim() || "Maninder Singh <maninder@houseofsingh.com>",
-  fromEditions: process.env.EMAIL_FROM_EDITIONS?.trim() || '"Maninder Singh, House of Singh Editions" <editions@houseofsingh.com>',
+  fromEditions: process.env.EMAIL_FROM_EDITIONS?.trim() || '"Maninder Singh, House of Singh" <editions@houseofsingh.com>',
   postalAddress: process.env.EMAIL_POSTAL_ADDRESS?.trim() || "",
   notifyTo: process.env.EMAIL_NOTIFY_TO?.trim() || "maninder@houseofsingh.com",
   dailyLimit: Math.max(1, Number(process.env.RESEND_DAILY_LIMIT) || 100),

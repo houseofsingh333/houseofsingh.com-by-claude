@@ -76,15 +76,16 @@ function plain(blocks: Block[], footer: string): string {
         if ("sign" in b) return `\n${b.sign}`;
         return b.p;
       })
-      .join("\n\n") + `\n\n--\n${footer.replace(/<[^>]+>/g, "")}`
+      // The footer's lines keep their breaks (they were run together, 14 Nov).
+      .join("\n\n") + `\n\n--\n${footer.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "")}`
   );
 }
 
 /** Who sent it, where from, and why it arrived (CASL). */
 function footer(who: "letters" | "editions", why: string, unsubscribe?: string | null): string {
   const { postalAddress, siteUrl } = emailConfig();
-  // Who sends (CASL): Maninder in both cases; the Shop's emails as House of Singh Editions.
-  const sender = who === "letters" ? "Maninder Singh, House of Singh" : "Maninder Singh, House of Singh Editions";
+  // Who sends (CASL): Maninder, House of Singh, for the letters and the Shop alike (14 Nov).
+  const sender = "Maninder Singh, House of Singh";
   const site = siteUrl.replace(/^https?:\/\//, "");
   const leave = unsubscribe ? `<a href="${esc(unsubscribe)}" style="color:${C.muted}">Unsubscribe</a>` : "";
   return [esc(sender), postalAddress ? esc(postalAddress) : "", `<a href="${siteUrl}" style="color:${C.muted}">${esc(site)}</a>`, esc(why), leave].filter(Boolean).join("<br>");

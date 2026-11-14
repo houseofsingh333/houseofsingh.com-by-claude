@@ -10,7 +10,7 @@ How email works on houseofsingh.com, what to set up, and how to check it.
 | What it sends | Only the letters Maninder writes: newsletters, Collection releases, early access invitations, sent to a tag | Every automatic email the website triggers, one person at a time |
 | Who presses send | Maninder, in Kit | The website |
 
-**Who sends what.** The newsletter welcome comes from Maninder himself, `Maninder Singh <maninder@houseofsingh.com>` (`EMAIL_FROM_LETTERS`), and replies go to maninder@. Every Shop email (Notify me, proposals, orders, certificate, being made, shipped) comes from `"Maninder Singh, House of Singh Editions" <editions@houseofsingh.com>` (`EMAIL_FROM_EDITIONS`; the name is in quotes because of its comma), and replies go to editions@. Each email's replies go back to its own sender. Letters Maninder sends from Kit use Kit's own sender settings.
+**Who sends what.** The newsletter welcome comes from Maninder himself, `Maninder Singh <maninder@houseofsingh.com>` (`EMAIL_FROM_LETTERS`), and replies go to maninder@. Every Shop email (Notify me, proposals, orders, certificate, being made, shipped) comes from `"Maninder Singh, House of Singh" <editions@houseofsingh.com>` (`EMAIL_FROM_EDITIONS`; the name is in quotes because of its comma; the sender name approved 14 Nov), and replies go to editions@. Each email's replies go back to its own sender. Letters Maninder sends from Kit use Kit's own sender settings.
 
 **Tags in Kit.** Footer newsletter sign ups carry the tag `Letters`. Shop Notify me sign ups carry the Collection's tag, its title from Sanity, for example `Collection 01`. One person can carry both. A letter goes to a tag: write the newsletter to `Letters`, the release of Collection 01 to `Collection 01`. The website creates a tag the first time it is used.
 
@@ -100,7 +100,7 @@ Every message sent through the contact form, a project's "Interested in this pro
 | `KIT_API_KEY` | Kit v4 API key | Production, Preview |
 | `RESEND_API_KEY` | Resend API key | Production, Preview |
 | `EMAIL_FROM_LETTERS` | `Maninder Singh <maninder@houseofsingh.com>` (the default) | Optional |
-| `EMAIL_FROM_EDITIONS` | `"Maninder Singh, House of Singh Editions" <editions@houseofsingh.com>` (the default; keep the quotes if you set it) | Optional |
+| `EMAIL_FROM_EDITIONS` | `"Maninder Singh, House of Singh" <editions@houseofsingh.com>` (the default; keep the quotes if you set it) | Optional |
 | `EMAIL_POSTAL_ADDRESS` | The mailing address for the anti spam law, one line | Production, Preview |
 | `CRON_SECRET` | A long random string | Production |
 | `EMAIL_NOTIFY_TO` | Where messages through the forms and the daily list go; `maninder@houseofsingh.com` is the default | Optional |

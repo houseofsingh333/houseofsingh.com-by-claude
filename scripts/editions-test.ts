@@ -413,7 +413,7 @@ const session = (id: string, email: string, meta: Record<string, string>): Check
     process.env.GST_NUMBER = "123456789RT0001";
     const e = orderEmail("buyer@example.test", { pieceName: "Window Seat", price: 180, shipping: 18, tax: 0, total: 198, collectorNumber: 4, orderRef: "TEST" });
     check(!/\bTax\b|GST|HST|123456789/.test(e.html + e.text) && /198/.test(e.text), "order email, no tax: no Tax row and no GST/HST number", e.text);
-    check(/Maninder Singh, House of Singh Editions/.test(e.text) && /Studios Inc/.test(e.text) === false, "order email: sent by Maninder Singh, House of Singh Editions");
+    check(/Maninder Singh, House of Singh\b(?! Editions)/.test(e.text) && !/Maninder Singh, House of Singh Editions/.test(e.text) && /Studios Inc/.test(e.text) === false, "order email: sent by Maninder Singh, House of Singh (14 Nov)");
     const taxed = orderEmail("buyer@example.test", { pieceName: "Window Seat", price: 180, shipping: 18, tax: 25.74, total: 223.74, collectorNumber: 4, orderRef: "TEST" });
     check(/Tax/.test(taxed.text) && /123456789RT0001/.test(taxed.text), "order email, tax charged (a future registration): the Tax row and the number");
     delete process.env.GST_NUMBER;

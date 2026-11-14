@@ -27,7 +27,7 @@ const RECORDED: Partial<Record<keyof typeof CONSENT, string>> = {
 const SENDER = {
   letters: "Maninder Singh at House of Singh, Toronto",
   lettersMenu: "Maninder Singh at House of Singh, Toronto",
-  shop: "Maninder Singh, House of Singh Editions, Toronto",
+  shop: "Maninder Singh, House of Singh, Toronto",
 } as const;
 
 /** What is kept in Kit: the words shown, who sends, where, and when. */
