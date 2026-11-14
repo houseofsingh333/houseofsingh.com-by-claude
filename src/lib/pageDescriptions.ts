@@ -5,10 +5,14 @@
  */
 
 export const JOURNAL_TITLE = "Journal";
+/** The Journal's title in search results and share cards (approved 14 Nov); the page itself still says "Journal". */
+export const JOURNAL_SEARCH_TITLE = "Journal, photographs and notes";
 export const JOURNAL_DESCRIPTION =
   "The House of Singh journal: photographs and short notes by Maninder Singh, a Toronto creative, kept by year and month since 2021.";
 
 export const PROJECTS_TITLE = "Projects";
+/** The Projects title in search results and share cards (approved 14 Nov). */
+export const PROJECTS_SEARCH_TITLE = "Projects by Maninder Singh";
 export const PROJECTS_DESCRIPTION =
   "Selected projects by Maninder Singh, from photography to collaborations, including Zamana, a vintage inspired study of Sikh migration.";
 

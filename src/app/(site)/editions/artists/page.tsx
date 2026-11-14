@@ -19,7 +19,10 @@ export async function generateMetadata(_props: unknown, parent: ResolvingMetadat
     title: "For artists",
     description: ARTISTS_DESCRIPTION,
     alternates: { canonical: "/editions/artists" },
-    ...(await shareCard(parent, fullTitle("For artists"), ARTISTS_DESCRIPTION)),
+    // Out of search like every Shop page, but its links are followed
+    // (approved 14 Nov): the layout's nofollow is lifted here only.
+    robots: { index: false, follow: true, nocache: true, googleBot: { index: false, follow: true } },
+    ...(await shareCard(parent, fullTitle("For artists"), ARTISTS_DESCRIPTION, "/editions/artists")),
   };
 }
 

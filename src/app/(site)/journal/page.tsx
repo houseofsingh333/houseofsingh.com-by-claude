@@ -3,7 +3,7 @@ import { pagePhoto } from "@/lib/pagePhotos";
 import { fullTitle } from "@/lib/page-title";
 import { shareCard, withSharePhoto } from "@/lib/share-metadata";
 import JournalPage from "@/components/journal/room/JournalPage";
-import { JOURNAL_DESCRIPTION, JOURNAL_TITLE } from "@/lib/pageDescriptions";
+import { JOURNAL_DESCRIPTION, JOURNAL_SEARCH_TITLE, JOURNAL_TITLE } from "@/lib/pageDescriptions";
 import JsonLd from "@/components/JsonLd";
 import { loadJournalIndex } from "@/lib/journalData";
 import { sanityFetch } from "@/sanity/fetch";
@@ -18,12 +18,12 @@ export async function generateMetadata(
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   return {
-    title: JOURNAL_TITLE,
+    title: JOURNAL_SEARCH_TITLE,
     description: JOURNAL_DESCRIPTION,
     alternates: {
       canonical: "/journal",
     },
-    ...withSharePhoto(await shareCard(parent, fullTitle(JOURNAL_TITLE), JOURNAL_DESCRIPTION), await pagePhoto("journal"), JOURNAL_TITLE),
+    ...withSharePhoto(await shareCard(parent, fullTitle(JOURNAL_SEARCH_TITLE), JOURNAL_DESCRIPTION, "/journal"), await pagePhoto("journal"), JOURNAL_TITLE),
   };
 }
 
