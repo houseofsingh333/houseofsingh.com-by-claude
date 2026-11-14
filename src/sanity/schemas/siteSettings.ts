@@ -52,13 +52,15 @@ export const siteSettings = defineType({
     { name: "search", title: "Search" },
   ],
   fieldsets: [
-    { name: "chapter1", title: "Chapter I, the hero", options: { collapsible: true, collapsed: true } },
-    { name: "chapter2", title: "Chapter II, the artist", options: { collapsible: true, collapsed: true } },
-    { name: "chapter3", title: "Chapter III, the work", options: { collapsible: true, collapsed: true } },
-    { name: "chapter4", title: "Chapter IV, in the studio now", options: { collapsible: true, collapsed: true } },
-    { name: "chapter5", title: "Chapter V, the notebook", options: { collapsible: true, collapsed: true } },
-    { name: "chapter6", title: "Chapter VI, the record", options: { collapsible: true, collapsed: true } },
-    { name: "chapter7", title: "Chapter VII, the practice", options: { collapsible: true, collapsed: true } },
+    // The chapters in the order of the page (14 Nov); their numerals follow
+    // from which are shown (In the studio now only when its Spotlight is on).
+    { name: "chapter1", title: "The opening, the crest", options: { collapsible: true, collapsed: true } },
+    { name: "chapter2", title: "Chapter I, Introduction", options: { collapsible: true, collapsed: true } },
+    { name: "chapter3", title: "Chapter II, Selected work", options: { collapsible: true, collapsed: true } },
+    { name: "chapter4", title: "In the studio now (the Spotlight)", options: { collapsible: true, collapsed: true } },
+    { name: "chapter5", title: "The notebook", options: { collapsible: true, collapsed: true } },
+    { name: "chapter6", title: "The record", options: { collapsible: true, collapsed: true } },
+    { name: "chapter7", title: "The practice", options: { collapsible: true, collapsed: true } },
     { name: "coda", title: "Coda, the footer", options: { collapsible: true, collapsed: true } },
     { name: "privacy", title: "Privacy: In short lines", options: { collapsible: true, collapsed: true } },
     { name: "terms", title: "Terms: In short lines", options: { collapsible: true, collapsed: true } },
@@ -174,17 +176,16 @@ export const siteSettings = defineType({
       fields: imageAltFields,
     }),
 
-    /* ——— Chapter III: the three projects (approved 10 Nov) ——— */
+    /* ——— Chapter II, Selected work: one project (approved 14 Nov) ——— */
     defineField({
-      name: "homepageProjects",
-      title: "Homepage projects",
-      type: "array",
+      name: "featuredProject",
+      title: "The selected project",
+      type: "reference",
+      to: [{ type: "project" }],
       group: "homepage",
       fieldset: "chapter3",
-      of: [{ type: "reference", to: [{ type: "project" }] }],
       description:
-        "Up to three projects for Chapter III, in this order. When empty, the first three projects marked Show on Homepage are used, in their Homepage Order.",
-      validation: (rule) => rule.max(3).unique(),
+        "The one project shown at full width under Selected work, with its title, category, line and a link to it. When empty, the first project in Homepage Order is used.",
     }),
 
     /* ——— Menu: one photograph per page (approved 10 Nov) ——— */

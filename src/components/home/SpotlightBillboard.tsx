@@ -18,7 +18,7 @@ const TITLE_ID = "spotlight-billboard-title";
  * "Aperture" in styles/home.css). Phones, reduced motion and no JavaScript:
  * the open layout. All text comes from the spotlight's Sanity fields.
  */
-export default function SpotlightBillboard({ spotlight, copy }: { spotlight: SpotlightData; copy: SiteCopy }) {
+export default function SpotlightBillboard({ spotlight, copy, numeral = "III" }: { spotlight: SpotlightData; copy: SiteCopy; numeral?: string }) {
   if (!hasImageAsset(spotlight.image)) return null;
   const isExternal = /^https?:\/\//.test(spotlight.linkUrl ?? "");
 
@@ -32,7 +32,7 @@ export default function SpotlightBillboard({ spotlight, copy }: { spotlight: Spo
         media="(min-width: 1024px) and (prefers-reduced-motion: no-preference)"
       />
       <div className="aperture-stage px-6 md:px-16">
-        <ChapterMark numeral="IV" label={copy.studioNowLabel} inverse className="aperture-head" />
+        <ChapterMark numeral={numeral} label={copy.studioNowLabel} inverse className="aperture-head" />
 
         <div className="aperture-grid">
           <div className="aperture-text">

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "@/components/Link";
 import NavOverlay, { SITE_MENU_ID, type MenuCopy } from "./NavOverlay";
-import IntroOverlay, { useIntroSequence } from "./IntroOverlay";
+import { usePathname } from "next/navigation";
 import { PAGE_TOP_EVENT } from "@/components/PageTransition";
 
 import type { MenuPhoto, NavItem } from "@/lib/types";
@@ -22,8 +22,9 @@ type Props = {
 export default function Header({ items, menuPhotos, menuCopy }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { introVisible, introFading, introDone, dismissIntro } =
-    useIntroSequence();
+  // On Home the opening's own crest is State 1's crest (approved 14 Nov):
+  // the header shows only its dot there until the wordmark bar, as before.
+  const onHome = usePathname() === "/";
   const menuButton1Ref = useRef<HTMLButtonElement>(null);
   const menuButton2Ref = useRef<HTMLButtonElement>(null);
   const menuWasOpenRef = useRef(false);
@@ -93,15 +94,11 @@ export default function Header({ items, menuPhotos, menuCopy }: Props) {
 
 
   /* ── Derived state ── */
-  const showState1 = introDone && !scrolled;
-  const showState2 = introDone && scrolled;
+  const showState1 = !scrolled;
+  const showState2 = scrolled;
 
   return (
     <>
-      {/* ═══ STATE 0 : Video intro overlay ═══ */}
-      {introVisible && (
-        <IntroOverlay fading={introFading} onDismiss={dismissIntro} />
-      )}
 
       {/* ═══ STATE 1 : Crest + controls — top-edges at 32px rail ═══ */}
       <header
@@ -110,7 +107,9 @@ export default function Header({ items, menuPhotos, menuCopy }: Props) {
         }`}
         aria-hidden={!showState1}
       >
-        {/* Crest — center, links home. CSS mask so it renders in currentColor. */}
+        {/* Crest — center, links home. CSS mask so it renders in currentColor.
+            Not on Home, where the opening's crest stands in its place. */}
+        {!onHome && (
         <Link
           href="/"
           tabIndex={showState1 ? 0 : -1}
@@ -133,6 +132,7 @@ export default function Header({ items, menuPhotos, menuCopy }: Props) {
             aria-label="House of Singh crest"
           />
         </Link>
+        )}
 
         {/* Dot menu — left, top edge at 32px rail.
             z-10 + pointer-events:auto — same fix as toggle (see comment there).

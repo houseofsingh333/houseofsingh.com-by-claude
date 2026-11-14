@@ -22,16 +22,21 @@ type CopyField = {
 
 export const SITE_COPY_FIELDS = [
   // ——— Homepage chapters ———
-  { name: "heroPreviousLabel", title: "Previous slide button", group: "homepage", fieldset: "chapter1", text: "Previous slide" },
-  { name: "heroNextLabel", title: "Next slide button", group: "homepage", fieldset: "chapter1", text: "Next slide" },
+  { name: "openingScroll", title: "The word above the scroll line", group: "homepage", fieldset: "chapter1", text: "Scroll" },
 
-  { name: "artistHeading", title: "Label", group: "homepage", fieldset: "chapter2", text: "The artist" },
-  { name: "artistLink", title: "Link text", group: "homepage", fieldset: "chapter2", text: "More about Maninder" },
-  { name: "artistCaption", title: "Portrait caption", group: "homepage", fieldset: "chapter2", text: "Maninder Singh, Toronto" },
+  { name: "introLabel", title: "Label", group: "homepage", fieldset: "chapter2", text: "Introduction" },
+  {
+    name: "introLine",
+    title: "The line under the name",
+    group: "homepage",
+    fieldset: "chapter2",
+    text: "Creative director, photographer and multidisciplinary designer, based in Toronto.",
+  },
+  { name: "introAboutLink", title: "Link to About", group: "homepage", fieldset: "chapter2", text: "About" },
 
-  { name: "workHeading", title: "Label", group: "homepage", fieldset: "chapter3", text: "The work" },
-  { name: "workSkipLink", title: "Skip link", group: "homepage", fieldset: "chapter3", text: "Skip to journal" },
-  { name: "workEnterLink", title: "Project link text", group: "homepage", fieldset: "chapter3", text: "Enter the project" },
+  { name: "selectedWorkLabel", title: "Label", group: "homepage", fieldset: "chapter3", text: "Selected work" },
+  { name: "allProjectsLink", title: "Link to every project", group: "homepage", fieldset: "chapter3", text: "All projects" },
+  { name: "viewProjectLink", title: "Link to the project", group: "homepage", fieldset: "chapter3", text: "View the project" },
 
   { name: "studioNowLabel", title: "Label", group: "homepage", fieldset: "chapter4", text: "In the studio now" },
   { name: "studioNowHint", title: "Scroll hint", group: "homepage", fieldset: "chapter4", text: "Scroll to open" },

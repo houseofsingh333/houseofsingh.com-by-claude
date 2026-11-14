@@ -56,7 +56,6 @@ function buildMenuPhotos(items: NavItem[], d: MenuPhotoSources | null): Record<s
 }
 import JsonLd from "@/components/JsonLd";
 import { buildSiteJsonLd } from "@/lib/structured-data";
-import { IntroProvider } from "@/components/IntroContext";
 
 /**
  * Layout for the public website: every page a visitor sees. The (site) route
@@ -105,7 +104,6 @@ export default async function SiteLayout({
       >
         Skip to content
       </a>
-      <IntroProvider>
         <Header
           items={navItems}
           menuPhotos={menuPhotos}
@@ -141,7 +139,6 @@ export default async function SiteLayout({
           }}
           bookUrl={bookingUrl(settings?.codaBookUrl)}
         />
-      </IntroProvider>
       <SpeedInsights />
     </>
   );
