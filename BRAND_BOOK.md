@@ -123,7 +123,7 @@ No other sentence on the site is set in Playfair.
 | `body` | 17px | 16px | Instrument Sans 400 | Reading text: project stories, journal entries, legal text, the home introduction, footer links, form fields |
 | `small` | 14px | 14px | Instrument Sans 400 | Captions and descriptions |
 | **label** | **12px** | **12px** | **Instrument Sans 400, uppercase, 0.12em** | Every small label (below) |
-| `legal` | 11px | 11px | Instrument Sans 400 | The footer's bottom line (copyright, Privacy, Terms) |
+| `legal` | 11px | 11px | Instrument Sans 400 | The footer's bottom line (copyright, Privacy, Terms) and the trademark line beneath it |
 
 Two drawings keep their own proportional lettering and are not part of the scale: the record sleeve's title in Chapter VI (drawn to the sleeve's size) and the newsletter postmark. The header wordmark is the logo, not text.
 

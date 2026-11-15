@@ -335,7 +335,8 @@ html:not(.js) .footer-time {
 }
 
 .footer-bottom-copyright,
-.footer-bottom-link {
+.footer-bottom-link,
+.footer-bottom-mark {
   font-size: var(--type-legal);
   line-height: 1.5;
   letter-spacing: 0.08em;
@@ -344,6 +345,13 @@ html:not(.js) .footer-time {
 }
 .footer-bottom-link {
   padding-bottom: 2px;
+}
+/* The trademark line (15 Nov): the copyright's size and colour, on its own
+   line under the row, and free to wrap on a phone. */
+.footer-bottom-mark {
+  flex-basis: 100%;
+  margin: 0;
+  white-space: normal;
 }
 
 @media (min-width: 768px) {
@@ -380,6 +388,9 @@ html:not(.js) .footer-time {
     margin: 0 64px;
     padding: 0 0 24px;
     border-top: 0;
+  }
+  .footer-bottom-mark {
+    text-align: right;
   }
 }
 
