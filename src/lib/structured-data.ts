@@ -72,6 +72,9 @@ const PERSON_SAME_AS = [
   "https://www.behance.net/manindersingh",
 ];
 
+/** The brand's other spoken name, on the WebSite and Organization only (15 Nov); the Person is unchanged. */
+const ALTERNATE_NAME = "The House of Singh";
+
 const DEFAULTS = {
   organizationName: "House of Singh",
   founderName: "Maninder Singh",
@@ -141,6 +144,7 @@ function organizationNode(settings?: SiteSettings | null): Json {
     "@type": "Organization",
     "@id": ORGANIZATION_ID,
     name: orgName(settings),
+    alternateName: ALTERNATE_NAME,
     url: SITE_URL,
     logo: orgLogo(),
     foundingDate: "2014",
@@ -247,6 +251,7 @@ export function buildSiteJsonLd(settings?: SiteSettings | null): Json {
     "@type": "WebSite",
     "@id": WEBSITE_ID,
     name,
+    alternateName: ALTERNATE_NAME,
     url: SITE_URL,
     description,
     author: { "@id": PERSON_ID },
