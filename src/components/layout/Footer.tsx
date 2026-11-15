@@ -105,6 +105,7 @@ export default function Footer({ copy, bookUrl }: { copy: FooterCopy; bookUrl: s
         <Link href="/terms" className="footer-bottom-link hairline">
           Terms
         </Link>
+        <p className="footer-bottom-mark">HOUSE OF SINGH® is a registered trademark of House of Singh Studios Inc.</p>
       </div>
     </footer>
   );

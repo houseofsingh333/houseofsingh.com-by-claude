@@ -90,9 +90,12 @@ export async function sitemapEntries(): Promise<MetadataRoute.Sitemap> {
           `*[_type == "project"]{ "slug": slug.current, "lastmod": coalesce(updatedAt, publishedAt, _updatedAt),
             "images": [select(defined(coverImage.asset) => coverImage, thumbnail), ...photographs[], ...contentSections[].image, ...contentSections[].images[]]${IMG} }`
         ),
-        // Each entry's cover and the photographs in its text.
+        // Each entry's cover and the photographs in its text. An entry is
+        // dated by its own date, not by _updatedAt, so a bulk edit in Sanity
+        // does not mark every entry as new (journal entries have no edited
+        // "updated" field; projects use theirs, above).
         client.fetch<Array<{ slug: string; date: string; lastmod: string | null; images: Img[] }>>(
-          `*[_type == "journalEntry"]{ "slug": slug.current, date, "lastmod": coalesce(_updatedAt, date),
+          `*[_type == "journalEntry"]{ "slug": slug.current, date, "lastmod": date,
             "images": [coverImage, ...body[_type == "image"]]${IMG} }`
         ),
       ]);
