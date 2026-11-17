@@ -11,6 +11,14 @@ import { test, expect, open, header, readThrough, PAGES, SHOP } from "./helpers"
 test.use({ reducedMotion: "reduce" });
 
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"];
+/**
+ * Rules axe marks experimental, so the tags above leave them out, run
+ * here by name. label-content-name-mismatch (WCAG 2.5.3, Label in Name):
+ * a link's spoken name must contain the words on screen, so a voice
+ * control user can say what they see (found on the Shop's "House of
+ * Singh × you" line, 17 Nov 2026).
+ */
+const RULES = { "label-content-name-mismatch": { enabled: true } };
 
 /*
  * Known violations that may not be fixed yet (inside a protected design,
@@ -34,12 +42,12 @@ const builder = (page: Page) => ({
   analyze: async (): Promise<{ violations: Violation[] }> => {
     if (!(await page.evaluate(() => "axe" in window))) await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
     return page.evaluate(
-      (tags) =>
+      ({ tags, rules }) =>
         (window as unknown as { axe: { run: (c: object, o: object) => Promise<{ violations: Violation[] }> } }).axe.run(
           { exclude: [["iframe[src*='spotify.com']"]] },
-          { runOnly: { type: "tag", values: tags }, iframes: false, resultTypes: ["violations"] },
+          { runOnly: { type: "tag", values: tags }, rules, iframes: false, resultTypes: ["violations"] },
         ),
-      TAGS,
+      { tags: TAGS, rules: RULES },
     );
   },
 });
@@ -224,6 +232,39 @@ test("state: Projects at a glance", async ({ page }) => {
   else await page.locator("button.mono-icon").click();
   await page.waitForTimeout(800);
   await axe(page, "projects, at a glance");
+});
+
+/*
+ * The Shop's "House of Singh × a weaver … you" line, with motion: every
+ * other check here is at rest, where the line shows "you" alone, so only
+ * a rolling word shows whether the link's name follows what is on screen.
+ * Checked at three moments as the words roll, for Label in Name alone
+ * (colours mid fade are not measured).
+ */
+test.describe("with motion", () => {
+  test.use({ reducedMotion: "no-preference" });
+  test("state: the Shop's rolling words, named as they show", async ({ page }, info) => {
+    test.skip(info.project.name.startsWith("phone"), "the line is the desktop's; the phone panel's link is its own words");
+    await open(page, "/editions");
+    const line = page.locator(".ed-invite-line");
+    await line.scrollIntoViewIfNeeded();
+    if (!(await page.evaluate(() => "axe" in window))) await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
+    const names = new Set<string>();
+    for (let moment = 0; moment < 3; moment++) {
+      if (moment) await page.waitForTimeout(1700);
+      names.add((await line.ariaSnapshot()).split("\n")[0]);
+      const { violations } = await page.evaluate(
+        (rules) =>
+          (window as unknown as { axe: { run: (c: object, o: object) => Promise<{ violations: Violation[] }> } }).axe.run(document, {
+            runOnly: { type: "rule", values: Object.keys(rules) },
+            resultTypes: ["violations"],
+          }),
+        RULES,
+      );
+      expect(violations.flatMap((v) => v.nodes.map((n) => `${v.id}: ${n.target.join(" ")}`)), `moment ${moment + 1}`).toEqual([]);
+    }
+    expect(names.size, "the words rolled while checked").toBeGreaterThan(1);
+  });
 });
 
 // Each known exception still occurs; once fixed, it must leave KNOWN.

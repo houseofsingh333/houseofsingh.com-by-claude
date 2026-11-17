@@ -27,7 +27,10 @@ const watchMotion = (change: () => void) => {
  * and "Propose a collaboration" beneath. The words start on the first
  * craft and roll through to "you", which holds longest, then go round
  * again; the window is one and a half lines tall, so no letter is
- * clipped. With reduced motion the last word ("you") stays. Screen readers hear "Propose a collaboration".
+ * clipped. With reduced motion the last word ("you") stays. The desktop
+ * link is named by the words on screen, only the word showing now, then
+ * ", propose a collaboration", so voice control users can say what they
+ * see; the phone panel's own link says "Propose a collaboration".
  * The words roll only while they are on screen (the desktop line or the
  * phone panel, whichever the screen shows); elsewhere nothing runs.
  */
@@ -75,13 +78,16 @@ export default function ArtistsInvite({ words, href }: { words: string[]; href: 
   // With reduced motion the last word ("you") stays.
   const at = still ? last : roll.at;
   const duration = !still && roll.slide ? (roll.at === last ? LAST_SLIDE_MS : SLIDE_MS) : 0;
-  const reel = (
-    <span className="ed-roll" aria-hidden="true">
+  /** The rolling word; read aloud (desktop), only the word showing now is heard. */
+  const reel = (read: boolean) => (
+    <span className="ed-roll" aria-hidden={read ? undefined : true}>
       {/* A space for the words as read ("House of Singh you"); first in this
           inline block, so it is never drawn. */}{" "}
       <span className="ed-roll-reel" style={{ transform: `translateY(${-at * 1.5}em)`, transitionDuration: `${duration}ms` }}>
         {[...list, list[0]].map((w, i) => (
-          <span key={`${w}-${i}`}>{w}</span>
+          <span key={`${w}-${i}`} aria-hidden={read && i !== at ? true : undefined}>
+            {w}
+          </span>
         ))}
       </span>
     </span>
@@ -89,12 +95,13 @@ export default function ArtistsInvite({ words, href }: { words: string[]; href: 
 
   return (
     <>
-      <Link ref={lineRef} href={href} className="ed-invite-line" aria-label={`House of Singh × ${list[last]}, propose a collaboration`}>
-        <span aria-hidden="true" className="ed-invite-words">
+      <Link ref={lineRef} href={href} className="ed-invite-line">
+        <span className="ed-invite-words">
           House of Singh
           <DrawnTimes className="ed-invite-x" />
-          {reel}
+          {reel(true)}
         </span>
+        <span className="sr-only">, propose a collaboration</span>
         <span aria-hidden="true" className="ed-invite-arrow">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25">
             <path d="M5 12h13" />
@@ -107,7 +114,7 @@ export default function ArtistsInvite({ words, href }: { words: string[]; href: 
           House of Singh
         </span>
         <DrawnTimes className="ed-invite-x" />
-        {reel}
+        {reel(false)}
         <Link href={href} className="text-link ed-invite-panel-link">
           <span className="text-link-text">Propose a collaboration</span>
           <span aria-hidden="true" className="text-link-arrow">
