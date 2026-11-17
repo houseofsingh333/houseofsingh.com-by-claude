@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* The docs (audit reports, plans) quote class names; they are not pages,
+   so Tailwind does not read them for classes to build. */
+@source not "../../docs";
+
 /*
  * The site wide stylesheet. The order of the imports is the cascade order:
  * later files win over earlier ones at equal specificity. Each area's own

@@ -34,7 +34,11 @@ const once = /(overflow|crawl|budget)\.spec\.ts/;
 const extra = process.env.BROWSERS === "all"
   ? [
       { name: "phone-webkit", use: { ...devices["iPhone 14"] }, testIgnore: [once, /visual\.spec\.ts/] },
-      { name: "desktop-firefox", use: { ...devices["Desktop Firefox"], ...desktop }, testIgnore: [once, /visual\.spec\.ts/] },
+      // Firefox keeps its own list of trusted certificates, not the
+      // computer's: behind a network that re-signs HTTPS (a cloud sandbox,
+      // an office proxy) it refused every photograph from cdn.sanity.io,
+      // and the photographs test failed though the site was fine (17 Nov).
+      { name: "desktop-firefox", use: { ...devices["Desktop Firefox"], ...desktop, ignoreHTTPSErrors: !!process.env.HTTPS_PROXY }, testIgnore: [once, /visual\.spec\.ts/] },
     ]
   : [];
 

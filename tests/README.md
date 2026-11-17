@@ -9,7 +9,7 @@ Every pull request into `main` runs these checks automatically. The check called
 | Journeys | Each page opens with its heading and no errors. The menu opens, holds focus, closes with Escape. Every form state, from the contact form to Notify me and unsubscribe. The sealed Shop shows no prices and no Buy. | `e2e/journeys.spec.ts` |
 | Page changes | A new page opens at its top, from any depth. Back and Forward return to where you were. A page change never shows two pages at once. | `e2e/navigation.spec.ts` |
 | Screenshots | Every page type, on a phone (390) and a desktop (1440), looks as approved. | `e2e/visual.spec.ts` |
-| Accessibility | axe (WCAG 2.2, A and AA) on every page type and every state, with zero violations. | `e2e/a11y.spec.ts` |
+| Accessibility | axe (WCAG 2.2, A and AA, plus Label in Name, which axe marks experimental) on every page type and every state, with zero violations. | `e2e/a11y.spec.ts` |
 | Sideways scroll | No page scrolls sideways, at 12 widths from 320 to 2560. | `e2e/overflow.spec.ts` |
 | Crawl | Every page of the site: no broken links, no console errors. | `e2e/crawl.spec.ts` |
 | Script budget | Each page type stays within its JavaScript size. | `e2e/budget.spec.ts`, `budgets.json` |

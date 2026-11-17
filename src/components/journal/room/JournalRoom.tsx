@@ -348,7 +348,8 @@ export default function JournalRoom({ index, months, opening, target, headingSlu
   const older = months[at(range[range.length - 1]) + 1];
   const newer = months[at(range[0]) - 1];
   const scrollScript = target
-    ? `document.getElementById(${JSON.stringify(`entry-${target}`)})?.scrollIntoView({block:"start",behavior:"instant"})`
+    ? // "<" escaped, as in JsonLd.tsx, so no slug can close the script early.
+      `document.getElementById(${JSON.stringify(`entry-${target}`).replace(/</g, "\\u003c")})?.scrollIntoView({block:"start",behavior:"instant"})`
     : null;
 
   return (
