@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { OutlineButton } from "@/components/OutlineCta";
 import { TextButton } from "@/components/TextLink";
 import StepRenderer from "@/components/contact/StepRenderer";
@@ -9,6 +10,7 @@ import {
 } from "@/components/contact/ReviewConfirmation";
 import { TwoColumnLayout } from "./ContactLayout";
 import { useContactForm } from "./useContactForm";
+import { bringStepIntoView } from "./bringStepIntoView";
 import SanityImage from "@/components/SanityImage";
 import type { SanityImage as SanityImageData } from "@/lib/types";
 import HoneypotField from "@/components/HoneypotField";
@@ -70,6 +72,32 @@ export default function ContactForm({ portrait, caption, copy }: Props) {
     setHoneypot,
   } = useContactForm(copy);
 
+  /* Moving to a step (Next, Back, a reason chosen, Back from the review):
+     the question comes into view below the header if it or Next is not
+     already wholly in view, and takes the focus; on a text step the field
+     takes it once the page is at rest. Not on the first step as the page
+     opens. */
+  const questionRef = useRef<HTMLHeadingElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const opened = useRef(false);
+  useEffect(() => {
+    if (phase !== "form") return;
+    if (!opened.current) {
+      opened.current = true;
+      return;
+    }
+    // Next (or Review) is the last button in the row; the reasons step has none.
+    const buttons = navRef.current?.querySelectorAll<HTMLElement>("button");
+    const next = currentStepDef?.type === "intent" || !buttons?.length ? null : buttons[buttons.length - 1];
+    // A text step: once the page is at rest, the caret goes to its field so
+    // the reader can type straight away. A choice step keeps the question focused.
+    const typed = ["text", "email", "tel", "textarea"].includes(currentStepDef?.type ?? "");
+    const step = questionRef.current?.closest(".editorial-slide-up");
+    bringStepIntoView(questionRef.current, next, typed ? () => step?.querySelector<HTMLElement>("input.contact-input, textarea.contact-input")?.focus({ preventScroll: true }) : undefined);
+    // Only a move to another step: not the answers changing within one.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, phase]);
+
   const aside = portrait ? <ContactPortrait image={portrait} caption={caption} /> : undefined;
 
   /* ── Confirmation ── */
@@ -115,7 +143,7 @@ export default function ContactForm({ portrait, caption, copy }: Props) {
         <div className="min-h-[50vh] flex flex-col justify-center max-w-lg">
           <div key={currentStep} className="editorial-slide-up">
             {/* Question */}
-            <h2 className="font-editorial font-normal text-display-l text-foreground leading-[1.15] sm:leading-[1.12] mb-5 tracking-[-0.01em] text-balance">
+            <h2 ref={questionRef} tabIndex={-1} className="font-editorial font-normal text-display-l text-foreground leading-[1.15] sm:leading-[1.12] mb-5 tracking-[-0.01em] text-balance outline-none">
               {currentStepDef?.question}
             </h2>
 
@@ -150,7 +178,7 @@ export default function ContactForm({ portrait, caption, copy }: Props) {
           </div>
 
           {/* Navigation buttons */}
-          <div className="flex items-center justify-between pt-10 md:pt-16">
+          <div ref={navRef} className="flex items-center justify-between pt-10 md:pt-16">
             <div>
               {currentStep > 0 && (
                 <TextButton back onClick={handlePrev}>

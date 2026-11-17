@@ -122,6 +122,20 @@ export const transitioning = (page: Page) =>
   page.evaluate(() => document.getAnimations().some((a) => (a.effect as KeyframeEffect | null)?.pseudoElement?.startsWith("::view-transition")));
 
 /** Waits for the page change to finish: none begun and unfinished, no fade running. */
+/**
+ * Waits until every finite animation has finished (a step's entrance, a
+ * fade), so a click lands where the reader would click. Clicking a thing
+ * still moving made Playwright scroll it under the fixed header in
+ * Firefox, and the click met the header (found 17 Nov 2026).
+ */
+export async function still(page: Page) {
+  await page.waitForFunction(
+    () => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity),
+    null,
+    { timeout: 6000 },
+  );
+}
+
 export async function settled(page: Page) {
   await page
     .waitForFunction(

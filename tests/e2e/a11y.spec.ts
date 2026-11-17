@@ -152,6 +152,7 @@ test("state: every step of the contact form, its review, its error and its thank
   await open(page, "/contact");
   await axe(page, "contact, first step");
   await page.locator(".contact-intent-option").first().click();
+  await expect(page.locator(".contact-intent-option"), "choosing a reason moves the form on").toHaveCount(0);
   for (let i = 0; i < 12; i++) {
     await page.waitForTimeout(400);
     if (await page.locator("main button:visible", { hasText: /^(submit|send)/i }).count()) break;

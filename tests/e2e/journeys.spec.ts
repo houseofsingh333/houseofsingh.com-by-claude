@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import type { Page, Route } from "@playwright/test";
-import { test, expect, open, header, LOCAL, SHOP } from "./helpers";
+import { test, expect, open, header, still, LOCAL, SHOP } from "./helpers";
 
 /*
  * The journeys a reader takes, on a phone and on a desktop.
@@ -110,9 +110,13 @@ test.describe("menu", () => {
 test.describe("contact form", () => {
   async function toReview(page: Page) {
     await open(page, "/contact");
+    // Each step is chosen only once its entrance has finished, as a reader would.
+    await still(page);
     await page.locator(".contact-intent-option").first().click();
+    await expect(page.locator(".contact-intent-option"), "choosing a reason moves the form on").toHaveCount(0);
     // Each step: Next waits until the answer is given; skippable steps are skipped.
     for (let i = 0; i < 12; i++) {
+      await still(page);
       if (await page.locator("main button:visible", { hasText: /^(submit|send)/i }).count()) return;
       const next = page.locator("main button:visible", { hasText: /^(next|review)/i }).first();
       const skip = page.locator("main button:visible", { hasText: /^skip/i }).first();
@@ -156,6 +160,134 @@ test.describe("contact form", () => {
     await expect(page.locator("main button:visible", { hasText: /^(submit|send)/i })).toHaveCount(0);
     await expect(page.locator(".contact-input")).toHaveCount(0);
   });
+
+  /*
+   * Whenever the form moves to a step, forward or Back, the step's first
+   * answer (an option or the field) and its Next button are wholly on
+   * screen and below the fixed header, without the reader scrolling: on a
+   * phone, a desktop and a short laptop, in Chromium and Firefox, through
+   * every reason's steps. A step taller than the screen below the header
+   * instead has its question just below the header (24 to 48px) and Next
+   * within one screen of scrolling (approved 17 Nov 2026; the rule is set
+   * out in inView). A failure here is the site's, not the test's.
+   */
+  for (const size of [
+    { width: 390, height: 844 },
+    { width: 1440, height: 900 },
+    { width: 1280, height: 720 },
+  ]) {
+    test(`every step opens in view below the header at ${size.width}x${size.height}`, async ({ page, browserName }, info) => {
+      test.skip(info.project.name.startsWith("phone") || browserName === "webkit", "Chromium and Firefox, each size set here, in the desktop projects");
+      test.setTimeout(180_000);
+      await page.setViewportSize(size);
+      await open(page, "/contact");
+      const intents = await page.locator(".contact-intent-option").allTextContents();
+      expect(intents.length, "the reasons to write").toBeGreaterThan(0);
+      const nextButton = page.locator("main button:visible", { hasText: /^(next|review)/i }).first();
+
+      /** The step now showing: its first answer and its Next button, wholly in view below the header. */
+      async function inView(where: string) {
+        await still(page);
+        // And the page itself at rest: the form may glide the step into view.
+        await page.waitForFunction(
+          () => new Promise<boolean>((done) => { const y = scrollY; setTimeout(() => done(scrollY === y), 150); }),
+          null,
+          { timeout: 5000 },
+        );
+        const step = await page.evaluate(() => {
+          const box = (el: Element | null | undefined) => {
+            if (!el) return null;
+            const r = el.getBoundingClientRect();
+            return { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) };
+          };
+          const shown = (el: Element) => (el as HTMLElement).offsetParent !== null;
+          const answer = [...document.querySelectorAll("main .contact-intent-option, main .contact-option, main .contact-input")].find(shown);
+          const next = [...document.querySelectorAll("main button")].find((b) => shown(b) && /^(next|review)/i.test(b.textContent?.trim() ?? ""));
+          // The header is fixed, so it has no offsetParent: the one showing is the one with a size.
+          const head = [...document.querySelectorAll("header[aria-hidden='false']")].find((h) => h.getBoundingClientRect().height > 0);
+          return {
+            question: document.querySelector("main h2")?.textContent?.trim() ?? "",
+            q: box(document.querySelector("main h2")),
+            intent: !!document.querySelector("main .contact-intent-option"),
+            answer: box(answer),
+            next: box(next),
+            headerBottom: head ? Math.round(head.getBoundingClientRect().bottom) : 0,
+            width: innerWidth,
+            height: innerHeight,
+          };
+        });
+        const problems: string[] = [];
+        const check = (name: string, b: typeof step.answer) => {
+          if (!b) return problems.push(`${name} is missing`);
+          if (b.top < step.headerBottom) problems.push(`${name} starts at ${b.top}px, under the header (it ends at ${step.headerBottom}px)`);
+          if (b.bottom > step.height) problems.push(`${name} ends at ${b.bottom}px, below the screen (${step.height}px)`);
+          if (b.left < 0 || b.right > step.width) problems.push(`${name} runs off the side (${b.left} to ${b.right}px of ${step.width}px)`);
+        };
+        // The rule (approved 17 Nov 2026):
+        // - A step that fits in the space under the header (from its question's
+        //   top to its Next button's foot, no taller than the screen below the
+        //   header) is wholly in view: its first answer and Next, below the
+        //   header and above the screen's foot.
+        // - A step taller than that space cannot be: its question lands just
+        //   below the header (24 to 48px under it), and Next is reachable
+        //   within one screen height of scrolling (its foot no further than
+        //   two screen heights down).
+        const space = step.height - step.headerBottom;
+        const tall = !step.intent && !!step.q && !!step.next && step.next.bottom - step.q.top > space;
+        if (!tall) {
+          check("the first answer", step.answer);
+          // The reasons step has no Next: choosing a reason moves on by itself.
+          if (!step.intent) check("the Next button", step.next);
+        } else {
+          const air = step.q!.top - step.headerBottom;
+          if (air < 24 || air > 48) problems.push(`a step taller than the screen: its question starts ${air}px below the header, not 24 to 48px`);
+          if (step.next!.bottom - step.height > step.height) problems.push(`a step taller than the screen: Next ends at ${step.next!.bottom}px, more than one screen (${step.height}px) of scrolling away`);
+        }
+        // Focus: a text step's field, ready to type; a choice step's question.
+        const focus = await page.evaluate(() => {
+          const a = document.activeElement;
+          const field = document.querySelector("main input.contact-input, main textarea.contact-input");
+          return { onField: !!field && a === field, onQuestion: a === document.querySelector("main h2"), hasField: !!field };
+        });
+        if (focus.hasField && !focus.onField) problems.push("a text step: its field does not have the focus");
+        if (!focus.hasField && !focus.onQuestion) problems.push("a choice step: its question does not have the focus");
+        // Soft: every step at fault is reported, not only the first.
+        expect.soft(problems, `${size.width}x${size.height}, ${where}: "${step.question}"`).toEqual([]);
+      }
+
+      for (const [n, intent] of intents.entries()) {
+        // The reasons as the page first opens are the page's layout, not a
+        // move; after Back, they are a step the form moved to.
+        if (n > 0) await inView(`the reasons, after Back (${intent})`);
+        await page.locator(".contact-intent-option", { hasText: intent }).first().click();
+        await expect(page.locator(".contact-intent-option")).toHaveCount(0);
+        // Forward, answering each step, to the review.
+        let steps = 0;
+        while (!(await page.locator("main button:visible", { hasText: /^(submit|send)/i }).count())) {
+          expect(++steps, "the steps end in a review").toBeLessThan(15);
+          await inView(`${intent}, forward, step ${steps + 1}`);
+          const field = page.locator("main input:visible:not([name=company]):not([type=date]), main textarea:visible").first();
+          if (await field.count()) {
+            const type = await field.getAttribute("type");
+            if (!(await field.inputValue())) await field.fill(type === "email" ? "reader@example.com" : type === "tel" ? "+1 416 555 0100" : "A few words");
+          } else if (await page.locator("main .contact-option:visible").count()) {
+            await page.locator("main .contact-option:visible").first().click();
+          }
+          await expect(nextButton).toBeEnabled();
+          await nextButton.click();
+        }
+        // Back from the review, then Back through every step to the reasons.
+        for (let back = 0; !(await page.locator("main .contact-intent-option").count()); back++) {
+          expect(back, "Back returns to the reasons").toBeLessThan(15);
+          await still(page);
+          await page.locator("main").getByRole("button", { name: /^back$/i }).first().click();
+          if (await page.locator("main .contact-intent-option").count()) break;
+          await inView(`${intent}, Back, ${back + 1} back`);
+        }
+        if (n === intents.length - 1) await inView("the reasons, after Back (last)");
+      }
+    });
+  }
 
   test("a refused send says why and keeps the answers", async ({ page }) => {
     await answer(page, "/api/contact", 400, { error: "Please provide a valid email address." });
