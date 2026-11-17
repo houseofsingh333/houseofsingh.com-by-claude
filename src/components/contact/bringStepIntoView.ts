@@ -60,44 +60,57 @@ function resting(el: Element) {
   return { top: r.top - shift, bottom: r.bottom - shift };
 }
 
-let stopGlide: (() => void) | null = null;
+/** Ends a glide still running: without its "then" when a newer step has superseded it. */
+let stopGlide: ((superseded: boolean) => void) | null = null;
 
-export function bringStepIntoView(question: HTMLElement | null, next: HTMLElement | null) {
+/**
+ * `then` runs once the page is at rest: when the glide has finished (or
+ * the reader took over), at once with reduced motion or when nothing
+ * needed to move. A text step uses it to put the caret in its field, so
+ * the reader can type straight away without the field's focus fighting
+ * the glide (approved 17 Nov 2026).
+ */
+export function bringStepIntoView(question: HTMLElement | null, next: HTMLElement | null, then?: () => void) {
+  stopGlide?.(true);
   if (!question) return;
   question.focus({ preventScroll: true });
 
   const top = headerBottom();
   const inView = (b: { top: number; bottom: number }) => b.top >= top && b.bottom <= window.innerHeight;
   const q = resting(question);
-  if (inView(q) && (!next || inView(resting(next)))) return;
-
   const most = document.documentElement.scrollHeight - window.innerHeight;
   const to = Math.round(Math.min(most, Math.max(0, window.scrollY + q.top - barHeight() - GAP)));
   const from = window.scrollY;
-  if (Math.abs(to - from) < 1) return;
+  if ((inView(q) && (!next || inView(resting(next)))) || Math.abs(to - from) < 1) {
+    then?.();
+    return;
+  }
 
-  stopGlide?.();
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     window.scrollTo({ top: to, behavior: "instant" });
+    then?.();
     return;
   }
 
   const { ms, ease } = tokens();
   const start = performance.now();
   let frame = 0;
-  // The reader takes over the moment they scroll, touch or press a key.
-  const stop = () => {
+  const EVENTS = ["wheel", "touchstart", "keydown", "pointerdown"];
+  const stop = (superseded: boolean) => {
     cancelAnimationFrame(frame);
-    for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) window.removeEventListener(type, stop);
+    for (const type of EVENTS) window.removeEventListener(type, takeOver);
     stopGlide = null;
+    if (!superseded) then?.();
   };
-  for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) window.addEventListener(type, stop, { passive: true });
+  // The reader takes over the moment they scroll, touch or press a key.
+  const takeOver = () => stop(false);
+  for (const type of EVENTS) window.addEventListener(type, takeOver, { passive: true });
   stopGlide = stop;
   const step = (now: number) => {
     const p = Math.min(1, (now - start) / ms);
     window.scrollTo({ top: from + (to - from) * ease(p), behavior: "instant" });
     if (p < 1) frame = requestAnimationFrame(step);
-    else stop();
+    else stop(false);
   };
   frame = requestAnimationFrame(step);
 }

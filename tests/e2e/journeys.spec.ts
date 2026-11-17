@@ -166,7 +166,10 @@ test.describe("contact form", () => {
    * answer (an option or the field) and its Next button are wholly on
    * screen and below the fixed header, without the reader scrolling: on a
    * phone, a desktop and a short laptop, in Chromium and Firefox, through
-   * every reason's steps. A failure here is the site's, not the test's.
+   * every reason's steps. A step taller than the screen below the header
+   * instead has its question just below the header (24 to 48px) and Next
+   * within one screen of scrolling (approved 17 Nov 2026; the rule is set
+   * out in inView). A failure here is the site's, not the test's.
    */
   for (const size of [
     { width: 390, height: 844 },
@@ -204,6 +207,7 @@ test.describe("contact form", () => {
           const head = [...document.querySelectorAll("header[aria-hidden='false']")].find((h) => h.getBoundingClientRect().height > 0);
           return {
             question: document.querySelector("main h2")?.textContent?.trim() ?? "",
+            q: box(document.querySelector("main h2")),
             intent: !!document.querySelector("main .contact-intent-option"),
             answer: box(answer),
             next: box(next),
@@ -219,9 +223,34 @@ test.describe("contact form", () => {
           if (b.bottom > step.height) problems.push(`${name} ends at ${b.bottom}px, below the screen (${step.height}px)`);
           if (b.left < 0 || b.right > step.width) problems.push(`${name} runs off the side (${b.left} to ${b.right}px of ${step.width}px)`);
         };
-        check("the first answer", step.answer);
-        // The reasons step has no Next: choosing a reason moves on by itself.
-        if (!step.intent) check("the Next button", step.next);
+        // The rule (approved 17 Nov 2026):
+        // - A step that fits in the space under the header (from its question's
+        //   top to its Next button's foot, no taller than the screen below the
+        //   header) is wholly in view: its first answer and Next, below the
+        //   header and above the screen's foot.
+        // - A step taller than that space cannot be: its question lands just
+        //   below the header (24 to 48px under it), and Next is reachable
+        //   within one screen height of scrolling (its foot no further than
+        //   two screen heights down).
+        const space = step.height - step.headerBottom;
+        const tall = !step.intent && !!step.q && !!step.next && step.next.bottom - step.q.top > space;
+        if (!tall) {
+          check("the first answer", step.answer);
+          // The reasons step has no Next: choosing a reason moves on by itself.
+          if (!step.intent) check("the Next button", step.next);
+        } else {
+          const air = step.q!.top - step.headerBottom;
+          if (air < 24 || air > 48) problems.push(`a step taller than the screen: its question starts ${air}px below the header, not 24 to 48px`);
+          if (step.next!.bottom - step.height > step.height) problems.push(`a step taller than the screen: Next ends at ${step.next!.bottom}px, more than one screen (${step.height}px) of scrolling away`);
+        }
+        // Focus: a text step's field, ready to type; a choice step's question.
+        const focus = await page.evaluate(() => {
+          const a = document.activeElement;
+          const field = document.querySelector("main input.contact-input, main textarea.contact-input");
+          return { onField: !!field && a === field, onQuestion: a === document.querySelector("main h2"), hasField: !!field };
+        });
+        if (focus.hasField && !focus.onField) problems.push("a text step: its field does not have the focus");
+        if (!focus.hasField && !focus.onQuestion) problems.push("a choice step: its question does not have the focus");
         // Soft: every step at fault is reported, not only the first.
         expect.soft(problems, `${size.width}x${size.height}, ${where}: "${step.question}"`).toEqual([]);
       }

@@ -74,8 +74,9 @@ export default function ContactForm({ portrait, caption, copy }: Props) {
 
   /* Moving to a step (Next, Back, a reason chosen, Back from the review):
      the question comes into view below the header if it or Next is not
-     already wholly in view, and takes the focus. Not on the first step as
-     the page opens. */
+     already wholly in view, and takes the focus; on a text step the field
+     takes it once the page is at rest. Not on the first step as the page
+     opens. */
   const questionRef = useRef<HTMLHeadingElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const opened = useRef(false);
@@ -88,7 +89,11 @@ export default function ContactForm({ portrait, caption, copy }: Props) {
     // Next (or Review) is the last button in the row; the reasons step has none.
     const buttons = navRef.current?.querySelectorAll<HTMLElement>("button");
     const next = currentStepDef?.type === "intent" || !buttons?.length ? null : buttons[buttons.length - 1];
-    bringStepIntoView(questionRef.current, next);
+    // A text step: once the page is at rest, the caret goes to its field so
+    // the reader can type straight away. A choice step keeps the question focused.
+    const typed = ["text", "email", "tel", "textarea"].includes(currentStepDef?.type ?? "");
+    const step = questionRef.current?.closest(".editorial-slide-up");
+    bringStepIntoView(questionRef.current, next, typed ? () => step?.querySelector<HTMLElement>("input.contact-input, textarea.contact-input")?.focus({ preventScroll: true }) : undefined);
     // Only a move to another step: not the answers changing within one.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep, phase]);
