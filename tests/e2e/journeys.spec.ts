@@ -185,6 +185,12 @@ test.describe("contact form", () => {
       /** The step now showing: its first answer and its Next button, wholly in view below the header. */
       async function inView(where: string) {
         await still(page);
+        // And the page itself at rest: the form may glide the step into view.
+        await page.waitForFunction(
+          () => new Promise<boolean>((done) => { const y = scrollY; setTimeout(() => done(scrollY === y), 150); }),
+          null,
+          { timeout: 5000 },
+        );
         const step = await page.evaluate(() => {
           const box = (el: Element | null | undefined) => {
             if (!el) return null;

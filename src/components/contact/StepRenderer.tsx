@@ -101,7 +101,6 @@ export default function StepRenderer({
         onChange={(e) => handleChange(e.target.value)}
         placeholder="Type here…"
         className="contact-input w-full bg-transparent border-0 px-0 py-3 text-statement text-foreground resize-none"
-        autoFocus
       />
     );
   }
@@ -153,7 +152,6 @@ export default function StepRenderer({
             : "Type here…"
       }
       className="contact-input w-full bg-transparent border-0 px-0 py-3 text-statement text-foreground"
-      autoFocus
     />
     {error && (
       <p id={errorId} role="alert" className="mt-3 text-small text-error">
